@@ -1,0 +1,10 @@
+ManifestFileVersion: 0
+CRC: 339615811
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: roles/main_male_role
+      Dependencies: {}
+    Info_1:
+      Name: res_brigdes
+      Dependencies: {}

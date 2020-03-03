@@ -1,0 +1,50 @@
+ManifestFileVersion: 0
+CRC: 2326905513
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 171e75f313a61255e971ab410c475fdb
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 4dfdc82d22367c9286cc6232c48f465f
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 54
+  Script: {instanceID: 0}
+- Class: 74
+  Script: {instanceID: 0}
+- Class: 90
+  Script: {instanceID: 0}
+- Class: 91
+  Script: {instanceID: 0}
+- Class: 95
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 4db4427dc6b01ab47a24e7f7236a191c, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 136
+  Script: {instanceID: 0}
+- Class: 137
+  Script: {instanceID: 0}
+- Class: 195
+  Script: {instanceID: 0}
+Assets:
+- Assets/res_data/roles/main_male_role/MainMaleRoleAniController.controller
+- Assets/res_data/roles/main_male_role/main_male_role_idle.FBX
+- Assets/res_data/roles/main_male_role/MainMaleRole.prefab
+Dependencies: []

@@ -1,0 +1,22 @@
+ManifestFileVersion: 0
+CRC: 387240364
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: ba19a35c698318ec8a995da795bc5afb
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 9f54f892d7a4f4c9a5e263039370985c
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 8cb822559ed7cae4eb69fbae8e673704, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+Assets:
+- Assets/res_data/res_brigdes/MainMaleRoleRes.prefab
+Dependencies: []
