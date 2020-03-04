@@ -1,5 +1,35 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4944680497804059555
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6126650196677286018}
+  m_Layer: 0
+  m_Name: CameraNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6126650196677286018
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4944680497804059555}
+  m_LocalRotation: {x: -0.5000001, y: 0.4999999, z: 0.4999999, w: 0.5000001}
+  m_LocalPosition: {x: -0.05, y: -0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2073633480105472457}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 89.99999}
 --- !u!1 &5727849345280985228
 GameObject:
   m_ObjectHideFlags: 0
@@ -115,7 +145,7 @@ MonoBehaviour:
   m_RoleRigidbody: {fileID: 7659970876832666227}
   m_RoleCollider: {fileID: 3786588106611295116}
   m_RoleAnimator: {fileID: 2073633480115084903}
-  m_CameraNode: {fileID: 8411578853002557157}
+  m_CameraNode: {fileID: 6126650196677286018}
   m_IsShowEnemyPos: 0
 --- !u!1001 &2073633480105601799
 PrefabInstance:
@@ -279,6 +309,12 @@ Transform:
 --- !u!95 &2073633480115084903 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 9500000, guid: 1ec0b27cf271b8440ad390581c7d3691,
+    type: 3}
+  m_PrefabInstance: {fileID: 2073633480105601799}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2073633480105472457 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 400078, guid: 1ec0b27cf271b8440ad390581c7d3691,
     type: 3}
   m_PrefabInstance: {fileID: 2073633480105601799}
   m_PrefabAsset: {fileID: 0}

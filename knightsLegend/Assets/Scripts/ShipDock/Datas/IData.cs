@@ -1,9 +1,8 @@
-﻿using ShipDock.Notices;
-
-namespace ShipDock.Datas
+﻿namespace ShipDock.Datas
 {
     public interface IData
     {
+        void Register(IDataExtracter dataHandler);
         int DataName { get; }
     }
 

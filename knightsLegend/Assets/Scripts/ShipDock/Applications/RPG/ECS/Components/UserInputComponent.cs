@@ -85,7 +85,6 @@ namespace ShipDock.Applications
             mInputX = GetHorizontal();
             mInputY = GetVertical();
             mInputV = new Vector3(mInputX, mInputY);
-            Debug.Log(mInputV);
             mRoleInput.SetUserInputValue(mInputV);
         }
 

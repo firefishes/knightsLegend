@@ -41,9 +41,9 @@ namespace KLGame
             Servers servers = app.Servers;
             servers.OnInit += OnServersInit;
             servers.Add(new KLServer());
-            //servers.Add(new FWDataServer());
+            servers.Add(new KLDataServer());
             servers.Add(new KLComponentServer());
-            //servers.Add(new FWCamerasServer());
+            servers.Add(new KLCameraServer());
             servers.AddOnServerFinished(OnFinished);
         }
 
@@ -83,6 +83,7 @@ namespace KLGame
             GameObject role = Instantiate(prefab);
             //UIManager uis = ShipDockApp.Instance.UIs;
             //uis.Open<RoleChooser>(FWConsts.UI_NAME_ROLE_CHOOSER);
+
         }
 
         private void OnServersInit()

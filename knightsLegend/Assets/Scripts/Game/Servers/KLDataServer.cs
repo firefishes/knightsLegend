@@ -12,14 +12,14 @@ namespace KLGame
 
         public KLDataServer()
         {
-            ServerName = KLConsts.S_KL_DATAS;
+            ServerName = KLConsts.S_DATAS;
             mRelater = new ServerRelater
             {
-                //DataNames = new int[]
-                //{
-                //    KLConsts.DATA_GAME,
-                //    KLConsts.DATA_PLAYER
-                //},
+                DataNames = new int[]
+                {
+                    //KLConsts.DATA_GAME,
+                    KLConsts.D_PLAYER
+                },
                 //ComponentNames = new int[]
                 //{
                 //    KLConsts.COMPONENT_ROLE_CAMP
@@ -35,7 +35,7 @@ namespace KLGame
             ShipDockApp app = ShipDockApp.Instance;
             var datas = app.Datas;
             //datas.AddData(new FWGameData());
-            //datas.AddData(new FWPlayerData());
+            datas.AddData(new KLPlayerData());
 
             //Register<IParamNotice<IFWRole>>(CampRoleCreated, Pooling<CampRoleNotice>.Instance);
             //Register<IParamNotice<IFWRole>>(SetUserFWRoleResolver, Pooling<ParamNotice<IFWRole>>.Instance);
