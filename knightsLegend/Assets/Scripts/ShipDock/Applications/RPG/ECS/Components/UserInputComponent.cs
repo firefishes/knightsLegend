@@ -9,12 +9,12 @@ namespace ShipDock.Applications
     public class UserInputComponent<S> : ShipDockComponent where S : MainServer
     {
 
+        protected float mInputX;
+        protected float mInputY;
+        protected Vector3 mInputV;
         protected ICommonRole mRoleItem;
 
         private bool mIsRelaterInited;
-        private float mInputX;
-        private float mInputY;
-        private Vector3 mInputV;
         private IRoleData mRoleData;
         private IRoleInput mRoleInput;
         private ServerRelater mRelater;
@@ -82,10 +82,15 @@ namespace ShipDock.Applications
                 S server = GetMainServer<S>();
                 MainInputer = server.MainInputer;
             }
+            GetUserInput();
+            mRoleInput?.SetUserInputValue(mInputV);
+        }
+
+        protected virtual void GetUserInput()
+        {
             mInputX = GetHorizontal();
             mInputY = GetVertical();
             mInputV = new Vector3(mInputX, mInputY);
-            mRoleInput.SetUserInputValue(mInputV);
         }
 
         protected virtual float GetHorizontal()

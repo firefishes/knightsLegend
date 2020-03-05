@@ -23,7 +23,7 @@ namespace KLGame
 
         void Start()
         {
-            ShipDockApp.StartUp(120, OnShipDockStart);
+            ShipDockApp.StartUp(200, OnShipDockStart);
         }
 
         private void OnShipDockStart()

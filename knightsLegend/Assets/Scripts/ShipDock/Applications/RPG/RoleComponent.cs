@@ -39,6 +39,7 @@ namespace ShipDock.Applications
         private Transform m_CameraNode;
 
         protected IRoleData mRoleData;
+        protected IRoleInput mRoleInput;
         protected RoleEntitas mRole;
 
         private bool mIsRoleNameSynced;
@@ -46,7 +47,6 @@ namespace ShipDock.Applications
         private Ray mCrouchRay;
         private RaycastHit mGroundHitInfo;
         private CommonRoleAnimatorInfo mAnimatorInfo;
-        private IRoleInput mRoleInput;
         private Vector3 mInitPosition;
         private ComponentBridge mBrigae;
         private AnimatorStateInfo mAnimatorStateInfo;
@@ -179,11 +179,31 @@ namespace ShipDock.Applications
             }
             else
             {
-                m_NavMeshAgent.isStopped = true;
-                Vector3 d = new Vector3(mRoleInput.GetUserInputValue().x, 0, mRoleInput.GetUserInputValue().y);
-                mRoleInput.SetMoveValue(d);
-                m_RoleRigidbody.velocity = d * mRole.SpeedCurrent * 10;
+                ApplyUserControllingMove();
             }
+        }
+
+        protected virtual void ApplyUserControllingMove()
+        {
+            SetNavMeshAgentStopped(true);
+            UpdateRoleInputMoveValue(out Vector3 v);
+            SetRoleRigidbodyVelocity(v * mRole.SpeedCurrent * 10);
+        }
+
+        protected void SetNavMeshAgentStopped(bool flag)
+        {
+            m_NavMeshAgent.isStopped = true;
+        }
+
+        protected virtual void UpdateRoleInputMoveValue(out Vector3 v)
+        {
+            v = new Vector3(mRoleInput.GetUserInputValue().x, 0, mRoleInput.GetUserInputValue().y);
+            mRoleInput.SetMoveValue(v);
+        }
+
+        protected void SetRoleRigidbodyVelocity(Vector3 v)
+        {
+            m_RoleRigidbody.velocity = v;
         }
 
         protected void CheckRoleGrounding()

@@ -31,5 +31,11 @@ namespace KLGame
         {
         }
 
+        protected override void UpdateRoleInputMoveValue(out Vector3 v)
+        {
+            v = new Vector3(mRoleInput.GetUserInputValue().x, 0, mRoleInput.GetUserInputValue().y);
+            
+            mRoleInput.SetMoveValue(v);
+        }
     }
 }
