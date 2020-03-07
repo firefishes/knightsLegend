@@ -35,8 +35,7 @@ namespace ShipDock.Applications
             {
                 mMapper[m_CameraGroups[i].Name] = m_CameraGroups[i];
             }
-
-            //FWConsts.SERVER_FW_LENS.DeliveParam<FWCamerasServer, FWCamerLens>("SetLens", "SetLensParamer", OnSetLens);
+            
             m_LensServerName.DeliveParam<S, ICamerLens>("SetLens", "SetLensParamer", OnSetLens);
         }
 

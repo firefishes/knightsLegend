@@ -10,7 +10,12 @@ namespace ShipDock.Applications
             base.InitComponents();
 
             RoleAnimatorInfo = new CommonRoleAnimatorInfo();
-            RoleInput = new RoleInputInfo();
+            SetRoleInputInfo();
+        }
+
+        protected virtual void SetRoleInputInfo()
+        {
+            RoleInput = new RoleInputInfo(this);
         }
 
         public void SetRoleData(IRoleData data)
@@ -50,11 +55,12 @@ namespace ShipDock.Applications
         public Vector3 PostionTarget { get; set; }
         public Vector3 GroundNormal { get; set; }
         public Vector3 PatherTargetPosition { get; private set; }
+        public Vector3 CameraForward { get; set; }
         public List<int> CollidingRoles { get; } = new List<int>();
         public ICommonRole EnemyMainLockDown { get; set; }
         public IRoleData RoleDataSource { get; private set; }
-        public CommonRoleMustSubgroup RoleMustSubgroup { get; set; }
         public IRoleInput RoleInput { get; set; }
+        public CommonRoleMustSubgroup RoleMustSubgroup { get; set; }
         public CommonRoleAnimatorInfo RoleAnimatorInfo { get; private set; }
 
         protected override int[] ComponentIDs { get; } = default;

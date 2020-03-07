@@ -4,6 +4,7 @@ namespace ShipDock.Applications
 {
     public interface IRoleInput
     {
+        IUserInputPhase GetUserInputPhase();
         void SetUserInputValue(Vector3 value);
         Vector3 GetUserInputValue();
         Vector3 GetMoveValue();
@@ -19,8 +20,9 @@ namespace ShipDock.Applications
         bool HandleGroundedMovement(ref IRoleInput input, ref CommonRoleAnimatorInfo animatorInfo);
         void HandleAirborneMovement(ref IRoleData roleData);
         void UpdateAmout(ref ICommonRole roleEntitas);
-        void UpdateMovePhase();
+        void AdvancedInputPhase();
         int RoleMovePhase { get; }
+        bool ShouldGetUserInput { get; set; }
         float ExtraTurnRotationOut { get; }
         float ForwardAmount { get; }
         float TurnAmount { get; }

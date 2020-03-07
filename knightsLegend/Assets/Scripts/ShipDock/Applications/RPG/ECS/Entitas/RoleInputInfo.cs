@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace ShipDock.Applications
@@ -6,13 +7,33 @@ namespace ShipDock.Applications
     [Serializable]
     public class RoleInputInfo : IRoleInput
     {
+        public bool jump;
+        public bool crouch;
+        public bool crouching;
         public float deltaTime;
+        public float turnSpeed;
         public Vector3 move;
         public Vector3 userInput;
-        public bool crouch;
-        public bool jump;
-        public bool crouching;
-        public float turnSpeed;
+
+        private float mUserInputTime;
+        private List<IUserInputPhase> mInputPhases;
+
+        public RoleInputInfo(ICommonRole roleEntitas)
+        {
+            mInputPhases = new List<IUserInputPhase>()
+            {
+                new RoleMovePhase(),
+                new RoleAmoutExtranTurn(roleEntitas),
+                new RoleInputDefaultPhase(),
+                new RoleScaleCapsulePhase(roleEntitas),
+                new RoleInputDefaultPhase()
+            };
+            int max = mInputPhases.Count;
+            for (int i = 0; i < max; i++)
+            {
+                mInputPhases[i].SetRoleInput(this);
+            }
+        }
 
         public void UpdateAmout(ref ICommonRole roleEntitas)
         {
@@ -36,7 +57,7 @@ namespace ShipDock.Applications
         public bool HandleGroundedMovement(ref IRoleInput input, ref CommonRoleAnimatorInfo animatorInfo)
         {
             // check whether conditions are right to allow a jump:
-            bool isNameGrounded = animatorInfo.IsNameGrounded;
+            bool isNameGrounded = animatorInfo.IsMainBlendTree;
             bool result = input.IsJump() && !input.IsCrouch() && isNameGrounded;
             return result;
         }
@@ -102,7 +123,7 @@ namespace ShipDock.Applications
             return jump;
         }
 
-        public void UpdateMovePhase()
+        public void AdvancedInputPhase()
         {
             RoleMovePhase++;
             if(RoleMovePhase >= 5)
@@ -121,6 +142,12 @@ namespace ShipDock.Applications
             deltaTime = time;
         }
 
+        public IUserInputPhase GetUserInputPhase()
+        {
+            return (RoleMovePhase >= 0) && (RoleMovePhase < mInputPhases.Count) ? mInputPhases[RoleMovePhase] : default;
+        }
+
+        public bool ShouldGetUserInput { get; set; }
         public int RoleMovePhase { get; private set; }
         public float TurnAmount { get; private set; }
         public float ForwardAmount { get; private set; }

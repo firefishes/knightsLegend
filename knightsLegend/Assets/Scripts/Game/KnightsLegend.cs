@@ -23,7 +23,8 @@ namespace KLGame
 
         void Start()
         {
-            ShipDockApp.StartUp(200, OnShipDockStart);
+            Application.targetFrameRate = 120;
+            ShipDockApp.StartUp(120, OnShipDockStart);
         }
 
         private void OnShipDockStart()

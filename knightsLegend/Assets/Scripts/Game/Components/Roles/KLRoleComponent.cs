@@ -1,9 +1,6 @@
 ﻿using ShipDock.Applications;
 using ShipDock.Notices;
 using ShipDock.Server;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace KLGame
@@ -33,8 +30,8 @@ namespace KLGame
 
         protected override void UpdateRoleInputMoveValue(out Vector3 v)
         {
-            v = new Vector3(mRoleInput.GetUserInputValue().x, 0, mRoleInput.GetUserInputValue().y);
-            
+            Vector3 userInputValue = mRoleInput.GetUserInputValue();
+            v = Quaternion.Euler(transform.eulerAngles) * new Vector3(userInputValue.x / 2, 0, userInputValue.y);
             mRoleInput.SetMoveValue(v);
         }
     }

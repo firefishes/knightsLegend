@@ -39,34 +39,17 @@ namespace ShipDock.Applications
             mRoleInput = mRoleItem.RoleInput;
             mAnimatorInfo = mRoleItem.RoleAnimatorInfo;
 
-            if (mRoleItem.IsUserControlling)
+            if (mRoleItem.IsUserControlling && (mRoleInput != default) && (mRoleInput.ShouldGetUserInput))
             {
                 CheckUserInput();
+                mRoleInput.ShouldGetUserInput = false;
             }
             if (mRoleInput == default)
             {
                 return;
             }
-            switch (mRoleInput.RoleMovePhase)
-            {
-                case UserInputPhases.ROLE_INPUT_PHASE_MOVE_READY:
-                    if (mRoleInput.GetMoveValue().magnitude > 1f)
-                    {
-                        mRoleInput.MoveValueNormalize();
-                    }
-                    break;
-                case UserInputPhases.ROLE_INPUT_PHASE_AMOUT_EXTRAN_TURN:
-                    Vector3 move = Vector3.ProjectOnPlane(mRoleInput.GetMoveValue(), mRoleItem.GroundNormal);
-                    mRoleInput.SetMoveValue(move);
-                    mRoleInput.UpdateAmout(ref mRoleItem);
-                    mRoleInput.UpdateRoleExtraTurnRotation(ref mRoleData);
-                    mRoleInput.UpdateMovePhase();
-                    break;
-                case UserInputPhases.ROLE_INPUT_PHASE_SCALE_CAPSULE:
-                    mRoleInput.ScaleCapsuleForCrouching(ref mRoleItem, ref mRoleInput);
-                    mRoleInput.UpdateMovePhase();
-                    break;
-            }
+            IUserInputPhase inputPhase = mRoleInput.GetUserInputPhase();
+            inputPhase?.ExecuteByEntitasComponent();
         }
 
         protected T GetMainServer<T>() where T : MainServer

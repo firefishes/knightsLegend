@@ -7,6 +7,8 @@ namespace KLGame
 {
     public class KLCamerasComponent : CamerLens<KLCameraServer, KLCamerasComponent>
     {
-
+        private void Awake()
+        {
+        }
     }
 }

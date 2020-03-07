@@ -1,0 +1,236 @@
+fileFormatVersion: 2
+guid: e147aef6fdf7915408739d61bf317e8d
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: body03
+    100002: body15
+    100004: body16
+    100006: face02
+    100008: face03
+    100010: hair01
+    100012: hair03
+    100014: leg06
+    100016: leg07
+    100018: //RootNode
+    100020: Object03
+    100022: Object05
+    100024: Object08
+    100026: Object09
+    100028: Object12
+    100030: Object13
+    100032: Object16
+    100034: Object18
+    100036: Object20
+    100038: Plane01
+    100040: "\u6807\u51C6\u7537\u65B0\u624B\u88C5_body"
+    100042: "\u6807\u51C6\u7537\u65B0\u624B\u88C5_leg"
+    100044: "\u6807\u51C6\u7537\u65B0\u624B\u88C5_leg01"
+    100046: "\u88D9\u6446A02"
+    100048: "\u88D9\u6446A03"
+    100050: "\u88D9\u6446A04"
+    100052: "\u88D9\u6446B01"
+    100054: "\u88D9\u6446B03"
+    400000: body03
+    400002: body15
+    400004: body16
+    400006: face02
+    400008: face03
+    400010: hair01
+    400012: hair03
+    400014: leg06
+    400016: leg07
+    400018: //RootNode
+    400020: Object03
+    400022: Object05
+    400024: Object08
+    400026: Object09
+    400028: Object12
+    400030: Object13
+    400032: Object16
+    400034: Object18
+    400036: Object20
+    400038: Plane01
+    400040: "\u6807\u51C6\u7537\u65B0\u624B\u88C5_body"
+    400042: "\u6807\u51C6\u7537\u65B0\u624B\u88C5_leg"
+    400044: "\u6807\u51C6\u7537\u65B0\u624B\u88C5_leg01"
+    400046: "\u88D9\u6446A02"
+    400048: "\u88D9\u6446A03"
+    400050: "\u88D9\u6446A04"
+    400052: "\u88D9\u6446B01"
+    400054: "\u88D9\u6446B03"
+    2100000: orig_08 - Default
+    2100002: 'Material #43'
+    2100004: 11 - Default
+    2100006: 'Material #26'
+    2100008: 20 - Default
+    2100010: "orig_orig_orig_\u5C11\u679710"
+    2100012: 'Material #44'
+    2100014: 'Material #84'
+    2300000: body03
+    2300002: body15
+    2300004: body16
+    2300006: face02
+    2300008: face03
+    2300010: hair01
+    2300012: hair03
+    2300014: leg06
+    2300016: leg07
+    2300018: Object03
+    2300020: Object05
+    2300022: Object08
+    2300024: Object09
+    2300026: Object12
+    2300028: Object13
+    2300030: Object16
+    2300032: Object18
+    2300034: Object20
+    2300036: Plane01
+    2300038: "\u6807\u51C6\u7537\u65B0\u624B\u88C5_body"
+    2300040: "\u6807\u51C6\u7537\u65B0\u624B\u88C5_leg"
+    2300042: "\u6807\u51C6\u7537\u65B0\u624B\u88C5_leg01"
+    2300044: "\u88D9\u6446A02"
+    2300046: "\u88D9\u6446A03"
+    2300048: "\u88D9\u6446A04"
+    2300050: "\u88D9\u6446B01"
+    2300052: "\u88D9\u6446B03"
+    3300000: body03
+    3300002: body15
+    3300004: body16
+    3300006: face02
+    3300008: face03
+    3300010: hair01
+    3300012: hair03
+    3300014: leg06
+    3300016: leg07
+    3300018: Object03
+    3300020: Object05
+    3300022: Object08
+    3300024: Object09
+    3300026: Object12
+    3300028: Object13
+    3300030: Object16
+    3300032: Object18
+    3300034: Object20
+    3300036: Plane01
+    3300038: "\u6807\u51C6\u7537\u65B0\u624B\u88C5_body"
+    3300040: "\u6807\u51C6\u7537\u65B0\u624B\u88C5_leg"
+    3300042: "\u6807\u51C6\u7537\u65B0\u624B\u88C5_leg01"
+    3300044: "\u88D9\u6446A02"
+    3300046: "\u88D9\u6446A03"
+    3300048: "\u88D9\u6446A04"
+    3300050: "\u88D9\u6446B01"
+    3300052: "\u88D9\u6446B03"
+    4300000: "\u88D9\u6446A04"
+    4300002: face02
+    4300004: hair01
+    4300006: Object09
+    4300008: "\u6807\u51C6\u7537\u65B0\u624B\u88C5_leg"
+    4300010: Plane01
+    4300012: Object05
+    4300014: Object12
+    4300016: Object13
+    4300018: Object16
+    4300020: "\u88D9\u6446A03"
+    4300022: Object18
+    4300024: "\u88D9\u6446B03"
+    4300026: "\u88D9\u6446B01"
+    4300028: "\u88D9\u6446A02"
+    4300030: "\u6807\u51C6\u7537\u65B0\u624B\u88C5_body"
+    4300032: Object08
+    4300034: leg06
+    4300036: leg07
+    4300038: body03
+    4300040: Object03
+    4300042: body15
+    4300044: body16
+    4300046: Object20
+    4300048: face03
+    4300050: "\u6807\u51C6\u7537\u65B0\u624B\u88C5_leg01"
+    4300052: hair03
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: roles/main_male_role
+  assetBundleVariant: 

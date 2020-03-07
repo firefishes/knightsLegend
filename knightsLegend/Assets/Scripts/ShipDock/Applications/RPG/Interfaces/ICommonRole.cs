@@ -17,6 +17,7 @@ namespace ShipDock.Applications
         IRoleData RoleDataSource { get; }
         ICommonRole EnemyMainLockDown { get; set; }
         Vector3 GroundNormal { get; set; }
+        Vector3 CameraForward { get; set; }
         CommonRoleMustSubgroup RoleMustSubgroup { get; set; }
         CommonRoleAnimatorInfo RoleAnimatorInfo { get; }
     }

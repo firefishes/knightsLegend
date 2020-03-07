@@ -1,6 +1,9 @@
 ﻿#define _TEST_MOVER
+#define _DEBUG_ENMEY_POS
 
 using ShipDock.Notices;
+using ShipDock.Tools;
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -9,8 +12,6 @@ namespace ShipDock.Applications
     public abstract class RoleComponent : MonoBehaviour
     {
 
-        private const float k_Half = 0.5f;
-
 #if TEST_MOVER
         [SerializeField]
         private Transform m_Mover;
@@ -18,15 +19,9 @@ namespace ShipDock.Applications
         [SerializeField]
         private NavMeshAgent m_NavMeshAgent;
         [SerializeField]
-        private float m_Hp;
+        private RoleInfo m_RoleCompInfo = new RoleInfo();
         [SerializeField]
-        private float m_Speed;
-        [SerializeField]
-        private float m_RunCycleLegOffset = 0.2f;
-        [SerializeField]
-        private float m_AnimSpeedMultiplier = 1f;
-        [SerializeField]
-        private float m_MoveSpeedMultiplier = 1f;
+        private RoleBlendTreeInfo m_BlendTreeInfo = new RoleBlendTreeInfo();
         [SerializeField]
         private CommonRoleMustSubgroup m_RoleMustSubgroup;
         [SerializeField]
@@ -44,16 +39,20 @@ namespace ShipDock.Applications
 
         private bool mIsRoleNameSynced;
         private float mGroundCheckDistance = 0.3f;
+        private Vector3 mInitPosition;
+        private IUserInputPhase mInputPhase;
+        private Action mSceneCompCallaback;
         private Ray mCrouchRay;
         private RaycastHit mGroundHitInfo;
-        private CommonRoleAnimatorInfo mAnimatorInfo;
-        private Vector3 mInitPosition;
-        private ComponentBridge mBrigae;
         private AnimatorStateInfo mAnimatorStateInfo;
+        private CommonRoleAnimatorInfo mAnimatorInfo;
+        private ComponentBridge mBrigae;
+        private KeyValueList<int, Action> mSceneCompCallbacks;
 
         protected virtual void Awake()
         {
             Init();
+
             mBrigae = new ComponentBridge(OnInited);
             mBrigae.Start();
         }
@@ -70,6 +69,11 @@ namespace ShipDock.Applications
 
         private void Init()
         {
+            mSceneCompCallbacks = new KeyValueList<int, Action>();
+            mSceneCompCallbacks[UserInputPhases.ROLE_INPUT_PHASE_MOVE_READY] = CheckRoleInputMovePhase;
+            mSceneCompCallbacks[UserInputPhases.ROLE_INPUT_PHASE_CHECK_GROUND] = CheckRoleInputGroundPhase;
+            mSceneCompCallbacks[UserInputPhases.ROLE_INPUT_PHASE_CHECK_CROUCH] = CheckRoleInputCrouchPhase;
+
             InitRoleData();
             
             m_RoleMustSubgroup = new CommonRoleMustSubgroup
@@ -87,7 +91,7 @@ namespace ShipDock.Applications
             m_RoleMustSubgroup.Init(ref m_RoleCollider);
         }
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR && DEBUG_ENMEY_POS
         private static RoleComponent sceneSelectedRole;
 
         [SerializeField]
@@ -155,35 +159,40 @@ namespace ShipDock.Applications
         protected abstract void SetRoleEntitas();
         protected abstract void OnRoleNotices(INoticeBase<int> obj);
 
+        private void UpdateNavMeshAgent()
+        {
+            if (mRole.FindngPath)
+            {
+                if (mRole.EnemyMainLockDown != default)
+                {
+                    m_NavMeshAgent.destination = mRole.EnemyMainLockDown.Position;
+                    mRoleInput.SetMoveValue(m_NavMeshAgent.velocity);
+                }
+            }
+            else
+            {
+                if (mRoleInput != default)
+                {
+                    mRoleInput.SetMoveValue(Vector3.zero);
+                }
+            }
+        }
+
         protected void UpdateByPositionComponent()
         {
             mRole.Direction = transform.forward;
             mRole.Position = transform.position;
             if (mRole.PositionEnabled)
             {
-                if (mRole.FindngPath)
-                {
-                    if (mRole.EnemyMainLockDown != default)
-                    {
-                        m_NavMeshAgent.destination = mRole.EnemyMainLockDown.Position;
-                        mRoleInput.SetMoveValue(m_NavMeshAgent.velocity);
-                    }
-                }
-                else
-                {
-                    if (mRoleInput != default)
-                    {
-                        mRoleInput.SetMoveValue(Vector3.zero);
-                    }
-                }
+                UpdateNavMeshAgent();
             }
             else
             {
-                ApplyUserControllingMove();
+                UpdateByUserControlled();
             }
         }
 
-        protected virtual void ApplyUserControllingMove()
+        protected virtual void UpdateByUserControlled()
         {
             SetNavMeshAgentStopped(true);
             UpdateRoleInputMoveValue(out Vector3 v);
@@ -197,7 +206,8 @@ namespace ShipDock.Applications
 
         protected virtual void UpdateRoleInputMoveValue(out Vector3 v)
         {
-            v = new Vector3(mRoleInput.GetUserInputValue().x, 0, mRoleInput.GetUserInputValue().y);
+            Vector3 userInputValue = mRoleInput.GetUserInputValue();
+            v = new Vector3(userInputValue.x, 0, userInputValue.y);
             mRoleInput.SetMoveValue(v);
         }
 
@@ -206,13 +216,13 @@ namespace ShipDock.Applications
             m_RoleRigidbody.velocity = v;
         }
 
-        protected void CheckRoleGrounding()
+        protected void CheckRoleInputGroundPhase()
         {
             transform.Rotate(0, mRoleInput.ExtraTurnRotationOut, 0);
 
             mAnimatorInfo = mRole.RoleAnimatorInfo;
             mAnimatorStateInfo = m_RoleAnimator.GetCurrentAnimatorStateInfo(0);
-            mAnimatorInfo.IsNameGrounded = mAnimatorStateInfo.IsName("Grounded");
+            mAnimatorInfo.IsMainBlendTree = mAnimatorStateInfo.IsName(m_BlendTreeInfo.MainBlendTreeName);
 
             Vector3 velocity = m_RoleRigidbody.velocity;
             if (mRole.IsGrounded)
@@ -233,10 +243,10 @@ namespace ShipDock.Applications
                 m_RoleRigidbody.AddForce(mRoleInput.ExtraGravityForceOut);
                 mGroundCheckDistance = velocity.y < 0 ? m_RoleMustSubgroup.origGroundCheckDistance : 0.01f;
             }
-            mRoleInput.UpdateMovePhase();
+            mRoleInput.AdvancedInputPhase();
         }
 
-        protected void CheckRoleCrouching()
+        protected void CheckRoleInputCrouchPhase()
         {
             if (mRole.IsGroundedAndCrouch)
             {
@@ -262,14 +272,14 @@ namespace ShipDock.Applications
                 UpdateCrouchingByRay();
             }
             UpdateAnimator();
-            mRoleInput.UpdateMovePhase();
+            mRoleInput.AdvancedInputPhase();
         }
 
         private bool UpdateCrouchingByRay()
         {
-            mCrouchRay = new Ray(m_RoleRigidbody.position + Vector3.up * m_RoleCollider.radius * k_Half, Vector3.up);
-            float crouchRayLength = m_RoleMustSubgroup.capsuleHeight - m_RoleCollider.radius * k_Half;
-            bool flag = Physics.SphereCast(mCrouchRay, m_RoleCollider.radius * k_Half, crouchRayLength, Physics.AllLayers, QueryTriggerInteraction.Ignore);
+            mCrouchRay = new Ray(m_RoleRigidbody.position + Vector3.up * m_RoleCollider.radius * RoleInfo.KHalf, Vector3.up);
+            float crouchRayLength = m_RoleMustSubgroup.capsuleHeight - m_RoleCollider.radius * RoleInfo.KHalf;
+            bool flag = Physics.SphereCast(mCrouchRay, m_RoleCollider.radius * RoleInfo.KHalf, crouchRayLength, Physics.AllLayers, QueryTriggerInteraction.Ignore);
             if (flag)
             {
                 mRoleInput.SetCrouching(true);
@@ -277,53 +287,51 @@ namespace ShipDock.Applications
             return flag;
         }
 
+        private void SyncInfos()
+        {
+            m_RoleCompInfo.SetHp(mRole.RoleDataSource.Hp);
+            m_RoleCompInfo.SetSpeed(mRole.SpeedCurrent);
+            if (m_NavMeshAgent != default)
+            {
+                m_NavMeshAgent.speed = mRole.SpeedCurrent;
+            }
+            if (mRoleInput == default)
+            {
+                mRoleInput = mRole.RoleInput;
+            }
+            mRoleInput.SetDeltaTime(Time.deltaTime);
+            if (!mIsRoleNameSynced && !string.IsNullOrEmpty(mRole.Name))
+            {
+                mIsRoleNameSynced = true;
+                name = mRole.Name;
+            }
+        }
+
         private void Update()
         {
             if (mRole != default)
             {
-                m_Hp = mRole.RoleDataSource.Hp;
-                m_Speed = mRole.SpeedCurrent;
-                if(m_NavMeshAgent != default)
-                {
-                    m_NavMeshAgent.speed = mRole.SpeedCurrent;
-                }
-                mRoleInput = mRole.RoleInput;
-
-                if(!mIsRoleNameSynced && !string.IsNullOrEmpty(mRole.Name))
-                {
-                    mIsRoleNameSynced = true;
-                    name = mRole.Name;
-                }
-
+                SyncInfos();
                 UpdateByPositionComponent();
 
                 if (mRoleInput != default)
                 {
-                    switch (mRoleInput.RoleMovePhase)
-                    {
-                        case UserInputPhases.ROLE_INPUT_PHASE_MOVE_READY:
-                            CheckMoveAndGroundStatus();
-                            break;
-                        case UserInputPhases.ROLE_INPUT_PHASE_CHECK_GROUNDE:
-                            CheckRoleGrounding();
-                            break;
-                        case UserInputPhases.ROLE_INPUT_PHASE_CHECK_CROUCH:
-                            CheckRoleCrouching();
-                            break;
-                    }
+                    mInputPhase = mRoleInput.GetUserInputPhase();
+                    int phaseValue = mRoleInput.RoleMovePhase;
+                    mSceneCompCallaback = mSceneCompCallbacks[phaseValue];
+                    mInputPhase.ExecuteBySceneComponent(mSceneCompCallaback);
                 }
+                mRoleInput.ShouldGetUserInput = true;
             }
         }
 
-        private void CheckMoveAndGroundStatus()
+        private void CheckRoleInputMovePhase()
         {
-            mRoleInput.SetDeltaTime(Time.deltaTime);
-
             Vector3 v = transform.InverseTransformDirection(mRoleInput.GetMoveValue());
             mRoleInput.SetMoveValue(v);
 
             CheckGroundStatus();
-            mRoleInput.UpdateMovePhase();
+            mRoleInput.AdvancedInputPhase();
         }
 
         private void CheckGroundStatus()
@@ -350,35 +358,45 @@ namespace ShipDock.Applications
             mRole.GroundNormal = value ? mGroundHitInfo.normal : Vector3.up;
         }
 
-        private void UpdateAnimator()
+        private void UpdateAnimatorParams()
         {
             // update the animator parameters
-            m_RoleAnimator.SetFloat("Forward", mRoleInput.ForwardAmount, 0.1f, Time.deltaTime);
-            m_RoleAnimator.SetFloat("Turn", mRoleInput.TurnAmount, 0.1f, Time.deltaTime);
-            m_RoleAnimator.SetBool("Crouch", mRoleInput.IsCrouching());
-            m_RoleAnimator.SetBool("OnGround", mRole.IsGrounded);
-            if (!mRole.IsGrounded)
-            {
-                m_RoleAnimator.SetFloat("Jump", m_RoleRigidbody.velocity.y);
-            }
+            m_RoleAnimator.SetFloat(m_BlendTreeInfo.MoveMotionName, mRoleInput.ForwardAmount, 0.1f, Time.deltaTime);
+            m_RoleAnimator.SetFloat(m_BlendTreeInfo.TurnMotionName, mRoleInput.TurnAmount, 0.1f, Time.deltaTime);
+            m_RoleAnimator.SetBool(m_BlendTreeInfo.OnGroundParamName, mRole.IsGrounded);
 
+            if (m_BlendTreeInfo.ApplyCrouchMotion)
+            {
+                m_RoleAnimator.SetBool(m_BlendTreeInfo.CrouchParamName, mRoleInput.IsCrouching());
+            }
+            if (m_BlendTreeInfo.ApplyJumpMotion && !mRole.IsGrounded)
+            {
+                m_RoleAnimator.SetFloat(m_BlendTreeInfo.JumpMotionName, m_RoleRigidbody.velocity.y);
+            }
+        }
+
+        private void UpdateLegMotionParam()
+        {
             // calculate which leg is behind, so as to leave that leg trailing in the jump animation
             // (This code is reliant on the specific run cycle offset in our animations,
             // and assumes one leg passes the other at the normalized clip times of 0.0 and 0.5)
-            m_RunCycleLegOffset = mRole.RoleAnimatorInfo.RunCycleLegOffset;
-            float runCycle = Mathf.Repeat(m_RoleAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime + m_RunCycleLegOffset, 1);
-            float jumpLeg = (runCycle < k_Half ? 1 : -1) * mRoleInput.ForwardAmount;
-            if (mRole.IsGrounded)
+            m_RoleCompInfo.SetRunCycleLegOffset(mRole.RoleAnimatorInfo.RunCycleLegOffset);
+            float runCycle = Mathf.Repeat(m_RoleAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime + m_RoleCompInfo.RunCycleLegOffset(), 1);
+            float jumpLeg = (runCycle < RoleInfo.KHalf ? 1 : -1) * mRoleInput.ForwardAmount;
+            if (mRole.IsGrounded && m_BlendTreeInfo.ApplyJumpMotion)
             {
-                m_RoleAnimator.SetFloat("JumpLeg", jumpLeg);
+                m_RoleAnimator.SetFloat(m_BlendTreeInfo.JumpLegMotionName, jumpLeg);
             }
+        }
 
+        private void UpdateGroundedStatu()
+        {
             // the anim speed multiplier allows the overall speed of walking/running to be tweaked in the inspector,
             // which affects the movement speed because of the root motion.
             if (mRole.IsGrounded && mRoleInput.GetMoveValue().magnitude > 0)
             {
-                m_AnimSpeedMultiplier = mRole.RoleAnimatorInfo.AnimSpeedMultiplier;
-                m_RoleAnimator.speed = m_AnimSpeedMultiplier;
+                m_RoleCompInfo.SetAnimSpeedMultiplier(mRole.RoleAnimatorInfo.AnimSpeedMultiplier);
+                m_RoleAnimator.speed = m_RoleCompInfo.AnimSpeedMultiplier();
             }
             else
             {
@@ -387,14 +405,21 @@ namespace ShipDock.Applications
             }
         }
 
+        private void UpdateAnimator()
+        {
+            UpdateAnimatorParams();
+            UpdateLegMotionParam();
+            UpdateGroundedStatu();
+        }
+
         public void OnAnimatorMove()
         {
             // we implement this function to override the default root motion.
             // this allows us to modify the positional speed before it's applied.
             if (mRole != default && mRole.IsGrounded && Time.deltaTime > 0)
             {
-                m_MoveSpeedMultiplier = mRole.RoleAnimatorInfo.MoveSpeedMultiplier;
-                Vector3 v = m_RoleAnimator.deltaPosition * m_MoveSpeedMultiplier / Time.deltaTime;
+                m_RoleCompInfo.SetMoveSpeedMultiplier(mRole.RoleAnimatorInfo.MoveSpeedMultiplier);
+                Vector3 v = m_RoleAnimator.deltaPosition * m_RoleCompInfo.MoveSpeedMultiplier() / Time.deltaTime;
 
                 // we preserve the existing y part of the current velocity.
                 v.y = m_RoleRigidbody.velocity.y;
