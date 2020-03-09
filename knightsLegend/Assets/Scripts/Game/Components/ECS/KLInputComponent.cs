@@ -8,13 +8,6 @@ namespace KLGame
     public class KLInputComponent : HostGameInputComponent<KLServer>
     {
 
-        protected override void GetUserInput()
-        {
-            base.GetUserInput();
-
-            //mInputV = Quaternion.Euler(mInputV) * mRoleItem.CameraForward;
-        }
-
         protected override string[] RelateServerNames { get; } = new string[]
         {
             KLConsts.S_KL

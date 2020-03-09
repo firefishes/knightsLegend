@@ -21,17 +21,18 @@ namespace ShipDock.Applications
         [SerializeField]
         private RoleInfo m_RoleCompInfo = new RoleInfo();
         [SerializeField]
-        private RoleBlendTreeInfo m_BlendTreeInfo = new RoleBlendTreeInfo();
-        [SerializeField]
         private CommonRoleMustSubgroup m_RoleMustSubgroup;
         [SerializeField]
         private Rigidbody m_RoleRigidbody;
         [SerializeField]
         private CapsuleCollider m_RoleCollider;
         [SerializeField]
-        private Animator m_RoleAnimator;
-        [SerializeField]
         private Transform m_CameraNode;
+        
+        [SerializeField]
+        protected Animator m_RoleAnimator;
+        [SerializeField]
+        protected RoleBlendTreeInfo m_BlendTreeInfo = new RoleBlendTreeInfo();
 
         protected IRoleData mRoleData;
         protected IRoleInput mRoleInput;
@@ -67,7 +68,7 @@ namespace ShipDock.Applications
 
         protected abstract void InitRoleData();
 
-        private void Init()
+        protected virtual void Init()
         {
             mSceneCompCallbacks = new KeyValueList<int, Action>();
             mSceneCompCallbacks[UserInputPhases.ROLE_INPUT_PHASE_MOVE_READY] = CheckRoleInputMovePhase;
@@ -84,11 +85,23 @@ namespace ShipDock.Applications
                 origGroundCheckDistance = mGroundCheckDistance
             };
 
-            m_RoleRigidbody.constraints = RigidbodyConstraints.FreezeRotationX |
-                                          RigidbodyConstraints.FreezeRotationY |
-                                          RigidbodyConstraints.FreezeRotationZ;
-
+            FreezeAllRotation(true);
             m_RoleMustSubgroup.Init(ref m_RoleCollider);
+        }
+
+        protected void FreezeAllRotation(bool flag)
+        {
+            if(flag)
+            {
+                m_RoleRigidbody.constraints = RigidbodyConstraints.FreezeRotationX |
+                                              RigidbodyConstraints.FreezeRotationY |
+                                              RigidbodyConstraints.FreezeRotationZ;
+
+            }
+            else
+            {
+                m_RoleRigidbody.constraints = RigidbodyConstraints.None;
+            }
         }
 
 #if UNITY_EDITOR && DEBUG_ENMEY_POS
@@ -196,7 +209,7 @@ namespace ShipDock.Applications
         {
             SetNavMeshAgentStopped(true);
             UpdateRoleInputMoveValue(out Vector3 v);
-            SetRoleRigidbodyVelocity(v * mRole.SpeedCurrent * 10);
+            SetRoleRigidbodyVelocity(CreateRoleRigidbodyVelocity(v));
         }
 
         protected void SetNavMeshAgentStopped(bool flag)
@@ -214,6 +227,11 @@ namespace ShipDock.Applications
         protected void SetRoleRigidbodyVelocity(Vector3 v)
         {
             m_RoleRigidbody.velocity = v;
+        }
+
+        protected virtual Vector3 CreateRoleRigidbodyVelocity(Vector3 v)
+        {
+            return v * mRole.SpeedCurrent * 10;
         }
 
         protected void CheckRoleInputGroundPhase()
@@ -358,11 +376,11 @@ namespace ShipDock.Applications
             mRole.GroundNormal = value ? mGroundHitInfo.normal : Vector3.up;
         }
 
-        private void UpdateAnimatorParams()
+        protected virtual void UpdateAnimatorParams()
         {
             // update the animator parameters
-            m_RoleAnimator.SetFloat(m_BlendTreeInfo.MoveMotionName, mRoleInput.ForwardAmount, 0.1f, Time.deltaTime);
-            m_RoleAnimator.SetFloat(m_BlendTreeInfo.TurnMotionName, mRoleInput.TurnAmount, 0.1f, Time.deltaTime);
+            UpdateAnimatorForwardParam();
+            UpdateAnimatorTurnParam();
             m_RoleAnimator.SetBool(m_BlendTreeInfo.OnGroundParamName, mRole.IsGrounded);
 
             if (m_BlendTreeInfo.ApplyCrouchMotion)
@@ -373,6 +391,16 @@ namespace ShipDock.Applications
             {
                 m_RoleAnimator.SetFloat(m_BlendTreeInfo.JumpMotionName, m_RoleRigidbody.velocity.y);
             }
+        }
+
+        protected virtual void UpdateAnimatorForwardParam()
+        {
+            m_RoleAnimator.SetFloat(m_BlendTreeInfo.MoveMotionName, mRoleInput.ForwardAmount, 0.1f, Time.deltaTime);
+        }
+
+        protected virtual void UpdateAnimatorTurnParam()
+        {
+            m_RoleAnimator.SetFloat(m_BlendTreeInfo.TurnMotionName, mRoleInput.TurnAmount, 0.1f, Time.deltaTime);
         }
 
         private void UpdateLegMotionParam()

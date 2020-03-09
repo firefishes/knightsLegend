@@ -34,7 +34,6 @@ namespace KLGame
         public override void ServerReady()
         {
             base.ServerReady();
-
         }
     }
 }
