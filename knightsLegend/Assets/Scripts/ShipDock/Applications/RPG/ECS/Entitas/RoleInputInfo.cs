@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ShipDock.Tools;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,9 +18,11 @@ namespace ShipDock.Applications
 
         private float mUserInputTime;
         private List<IUserInputPhase> mInputPhases;
+        private KeyValueList<string, bool> mInputKeys;
 
         public RoleInputInfo(ICommonRole roleEntitas)
         {
+            mInputKeys = new KeyValueList<string, bool>();
             mInputPhases = new List<IUserInputPhase>()
             {
                 new RoleMovePhase(),
@@ -57,7 +60,7 @@ namespace ShipDock.Applications
         public bool HandleGroundedMovement(ref IRoleInput input, ref CommonRoleAnimatorInfo animatorInfo)
         {
             // check whether conditions are right to allow a jump:
-            bool isNameGrounded = animatorInfo.IsMainBlendTree;
+            bool isNameGrounded = animatorInfo.IsMovementBlendTree;
             bool result = input.IsJump() && !input.IsCrouch() && isNameGrounded;
             return result;
         }
@@ -145,6 +148,16 @@ namespace ShipDock.Applications
         public IUserInputPhase GetUserInputPhase()
         {
             return (RoleMovePhase >= 0) && (RoleMovePhase < mInputPhases.Count) ? mInputPhases[RoleMovePhase] : default;
+        }
+
+        public void SetUserInputValue(string key, bool value)
+        {
+            mInputKeys[key] = value;
+        }
+
+        public bool GetUserInputValue(string key)
+        {
+            return mInputKeys[key];
         }
 
         public bool ShouldGetUserInput { get; set; }

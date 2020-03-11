@@ -240,7 +240,7 @@ namespace ShipDock.Applications
 
             mAnimatorInfo = mRole.RoleAnimatorInfo;
             mAnimatorStateInfo = m_RoleAnimator.GetCurrentAnimatorStateInfo(0);
-            mAnimatorInfo.IsMainBlendTree = mAnimatorStateInfo.IsName(m_BlendTreeInfo.MainBlendTreeName);
+            mAnimatorInfo.IsMovementBlendTree = mAnimatorStateInfo.IsName(m_BlendTreeInfo.MainBlendTreeName);
 
             Vector3 velocity = m_RoleRigidbody.velocity;
             if (mRole.IsGrounded)
@@ -340,7 +340,13 @@ namespace ShipDock.Applications
                     mInputPhase.ExecuteBySceneComponent(mSceneCompCallaback);
                 }
                 mRoleInput.ShouldGetUserInput = true;
+
+                UpdateAnimations();
             }
+        }
+
+        protected virtual void UpdateAnimations()
+        {
         }
 
         private void CheckRoleInputMovePhase()

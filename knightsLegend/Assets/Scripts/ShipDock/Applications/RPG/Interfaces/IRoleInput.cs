@@ -6,6 +6,8 @@ namespace ShipDock.Applications
     {
         IUserInputPhase GetUserInputPhase();
         void SetUserInputValue(Vector3 value);
+        void SetUserInputValue(string key, bool value);
+        bool GetUserInputValue(string key);
         Vector3 GetUserInputValue();
         Vector3 GetMoveValue();
         void SetDeltaTime(float time);

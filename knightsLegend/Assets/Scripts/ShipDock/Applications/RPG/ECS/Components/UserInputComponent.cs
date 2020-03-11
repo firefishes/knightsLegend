@@ -13,10 +13,10 @@ namespace ShipDock.Applications
         protected float mInputY;
         protected Vector3 mInputV;
         protected ICommonRole mRoleItem;
+        protected IRoleInput mRoleInput;
 
         private bool mIsRelaterInited;
         private IRoleData mRoleData;
-        private IRoleInput mRoleInput;
         private ServerRelater mRelater;
         private CommonRoleAnimatorInfo mAnimatorInfo;
 

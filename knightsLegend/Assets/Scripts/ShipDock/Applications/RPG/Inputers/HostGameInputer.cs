@@ -7,7 +7,7 @@ namespace ShipDock.Applications
         [SerializeField]
         private int m_UserInputComponentName;
         [SerializeField]
-        private HostGameInputerButtons m_InputerButtons;
+        protected HostGameInputerButtons m_InputerButtons;
 
         private int mAxisCount;
         private float mAxisValue;
@@ -43,6 +43,7 @@ namespace ShipDock.Applications
         private void FixedUpdate()
         {
             CheckDirectionsButtons();
+            CheckCustomButtons();
         }
         
         private void CheckDirectionsButtons()
@@ -59,6 +60,11 @@ namespace ShipDock.Applications
                 m_InputerButtons.SetAxis(mDirectionAxis[i], mAxisValue);
                 m_InputerButtons.SetActiveButton(mDirectionAxis[i], (mAxisValue != 0f));
             }
+        }
+
+        protected virtual void CheckCustomButtons()
+        {
+
         }
     }
 }

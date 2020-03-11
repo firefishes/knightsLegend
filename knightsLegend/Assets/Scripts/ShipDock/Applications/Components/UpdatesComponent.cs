@@ -38,6 +38,7 @@ namespace ShipDock.Applications
 
         private void Update()
         {
+            mUpdatesCacher?.CheckDeleted();
             int time = (int)(Time.deltaTime * UpdatesCacher.UPDATE_CACHER_TIME_SCALE);
             mUpdatesCacher?.Update(time);
         }
@@ -51,6 +52,7 @@ namespace ShipDock.Applications
 
         private void LateUpdate()
         {
+            mUpdatesCacher?.CheckDeleted();
             mUpdatesCacher?.LateUpdate();
         }
     }

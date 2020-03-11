@@ -6,7 +6,7 @@ namespace ShipDock.Applications
     public class MethodUpdater : IUpdate, IDispose
     {
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             Asynced = false;
             Update = default;
@@ -30,7 +30,7 @@ namespace ShipDock.Applications
             LateUpdate?.Invoke();
         }
 
-        public void OnUpdate(int dTime)
+        public virtual void OnUpdate(int dTime)
         {
             Update?.Invoke(dTime);
         }

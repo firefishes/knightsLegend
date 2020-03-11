@@ -16,7 +16,7 @@
         {
             UserInputButtons = target;
         }
-        
+
         private bool IsJoypad()
         {
             return false;
