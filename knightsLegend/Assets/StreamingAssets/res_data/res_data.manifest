@@ -1,10 +1,18 @@
 ManifestFileVersion: 0
-CRC: 339615811
+CRC: 2734306180
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
       Name: roles/main_male_role
-      Dependencies: {}
+      Dependencies:
+        Dependency_0: assets/orientalsword
     Info_1:
       Name: res_brigdes
+      Dependencies: {}
+    Info_2:
+      Name: assets/prefabs
+      Dependencies:
+        Dependency_0: roles/main_male_role
+    Info_3:
+      Name: assets/orientalsword
       Dependencies: {}

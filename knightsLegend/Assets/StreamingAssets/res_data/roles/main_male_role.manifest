@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 2326905513
+CRC: 2491010178
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 171e75f313a61255e971ab410c475fdb
+    Hash: 24255cd322f2a915d53d321fb0d8426f
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 4dfdc82d22367c9286cc6232c48f465f
+    Hash: 180aa385b691df1d7e67df0b7834cfb0
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -45,6 +45,9 @@ ClassTypes:
   Script: {instanceID: 0}
 Assets:
 - Assets/res_data/roles/main_male_role/MainMaleRoleAniController.controller
-- Assets/res_data/roles/main_male_role/main_male_role_idle.FBX
+- Assets/res_data/roles/main_male_role/MainMaleRole_2/male_role_model.FBX
+- Assets/res_data/roles/main_male_role/MainMaleRole_2/male_role_walk.FBX
+- Assets/res_data/roles/main_male_role/MainMaleRole_2/main_male_role_idle.FBX
 - Assets/res_data/roles/main_male_role/MainMaleRole.prefab
-Dependencies: []
+Dependencies:
+- F:/Work/BuildShip/Knights/knightsLegend/knightsLegend/Assets/StreamingAssets/res_data/assets/orientalsword

@@ -25,6 +25,33 @@
             return result;
         }
 
+        public static ValueItem New(string keyField, float value)
+        {
+            ValueItem result = new ValueItem(value)
+            {
+                KeyField = keyField
+            };
+            return result;
+        }
+
+        public static ValueItem New(string keyField, bool value = default)
+        {
+            ValueItem result = new ValueItem(value)
+            {
+                KeyField = keyField
+            };
+            return result;
+        }
+
+        public static ValueItem New(string keyField, int value)
+        {
+            ValueItem result = new ValueItem(value)
+            {
+                KeyField = keyField
+            };
+            return result;
+        }
+
         private bool mBool;
         private int mInt;
         private float mFloat;
@@ -35,6 +62,27 @@
         {
             Type = STRING;
             Change(value);
+        }
+
+        public ValueItem(bool value)
+        {
+            Bool = value;
+        }
+
+        public ValueItem(int value)
+        {
+            Int = value;
+        }
+
+        public ValueItem(float value)
+        {
+            Float = value;
+        }
+
+        public ValueItem SetDampTime(float time)
+        {
+            DampTime = time;
+            return this;
         }
 
         public void Change(string value)
@@ -114,8 +162,33 @@
             }
         }
 
+        public bool IsBool
+        {
+            get
+            {
+                return Type == BOOL;
+            }
+        }
+
+        public bool IsFloat
+        {
+            get
+            {
+                return Type == FLOAT;
+            }
+        }
+
+        public bool IsInt
+        {
+            get
+            {
+                return Type == INT;
+            }
+        }
+
         public virtual int Type { get; set; }
         public string Value { get; private set; }
         public string KeyField { get; set; }
+        public float DampTime { get; set; }
     }
 }

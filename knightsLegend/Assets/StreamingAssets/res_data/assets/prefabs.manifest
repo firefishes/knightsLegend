@@ -1,0 +1,19 @@
+ManifestFileVersion: 0
+CRC: 1752452116
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 1d46a5be1f5f838f38293121c99579d2
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: fdf6c57a251b9f6ec27bdd2fe01b033c
+HashAppended: 0
+ClassTypes:
+- Class: 74
+  Script: {instanceID: 0}
+- Class: 91
+  Script: {instanceID: 0}
+Assets:
+- Assets/res_data/roles/main_male_role/MainMaleRole_2/MainMaleRoleAniController_2.controller
+Dependencies:
+- F:/Work/BuildShip/Knights/knightsLegend/knightsLegend/Assets/StreamingAssets/res_data/roles/main_male_role

@@ -1,0 +1,43 @@
+ManifestFileVersion: 0
+CRC: 2171341823
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 4d025479bc97db472d9fc4f6583ca136
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 88087408953065fa31a3b078f8c59fdd
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 74
+  Script: {instanceID: 0}
+- Class: 90
+  Script: {instanceID: 0}
+- Class: 95
+  Script: {instanceID: 0}
+- Class: 137
+  Script: {instanceID: 0}
+Assets:
+- Assets/OrientalSword/Generic/OrientalSword_StrafeRight.FBX
+- Assets/OrientalSword/Generic/Materials/02 - Default.mat
+- Assets/OrientalSword/Generic/OrientalSword_BASE.FBX
+- Assets/OrientalSword/Generic/OrientalSword_SINGLEATTACK03.FBX
+- Assets/OrientalSword/Generic/OrientalSword_StrafeBack.FBX
+- Assets/OrientalSword/Generic/OrientalSword_SINGLEATTACK01.FBX
+- Assets/OrientalSword/Generic/OrientalSword_B_IDLE01.FBX
+- Assets/OrientalSword/Generic/OrientalSword_B_MOVE.FBX
+- Assets/OrientalSword/[no-weapon]Generic/[no_weapon]OrientalSword_ATTACKED_F.FBX
+- Assets/OrientalSword/Generic/OrientalSword_SINGLEATTACK02.FBX
+- Assets/OrientalSword/Generic/OrientalSword_StrafeLeft.FBX
+- Assets/OrientalSword/Materials/Body_Diffuse_01.mat
+Dependencies: []

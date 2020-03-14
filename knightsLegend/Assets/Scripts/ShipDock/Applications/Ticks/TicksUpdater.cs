@@ -152,7 +152,7 @@ namespace ShipDock.Applications
         /// <summary>检测一个刷帧对象是否有效</summary>
         private bool IsValidUpdate(IUpdate target)
         {
-            return (mListDeleted != null) && !mListDeleted.Contains(target);
+            return (target != default) && (mListDeleted != null) && !mListDeleted.Contains(target);
         }
         
         private void Updating(int time)

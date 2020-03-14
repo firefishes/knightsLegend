@@ -1,4 +1,4 @@
-﻿#define _TEST_MOVER
+﻿#define TEST_MOVER
 #define _DEBUG_ENMEY_POS
 
 using ShipDock.Notices;
@@ -14,7 +14,7 @@ namespace ShipDock.Applications
 
 #if TEST_MOVER
         [SerializeField]
-        private Transform m_Mover;
+        protected Transform m_Mover;
 #endif
         [SerializeField]
         private NavMeshAgent m_NavMeshAgent;

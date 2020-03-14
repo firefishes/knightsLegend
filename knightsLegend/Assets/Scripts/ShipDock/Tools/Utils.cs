@@ -1,4 +1,5 @@
 ﻿using ShipDock.Interfaces;
+using System;
 using System.Collections.Generic;
 
 namespace ShipDock.Tools
@@ -10,6 +11,28 @@ namespace ShipDock.Tools
             if (target != null)
             {
                 target.Dispose();
+            }
+        }
+        
+        public static void Reclaim<T>(ref T[] target, bool isSetNull = true, bool isDisposeItems = false)
+        {
+            if ((target != default) && (target.Length > 0))
+            {
+                if (isDisposeItems)
+                {
+                    IDispose dp;
+                    int max = target.Length;
+                    for (int i = 0; i < max; i++)
+                    {
+                        dp = target[i] as IDispose;
+                        Reclaim(dp);
+                    }
+                }
+                Array.Clear(target, 0, target.Length);
+            }
+            if (isSetNull)
+            {
+                target = default;
             }
         }
 
@@ -97,15 +120,8 @@ namespace ShipDock.Tools
             {
                 return;
             }
-
-            if (isDisposeItems)
-            {
-                target.Dispose(true);
-            }
-            else
-            {
-                target.Dispose();
-            }
+            
+            target.Dispose(isDisposeItems);
 
             if (isSetNull)
             {
