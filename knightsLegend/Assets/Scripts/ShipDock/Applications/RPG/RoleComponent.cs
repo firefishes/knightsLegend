@@ -23,7 +23,7 @@ namespace ShipDock.Applications
         [SerializeField]
         private CommonRoleMustSubgroup m_RoleMustSubgroup;
         [SerializeField]
-        private Rigidbody m_RoleRigidbody;
+        protected Rigidbody m_RoleRigidbody;
         [SerializeField]
         private CapsuleCollider m_RoleCollider;
         [SerializeField]
@@ -226,7 +226,14 @@ namespace ShipDock.Applications
 
         protected void SetRoleRigidbodyVelocity(Vector3 v)
         {
-            m_RoleRigidbody.velocity = v;
+            if(IsKinematic)
+            {
+                transform.position += v * Time.deltaTime;
+            }
+            else
+            {
+                m_RoleRigidbody.velocity = v;
+            }
         }
 
         protected virtual Vector3 CreateRoleRigidbodyVelocity(Vector3 v)
@@ -484,6 +491,14 @@ namespace ShipDock.Applications
             get
             {
                 return m_CameraNode;
+            }
+        }
+
+        public bool IsKinematic
+        {
+            get
+            {
+                return m_RoleRigidbody != default ? m_RoleRigidbody.isKinematic : false;
             }
         }
     }

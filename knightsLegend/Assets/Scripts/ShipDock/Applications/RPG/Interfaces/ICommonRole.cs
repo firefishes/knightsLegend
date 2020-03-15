@@ -12,6 +12,7 @@ namespace ShipDock.Applications
         bool IsGrounded { get; set; }
         bool IsGroundedAndCrouch { get; set; }
         int SourceID { get; }
+        int Camp { get; }
         string Name { get; set; }
         IRoleInput RoleInput { get; set; }
         IRoleData RoleDataSource { get; }

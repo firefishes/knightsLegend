@@ -42,9 +42,9 @@ GameObject:
   - component: {fileID: 7659970876832666227}
   - component: {fileID: 3786588106611295116}
   - component: {fileID: 4332077693763143798}
-  - component: {fileID: 4846574002514047421}
+  - component: {fileID: 4300343183109717744}
   m_Layer: 0
-  m_Name: MainMaleRole
+  m_Name: EnmeyRole
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -118,7 +118,7 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &4846574002514047421
+--- !u!114 &4300343183109717744
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,7 +127,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5727849345280985228}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4aee68b072d898342873605f75c34dfc, type: 3}
+  m_Script: {fileID: 11500000, guid: ca403a6ff4cb2fa4ca948d6667769f68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Mover: {fileID: 0}
@@ -173,7 +173,7 @@ PrefabInstance:
     - target: {fileID: 9500000, guid: 49c8c7e4815fc644195373b49fa2c332, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: c7c7696439fbd294b960ae8ace881681, type: 2}
+      objectReference: {fileID: 9100000, guid: 17b0b9683bdbd674b8536d03ebff2a74, type: 2}
     - target: {fileID: 400138, guid: 49c8c7e4815fc644195373b49fa2c332, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

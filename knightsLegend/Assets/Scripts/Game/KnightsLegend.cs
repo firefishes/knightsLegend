@@ -73,6 +73,7 @@ namespace KLGame
                     //.Add(FWConsts.ASSET_UI_ROLE_CHOOSER)
                     .Add(KLConsts.A_RES_BRIGEDS)
                     .Add(KLConsts.A_MAIN_MALE_ROLE)
+                    .Add(KLConsts.A_ENMEY_ROLE)
                     .Load(out _);
             }
         }
@@ -82,6 +83,9 @@ namespace KLGame
             AssetBundles ABs = ShipDockApp.Instance.ABs;
             GameObject prefab = ABs.Get(KLConsts.A_RES_BRIGEDS, "MainMaleRoleRes");
             GameObject role = Instantiate(prefab);
+
+            prefab = ABs.Get(KLConsts.A_RES_BRIGEDS, "EnemyRoleRes");
+            role = Instantiate(prefab);
             //UIManager uis = ShipDockApp.Instance.UIs;
             //uis.Open<RoleChooser>(FWConsts.UI_NAME_ROLE_CHOOSER);
 

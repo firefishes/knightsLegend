@@ -106,10 +106,6 @@ namespace KLGame
                         mWillCacheCombo = true;
                     }
                 }
-                if (mCurrentCombo > 0)
-                {
-                    ComboNext?.Invoke();
-                }
             }
             CountComboTime(ref animator);
             mHasComboInput = false;
@@ -191,8 +187,6 @@ namespace KLGame
                 mValueItem = MotionTransParam[i];
                 animator.SetFloat(mValueItem.KeyField, 0f);
             }
-
-            ComboReseted?.Invoke();
             MotionCompletion?.Invoke();
         }
         
@@ -218,8 +212,6 @@ namespace KLGame
         }
 
         public Action MotionCompletion { get; private set; }
-        public Action ComboNext { get; set; }
-        public Action ComboReseted { get; set; }
         public int ComboMotionMax { get; private set; }
         public ValueItem[] MotionTransParam { get; private set; }
         public ValueItem[] MotionTriggerParam { get; private set; }

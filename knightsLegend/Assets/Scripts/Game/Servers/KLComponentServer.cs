@@ -25,7 +25,7 @@ namespace KLGame
             ShipDockApp app = ShipDockApp.Instance;
             var components = app.Components;
             components.Create<RoleMustComponent>(KLConsts.C_ROLE_MUST);
-            //components.Create<RoleCampComponent>(KLConsts.COMPONENT_ROLE_CAMP);
+            components.Create<KLRoleCampComponent>(KLConsts.C_ROLE_CAMP);
             components.Create<KLInputComponent>(KLConsts.C_ROLE_INPUT);
             components.Create<PositionComponent>(KLConsts.C_POSITION);
             components.Create<RoleColliderComponent>(KLConsts.C_ROLE_COLLIDER);

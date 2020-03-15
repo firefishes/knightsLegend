@@ -45,6 +45,7 @@ namespace ShipDock.Applications
         public bool IsUserControlling { get; set; }
         public bool PositionEnabled { get; set; } = true;
         public bool FindngPath { get; set; }
+        public int Camp { get; set; }
         public int SourceID { get; private set; }
         public int[] States { get; private set; }
         public float Speed { get; set; }

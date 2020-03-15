@@ -15,6 +15,23 @@ namespace KLGame
             
             IsUserControlling = true;
             PositionEnabled = false;
+
+            Camp = 0;
+        }
+    }
+
+    public class EnmeyRole : KLRole
+    {
+        public EnmeyRole()
+        {
+            IRoleData data = KLRoleData.GetRoleDataByRandom();
+            data.ConfigID = 1;
+            SetRoleData(data);
+
+            IsUserControlling = false;
+            PositionEnabled = true;
+
+            Camp = 1;
         }
     }
 }

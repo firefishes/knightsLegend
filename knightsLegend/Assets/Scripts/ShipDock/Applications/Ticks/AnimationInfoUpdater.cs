@@ -1,6 +1,5 @@
 ﻿using ShipDock.Tools;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace ShipDock.Applications
@@ -44,7 +43,6 @@ namespace ShipDock.Applications
             TimingCallbacker callbacker;
 
             int index = Mathf.CeilToInt(Length * 0.8f);
-            //Debug.Log("f " + index);
             if (mTimings.ContainsKey(index))
             {
                 callbacker = mTimings[index];
@@ -83,14 +81,13 @@ namespace ShipDock.Applications
 
             AnimatorClipInfo[] clips = AnimatorTarget.GetCurrentAnimatorClipInfo(0);
             ClipInfo = (clips.Length > 0) ? clips[0] : default;
-            Length = (clips.Length > 0) ? ClipInfo.weight : 1f;//clip.ofs; //StateInfo.length - lengthOffset;
+            Length = (clips.Length > 0) ? ClipInfo.weight : 1f;
             Length -= lengthOffset;
 
             ShortNameHash = StateInfo.shortNameHash;
             Completion = method;
 
             UpdaterNotice.AddSceneUpdater(this);
-            OnUpdate(0);
         }
 
         private void RefreshParams(ref ValueItem[] paramConfs, bool checkDampTime = false, bool isReset = false)
@@ -143,8 +140,6 @@ namespace ShipDock.Applications
             if (Length <= 0f)
             {
                 Completion?.Invoke(AnimatorTarget);
-                //if (mParamsNew != default)
-                //    Debug.Log(mParamsNew[0].Float + " set completion true");
                 HasCompleted = true;
 
                 if (AutoDispose)
@@ -160,7 +155,6 @@ namespace ShipDock.Applications
             {
                 if(mTimings != default && mTimings.ContainsKey(mFrame))
                 {
-                    //Debug.Log("frame " + mFrame);
                     mTimings[mFrame].callback?.Invoke();
                 }
             }

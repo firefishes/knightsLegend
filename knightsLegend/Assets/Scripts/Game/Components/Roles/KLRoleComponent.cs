@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using ShipDock.Applications;
+﻿using ShipDock.Applications;
 using ShipDock.Notices;
-using ShipDock.Server;
 using ShipDock.Tools;
 using UnityEngine;
 
@@ -10,7 +7,19 @@ namespace KLGame
 {
     public class KLRoleComponent : RoleComponent
     {
-        private ComboMotionCreater mNormalAtkMotionCreater;
+        protected string mIsAtkParamName = "IsAtk";
+        protected string mFire1ParamName = "Fire1";
+        protected ComboMotionCreater mNormalAtkMotionCreater;
+
+        private int mUnderAttackValue;
+        private AnimationInfoUpdater mUnderAttackUpdater;
+
+        protected override void Awake()
+        {
+            base.Awake();
+
+            m_RoleRigidbody.isKinematic = true;
+        }
 
         protected override void Init()
         {
@@ -26,26 +35,10 @@ namespace KLGame
                 ValueItem.New("Atk1", 2f),
                 ValueItem.New("Atk1", 3f),
             };
-            mNormalAtkMotionCreater = new ComboMotionCreater(3, triggers, trans, OnAtk1Completed)
-            {
-                //ComboNext = OnNormalAtkComboNext,
-                //ComboReseted = OnNormalAtkComboReseted
-            };
+            mNormalAtkMotionCreater = new ComboMotionCreater(3, triggers, trans, OnAtk1Completed);
             mNormalAtkMotionCreater.SetCheckComboTime(1.5f);
 
             FreezeAllRotation(false);
-        }
-
-        private void OnNormalAtkComboNext()
-        {
-            m_RoleAnimator.SetBool("IsAtk1Combo", true);
-            Debug.Log(m_RoleAnimator.GetBool("IsAtk1Combo"));
-        }
-
-        private void OnNormalAtkComboReseted()
-        {
-            m_RoleAnimator.SetBool("IsAtk1Combo", false);
-            m_RoleAnimator.SetFloat("Atk1", 0f);
         }
 
         private void OnAtk1Completed()
@@ -62,54 +55,13 @@ namespace KLGame
 
         protected override void SetRoleEntitas()
         {
-            mRole = new MainMaleRole();
-
-            KLConsts.S_LENS.DeliveParam<KLCameraServer, KLRoleComponent>("InitPlayerRoleLen", "PlayerRole_0", OnSetRoleInitParam);
-        }
-
-        [Resolvable("PlayerRole_0")]
-        private void OnSetRoleInitParam(ref IParamNotice<KLRoleComponent> target)
-        {
-            target.ParamValue = this;
         }
 
         protected override void OnRoleNotices(INoticeBase<int> obj)
         {
         }
 
-        private string mIsAtkParamName = "IsAtk";
-        private string mFire1ParamName = "Fire1";
-
-        protected override void UpdateRoleInputMoveValue(out Vector3 v)
-        {
-            if (!m_RoleAnimator.GetBool(mIsAtkParamName))
-            {
-                Vector3 userInputValue = mRoleInput.GetUserInputValue();
-
-                float x = userInputValue.x / 4;
-                x = (Mathf.Abs(userInputValue.y) < 0.1f) ? x : -x;
-                v = Quaternion.Euler(transform.eulerAngles) * new Vector3(x, 0, userInputValue.y);
-                mRoleInput.SetMoveValue(v);
-            }
-            else
-            {
-                v = Vector3.zero;
-            }
-        }
-
-        protected override void UpdateAnimatorParams()
-        {
-            base.UpdateAnimatorParams();
-            
-            if (mRoleInput.GetUserInputValue(mFire1ParamName))
-            {
-                mNormalAtkMotionCreater.AddComboMotion(ref m_RoleAnimator);
-                mRoleInput.SetUserInputValue(mFire1ParamName, false);
-            }
-            SetUnderAttackParam();
-        }
-
-        private void SetUnderAttackParam()
+        protected void SetUnderAttackParam()
         {
             if (mUnderAttackUpdater == default)
             {
@@ -129,9 +81,6 @@ namespace KLGame
             mNormalAtkMotionCreater?.CountComboTime(ref m_RoleAnimator);
 
         }
-
-        private int mUnderAttackValue;
-        private AnimationInfoUpdater mUnderAttackUpdater;
 
         public void UnderAttack()
         {
