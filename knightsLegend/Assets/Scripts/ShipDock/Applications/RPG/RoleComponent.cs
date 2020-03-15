@@ -238,7 +238,7 @@ namespace ShipDock.Applications
 
         protected virtual Vector3 CreateRoleRigidbodyVelocity(Vector3 v)
         {
-            return v * mRole.SpeedCurrent * 10;
+            return IsKinematic ? v * mRole.SpeedCurrent : v * mRole.SpeedCurrent * 10;
         }
 
         protected void CheckRoleInputGroundPhase()

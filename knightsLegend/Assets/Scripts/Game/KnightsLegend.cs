@@ -85,7 +85,11 @@ namespace KLGame
             GameObject role = Instantiate(prefab);
 
             prefab = ABs.Get(KLConsts.A_RES_BRIGEDS, "EnemyRoleRes");
-            role = Instantiate(prefab);
+            int max = 5;// 0;
+            for (int i = 0; i < max; i++)
+            {
+                role = Instantiate(prefab);
+            }
             //UIManager uis = ShipDockApp.Instance.UIs;
             //uis.Open<RoleChooser>(FWConsts.UI_NAME_ROLE_CHOOSER);
 

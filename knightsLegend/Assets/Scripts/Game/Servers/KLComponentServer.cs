@@ -29,6 +29,7 @@ namespace KLGame
             components.Create<KLInputComponent>(KLConsts.C_ROLE_INPUT);
             components.Create<PositionComponent>(KLConsts.C_POSITION);
             components.Create<RoleColliderComponent>(KLConsts.C_ROLE_COLLIDER);
+            components.Create<RoleAIAtkComponent>(KLConsts.C_ROLE_AI_ATK);
         }
 
         public override void ServerReady()

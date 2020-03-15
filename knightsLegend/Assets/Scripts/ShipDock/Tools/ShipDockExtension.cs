@@ -90,4 +90,29 @@ static public class ShipDockExtension
         }
         return target.ToArray();
     }
+
+    public static void ContactToArr<T>(this T[] target, T[] list, out T[] result)
+    {
+        result = default;
+        if (list == default || list.Length < 0)
+        {
+            return;
+        }
+        int oldLen = target.Length;
+        int contactLen = list.Length;
+        int max = oldLen + contactLen;
+
+        result = new T[max];
+        for (int i = 0; i < max; i++)
+        {
+            if(i < oldLen)
+            {
+                result[i] = target[i];
+            }
+            else if(i >= oldLen && i < max)
+            {
+                result[i] = list[i - oldLen];
+            }
+        }
+    }
 }

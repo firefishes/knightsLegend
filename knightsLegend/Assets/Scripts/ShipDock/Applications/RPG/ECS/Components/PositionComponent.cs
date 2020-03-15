@@ -22,6 +22,7 @@ namespace ShipDock.Applications
                     {
                         mRole.FindngPath = false;
                         mRole.SpeedCurrent = 0;
+                        mRole.AfterGetStopDistance(mDistance, mRole.Position);
                     }
                     else if (ShouldMove())
                     {
@@ -43,7 +44,7 @@ namespace ShipDock.Applications
 
         private float GetStopDistance()
         {
-            return 2f;
+            return mRole.GetStopDistance();
         }
 
         private float GetTraceDistance()

@@ -41,7 +41,7 @@ namespace KLGame
             FreezeAllRotation(false);
         }
 
-        private void OnAtk1Completed()
+        protected virtual void OnAtk1Completed()
         {
             //UnderAttack();
             //UnderAttack();

@@ -14,9 +14,9 @@ namespace KLGame
             KLRoleData result = new KLRoleData
             {
                 //Hp = new System.Random().Next(50, 100),
-                Speed = 1.5f,// new System.Random(10).Next(1, 50) * 0.1f,
-                MovingTurnSpeed = 360,
-                StationaryTurnSpeed = 180,
+                Speed = UnityEngine.Random.Range(3f, 10f),//new System.Random(10).Next(3, 10) * 1f,
+                MovingTurnSpeed = UnityEngine.Random.Range(180f, 360f),
+                StationaryTurnSpeed = UnityEngine.Random.Range(90f, 360f),
                 GravityMultiplier = 2f,
                 JumpPower = 12f
             };

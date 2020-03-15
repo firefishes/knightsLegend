@@ -5,6 +5,7 @@ namespace ShipDock.Applications
 {
     public class RoleEntitas : EntitasComponentable, ICommonRole
     {
+
         public override void InitComponents()
         {
             base.InitComponents();
@@ -37,6 +38,15 @@ namespace ShipDock.Applications
         public float GetDistFromMainLockDown()
         {
             return EnemyMainLockDown != default ? Vector3.Distance(Position, EnemyMainLockDown.Position) : float.MaxValue;
+        }
+
+        public virtual void AfterGetStopDistance(float dist, Vector3 entitasPos)
+        {
+        }
+
+        public virtual float GetStopDistance()
+        {
+            return 2f;
         }
 
         public bool Gravity { get; set; }

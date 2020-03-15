@@ -15,6 +15,8 @@ namespace ShipDock.ECS
 
     public interface IPathFindable : IPositionEntitas
     {
+        float GetStopDistance();
+        void AfterGetStopDistance(float dist, Vector3 entitasPos);
         void SetPahterTarget(Vector3 value);
         Vector3 PatherTargetPosition { get; }
         bool FindngPath { get; set; }

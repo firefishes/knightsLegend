@@ -21,6 +21,7 @@ namespace KLGame
         public const int C_POSITION = 2;
         public const int C_ROLE_COLLIDER = 3;
         public const int C_ROLE_CAMP = 4;
+        public const int C_ROLE_AI_ATK = 5;
 
         public const int D_GAME = 0;
         public const int D_PLAYER = 1;
