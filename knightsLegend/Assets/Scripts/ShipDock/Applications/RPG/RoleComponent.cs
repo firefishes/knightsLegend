@@ -41,14 +41,13 @@ namespace ShipDock.Applications
         private bool mIsRoleNameSynced;
         private float mGroundCheckDistance = 0.3f;
         private Vector3 mInitPosition;
-        private IUserInputPhase mInputPhase;
         private Action mSceneCompCallaback;
         private Ray mCrouchRay;
         private RaycastHit mGroundHitInfo;
         private AnimatorStateInfo mAnimatorStateInfo;
         private CommonRoleAnimatorInfo mAnimatorInfo;
         private ComponentBridge mBrigae;
-        private KeyValueList<int, Action> mSceneCompCallbacks;
+        private KeyValueList<int, Action> mRoleInputCallbacks;
 
         protected virtual void Awake()
         {
@@ -64,17 +63,16 @@ namespace ShipDock.Applications
             mBrigae = default;
             
             GetInstanceID().Remove(OnRoleNotices);
+
+            Utils.Reclaim(ref mRoleInputCallbacks);
         }
 
         protected abstract void InitRoleData();
 
         protected virtual void Init()
         {
-            mSceneCompCallbacks = new KeyValueList<int, Action>();
-            mSceneCompCallbacks[UserInputPhases.ROLE_INPUT_PHASE_MOVE_READY] = CheckRoleInputMovePhase;
-            mSceneCompCallbacks[UserInputPhases.ROLE_INPUT_PHASE_CHECK_GROUND] = CheckRoleInputGroundPhase;
-            mSceneCompCallbacks[UserInputPhases.ROLE_INPUT_PHASE_CHECK_CROUCH] = CheckRoleInputCrouchPhase;
 
+            InitRoleInputCallbacks();
             InitRoleData();
             
             m_RoleMustSubgroup = new CommonRoleMustSubgroup
@@ -87,6 +85,20 @@ namespace ShipDock.Applications
 
             FreezeAllRotation(true);
             m_RoleMustSubgroup.Init(ref m_RoleCollider);
+        }
+
+        protected virtual void InitRoleInputCallbacks()
+        {
+            mRoleInputCallbacks = new KeyValueList<int, Action>();
+            SetRoleInputCallback(UserInputPhases.ROLE_INPUT_PHASE_MOVE_READY, CheckRoleInputMovePhase);
+            SetRoleInputCallback(UserInputPhases.ROLE_INPUT_PHASE_CHECK_GROUND, CheckRoleInputGroundPhase);
+            SetRoleInputCallback(UserInputPhases.ROLE_INPUT_PHASE_CHECK_CROUCH, CheckRoleInputCrouchPhase);
+            SetRoleInputCallback(UserInputPhases.ROLE_INPUT_PHASE_AFTER_MOVE, CheckRoleAfterMovePhase);
+        }
+
+        protected void SetRoleInputCallback(int phaseName, Action callback)
+        {
+            mRoleInputCallbacks?.Put(phaseName, callback);
         }
 
         protected void FreezeAllRotation(bool flag)
@@ -180,6 +192,7 @@ namespace ShipDock.Applications
                 {
                     m_NavMeshAgent.destination = mRole.EnemyMainLockDown.Position;
                     mRoleInput.SetMoveValue(m_NavMeshAgent.velocity);
+                    transform.LookAt(m_NavMeshAgent.destination);
                 }
             }
             else
@@ -268,7 +281,8 @@ namespace ShipDock.Applications
                 m_RoleRigidbody.AddForce(mRoleInput.ExtraGravityForceOut);
                 mGroundCheckDistance = velocity.y < 0 ? m_RoleMustSubgroup.origGroundCheckDistance : 0.01f;
             }
-            mRoleInput.AdvancedInputPhase();
+            mRoleInput.NextPhase();
+            mRoleInput.ResetEntitasCalled(UserInputPhases.ROLE_INPUT_PHASE_AMOUT_EXTRAN_TURN);
         }
 
         protected void CheckRoleInputCrouchPhase()
@@ -297,7 +311,13 @@ namespace ShipDock.Applications
                 UpdateCrouchingByRay();
             }
             UpdateAnimator();
-            mRoleInput.AdvancedInputPhase();
+            mRoleInput.NextPhase();
+            mRoleInput.ResetEntitasCalled(UserInputPhases.ROLE_INPUT_PHASE_SCALE_CAPSULE);
+        }
+
+        protected virtual void CheckRoleAfterMovePhase()
+        {
+            mRoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_MOVE_READY);
         }
 
         private bool UpdateCrouchingByRay()
@@ -338,17 +358,20 @@ namespace ShipDock.Applications
             {
                 SyncInfos();
                 UpdateByPositionComponent();
-
-                if (mRoleInput != default)
-                {
-                    mInputPhase = mRoleInput.GetUserInputPhase();
-                    int phaseValue = mRoleInput.RoleMovePhase;
-                    mSceneCompCallaback = mSceneCompCallbacks[phaseValue];
-                    mInputPhase.ExecuteBySceneComponent(mSceneCompCallaback);
-                }
+                ExecuteSceneComponentInput();
                 mRoleInput.ShouldGetUserInput = true;
 
                 UpdateAnimations();
+            }
+        }
+
+        protected void ExecuteSceneComponentInput()
+        {
+            if (mRoleInput != default)
+            {
+                int phaseValue = mRoleInput.RoleInputPhase;
+                mSceneCompCallaback = mRoleInputCallbacks[phaseValue];
+                mRoleInput.ExecuteBySceneComponent(ref mSceneCompCallaback);
             }
         }
 
@@ -362,19 +385,21 @@ namespace ShipDock.Applications
             mRoleInput.SetMoveValue(v);
 
             CheckGroundStatus();
-            mRoleInput.AdvancedInputPhase();
+
+            mRoleInput.NextPhase();
+            mRoleInput.ResetEntitasCalled(UserInputPhases.ROLE_INPUT_PHASE_MOVE_READY);
         }
 
         private void CheckGroundStatus()
         {
-            
+
 #if UNITY_EDITOR
             // helper to visualise the ground check ray in the scene view
             //Debug.DrawLine(transform.localPosition + (Vector3.up * 0.1f), transform.localPosition + (Vector3.up * 0.1f) + (Vector3.down * mGroundCheckDistance));
 #endif
             // 0.1f is a small offset to start the ray from inside the character
             // it is also good to note that the transform position in the sample assets is at the base of the character
-            
+
             //Debug.Log(transform.localPosition + (Vector3.up * 0.1f));
             //Debug.Log(Physics.Raycast(transform.localPosition + (Vector3.up * 0.1f), Vector3.down, out mGroundHitInfo, mGroundCheckDistance));
 

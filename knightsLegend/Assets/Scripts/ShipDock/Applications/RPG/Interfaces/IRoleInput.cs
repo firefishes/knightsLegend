@@ -1,10 +1,12 @@
-﻿using UnityEngine;
+﻿using ShipDock.Tools;
+using System;
+using UnityEngine;
 
 namespace ShipDock.Applications
 {
     public interface IRoleInput
     {
-        IUserInputPhase GetUserInputPhase();
+        void AddEntitasCallback(int phaseName, Action callback);
         void SetUserInputValue(Vector3 value);
         void SetUserInputValue(string key, bool value);
         bool GetUserInputValue(string key);
@@ -12,7 +14,11 @@ namespace ShipDock.Applications
         void SetCrouching(bool flag);
         void SetMoveValue(Vector3 value);
         void MoveValueNormalize();
-        void AdvancedInputPhase();
+        void SetInputPhase(int phaseName);
+        void NextPhase();
+        void ResetEntitasCalled(int phaseName);
+        void AdvancedInputPhase(int rolePhase, int allowCalled);
+        void ExecuteBySceneComponent(ref Action sceneCompMethod, int calledMustValue = 1);
         void UpdateAmout(ref ICommonRole roleEntitas);
         void HandleAirborneMovement(ref IRoleData roleData);
         void ScaleCapsuleForCrouching(ref ICommonRole roleEntitas, ref IRoleInput roleInput);
@@ -22,12 +28,15 @@ namespace ShipDock.Applications
         bool IsCrouch();
         bool IsCrouching();
         bool IsJump();
-        int RoleMovePhase { get; }
+        int RoleInputPhase { get; }
+        int RoleInputType { get; set; }
+        int[] RoleInputPhases { get; }
         float ExtraTurnRotationOut { get; }
         float ForwardAmount { get; }
         float TurnAmount { get; }
         Vector3 GetUserInputValue();
         Vector3 GetMoveValue();
         Vector3 ExtraGravityForceOut { get; }
+        ICommonRole RoleEntitas { get; }
     }
 }

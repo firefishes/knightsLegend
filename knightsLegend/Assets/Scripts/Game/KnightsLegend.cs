@@ -14,6 +14,11 @@ namespace KLGame
 {
     public class KnightsLegend : MonoBehaviour
     {
+        [SerializeField]
+        private int m_EnmeyCount = 1;
+        [SerializeField]
+        private int m_FrameRate = 100;
+
         private MethodUpdater updater;
 
         public void UIRootAwaked(IUIRoot root)
@@ -23,8 +28,8 @@ namespace KLGame
 
         void Start()
         {
-            Application.targetFrameRate = 120;
-            ShipDockApp.StartUp(120, OnShipDockStart);
+            Application.targetFrameRate = m_FrameRate;
+            ShipDockApp.StartUp(m_FrameRate, OnShipDockStart);
         }
 
         private void OnShipDockStart()
@@ -85,7 +90,7 @@ namespace KLGame
             GameObject role = Instantiate(prefab);
 
             prefab = ABs.Get(KLConsts.A_RES_BRIGEDS, "EnemyRoleRes");
-            int max = 5;// 0;
+            int max = m_EnmeyCount;// 0;
             for (int i = 0; i < max; i++)
             {
                 role = Instantiate(prefab);

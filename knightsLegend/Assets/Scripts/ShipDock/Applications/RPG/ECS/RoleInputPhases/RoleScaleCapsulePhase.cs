@@ -1,23 +1,51 @@
-﻿namespace ShipDock.Applications
+﻿using System;
+
+namespace ShipDock.Applications
 {
-    public class RoleScaleCapsulePhase : RoleInputDefaultPhase
+    public class RoleScaleCapsulePhase : RoleInputDefaultPhase, IRoleInputOnlyOnce
     {
-        private ICommonRole mRoleItem;
         private IRoleInput mRoleInput;
-
-        public RoleScaleCapsulePhase(ICommonRole item)
-        {
-            mRoleItem = item;
-        }
-
+        
         public override void ExecuteByEntitasComponent()
         {
+            if (IsExecuted)
+            {
+                return;
+            }
+            IsExecuted = true;
+
+            base.ExecuteByEntitasComponent();
+
             if (mRoleInput == default)
             {
                 mRoleInput = RoleInput;
             }
-            RoleInput.ScaleCapsuleForCrouching(ref mRoleItem, ref mRoleInput);
-            RoleInput.AdvancedInputPhase();
+            if (RoleInput == default)
+            {
+                IsExecuted = false;
+                return;
+            }
+
+            RoleInput?.ScaleCapsuleForCrouching(ref mRoleItem, ref mRoleInput);
+
+            DefaultAdvance();
         }
+
+        public override void ExecuteBySceneComponent(Action sceneCompCallback = null)
+        {
+            DefaultAdvance();
+
+            base.ExecuteBySceneComponent(sceneCompCallback);
+
+            IsExecuted = false;
+        }
+
+        public override int[] PhasesMapper { get; } = new int[]
+        {
+            UserInputPhases.ROLE_INPUT_PHASE_SCALE_CAPSULE,
+            UserInputPhases.ROLE_INPUT_PHASE_CHECK_CROUCH
+        };
+
+        public bool IsExecuted { get; set; }
     }
 }

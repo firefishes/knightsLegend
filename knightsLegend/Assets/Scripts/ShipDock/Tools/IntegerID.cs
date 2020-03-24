@@ -93,11 +93,11 @@ namespace ShipDock.Tools
         private void Purge(ref IntegerID<T> next, bool isDispose = true)
         {
             MaxID = 0;
-            if (next.HasNext)
+            if (next != default && next.HasNext)
             {
                 Utils.Reclaim(next);
             }
-            next = null;
+            next = default;
             if(isDispose)
             {
                 Utils.Reclaim(ref mMap);

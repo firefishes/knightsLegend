@@ -1,10 +1,16 @@
-﻿using ShipDock.Tools;
+﻿using ShipDock.FSM;
+using ShipDock.Tools;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace ShipDock.Applications
 {
+    public class RoleEntitasCallbacker
+    {
+        public int called;
+        public Action callbacker;
+    }
+
     [Serializable]
     public class RoleInputInfo : IRoleInput
     {
@@ -17,25 +23,34 @@ namespace ShipDock.Applications
         public Vector3 userInput;
 
         private float mUserInputTime;
-        private List<IUserInputPhase> mInputPhases;
         private KeyValueList<string, bool> mInputKeys;
+        private RoleEntitasCallbacker mEntitasCallbacker;
+        private KeyValueList<int, RoleEntitasCallbacker> mEntitasCallbackers;
 
         public RoleInputInfo(ICommonRole roleEntitas)
         {
             mInputKeys = new KeyValueList<string, bool>();
-            mInputPhases = new List<IUserInputPhase>()
+            RoleEntitas = roleEntitas;
+        }
+
+        public void AddEntitasCallback(int phaseName, Action callback)
+        {
+            if(mEntitasCallbackers == default)
             {
-                new RoleMovePhase(),
-                new RoleAmoutExtranTurn(roleEntitas),
-                new RoleInputDefaultPhase(),
-                new RoleScaleCapsulePhase(roleEntitas),
-                new RoleInputDefaultPhase()
-            };
-            int max = mInputPhases.Count;
-            for (int i = 0; i < max; i++)
-            {
-                mInputPhases[i].SetRoleInput(this);
+                mEntitasCallbackers = new KeyValueList<int, RoleEntitasCallbacker>();
             }
+            RoleEntitasCallbacker item;
+            if (mEntitasCallbackers.IsContainsKey(phaseName))
+            {
+                item = mEntitasCallbackers[phaseName];
+            }
+            else
+            {
+                item = new RoleEntitasCallbacker();
+                mEntitasCallbackers[phaseName] = item;
+            }
+            item.callbacker += callback;
+            Debug.Log(RoleEntitas + " " + phaseName);
         }
 
         public void UpdateAmout(ref ICommonRole roleEntitas)
@@ -126,28 +141,69 @@ namespace ShipDock.Applications
             return jump;
         }
 
-        public void AdvancedInputPhase()
+        public void AdvancedInputPhase(int rolePhase, int allowCalled)
         {
-            RoleMovePhase++;
-            if(RoleMovePhase >= 5)
+            if(mEntitasCallbackers != default)
             {
-                RoleMovePhase = 0;
+                mEntitasCallbacker = mEntitasCallbackers[rolePhase];
+                if(mEntitasCallbacker != default)
+                {
+                    if(allowCalled == 0)
+                    {
+                        mEntitasCallbacker.callbacker?.Invoke();
+                    }
+                    else
+                    {
+                        if (mEntitasCallbacker.called < allowCalled)
+                        {
+                            mEntitasCallbacker.callbacker?.Invoke();
+                            mEntitasCallbacker.called++;
+                        }
+                    }
+                }
+            }
+        }
+
+        public void ExecuteBySceneComponent(ref Action sceneCompMethod, int calledMustValue = 1)
+        {
+            if (mEntitasCallbackers != default)
+            {
+                mEntitasCallbacker = mEntitasCallbackers[RoleInputPhase];
+                if(mEntitasCallbacker != default)
+                {
+                    if(mEntitasCallbacker.called >= calledMustValue)
+                    {
+                        sceneCompMethod?.Invoke();
+                        mEntitasCallbacker.called = 0;
+                    }
+                }
+                else
+                {
+                    sceneCompMethod?.Invoke();
+                }
+            }
+        }
+
+        public void ResetEntitasCalled(int phaseName)
+        {
+            if (mEntitasCallbackers != default)
+            {
+                mEntitasCallbacker = mEntitasCallbackers[RoleInputPhase];
+                if (mEntitasCallbacker != default)
+                {
+                    mEntitasCallbacker.called = 0;
+                }
             }
         }
 
         public void ResetMovePhase()
         {
-            RoleMovePhase = 0;
+            RoleInputPhase = 0;
         }
 
         public void SetDeltaTime(float time)
         {
             deltaTime = time;
-        }
-
-        public IUserInputPhase GetUserInputPhase()
-        {
-            return (RoleMovePhase >= 0) && (RoleMovePhase < mInputPhases.Count) ? mInputPhases[RoleMovePhase] : default;
         }
 
         public void SetUserInputValue(string key, bool value)
@@ -160,12 +216,33 @@ namespace ShipDock.Applications
             return mInputKeys[key];
         }
 
+        public void SetInputPhase(int phaseName)
+        {
+            RoleInputPhase = phaseName;
+        }
+
+        public void NextPhase()
+        {
+            RoleInputPhase++;
+        }
+
         public bool ShouldGetUserInput { get; set; }
-        public int RoleMovePhase { get; private set; }
+        public int RoleInputType { get; set; } = 0;
+        public int RoleInputPhase { get; private set; } = UserInputPhases.ROLE_INPUT_PHASE_NONE;
+        public int[] RoleInputPhases { get; private set; } = new int[]
+        {
+            UserInputPhases.ROLE_INPUT_PHASE_MOVE_READY,
+            UserInputPhases.ROLE_INPUT_PHASE_AMOUT_EXTRAN_TURN,
+            UserInputPhases.ROLE_INPUT_PHASE_CHECK_GROUND,
+            UserInputPhases.ROLE_INPUT_PHASE_SCALE_CAPSULE,
+            UserInputPhases.ROLE_INPUT_PHASE_CHECK_CROUCH,
+            UserInputPhases.ROLE_INPUT_PHASE_AFTER_MOVE
+        };
         public float TurnAmount { get; private set; }
         public float ForwardAmount { get; private set; }
         public float ExtraTurnRotationOut { get; private set; }
         public Vector3 ExtraGravityForceOut { get; private set; }
+        public ICommonRole RoleEntitas { get; private set; }
     }
 
 }

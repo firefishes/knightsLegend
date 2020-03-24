@@ -22,11 +22,17 @@ namespace KLGame
         public const int C_ROLE_COLLIDER = 3;
         public const int C_ROLE_CAMP = 4;
         public const int C_ROLE_AI_ATK = 5;
+        public const int C_ROLE_INPUT_PHASES = 6;
+        public const int C_ROLE_MOVE = 7;
+        public const int C_ROLE_TIMES = 8;
 
         public const int D_GAME = 0;
         public const int D_PLAYER = 1;
 
         public const int DC_CAMP_ROLE_CREATED = 2000;
+
+        public const int ROLE_INPUT_TYPE_DEFAULT = 0;
+        public const int ROLE_INPUT_TYPE_ENEMY = 1;
 
         private static readonly IResolvableConfig[] KLServerConfigs =
         {

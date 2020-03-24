@@ -7,6 +7,9 @@ namespace KLGame
 {
     public class KLRoleComponent : RoleComponent
     {
+        [SerializeField]
+        private Transform m_BloodyEffectTF;
+
         protected string mIsAtkParamName = "IsAtk";
         protected string mFire1ParamName = "Fire1";
         protected ComboMotionCreater mNormalAtkMotionCreater;
@@ -41,6 +44,13 @@ namespace KLGame
             FreezeAllRotation(false);
         }
 
+        protected override void InitRoleInputCallbacks()
+        {
+            base.InitRoleInputCallbacks();
+
+            SetRoleInputCallback(UserInputPhases.ROLE_INPUT_PHASE_UNDERATTACKED, UnderAttack);
+        }
+
         protected virtual void OnAtk1Completed()
         {
             //UnderAttack();
@@ -69,7 +79,7 @@ namespace KLGame
             }
             if ((mUnderAttackValue > 0) && mUnderAttackUpdater.HasCompleted)
             {
-                mUnderAttackUpdater.Start(m_RoleAnimator, 0f, OnAtkedMotion, ValueItem.New("Atked", mUnderAttackValue * 0.2f), ValueItem.New("Forward", -0.6f));
+                mUnderAttackUpdater.Start(m_RoleAnimator, 0f, OnAtkedMotion, ValueItem.New("Atked", 1f), ValueItem.New("Forward", -0.6f));
             }
         }
 
@@ -79,7 +89,7 @@ namespace KLGame
 
             mNormalAtkMotionCreater?.CheckAnimator(ref m_RoleAnimator);
             mNormalAtkMotionCreater?.CountComboTime(ref m_RoleAnimator);
-
+            
         }
 
         public void UnderAttack()
@@ -95,6 +105,7 @@ namespace KLGame
                 mUnderAttackValue = 0;
                 mUnderAttackUpdater.Stop();
             }
+            mRole.RoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_AFTER_MOVE);
         }
     }
 }

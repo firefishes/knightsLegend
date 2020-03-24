@@ -1,39 +1,96 @@
-﻿using ShipDock.ECS;
+﻿using ShipDock.Applications;
+using ShipDock.ECS;
+using ShipDock.Tools;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace KLGame
 {
-    public class RoleAIAtkComponent : ShipDockComponent
+    public class RoleAIAtkComponent : RoleInputPhasesComponent
     {
-        private IAIRole mRole;
-        private float mNormalATKTime;
+        private IAIRole mAIRole;
+        private PositionComponent mPositionComp;
 
-        public override void Execute(int time, ref IShipDockEntitas target)
+        public override void Init()
         {
-            base.Execute(time, ref target);
+            base.Init();
 
-            mRole = target as IAIRole;
-            
-            if(mRole.ShouldAtkAIWork && !mRole.InATKCycle)
+            AddAllowCalled(EnemyInputPhases.ENEMY_INPUT_PHASE_NROMAL_ATKED, 0);
+        }
+
+        protected override void InitRolePhases(IRoleInput roleInput)
+        {
+            mAIRole.IsInitNormalATKPhases = true;
+            roleInput.AddEntitasCallback(EnemyInputPhases.ENEMY_INPUT_PHASE_UPDATE_NROMAL_ATK_TRIGGER_TIME, UpdateNormalATKTriggerTime);
+            roleInput.AddEntitasCallback(EnemyInputPhases.ENEMY_INPUT_PHASE_NROMAL_ATKED, AfterNormalATK);
+        }
+
+        private void AfterNormalATK()
+        {
+            if (mPositionComp.IsEntitasStoped(ref mRole))
             {
-                if(mRole.NormalATKTriggerTime > 0f)
+                mAIRole.SetShouldAtkAIWork(true);
+                mRoleInput.SetInputPhase(EnemyInputPhases.ENEMY_INPUT_PHASE_SET_NROMAL_ATK_TRIGGER_TIME);
+            }
+            else
+            {
+                ResetAIRoleATK();
+            }
+        }
+
+        private void UpdateNormalATKTriggerTime()
+        {
+            if (mPositionComp.IsEntitasStoped(ref mRole))
+            {
+                if (mAIRole.ShouldAtkAIWork)
                 {
-                    mNormalATKTime = mRole.NormalATKTriggerTime;
-                    mNormalATKTime -= time * 0.001f;
-                    if(mNormalATKTime <= 0f && mRole.ATKID != 3)
+                    if(!mAIRole.InATKCycle)
                     {
-                        mNormalATKTime = 0f;
-                        mRole.SetATKID(2);
+                        if (!mAIRole.TimesEntitas.GetRoleTime(RoleTimeNames.NORMAL_ATK_TIME).IsStart)
+                        {
+                            mRoleInput.SetInputPhase(EnemyInputPhases.ENEMY_INPUT_PHASE_NROMAL_ATK);
+                        }
                     }
-                    mRole.SetNormalATKTriggerTime(mNormalATKTime);
                 }
                 else
                 {
-                    mRole.SetATKID(1);
+                    mRoleInput.SetInputPhase(EnemyInputPhases.ENEMY_INPUT_PHASE_SET_NROMAL_ATK_TRIGGER_TIME);
                 }
             }
+            else
+            {
+                ResetAIRoleATK();
+            }
+        }
+
+        private void ResetAIRoleATK()
+        {
+            RoleTime target = mAIRole.TimesEntitas.GetRoleTime(RoleTimeNames.NORMAL_ATK_TIME);
+            target.ResetRunCounts();
+            
+            mAIRole.InATKCycle = false;
+            mAIRole.SetShouldAtkAIWork(false);
+            mRoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_MOVE_READY);
+        }
+
+        public override void Execute(int time, ref IShipDockEntitas target)
+        {
+            if (mPositionComp == default)
+            {
+                mPositionComp = ShipDockApp.Instance.Components.GetComponentByAID(KLConsts.C_POSITION) as PositionComponent;
+            }
+            
+            mAIRole = target as IAIRole;
+            
+            base.Execute(time, ref target);
+
+            if(!mAIRole.IsInitNormalATKPhases)
+            {
+                InitRolePhases(mRoleInput);
+            }
+
         }
     }
 

@@ -14,6 +14,7 @@ namespace ShipDock.Applications
         private string mDirectionKey;
         private string[] mDirectionButtons;
         private string[] mDirectionAxis;
+        private bool mIsInputCompEmpty;
         private IHostGameInputComponent mHostGameInputComp;
 
         protected override void Awake()
@@ -30,7 +31,14 @@ namespace ShipDock.Applications
             SetDirectionsKeys();
 
             mHostGameInputComp = mRelater.ComponentRef<IHostGameInputComponent>(m_UserInputComponentName);
-            mHostGameInputComp.SetUserInputerButtons(m_InputerButtons);
+            if (mHostGameInputComp != default)
+            {
+                mHostGameInputComp.SetUserInputerButtons(m_InputerButtons);
+            }
+            else
+            {
+                mIsInputCompEmpty = true;
+            }
         }
 
         private void SetDirectionsKeys()
@@ -38,6 +46,20 @@ namespace ShipDock.Applications
             mDirectionAxis = InputerButtonsKeys.DIRECTION_AXIS;
             mDirectionButtons = m_InputerButtons.axis;
             mAxisCount = mDirectionButtons.Length;
+        }
+
+        private void Update()
+        {
+            if(mIsInputCompEmpty)
+            {
+                mRelater.CommitRelate();
+                mHostGameInputComp = mRelater.ComponentRef<IHostGameInputComponent>(m_UserInputComponentName);
+                if (mHostGameInputComp != default)
+                {
+                    mIsInputCompEmpty = false;
+                    mHostGameInputComp.SetUserInputerButtons(m_InputerButtons);
+                }
+            }
         }
 
         private void FixedUpdate()

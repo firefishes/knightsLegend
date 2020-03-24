@@ -1,5 +1,6 @@
 ﻿using ShipDock.Datas;
 using ShipDock.ECS;
+using ShipDock.FSM;
 using ShipDock.Loader;
 using ShipDock.Notices;
 using ShipDock.Pooling;
@@ -34,6 +35,8 @@ namespace ShipDock.Applications
 
         private int mFrameSign;
         private Action mAppStarted;
+        private KeyValueList<IStateMachine, IUpdate> mFSMUpdaters;
+        private KeyValueList<IState, IUpdate> mStateUpdaters;
 
         public void Start(int ticks)
         {
@@ -50,6 +53,13 @@ namespace ShipDock.Applications
             Servers.OnInit += OnCreateComponentManager;
             Datas = new DataWarehouse();
             AssetsPooling = new AssetsPooling();
+            StateMachines = new StateMachines
+            {
+                FSMFrameUpdater = OnFSMFrameUpdater,
+                StateFrameUpdater = OnStateFrameUpdater
+            };
+            mFSMUpdaters = new KeyValueList<IStateMachine, IUpdate>();
+            mStateUpdaters = new KeyValueList<IState, IUpdate>();
 
             if (ticks > 0)
             {
@@ -63,6 +73,45 @@ namespace ShipDock.Applications
             mAppStarted = null;
         }
 
+        private void OnStateFrameUpdater(IState state, bool isAdd)
+        {
+            if (isAdd)
+            {
+                if(!mStateUpdaters.IsContainsKey(state))
+                {
+                    MethodUpdater updater = new MethodUpdater
+                    {
+                        Update = state.UpdateState
+                    };
+                    mStateUpdaters[state] = updater;
+                    UpdaterNotice.AddSceneUpdater(updater);
+                }
+            }
+            else
+            {
+                IUpdate updater = mStateUpdaters[state];
+                UpdaterNotice.RemoveSceneUpdater(updater);
+            }
+        }
+
+        private void OnFSMFrameUpdater(IStateMachine fsm, bool isAdd)
+        {
+            if(isAdd)
+            {
+                MethodUpdater updater = new MethodUpdater
+                {
+                    Update = fsm.UpdateState
+                };
+                mFSMUpdaters[fsm] = updater;
+                UpdaterNotice.AddSceneUpdater(updater);
+            }
+            else
+            {
+                IUpdate updater = mFSMUpdaters[fsm];
+                UpdaterNotice.RemoveSceneUpdater(updater);
+            }
+        }
+
         private void OnCreateComponentManager()
         {
             Components = new ShipDockComponentManager();
@@ -71,8 +120,10 @@ namespace ShipDock.Applications
             {
                 Update = ComponentUpdateByTicks
             };
-            UpdaterNotice notice = new UpdaterNotice();
-            notice.ParamValue = updater;
+            UpdaterNotice notice = new UpdaterNotice
+            {
+                ParamValue = updater
+            };
             ShipDockConsts.NOTICE_ADD_UPDATE.Dispatch(notice);
             notice.Dispose();
         }
@@ -98,13 +149,28 @@ namespace ShipDock.Applications
 
         public void Clean()
         {
-            IsStarted = false;
+            Utils.Reclaim(ref mFSMUpdaters);
+            Utils.Reclaim(ref mStateUpdaters);
+            ShipDockConsts.NOTICE_APPLICATION_CLOSE.Dispatch();
 
             Utils.Reclaim(Notificater);
-            TicksUpdater?.Dispose();
+            Utils.Reclaim(TicksUpdater);
+            Utils.Reclaim(Servers);
+            Utils.Reclaim(StateMachines);
+            Utils.Reclaim(Datas);
+            Utils.Reclaim(AssetsPooling);
+            Utils.Reclaim(ABs);
 
-            Notificater = null;
-            TicksUpdater = null;
+            AllPools.ResetAllPooling();
+
+            Notificater = default;
+            TicksUpdater = default;
+            Servers = default;
+            StateMachines = default;
+            Datas = default;
+            AssetsPooling = default;
+            ABs = default;
+            
         }
 
         public void AddStart(Action method)
@@ -137,5 +203,6 @@ namespace ShipDock.Applications
         public DataWarehouse Datas { get; private set; }
         public AssetBundles ABs { get; private set; }
         public AssetsPooling AssetsPooling { get; private set; }
+        public StateMachines StateMachines { get; private set; }
     }
 }
