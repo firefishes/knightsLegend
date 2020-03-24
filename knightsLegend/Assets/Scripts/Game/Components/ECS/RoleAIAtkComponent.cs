@@ -48,7 +48,7 @@ namespace KLGame
                 {
                     if(!mAIRole.InATKCycle)
                     {
-                        if (!mAIRole.TimesEntitas.GetRoleTime(RoleTimeNames.NORMAL_ATK_TIME).IsStart)
+                        if (!mAIRole.TimesEntitas.GetRoleTime(RoleTimingTaskNames.NORMAL_ATK_TIME).IsStart)
                         {
                             mRoleInput.SetInputPhase(EnemyInputPhases.ENEMY_INPUT_PHASE_NROMAL_ATK);
                         }
@@ -67,7 +67,7 @@ namespace KLGame
 
         private void ResetAIRoleATK()
         {
-            RoleTime target = mAIRole.TimesEntitas.GetRoleTime(RoleTimeNames.NORMAL_ATK_TIME);
+            TimingTasker target = mAIRole.TimesEntitas.GetRoleTime(RoleTimingTaskNames.NORMAL_ATK_TIME);
             target.ResetRunCounts();
             
             mAIRole.InATKCycle = false;

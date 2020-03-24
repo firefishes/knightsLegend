@@ -13,8 +13,7 @@ namespace KLGame
         protected string mIsAtkParamName = "IsAtk";
         protected string mFire1ParamName = "Fire1";
         protected ComboMotionCreater mNormalAtkMotionCreater;
-
-        private int mUnderAttackValue;
+        
         private AnimationInfoUpdater mUnderAttackUpdater;
 
         protected override void Awake()
@@ -42,6 +41,13 @@ namespace KLGame
             mNormalAtkMotionCreater.SetCheckComboTime(1.5f);
 
             FreezeAllRotation(false);
+        }
+
+        protected override void OnInited()
+        {
+            base.OnInited();
+
+            KLRole = mRole as IKLRole;
         }
 
         protected override void InitRoleInputCallbacks()
@@ -77,7 +83,7 @@ namespace KLGame
             {
                 mUnderAttackUpdater = new AnimationInfoUpdater();
             }
-            if ((mUnderAttackValue > 0) && mUnderAttackUpdater.HasCompleted)
+            if (mUnderAttackUpdater.HasCompleted)
             {
                 mUnderAttackUpdater.Start(m_RoleAnimator, 0f, OnAtkedMotion, ValueItem.New("Atked", 1f), ValueItem.New("Forward", -0.6f));
             }
@@ -94,18 +100,24 @@ namespace KLGame
 
         public void UnderAttack()
         {
-            mUnderAttackValue++;
+            MoveBlock = true;
+            SetUnderAttackParam();
         }
 
         private void OnAtkedMotion(Animator target)
         {
-            mUnderAttackValue--;
-            if(mUnderAttackValue <= 0)
-            {
-                mUnderAttackValue = 0;
-                mUnderAttackUpdater.Stop();
-            }
+            MoveBlock = false;
+            m_RoleAnimator.SetFloat("Atked", 0f);
+            m_RoleAnimator.SetFloat(m_BlendTreeInfo.MoveMotionName, 0f);
             mRole.RoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_AFTER_MOVE);
         }
+
+        protected override bool CheckMoveBlock()
+        {
+            return MoveBlock;
+        }
+
+        public IKLRole KLRole { get; private set; }
+        public bool MoveBlock { get; set; }
     }
 }

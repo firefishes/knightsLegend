@@ -183,12 +183,13 @@ namespace ShipDock.Applications
 
         protected abstract void SetRoleEntitas();
         protected abstract void OnRoleNotices(INoticeBase<int> obj);
+        protected abstract bool CheckMoveBlock();
 
         private void UpdateNavMeshAgent()
         {
             if (mRole.FindngPath)
             {
-                if (mRole.EnemyMainLockDown != default)
+                if ((mRole.EnemyMainLockDown != default) && !CheckMoveBlock())
                 {
                     m_NavMeshAgent.destination = mRole.EnemyMainLockDown.Position;
                     mRoleInput.SetMoveValue(m_NavMeshAgent.velocity);
@@ -239,7 +240,11 @@ namespace ShipDock.Applications
 
         protected void SetRoleRigidbodyVelocity(Vector3 v)
         {
-            if(IsKinematic)
+            if (CheckMoveBlock())
+            {
+                v = Vector3.zero;
+            }
+            if (IsKinematic)
             {
                 transform.position += v * Time.deltaTime;
             }

@@ -25,6 +25,7 @@ namespace KLGame
             ShipDockApp app = ShipDockApp.Instance;
             var components = app.Components;
 
+            components.Create<KLProcessComponent>(KLConsts.C_PROCESS);
             components.Create<KLRoleTimesComponent>(KLConsts.C_ROLE_TIMES);
             components.Create<RoleMoveComponent>(KLConsts.C_ROLE_MOVE);
             components.Create<RoleAIAtkComponent>(KLConsts.C_ROLE_AI_ATK);

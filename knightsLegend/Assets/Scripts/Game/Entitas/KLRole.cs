@@ -3,13 +3,6 @@ using System;
 
 namespace KLGame
 {
-    public interface IKLRole : ICommonRole
-    {
-        void UnderAttack();
-        void StartTimeEntitasGapper(int name, float time, Action completion = default);
-        RoleTimesEntitas TimesEntitas { get; }
-    }
-
     public class KLRole : RoleEntitas, IKLRole
     {
 
@@ -17,12 +10,14 @@ namespace KLGame
         {
             base.InitComponents();
 
-            TimesEntitas = new RoleTimesEntitas();
+            Processing = ShipDockApp.Instance.Components.GetComponentByAID(KLConsts.C_PROCESS) as KLProcessComponent;
+
+            TimesEntitas = new TimingTaskEntitas();
         }
 
-        public void StartTimeEntitasGapper(int name, float time, Action completion = default)
+        public void StartTimingTask(int name, float time, Action completion = default)
         {
-            RoleTime roleTime = TimesEntitas.GetRoleTime(name);
+            TimingTasker roleTime = TimesEntitas.GetRoleTime(name);
             if (roleTime != default)
             {
                 if (completion != default)
@@ -39,8 +34,11 @@ namespace KLGame
             RoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_UNDERATTACKED);
         }
 
+        public KLProcessComponent Processing { get; private set; }
+
         protected override int[] ComponentIDs { get; } = new int[]
         {
+            KLConsts.C_PROCESS,
             KLConsts.C_ROLE_INPUT,
             KLConsts.C_ROLE_MOVE,
             KLConsts.C_POSITION,
@@ -49,6 +47,6 @@ namespace KLGame
             KLConsts.C_ROLE_CAMP
         };
 
-        public RoleTimesEntitas TimesEntitas { get; private set; }
+        public TimingTaskEntitas TimesEntitas { get; private set; }
     }
 }

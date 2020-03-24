@@ -1,4 +1,5 @@
 ﻿using ShipDock.Notices;
+using ShipDock.Pooling;
 using ShipDock.Server;
 using UnityEngine;
 
@@ -53,8 +54,10 @@ namespace KLGame
             {
                 mNormalAtkMotionCreater.AddComboMotion(ref m_RoleAnimator);
                 mRoleInput.SetUserInputValue(mFire1ParamName, false);
+
+                //ProcessHit hit = Pooling<ProcessHit>.From();
+                //hit.Target = 
             }
-            SetUnderAttackParam();
         }
     }
 }

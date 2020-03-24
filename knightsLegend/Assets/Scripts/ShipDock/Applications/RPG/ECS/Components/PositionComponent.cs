@@ -1,5 +1,4 @@
-﻿using System;
-using ShipDock.ECS;
+﻿using ShipDock.ECS;
 
 namespace ShipDock.Applications
 {

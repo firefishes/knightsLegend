@@ -1,4 +1,6 @@
 ﻿using ShipDock.Applications;
+using ShipDock.ECS;
+using ShipDock.Pooling;
 using System;
 
 namespace KLGame
@@ -29,25 +31,25 @@ namespace KLGame
                 mNormalAtkMotionCreater.AddComboMotion(ref m_RoleAnimator);
                 mRoleATkAI.InATKCycle = true;
 
-                mRoleATkAI.StartTimeEntitasGapper(RoleTimeNames.NORMAL_ATK_HIT_TIME, 0.2f, EnemyAttked);
+                mRoleATkAI.StartTimingTask(RoleTimingTaskNames.NORMAL_ATK_HIT_TIME, 0.2f, EnemyAttked);
             }
         }
 
         private void EnemyAttked()
         {
-            mRoleATkAI.TimesEntitas.GetRoleTime(RoleTimeNames.NORMAL_ATK_HIT_TIME).completion -= EnemyAttked;
-            if (mRoleATkAI.EnemyMainLockDown != default)
-            {
-                (mRoleATkAI.EnemyMainLockDown as IKLRole).UnderAttack();
-            }
+            mRoleATkAI.TimesEntitas.GetRoleTime(RoleTimingTaskNames.NORMAL_ATK_HIT_TIME).completion -= EnemyAttked;
+            ProcessHit hit = Pooling<ProcessHit>.From();
+            hit.Target = mRole.EnemyMainLockDown as IShipDockEntitas;
+            hit.Initiator = mRoleATkAI as IShipDockEntitas;
+            KLRole.Processing.AddProcess(hit);
         }
 
         private void OnSetNormalATKTriggerTime()
         {
-            RoleTime target = mRoleATkAI.TimesEntitas.GetRoleTime(RoleTimeNames.NORMAL_ATK_TIME);
+            TimingTasker target = mRoleATkAI.TimesEntitas.GetRoleTime(RoleTimingTaskNames.NORMAL_ATK_TIME);
             if (target.RunCounts > 0)
             {
-                mRoleATkAI.StartTimeEntitasGapper(RoleTimeNames.NORMAL_ATK_TIME, UnityEngine.Random.Range(0.5f, 2f));
+                mRoleATkAI.StartTimingTask(RoleTimingTaskNames.NORMAL_ATK_TIME, UnityEngine.Random.Range(0.5f, 2f));
                 mRoleInput.NextPhase();
             }
             else
