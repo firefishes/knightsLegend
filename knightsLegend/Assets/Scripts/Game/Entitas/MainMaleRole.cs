@@ -17,19 +17,5 @@ namespace KLGame
 
             Camp = 0;
         }
-
-        public override void InitComponents()
-        {
-            base.InitComponents();
-
-            TimesEntitas.AddTimingTask(RoleTimingTaskNames.ENMEY_SCAN_TIME);
-
-            StartTimingTask(RoleTimingTaskNames.ENMEY_SCAN_TIME, 0.3f, OnScanEnemy);
-        }
-
-        private void OnScanEnemy()
-        {
-
-        }
     }
 }

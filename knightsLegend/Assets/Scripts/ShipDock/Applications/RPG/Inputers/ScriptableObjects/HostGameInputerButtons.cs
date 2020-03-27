@@ -5,7 +5,7 @@ using UnityEngine;
 namespace ShipDock.Applications
 {
     [Serializable]
-    [CreateAssetMenu(menuName = "ShipDock/Create/HostGameInputerButtons")]
+    [CreateAssetMenu(menuName = "ShipDock/Create/RPG/HostGameInputerButtons")]
     public class HostGameInputerButtons : ScriptableObject, IUserInputerButtons
     {
         public string[] directionButtons = new string[]

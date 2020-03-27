@@ -1,6 +1,7 @@
 ﻿using ShipDock.Notices;
 using ShipDock.Pooling;
 using ShipDock.Server;
+using ShipDock.Tools;
 using UnityEngine;
 
 namespace KLGame
@@ -32,13 +33,14 @@ namespace KLGame
             {
                 Vector3 userInputValue = mRoleInput.GetUserInputValue();
 
-                float x = userInputValue.x / 4;
+                float x = userInputValue.x * 0.25f;
                 if(!IsKinematic)
                 {
                     x = (Mathf.Abs(userInputValue.y) < 0.1f) ? x : -x;
                 }
                 v = Quaternion.Euler(transform.eulerAngles) * new Vector3(x, 0, userInputValue.y);
                 mRoleInput.SetMoveValue(v);
+                
             }
             else
             {
@@ -52,11 +54,18 @@ namespace KLGame
 
             if (mRoleInput.GetUserInputValue(mFire1ParamName))
             {
-                mNormalAtkMotionCreater.AddComboMotion(ref m_RoleAnimator);
+                //mNormalAtkMotionCreater.AddComboMotion(ref m_RoleAnimator);
+                m_Skills?.skillMotions.StartSkill(1, ref m_RoleAnimator);
                 mRoleInput.SetUserInputValue(mFire1ParamName, false);
 
-                //ProcessHit hit = Pooling<ProcessHit>.From();
-                //hit.Target = 
+                PlayerHit hit = Pooling<PlayerHit>.From();
+                hit.PlayerRole = KLRole;
+                hit.HitInfoScope.minAngle = 15f;
+                hit.HitInfoScope.minDistance = 1.5f;
+                hit.HitInfoScope.startPos = mRole.Position;
+                hit.HitInfoScope.startRotation = transform.rotation;
+                hit.HitInfoScope.Draws();
+                KLRole.Processing.AddProcess(hit);
             }
         }
     }

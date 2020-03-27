@@ -52,6 +52,15 @@
             return result;
         }
 
+        public static ValueItem New(string keyField, double value)
+        {
+            ValueItem result = new ValueItem(value)
+            {
+                KeyField = keyField
+            };
+            return result;
+        }
+
         private bool mBool;
         private int mInt;
         private float mFloat;
@@ -77,6 +86,11 @@
         public ValueItem(float value)
         {
             Float = value;
+        }
+
+        public ValueItem(double value)
+        {
+            Double = value;
         }
 
         public ValueItem SetDampTime(float time)

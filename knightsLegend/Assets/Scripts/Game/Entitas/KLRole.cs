@@ -1,5 +1,6 @@
 ﻿using ShipDock.Applications;
 using System;
+using System.Collections.Generic;
 
 namespace KLGame
 {
@@ -13,6 +14,16 @@ namespace KLGame
             Processing = ShipDockApp.Instance.Components.GetComponentByAID(KLConsts.C_PROCESS) as KLProcessComponent;
 
             TimesEntitas = new TimingTaskEntitas();
+        }
+
+        protected override void SetRoleInputInfo()
+        {
+            base.SetRoleInputInfo();
+
+            RoleInput.FullRoleInputPhases = new List<int>()
+            {
+                UserInputPhases.ROLE_INPUT_PHASE_UNDERATTACKED
+            };
         }
 
         public void StartTimingTask(int name, float time, Action completion = default)

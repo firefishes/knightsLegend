@@ -1,0 +1,80 @@
+﻿{
+	"skills": {
+		"infos": [{
+			"name": 0,
+			"skillName": "被攻击",
+			"skillParams": [{
+				"valueTypeInEditor": 5,
+				"valueInEditor": "1",
+				"keyField": "Atked",
+				"valueType": 5,
+				"str": "",
+				"floatValue": 0,
+				"triggerValue": false
+			}, {
+				"valueTypeInEditor": 5,
+				"valueInEditor": "-0.6",
+				"keyField": "Forward",
+				"valueType": 5,
+				"str": "",
+				"floatValue": 0,
+				"triggerValue": false
+			}]
+		}, {
+			"name": 1,
+			"skillName": "普通攻击1--触发",
+			"skillParams": [{
+				"valueTypeInEditor": 4,
+				"valueInEditor": "",
+				"keyField": "IsAtk",
+				"valueType": 4,
+				"str": "",
+				"floatValue": 0,
+				"triggerValue": true
+			}]
+		}, {
+			"name": 2,
+			"skillName": "普通攻击1--动画",
+			"skillParams": [{
+				"valueTypeInEditor": 5,
+				"valueInEditor": "1",
+				"keyField": "Atk1",
+				"valueType": 5,
+				"str": "",
+				"floatValue": 0,
+				"triggerValue": false
+			}, {
+				"valueTypeInEditor": 5,
+				"valueInEditor": "2",
+				"keyField": "Atk1",
+				"valueType": 5,
+				"str": "",
+				"floatValue": 0,
+				"triggerValue": false
+			}, {
+				"valueTypeInEditor": 5,
+				"valueInEditor": "3",
+				"keyField": "Atk1",
+				"valueType": 5,
+				"str": "",
+				"floatValue": 0,
+				"triggerValue": false
+			}]
+		}]
+	},
+	"skillMotions": {
+		"infos": [{
+			"ID": 0,
+			"skillName": "被攻击",
+			"isCombo": false,
+			"checkComboTime": 0.0,
+			"indexsForID": [0]
+		}, {
+			"ID": 1,
+			"skillName": "普通攻击1--触发",
+			"isCombo": true,
+			"checkComboTime": 1.5,
+			"indexsForID": [1, 2]
+		}]
+	}
+}

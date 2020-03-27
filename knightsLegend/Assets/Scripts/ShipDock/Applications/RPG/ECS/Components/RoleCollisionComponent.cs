@@ -42,6 +42,11 @@ namespace ShipDock.Applications
             }
         }
 
+        public void RefRoleByColliderID(int blockID, out ICommonRole result)
+        {
+            result = mRoleColliderMapper[blockID];
+        }
+
         public override void Execute(int time, ref IShipDockEntitas target)
         {
             base.Execute(time, ref target);

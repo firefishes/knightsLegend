@@ -30,6 +30,10 @@ namespace KLGame
 
         public void UpdateAllTimes(float dTime, ref List<TimingTasker> allRoleTimes, ref TimingTasker item)
         {
+            if (mTaskMapper == default)
+            {
+                return;
+            }
             bool flag;
             allRoleTimes = mTaskMapper.Values;
             int max = allRoleTimes.Count;

@@ -840,7 +840,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da18ac598c0c00842ac6c2eab64057d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Valid: 0
+  m_Valid: 1
   m_BundleName: roles/main_male_role
   m_Assets:
   - assetName: MainMaleRole

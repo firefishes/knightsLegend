@@ -25,6 +25,7 @@ namespace KLGame
             ShipDockApp app = ShipDockApp.Instance;
             var components = app.Components;
 
+            components.Create<RoleColliderComponent>(KLConsts.C_ROLE_COLLIDER);
             components.Create<KLProcessComponent>(KLConsts.C_PROCESS);
             components.Create<KLRoleTimesComponent>(KLConsts.C_ROLE_TIMES);
             components.Create<RoleMoveComponent>(KLConsts.C_ROLE_MOVE);
@@ -33,7 +34,6 @@ namespace KLGame
             components.Create<KLRoleCampComponent>(KLConsts.C_ROLE_CAMP);
             components.Create<KLInputComponent>(KLConsts.C_ROLE_INPUT);
             components.Create<PositionComponent>(KLConsts.C_POSITION);
-            components.Create<RoleColliderComponent>(KLConsts.C_ROLE_COLLIDER);
         }
 
         public override void ServerReady()

@@ -1,11 +1,44 @@
-﻿using ShipDock.Applications;
-using ShipDock.Interfaces;
+﻿using ShipDock.Interfaces;
 using ShipDock.Tools;
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 
-namespace KLGame
+namespace ShipDock.Applications
 {
+    [Serializable]
+    public class MotionCompletionEvent : UnityEvent { }
+
+    [Serializable]
+    public class MotionSceneInfo : IDispose
+    {
+#if UNITY_EDITOR
+        public string skillName;
+#endif
+
+        public bool isCombo;
+        public int ID;
+        public float checkComboTime;
+        public int[] indexsForID;
+        public MotionCompletionEvent motionCompletionEvent = new MotionCompletionEvent();
+
+        public void Dispose()
+        {
+            Utils.Reclaim(Motion);
+            Utils.Reclaim(ComboMotion);
+
+            motionCompletionEvent?.RemoveAllListeners();
+            ComboMotion = default;
+            Motion = default;
+            motionCompletionEvent = default;
+            MotionSkillInfo = default;
+        }
+        
+        public ComboMotionCreater ComboMotion { get; set; }
+        public SkillInfo MotionSkillInfo { get; set; }
+        public AnimationInfoUpdater Motion { get; set; }
+    }
+
     public class ComboMotionCreater : IDispose
     {
         private int mCurrentCombo;
@@ -30,7 +63,11 @@ namespace KLGame
         public void Dispose()
         {
             AllowComboInput();
+            Utils.Reclaim(mAniUpdater);
             mAniUpdater = default;
+
+            MotionCompletion = default;
+            MotionCompletionEvent = default;
         }
 
         private void AllowComboInput()
@@ -169,8 +206,6 @@ namespace KLGame
 
         private void ComboFinish(ref Animator animator)
         {
-            //Debug.Log("CheckComboFinish");
-
             mAniUpdater.Stop();
             mAniUpdater.ResetAllTiming();
             AllowComboInput();
@@ -188,6 +223,7 @@ namespace KLGame
                 animator.SetFloat(mValueItem.KeyField, 0f);
             }
             MotionCompletion?.Invoke();
+            MotionCompletionEvent?.Invoke();
         }
         
         private void MotionCompleted(Animator animator)
@@ -203,6 +239,11 @@ namespace KLGame
             mWillCacheCombo = false;
         }
 
+        public void AddMotionCompletion(Action method)
+        {
+            MotionCompletion = method;
+        }
+
         public bool IsMotionsFinish
         {
             get
@@ -212,6 +253,7 @@ namespace KLGame
         }
 
         public Action MotionCompletion { get; private set; }
+        public MotionCompletionEvent MotionCompletionEvent { get; set; }
         public int ComboMotionMax { get; private set; }
         public ValueItem[] MotionTransParam { get; private set; }
         public ValueItem[] MotionTriggerParam { get; private set; }
@@ -219,5 +261,6 @@ namespace KLGame
         public bool IsComboChecking { get; private set; }
         public float CheckComboTime { get; private set; } = 1.0f;
         public bool IsFastest { get; set; }
+        public int ID { get; set; }
     }
 }

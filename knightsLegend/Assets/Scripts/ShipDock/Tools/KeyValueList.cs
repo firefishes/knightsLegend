@@ -84,7 +84,7 @@ namespace ShipDock.Tools
         #endregion
 
         #region 销毁
-        public void Dispose()
+        public virtual void Dispose()
         {
             Clear();
         }

@@ -70,6 +70,16 @@ namespace KLGame
             return 2.5f;
         }
 
+        public void ResetAIRoleATK()
+        {
+            TimingTasker target = TimesEntitas.GetRoleTime(RoleTimingTaskNames.NORMAL_ATK_TIME);
+            target.ResetRunCounts();
+
+            InATKCycle = false;
+            SetShouldAtkAIWork(false);
+            RoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_MOVE_READY);
+        }
+
         public int ATKID { get; private set; }
         public bool ShouldAtkAIWork { get; private set; }
         public bool InATKCycle { get; set; }

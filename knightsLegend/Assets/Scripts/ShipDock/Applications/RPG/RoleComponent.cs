@@ -103,7 +103,7 @@ namespace ShipDock.Applications
 
         protected void FreezeAllRotation(bool flag)
         {
-            if(flag)
+            if (flag)
             {
                 m_RoleRigidbody.constraints = RigidbodyConstraints.FreezeRotationX |
                                               RigidbodyConstraints.FreezeRotationY |
@@ -498,24 +498,6 @@ namespace ShipDock.Applications
             }
         }
 
-        private void OnTriggerEnter(Collider other)
-        {
-            int id = other.GetInstanceID();
-            if (mRole != default && !mRole.CollidingRoles.Contains(id))
-            {
-                mRole.CollidingRoles.Add(id);
-            }
-        }
-
-        private void OnTriggerExit(Collider other)
-        {
-            int id = other.GetInstanceID();
-            if (mRole != default && mRole.CollidingRoles.Contains(id))
-            {
-                mRole.CollidingRoles.Remove(id);
-            }
-        }
-
         public Transform CameraNode
         {
             get
@@ -529,6 +511,14 @@ namespace ShipDock.Applications
             get
             {
                 return m_RoleRigidbody != default ? m_RoleRigidbody.isKinematic : false;
+            }
+        }
+
+        public ICommonRole RoleEntitas
+        {
+            get
+            {
+                return mRole;
             }
         }
     }

@@ -36,7 +36,7 @@ namespace KLGame
             }
             else
             {
-                ResetAIRoleATK();
+                mAIRole.ResetAIRoleATK();
             }
         }
 
@@ -61,18 +61,8 @@ namespace KLGame
             }
             else
             {
-                ResetAIRoleATK();
+                mAIRole.ResetAIRoleATK();
             }
-        }
-
-        private void ResetAIRoleATK()
-        {
-            TimingTasker target = mAIRole.TimesEntitas.GetRoleTime(RoleTimingTaskNames.NORMAL_ATK_TIME);
-            target.ResetRunCounts();
-            
-            mAIRole.InATKCycle = false;
-            mAIRole.SetShouldAtkAIWork(false);
-            mRoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_MOVE_READY);
         }
 
         public override void Execute(int time, ref IShipDockEntitas target)

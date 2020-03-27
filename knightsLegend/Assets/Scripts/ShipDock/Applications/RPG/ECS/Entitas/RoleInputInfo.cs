@@ -1,6 +1,7 @@
 ﻿using ShipDock.FSM;
 using ShipDock.Tools;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace ShipDock.Applications
@@ -216,8 +217,12 @@ namespace ShipDock.Applications
             return mInputKeys[key];
         }
 
-        public void SetInputPhase(int phaseName)
+        public void SetInputPhase(int phaseName, bool isCheckFullPhase = true)
         {
+            if(isCheckFullPhase && FullRoleInputPhases.IndexOf(RoleInputPhase) >= 0)
+            {
+                return;
+            }
             RoleInputPhase = phaseName;
         }
 
@@ -226,18 +231,10 @@ namespace ShipDock.Applications
             RoleInputPhase++;
         }
 
+        public List<int> FullRoleInputPhases { get; set; }
         public bool ShouldGetUserInput { get; set; }
         public int RoleInputType { get; set; } = 0;
         public int RoleInputPhase { get; private set; } = UserInputPhases.ROLE_INPUT_PHASE_NONE;
-        public int[] RoleInputPhases { get; private set; } = new int[]
-        {
-            UserInputPhases.ROLE_INPUT_PHASE_MOVE_READY,
-            UserInputPhases.ROLE_INPUT_PHASE_AMOUT_EXTRAN_TURN,
-            UserInputPhases.ROLE_INPUT_PHASE_CHECK_GROUND,
-            UserInputPhases.ROLE_INPUT_PHASE_SCALE_CAPSULE,
-            UserInputPhases.ROLE_INPUT_PHASE_CHECK_CROUCH,
-            UserInputPhases.ROLE_INPUT_PHASE_AFTER_MOVE
-        };
         public float TurnAmount { get; private set; }
         public float ForwardAmount { get; private set; }
         public float ExtraTurnRotationOut { get; private set; }

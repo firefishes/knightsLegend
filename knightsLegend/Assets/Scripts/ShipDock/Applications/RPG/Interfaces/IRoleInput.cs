@@ -1,5 +1,6 @@
 ﻿using ShipDock.Tools;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace ShipDock.Applications
@@ -14,7 +15,7 @@ namespace ShipDock.Applications
         void SetCrouching(bool flag);
         void SetMoveValue(Vector3 value);
         void MoveValueNormalize();
-        void SetInputPhase(int phaseName);
+        void SetInputPhase(int phaseName, bool isCheckFullPhase = true);
         void NextPhase();
         void ResetEntitasCalled(int phaseName);
         void AdvancedInputPhase(int rolePhase, int allowCalled);
@@ -28,9 +29,9 @@ namespace ShipDock.Applications
         bool IsCrouch();
         bool IsCrouching();
         bool IsJump();
+        List<int> FullRoleInputPhases { get; set; }
         int RoleInputPhase { get; }
         int RoleInputType { get; set; }
-        int[] RoleInputPhases { get; }
         float ExtraTurnRotationOut { get; }
         float ForwardAmount { get; }
         float TurnAmount { get; }

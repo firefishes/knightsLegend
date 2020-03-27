@@ -90,7 +90,7 @@ namespace ShipDock.Applications
             UpdaterNotice.AddSceneUpdater(this);
         }
 
-        private void RefreshParams(ref ValueItem[] paramConfs, bool checkDampTime = false, bool isReset = false)
+        private void RefreshParams(ref ValueItem[] paramConfs, bool checkDampTime = false)
         {
             if(paramConfs != default)
             {
@@ -98,12 +98,12 @@ namespace ShipDock.Applications
                 for (int i = 0; i < mMax; i++)
                 {
                     mConfItem = paramConfs[i];
-                    RefreshParamItem(ref mConfItem, ref checkDampTime, ref isReset);
+                    RefreshParamItem(ref mConfItem, ref checkDampTime);
                 }
             }
         }
 
-        private void RefreshParamItem(ref ValueItem conf, ref bool checkDampTime, ref bool isReset)
+        private void RefreshParamItem(ref ValueItem conf, ref bool checkDampTime)
         {
             if (conf.IsBool)
             {
@@ -111,13 +111,13 @@ namespace ShipDock.Applications
             }
             else if(conf.IsFloat)
             {
-                if (checkDampTime && !isReset && conf.DampTime > 0f)
+                if (checkDampTime && conf.DampTime > 0f)
                 {
                     AnimatorTarget.SetFloat(conf.KeyField, conf.Float, conf.DampTime, Time.deltaTime);
                 }
                 else
                 {
-                    AnimatorTarget.SetFloat(conf.KeyField, isReset ? 0f : conf.Float);
+                    AnimatorTarget.SetFloat(conf.KeyField, conf.Float);
                 }
             }
             else if (conf.IsInt)

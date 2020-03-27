@@ -1,0 +1,98 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1711aca1365a0f4aac82ac3570c60dd, type: 3}
+  m_Name: EnemyRoleSkill
+  m_EditorClassIdentifier: 
+  raw: {fileID: 4900000, guid: ddfc269de9f07424f9885aec5ff1e473, type: 3}
+  skills:
+    m_DisposeSkillInfos: 0
+    infos:
+    - skillName: "\u88AB\u653B\u51FB"
+      name: 0
+      skillParams:
+      - keyField: Atked
+        valueType: 5
+        str: 
+        floatValue: 1
+        doubleValue: 0
+        valueTypeInEditor: 5
+        valueInEditor: 1
+        triggerValue: 0
+      - keyField: Forward
+        valueType: 5
+        str: 
+        floatValue: -0.6
+        doubleValue: 0
+        valueTypeInEditor: 5
+        valueInEditor: -0.6
+        triggerValue: 0
+    - skillName: "\u666E\u901A\u653B\u51FB1--\u89E6\u53D1"
+      name: 1
+      skillParams:
+      - keyField: IsAtk
+        valueType: 4
+        str: 
+        floatValue: 0
+        doubleValue: 0
+        valueTypeInEditor: 4
+        valueInEditor: 
+        triggerValue: 1
+    - skillName: "\u666E\u901A\u653B\u51FB1--\u52A8\u753B"
+      name: 2
+      skillParams:
+      - keyField: Atk1
+        valueType: 5
+        str: 
+        floatValue: 1
+        doubleValue: 0
+        valueTypeInEditor: 5
+        valueInEditor: 1
+        triggerValue: 0
+      - keyField: Atk1
+        valueType: 5
+        str: 
+        floatValue: 2
+        doubleValue: 0
+        valueTypeInEditor: 5
+        valueInEditor: 2
+        triggerValue: 0
+      - keyField: Atk1
+        valueType: 5
+        str: 
+        floatValue: 3
+        doubleValue: 0
+        valueTypeInEditor: 5
+        valueInEditor: 3
+        triggerValue: 0
+  skillMotions:
+    m_DisposeSkillInfos: 0
+    infos:
+    - skillName: "\u88AB\u653B\u51FB"
+      isCombo: 0
+      ID: 0
+      checkComboTime: 0
+      indexsForID: 00000000
+      motionCompletionEvent:
+        m_PersistentCalls:
+          m_Calls: []
+        m_TypeName: ShipDock.Applications.MotionCompletionEvent, Assembly-CSharp,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    - skillName: "\u666E\u901A\u653B\u51FB1--\u89E6\u53D1"
+      isCombo: 1
+      ID: 1
+      checkComboTime: 1.5
+      indexsForID: 0100000002000000
+      motionCompletionEvent:
+        m_PersistentCalls:
+          m_Calls: []
+        m_TypeName: ShipDock.Applications.MotionCompletionEvent, Assembly-CSharp,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null

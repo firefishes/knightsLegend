@@ -28,10 +28,11 @@ namespace KLGame
             if (!mRoleATkAI.InATKCycle)
             {
                 m_RoleAnimator.SetFloat(m_BlendTreeInfo.MoveMotionName, 0f);
-                mNormalAtkMotionCreater.AddComboMotion(ref m_RoleAnimator);
+                //mNormalAtkMotionCreater.AddComboMotion(ref m_RoleAnimator);
+                m_Skills?.skillMotions.StartSkill(1, ref m_RoleAnimator);
                 mRoleATkAI.InATKCycle = true;
 
-                mRoleATkAI.StartTimingTask(RoleTimingTaskNames.NORMAL_ATK_HIT_TIME, 0.2f, EnemyAttked);
+                EnemyAttked();
             }
         }
 
@@ -49,7 +50,7 @@ namespace KLGame
             TimingTasker target = mRoleATkAI.TimesEntitas.GetRoleTime(RoleTimingTaskNames.NORMAL_ATK_TIME);
             if (target.RunCounts > 0)
             {
-                mRoleATkAI.StartTimingTask(RoleTimingTaskNames.NORMAL_ATK_TIME, UnityEngine.Random.Range(0.5f, 2f));
+                mRoleATkAI.StartTimingTask(RoleTimingTaskNames.NORMAL_ATK_TIME, UnityEngine.Random.Range(3f, 5f));
                 mRoleInput.NextPhase();
             }
             else
@@ -60,12 +61,22 @@ namespace KLGame
             }
         }
 
-        protected override void OnAtk1Completed()
+        public override void OnAtk1Completed()
         {
             base.OnAtk1Completed();
 
             mRoleATkAI.InATKCycle = false;
             mRoleInput.SetInputPhase(EnemyInputPhases.ENEMY_INPUT_PHASE_NROMAL_ATKED);
+        }
+
+        protected override bool CheckMoveBlock()
+        {
+            bool flag = base.CheckMoveBlock();
+            if (flag)
+            {
+                mRoleATkAI.ResetAIRoleATK();
+            }
+            return flag;
         }
     }
 }
