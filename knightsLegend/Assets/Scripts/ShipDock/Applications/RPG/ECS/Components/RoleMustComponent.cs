@@ -9,6 +9,7 @@ namespace ShipDock.Applications
         private ICommonRole mRoleItem = default;
         private KeyValueList<ICommonRole, int> mRigidbodySubgourp;
         private KeyValueList<ICommonRole, int> mRoleColliderSubgourp;
+        private KeyValueList<ICommonRole, int> mRoleColliderScanedSubgourp;
         private KeyValueList<ICommonRole, int> mAnimatorSubgourp;
 
         public override int SetEntitas(IShipDockEntitas target)
@@ -23,6 +24,7 @@ namespace ShipDock.Applications
                 SetSubgroupMap(ref mRigidbodySubgourp, subgroup.rigidbodyID);
                 SetSubgroupMap(ref mRoleColliderSubgourp, subgroup.roleColliderID);
                 SetSubgroupMap(ref mAnimatorSubgourp, subgroup.animatorID);
+                SetSubgroupMap(ref mRoleColliderScanedSubgourp, subgroup.roleScanedColliderID);
             }
 
             return id;
@@ -37,6 +39,8 @@ namespace ShipDock.Applications
             RemoveSubgroupMap(ref mRigidbodySubgourp, ref mRoleItem);
             RemoveSubgroupMap(ref mRoleColliderSubgourp, ref mRoleItem);
             RemoveSubgroupMap(ref mAnimatorSubgourp, ref mRoleItem);
+            RemoveSubgroupMap(ref mRoleColliderScanedSubgourp, ref mRoleItem);
+            
         }
 
         private void SetSubgroupMap(ref KeyValueList<ICommonRole, int> mapper, int mid)
@@ -72,6 +76,11 @@ namespace ShipDock.Applications
         public int GetAnimator(ref ICommonRole target)
         {
             return mAnimatorSubgourp.ContainsKey(target) ? mAnimatorSubgourp[target] : default;
+        }
+
+        public int GetColliderScaned(ref ICommonRole target)
+        {
+            return mRoleColliderScanedSubgourp.ContainsKey(target) ? mRoleColliderScanedSubgourp[target] : default;
         }
     }
 

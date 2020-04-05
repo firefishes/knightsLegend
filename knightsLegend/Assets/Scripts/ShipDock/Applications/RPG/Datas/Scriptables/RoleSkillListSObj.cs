@@ -7,7 +7,7 @@ namespace ShipDock.Applications
 {
     [Serializable]
     [CreateAssetMenu(menuName = "ShipDock/Create/RPG/RoleSkillList")]
-    public class RoleSkillList : ScriptableObject, IDispose
+    public class RoleSkillListSObj : ScriptableObject, IDispose
     {
 #if UNITY_EDITOR
         public TextAsset raw;

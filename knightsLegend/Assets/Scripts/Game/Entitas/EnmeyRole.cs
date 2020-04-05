@@ -20,6 +20,15 @@ namespace KLGame
             Camp = 1;
         }
 
+        protected override IRoleInput CreateRoleInputInfo()
+        {
+            var fsm = new MainMaleRoleFSM(RoleFSMName)
+            {
+                RoleEntitas = this
+            };
+            return new KLRoleInputInfo(this, fsm);
+        }
+        
         protected override void SetRoleInputInfo()
         {
             base.SetRoleInputInfo();
@@ -72,7 +81,7 @@ namespace KLGame
 
         public void ResetAIRoleATK()
         {
-            TimingTasker target = TimesEntitas.GetRoleTime(RoleTimingTaskNames.NORMAL_ATK_TIME);
+            TimingTasker target = TimesEntitas.GetRoleTiming(RoleTimingTaskNames.NORMAL_ATK_TIME);
             target.ResetRunCounts();
 
             InATKCycle = false;
@@ -84,5 +93,6 @@ namespace KLGame
         public bool ShouldAtkAIWork { get; private set; }
         public bool InATKCycle { get; set; }
         public bool IsInitNormalATKPhases { get; set; }
+        public override int RoleFSMName { get; } = KLConsts.RFSM_NORMAL_ENMEY;
     }
 }

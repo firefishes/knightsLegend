@@ -1,5 +1,3 @@
-using System;
-using ShipDock.Notices;
 using UnityEngine;
 
 namespace ShipDock.Applications
@@ -12,6 +10,8 @@ namespace ShipDock.Applications
         private int m_AddItemNoticeName = int.MaxValue;
         [SerializeField]
         private int m_RemoveItemNoticeName = int.MaxValue;
+        [SerializeField]
+        private int m_CallLateItemNoticeName = int.MaxValue;
 
         private ComponentBridge mCompBridge;
         private UpdatesCacher mUpdatesCacher;
@@ -26,7 +26,7 @@ namespace ShipDock.Applications
         {
             if ((int.MaxValue != m_AddItemNoticeName) && (int.MinValue != m_RemoveItemNoticeName))
             {
-                mUpdatesCacher = new UpdatesCacher(m_AddItemNoticeName, m_RemoveItemNoticeName);
+                mUpdatesCacher = new UpdatesCacher(m_AddItemNoticeName, m_RemoveItemNoticeName, m_CallLateItemNoticeName);
             }
             mCompBridge.Dispose();
 

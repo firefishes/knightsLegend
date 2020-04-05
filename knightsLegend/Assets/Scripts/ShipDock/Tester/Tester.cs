@@ -39,8 +39,9 @@ namespace ShipDock.Testers
         private KeyValueList<string, List<Asserter>> mTesterMapper = new KeyValueList<string, List<Asserter>>();
         private KeyValueList<string, KeyValueList<int, LogItem>> mLoggerMapper = new KeyValueList<string, KeyValueList<int, LogItem>>();
 
-        public void Init()
+        public void Init<T>(T defaultTester) where T : ITester
         {
+            SetDefaultTester(defaultTester);
             Application.logMessageReceived += OnLogMessageReceived;
         }
 

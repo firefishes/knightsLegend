@@ -1,4 +1,7 @@
-﻿using ShipDock.ECS;
+﻿#define G_LOG
+#define LOG_TRY_CATCH_ROLE
+
+using ShipDock.ECS;
 using ShipDock.Tools;
 
 namespace ShipDock.Applications
@@ -29,7 +32,18 @@ namespace ShipDock.Applications
             base.Execute(time, ref target);
 
             mRole = target as ICommonRole;
+#if LOG_TRY_CATCH_ROLE && UNITY_EDITOR
+            try
+            {
+#endif
             mRoleInput = mRole.RoleInput;
+#if LOG_TRY_CATCH_ROLE && UNITY_EDITOR
+            }
+            catch (System.Exception error)
+            {
+                Testers.Tester.Instance.Log(TesterRPG.Instance, TesterRPG.LOG, "error:".Append(error.Message));
+            }
+#endif
 
             if (mRoleInput == default)
             {

@@ -231,7 +231,7 @@ namespace ShipDock.FSM
             {
                 if (param != null)
                 {
-                    mSubState.SetStateParam(ref param);
+                    mSubState.SetStateParam(param);
                 }
                 else
                 {
@@ -298,7 +298,7 @@ namespace ShipDock.FSM
             }
         }
 
-        public virtual void SetStateParam(ref IStateParam param)
+        public virtual void SetStateParam(IStateParam param)
         {
             mSelfParam = param;
         }

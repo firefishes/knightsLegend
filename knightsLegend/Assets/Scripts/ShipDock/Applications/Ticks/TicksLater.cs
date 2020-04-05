@@ -8,6 +8,7 @@ namespace ShipDock.Applications
     public class TicksLater : IDispose
     {
         private bool mIsDisposed;
+        private Action<int> mAction;
         private Queue<Action<int>> mCachesTemp;
         private Queue<Action<int>> mCacheFront;
         private Queue<Action<int>> mCacheBack;
@@ -29,7 +30,6 @@ namespace ShipDock.Applications
             Utils.Reclaim(ref mCallLateCaches);
         }
 
-        private Action<int> mAction;
         public void Update(int dTime)
         {
             mCachesTemp = mCallLateCaches;//设置需要调用的单帧函数队列

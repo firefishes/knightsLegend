@@ -45,6 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d507373e71755045b2a1739edb4bfd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_EnmeyCount: 1
+  m_FrameRate: 100
 --- !u!114 &698715321385314094
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -60,6 +62,7 @@ MonoBehaviour:
   m_ReadyNoticeName: -1007
   m_AddItemNoticeName: -1005
   m_RemoveItemNoticeName: -1006
+  m_CallLateItemNoticeName: -1008
 --- !u!1 &8602951064911770544
 GameObject:
   m_ObjectHideFlags: 0

@@ -30,10 +30,16 @@ namespace KLGame
         public const int D_GAME = 0;
         public const int D_PLAYER = 1;
 
-        public const int DC_CAMP_ROLE_CREATED = 2000;
+        public const int N_TRIGGER_HIT = 1000;
+        public const int N_TRIGGER_ROLE_ACTIVE = 1001;
 
+        public const int DC_CAMP_ROLE_CREATED = 2000;
+        
         public const int ROLE_INPUT_TYPE_DEFAULT = 0;
         public const int ROLE_INPUT_TYPE_ENEMY = 1;
+
+        public const int RFSM_MAIN_MALE_ROLE = 0;
+        public const int RFSM_NORMAL_ENMEY = 1;
 
         private static readonly IResolvableConfig[] KLServerConfigs =
         {
@@ -42,6 +48,8 @@ namespace KLGame
             new ResolvableConfigItem<IParamNotice<ICommonRole>, ParamNotice<ICommonRole>>("SetUserRole"),
             new ResolvableConfigItem<IParamNotice<KLRoleComponent>, ParamNotice<KLRoleComponent>>("PlayerRole_0"),
             new ResolvableConfigItem<IParamNotice<KLCamerasComponent>, ParamNotice<KLCamerasComponent>>("SetLensParamer"),
+            new ResolvableConfigItem<IParamNotice<NormalATKStateParam>, ParamNotice<NormalATKStateParam>>("NormalATKStateParam"),
+            new ResolvableConfigItem<IParamNotice<IKLRole>, ParamNotice<IKLRole>>("KLRole"),
         };
 
         public static readonly IResolvableConfig[] ServerConfigs = MainServer.ServerConfigs.ContactToArr(KLServerConfigs);

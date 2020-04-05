@@ -1,0 +1,40 @@
+﻿{
+	"1": {
+		"id": 1,
+		"cn": "normal atk 1",
+		"gr": 0,
+		"ca": 0,
+		"m_p_n": "MainMaleRoleSkill",
+		"scp": {
+			"m_dist": 2.0,
+			"agl": 60
+		},
+		"m_p_id": 2,
+		"s_pha_ids": 2,
+		"s_pha_t": 0.3
+	},
+	"2": {
+		"id": 1,
+		"cn": "normal atk 2",
+		"gr": 0,
+		"ca": 0,
+		"scp": {
+			"m_dist": 2.5,
+			"agl": 60
+		},
+		"m_p_id": 3,
+		"s_pha_ids": 3,
+		"s_pha_t": 0.3
+	},
+	"3": {
+		"id": 1,
+		"cn": "normal atk 3",
+		"gr": 0,
+		"ca": 0,
+		"scp": {
+			"m_dist": 2.5,
+			"agl": 100
+		},
+		"m_p_id": -1
+	}
+}

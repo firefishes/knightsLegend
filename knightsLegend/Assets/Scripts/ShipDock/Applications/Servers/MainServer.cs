@@ -10,7 +10,8 @@ namespace ShipDock.Applications
         public readonly static List<IResolvableConfig> ServerConfigs = new List<IResolvableConfig>
         {
             new ResolvableConfigItem<INotice, Notice>("Notice"),
-            new ResolvableConfigItem<IParamNotice<int>, ParamNotice<int>>("IntParamer"),
+            new ResolvableConfigItem<IParamNotice<int>, ParamNotice<int>>("Int"),
+            new ResolvableConfigItem<IParamNotice<bool>, ParamNotice<bool>>("Bool"),
             new ResolvableConfigItem<IParamNotice<IInputer>, ParamNotice<IInputer>>("InputerParamer"),
             new ResolvableConfigItem<IParamNotice<IInputer>, ParamNotice<IInputer>>("SetInputerParamer"),
         };
@@ -26,6 +27,7 @@ namespace ShipDock.Applications
 
             Register<INotice>(NoticeResolver, Pooling<Notice>.Instance);
             Register<IParamNotice<int>>(IntParamerResolver, Pooling<ParamNotice<int>>.Instance);
+            Register<IParamNotice<bool>>(BoolParamerResolver, Pooling<ParamNotice<bool>>.Instance);
             Register<IParamNotice<IInputer>>(SetInputerParamer, Pooling<ParamNotice<IInputer>>.Instance);
             Register<IParamNotice<IInputer>>(GetInputerParamer, Pooling<ParamNotice<IInputer>>.Instance);
         }
@@ -35,9 +37,14 @@ namespace ShipDock.Applications
             base.ServerReady();
             
             Add<IParamNotice<IInputer>>(SetInputer);
+            Add<IParamNotice<bool>>(SetBoolTrue);
+            Add<IParamNotice<bool>>(SetBoolFalse);
         }
 
-        [Resolvable("IntParamer")]
+        [Resolvable("Bool")]
+        private void BoolParamerResolver(ref IParamNotice<bool> target) { }
+        
+        [Resolvable("Int")]
         private void IntParamerResolver(ref IParamNotice<int> target) { }
 
         [Resolvable("Notice")]
@@ -50,6 +57,18 @@ namespace ShipDock.Applications
         private void GetInputerParamer(ref IParamNotice<IInputer> target)
         {
             target.ParamValue = MainInputer;
+        }
+
+        [Callable("True", "Bool")]
+        private void SetBoolTrue(ref IParamNotice<bool> target)
+        {
+            target.ParamValue = true;
+        }
+
+        [Callable("False", "Bool")]
+        private void SetBoolFalse(ref IParamNotice<bool> target)
+        {
+            target.ParamValue = false;
         }
 
         [Callable("SetInputer", "SetInputerParamer")]

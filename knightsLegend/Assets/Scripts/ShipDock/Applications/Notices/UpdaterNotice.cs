@@ -37,5 +37,13 @@ namespace ShipDock.Applications
             ShipDockConsts.NOTICE_REMOVE_SCENE_UPDATE.Dispatch(notice);
             Pooling<UpdaterNotice>.To(notice);
         }
+
+        public static void SceneCallLater(Action<int> target)
+        {
+            ParamNotice<Action<int>> notice = Pooling<ParamNotice<Action<int>>>.From();
+            notice.ParamValue = target;
+            ShipDockConsts.NOTICE_SCENE_CALL_LATE.Dispatch(notice);
+            Pooling<ParamNotice<Action<int>>>.To(notice);
+        }
     }
 }

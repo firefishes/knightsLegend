@@ -34,8 +34,7 @@ namespace KLGame
 
         private void OnShipDockStart()
         {
-            Tester.Instance.SetDefaultTester(KLTester.Instance);
-            Tester.Instance.Init();
+            Tester.Instance.Init(KLTester.Instance);
             Tester.Instance.Log(KLTester.LOG0, "ShipDock start up..");
             Tester.Instance.Log(KLTester.LOG0, "KL game start");
 

@@ -26,7 +26,7 @@ namespace ShipDock.FSM
         void ChangeToNextState(IStateParam param = null);
         void ChangeToPreviousState(IStateParam param = null);
         void ChangeToDefaultState(IStateParam param = null);
-        void SetStateParam(ref IStateParam param);
+        void SetStateParam(IStateParam param);
         Action<IState, bool> StateFrameUpdater { get; set; }
         void SetFSM(IStateMachine fsm);
         IStateMachine GetFSM();

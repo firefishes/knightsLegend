@@ -5,7 +5,7 @@ using UnityEngine;
 namespace ShipDock.Applications
 {
 
-    [CustomEditor(typeof(RoleSkillList))]
+    [CustomEditor(typeof(RoleSkillListSObj))]
     public class RoleSkillListCustomEditor : Editor
     {
         private string mRaw;
@@ -18,7 +18,7 @@ namespace ShipDock.Applications
         {
             base.OnInspectorGUI();
 
-            RoleSkillList info = (RoleSkillList)target;
+            RoleSkillListSObj info = (RoleSkillListSObj)target;
             SkillInfo[] skillInfos = info.skills.infos;
 
             if(info.raw != default)
@@ -75,16 +75,27 @@ namespace ShipDock.Applications
                     info.skillMotions.infos = new MotionSceneInfo[0];
                 }
             }
-            CheckSkillInfos(ref info, ref skillInfos);
-            CheckMotions(ref info, ref skillInfos);
+            try
+            {
+                CheckSkillInfos(ref info, ref skillInfos);
+                CheckMotions(ref info, ref skillInfos);
+            }
+            catch(System.Exception error)
+            {
+
+            }
             
+            if(mMode == 1)
+            {
+                Debug.Log(mJSON);
+            }
+
             mMode = 0;
 
         }
 
-        private void CheckSkillInfos(ref RoleSkillList info, ref SkillInfo[] skillInfos)
+        private void CheckSkillInfos(ref RoleSkillListSObj info, ref SkillInfo[] skillInfos)
         {
-            ValueSubgroup vs;
             JSONObject item = default;
             if(mSInfos == default)
             {
@@ -100,7 +111,7 @@ namespace ShipDock.Applications
             int max = skillInfos.Length;
             for (int i = 0; i < max; i++)
             {
-                if(skillInfos[i] != default)
+                if(skillInfos[i] != default && skillInfos.Length > i)
                 {
                     EditorGUILayout.HelpBox("技能 ".Append(skillInfos[i].name.ToString(), " -- ", skillInfos[i].skillName), MessageType.Info);
                 }
@@ -131,6 +142,7 @@ namespace ShipDock.Applications
                         skillInfos.Length > 0 && 
                         skillInfos[i].skillParams != default ? 
                             skillInfos[i].skillParams.Length : 0;
+                ValueSubgroup vs;
                 for (int j = 0; j < n; j++)
                 {
                     var v = skillInfos[i];
@@ -144,6 +156,7 @@ namespace ShipDock.Applications
                     vs.valueTypeInEditor = (ValueItemType)EditorGUILayout.EnumPopup(vs.valueTypeInEditor);
                     vs.valueType = (int)vs.valueTypeInEditor;
                     vs.valueInEditor = vs.valueInEditor == default ? string.Empty : vs.valueInEditor;
+                    vs.dampTime = EditorGUILayout.FloatField("时间", vs.dampTime);
 
                     switch (mMode)
                     {
@@ -156,6 +169,10 @@ namespace ShipDock.Applications
                             s.AddField("str", vs.str);
                             s.AddField("floatValue", vs.floatValue);
                             s.AddField("triggerValue", vs.triggerValue);
+                            if(vs.dampTime > 0f)
+                            {
+                                s.AddField("dampTime", vs.dampTime);
+                            }
                             item["skillParams"].Add(s);
                             break;
                         case 2:
@@ -167,6 +184,7 @@ namespace ShipDock.Applications
                             vs.str = ssi.GetStringValue("str");
                             vs.floatValue = ssi.GetFloatValue("floatValue");
                             vs.triggerValue = ssi.GetBoolValue("triggerValue");
+                            vs.dampTime = ssi.HasField("dampTime") ? ssi.GetFloatValue("dampTime") : 0f;
                             skillInfos[i].skillParams[j] = vs;
                             break;
                     }
@@ -208,7 +226,7 @@ namespace ShipDock.Applications
             }
         }
 
-        private void CheckMotions(ref RoleSkillList info, ref SkillInfo[] skillInfos)
+        private void CheckMotions(ref RoleSkillListSObj info, ref SkillInfo[] skillInfos)
         {
             switch (mMode)
             {

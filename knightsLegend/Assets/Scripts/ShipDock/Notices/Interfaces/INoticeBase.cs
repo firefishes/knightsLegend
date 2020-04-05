@@ -1,5 +1,6 @@
 ﻿
 using ShipDock.Interfaces;
+using ShipDock.Pooling;
 
 namespace ShipDock.Notices
 {
@@ -24,7 +25,7 @@ namespace ShipDock.Notices
         bool IsRecivedNotice { get; set; }
     }
 
-    public interface INotice : INoticeBase<int>
+    public interface INotice : INoticeBase<int>, IPoolable
     {
     }
 

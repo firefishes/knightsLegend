@@ -5,6 +5,7 @@ namespace ShipDock.ECS
     public interface IShipDockComponent : IDispose
     {
         void Init();
+        void FillRelateComponents(IShipDockComponentManager manager);
         IShipDockEntitas GetEntitas(int id);
         int SetEntitas(IShipDockEntitas target);
         int DropEntitas(IShipDockEntitas target, int entitasID);
@@ -12,7 +13,10 @@ namespace ShipDock.ECS
         void UpdateComponent(int time);
         void FreeComponent(int time);
         void SetComponentID(int id);
-        bool Asynced { get; }
+        void SetSceneUpdate(bool value);
+        bool IsUpdating { get; }
         int ID { get; }
+        bool IsSceneUpdate { get; }
+        int[] RelateComponents { get; set; }
     }
 }

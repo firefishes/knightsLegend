@@ -7,20 +7,20 @@ namespace ShipDock.FSM
     public class AnimatorStateMachine : StateMachine
     {
 
-        public AnimatorStateMachine(ref Animator target, int name, Transform animatorTF = default, Action<IStateMachine> fsmRegister = default) : base(name, fsmRegister)
+        public AnimatorStateMachine(Animator target, int name, Action<IStateMachine> fsmRegister = default) : base(name, fsmRegister)
         {
             FSMRegister = fsmRegister;
-            Init(ref target, ref name, ref animatorTF);
+            Init(ref target);
         }
 
-        private void Init(ref Animator target, ref int name, ref Transform animatorTF)
+        private void Init(ref Animator target)
         {
-            InitAnimatorStateMachine(ref target, ref name, ref animatorTF);
+            InitAnimatorStateMachine(ref target);
             
             FSMRegister?.Invoke(this);
         }
 
-        protected virtual void InitAnimatorStateMachine(ref Animator target, ref int name, ref Transform animatorTF)
+        protected virtual void InitAnimatorStateMachine(ref Animator target)
         {
             IState state;
             IAnimatorState animatorState;
@@ -32,12 +32,13 @@ namespace ShipDock.FSM
                 {
                     animatorState = state as IAnimatorState;
                     animatorState.SetAnimator(ref target);
-                    if (animatorTF != null)
-                    {
-                        animatorState.SetTransform(ref animatorTF);
-                    }
                 }
             }
+        }
+
+        public void SetAnimator(ref Animator animator)
+        {
+            InitAnimatorStateMachine(ref animator);
         }
     }
 }

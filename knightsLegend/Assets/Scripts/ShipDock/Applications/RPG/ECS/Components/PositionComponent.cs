@@ -50,10 +50,10 @@ namespace ShipDock.Applications
         public override void Execute(int time, ref IShipDockEntitas target)
         {
             base.Execute(time, ref target);
-
+            
             mRole = target as ICommonRole;
 
-            if (mRole.PositionEnabled)
+            if (mRole != default && mRole.PositionEnabled)
             {
                 CheckEnemyLockDown();
             }

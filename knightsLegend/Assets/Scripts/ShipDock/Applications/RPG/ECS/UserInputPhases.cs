@@ -10,5 +10,6 @@
         public const int ROLE_INPUT_PHASE_CHECK_CROUCH = 4;
         public const int ROLE_INPUT_PHASE_AFTER_MOVE = 5;
         public const int ROLE_INPUT_PHASE_UNDERATTACKED = 100;
+        public const int ROLE_INPUT_PHASE_EMPTY = 101;
     }
 }

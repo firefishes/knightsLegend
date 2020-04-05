@@ -1,5 +1,4 @@
-﻿using ShipDock.Tools;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -29,6 +28,7 @@ namespace ShipDock.Applications
         bool IsCrouch();
         bool IsCrouching();
         bool IsJump();
+        void AddForceMove(IForceMover mover);
         List<int> FullRoleInputPhases { get; set; }
         int RoleInputPhase { get; }
         int RoleInputType { get; set; }
@@ -38,6 +38,7 @@ namespace ShipDock.Applications
         Vector3 GetUserInputValue();
         Vector3 GetMoveValue();
         Vector3 ExtraGravityForceOut { get; }
+        Vector3 ForceMove { get; } 
         ICommonRole RoleEntitas { get; }
     }
 }

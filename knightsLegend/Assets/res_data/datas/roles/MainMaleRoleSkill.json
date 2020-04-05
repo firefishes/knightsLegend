@@ -9,11 +9,11 @@
 				"keyField": "Atked",
 				"valueType": 5,
 				"str": "",
-				"floatValue": 0,
+				"floatValue": 1,
 				"triggerValue": false
 			}, {
 				"valueTypeInEditor": 5,
-				"valueInEditor": "-0.6",
+				"valueInEditor": "0.0",
 				"keyField": "Forward",
 				"valueType": 5,
 				"str": "",
@@ -24,13 +24,13 @@
 			"name": 1,
 			"skillName": "普通攻击1--触发",
 			"skillParams": [{
-				"valueTypeInEditor": 4,
+				"valueTypeInEditor": -1,
 				"valueInEditor": "",
-				"keyField": "IsAtk",
-				"valueType": 4,
+				"keyField": "",
+				"valueType": -1,
 				"str": "",
-				"floatValue": 0,
-				"triggerValue": true
+				"floatValue": -1,
+				"triggerValue": false
 			}]
 		}, {
 			"name": 2,
@@ -41,7 +41,7 @@
 				"keyField": "Atk1",
 				"valueType": 5,
 				"str": "",
-				"floatValue": 0,
+				"floatValue": 1,
 				"triggerValue": false
 			}, {
 				"valueTypeInEditor": 5,
@@ -49,7 +49,7 @@
 				"keyField": "Atk1",
 				"valueType": 5,
 				"str": "",
-				"floatValue": 0,
+				"floatValue": 2,
 				"triggerValue": false
 			}, {
 				"valueTypeInEditor": 5,
@@ -57,7 +57,7 @@
 				"keyField": "Atk1",
 				"valueType": 5,
 				"str": "",
-				"floatValue": 0,
+				"floatValue": 3,
 				"triggerValue": false
 			}]
 		}]
@@ -67,14 +67,14 @@
 			"ID": 0,
 			"skillName": "被攻击",
 			"isCombo": false,
-			"checkComboTime": 0.0,
-			"indexsForID": [0]
+			"indexsForID": [0],
+			"checkComboTime": 0
 		}, {
 			"ID": 1,
 			"skillName": "普通攻击1--触发",
 			"isCombo": true,
-			"checkComboTime": 1.5,
-			"indexsForID": [1, 2]
+			"indexsForID": [1, 2],
+			"checkComboTime": 1.5
 		}]
 	}
 }

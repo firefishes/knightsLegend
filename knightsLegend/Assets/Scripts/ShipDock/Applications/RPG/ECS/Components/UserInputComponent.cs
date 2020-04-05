@@ -33,8 +33,12 @@ namespace ShipDock.Applications
         public override void Execute(int time, ref IShipDockEntitas target)
         {
             base.Execute(time, ref target);
-
+            
             mRoleItem = target as ICommonRole;
+            if (mRoleItem == default)
+            {
+                return;
+            }
             mRoleData = mRoleItem.RoleDataSource;
             mRoleInput = mRoleItem.RoleInput;
             mAnimatorInfo = mRoleItem.RoleAnimatorInfo;

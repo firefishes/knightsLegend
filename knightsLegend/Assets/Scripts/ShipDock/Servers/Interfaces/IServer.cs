@@ -15,6 +15,7 @@ namespace ShipDock.Server
         InterfaceT Resolve<InterfaceT>(string alias,  string resolverName = "");
         void Add<InterfaceT>(ResolveDelegate<InterfaceT> target, bool onlyOnce = false);
         InterfaceT Delive<InterfaceT>(string resolverName, string alias);
+        void Revert(IPoolable target, string alias);
         IServersHolder ServersHolder { get; }
         int Prioriity { get; set; }
         string ServerName { get; }

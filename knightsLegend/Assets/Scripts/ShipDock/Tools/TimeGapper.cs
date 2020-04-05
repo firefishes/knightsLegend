@@ -6,9 +6,13 @@
         public float time;
         public float totalTime;
         
-        public void Start()
+        public void Start(float totalTimeValue = 0f)
         {
             isStart = true;
+            if(totalTimeValue > 0f)
+            {
+                totalTime = totalTimeValue;
+            }
             time = totalTime;
         }
 

@@ -42,7 +42,7 @@ namespace ShipDock.Applications
             mRelater.CommitRelate();
 
             SetMainServerName();
-            MainServerdName.DeliveParam<MainServer, IInputer>("SetInputer", "SetInputerParamer", OnSetInputer);
+            MainServerdName.DeliveParam<MainServer, IInputer>("SetInputer", "SetInputerParamer", OnSetInputer, true);
         }
 
         protected virtual void SetMainServerName()

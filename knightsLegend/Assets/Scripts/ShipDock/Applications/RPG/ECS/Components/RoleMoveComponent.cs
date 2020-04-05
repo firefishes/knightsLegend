@@ -6,10 +6,11 @@ namespace ShipDock.Applications
 
     public class RoleMoveComponent : RoleInputPhasesComponent
     {
+
         public override void Init()
         {
             base.Init();
-
+            
             AddAllowCalled(UserInputPhases.ROLE_INPUT_PHASE_MOVE_READY);
             AddAllowCalled(UserInputPhases.ROLE_INPUT_PHASE_AMOUT_EXTRAN_TURN);
             AddAllowCalled(UserInputPhases.ROLE_INPUT_PHASE_SCALE_CAPSULE);

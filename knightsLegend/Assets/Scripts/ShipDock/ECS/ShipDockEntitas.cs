@@ -11,7 +11,7 @@ namespace ShipDock.ECS
         {
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             WillDestroy = true;
         }

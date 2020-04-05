@@ -1,9 +1,10 @@
 ﻿using ShipDock.ECS;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace ShipDock.Applications
 {
-    public interface ICommonRole : IPathFindable, ICollidableRole, IStatesRole
+    public interface ICommonRole : IPathFindable, ICollidableRole, IStatesRole, IShipDockEntitas
     {
         void SetRoleData(IRoleData data);
         void SetSourceID(int id);
@@ -11,6 +12,8 @@ namespace ShipDock.Applications
         bool IsUserControlling { get; set; }
         bool IsGrounded { get; set; }
         bool IsGroundedAndCrouch { get; set; }
+        void AddCollidingPos(int cid, Vector3 pos);
+        List<RoleColldingPos> ColldingList(int cid);
         int SourceID { get; }
         int Camp { get; }
         string Name { get; set; }

@@ -7,6 +7,7 @@ namespace ShipDock.Applications
     public struct CommonRoleMustSubgroup
     {
         public int roleColliderID;
+        public int roleScanedColliderID;
         public int rigidbodyID;
         public int animatorID;
         public float capsuleHeight;

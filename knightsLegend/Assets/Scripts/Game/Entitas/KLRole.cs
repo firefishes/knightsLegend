@@ -1,17 +1,32 @@
 ﻿using ShipDock.Applications;
+using ShipDock.ECS;
+using ShipDock.Tools;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace KLGame
 {
-    public class KLRole : RoleEntitas, IKLRole
+    public abstract class KLRole : RoleEntitas, IKLRole
     {
+
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            Utils.Reclaim(TimesEntitas);
+
+            TimesEntitas = default;
+            Processing = default;
+            CollidingChanger = default;
+        }
 
         public override void InitComponents()
         {
             base.InitComponents();
 
-            Processing = ShipDockApp.Instance.Components.GetComponentByAID(KLConsts.C_PROCESS) as KLProcessComponent;
+            ShipDockComponentManager components = ShipDockApp.Instance.Components;
+            Processing = components.GetComponentByAID(KLConsts.C_PROCESS) as KLProcessComponent;
 
             TimesEntitas = new TimingTaskEntitas();
         }
@@ -28,7 +43,7 @@ namespace KLGame
 
         public void StartTimingTask(int name, float time, Action completion = default)
         {
-            TimingTasker roleTime = TimesEntitas.GetRoleTime(name);
+            TimingTasker roleTime = TimesEntitas.GetRoleTiming(name);
             if (roleTime != default)
             {
                 if (completion != default)
@@ -45,7 +60,10 @@ namespace KLGame
             RoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_UNDERATTACKED);
         }
 
-        public KLProcessComponent Processing { get; private set; }
+        public override void CollidingChanged(int colliderID, bool isTrigger, bool isCollided)
+        {
+            CollidingChanger?.Invoke(ID, colliderID, isTrigger, isCollided);
+        }
 
         protected override int[] ComponentIDs { get; } = new int[]
         {
@@ -58,6 +76,10 @@ namespace KLGame
             KLConsts.C_ROLE_CAMP
         };
 
+        public abstract int RoleFSMName { get; }
+        public KLProcessComponent Processing { get; private set; }
         public TimingTaskEntitas TimesEntitas { get; private set; }
+        public bool HitSomeOne { get; set; }
+        public Vector3 WeapontPos { get; set; }
     }
 }

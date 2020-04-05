@@ -138,9 +138,13 @@ namespace ShipDock.Server
             return result;
         }
 
-        public void Revert()
+        public void Revert(IPoolable target, string alias)
         {
-
+            IResolvable resolvable = ServersHolder.GetResolvable(ref alias, out int resultError);
+            if (resultError == 0)
+            {
+                resolvable.InstanceFactory.Reserve(ref target);
+            }
         }
 
         public void SetServerHolder(IServersHolder servers)

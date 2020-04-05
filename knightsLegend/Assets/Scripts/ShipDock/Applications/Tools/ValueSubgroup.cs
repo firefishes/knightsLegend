@@ -16,6 +16,7 @@ namespace ShipDock.Applications
         public float floatValue;
         [HideInInspector]
         public double doubleValue;
+        public float dampTime;
 #if UNITY_EDITOR
         public ValueItemType valueTypeInEditor;
         public string valueInEditor;
@@ -25,29 +26,29 @@ namespace ShipDock.Applications
 
         public ValueItem GetFloat()
         {
-            return ValueItem.New(keyField, floatValue);
+            return ValueItem.New(keyField, floatValue).SetDampTime(dampTime);
         }
 
         public ValueItem GetBool()
         {
-            return ValueItem.New(keyField, triggerValue);
+            return ValueItem.New(keyField, triggerValue).SetDampTime(dampTime);
         }
 
         public ValueItem GetString()
         {
-            return ValueItem.New(keyField, str);
+            return ValueItem.New(keyField, str).SetDampTime(dampTime);
         }
 
         private ValueItem GetInt()
         {
-            return ValueItem.New(keyField, (int)floatValue);
+            return ValueItem.New(keyField, (int)floatValue).SetDampTime(dampTime);
         }
 
         private ValueItem GetDouble()
         {
-            return ValueItem.New(keyField, doubleValue);
+            return ValueItem.New(keyField, doubleValue).SetDampTime(dampTime);
         }
-
+        
         public ValueItem GetValue()
         {
             ValueItem result;

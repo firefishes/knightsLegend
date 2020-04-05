@@ -57,10 +57,6 @@ namespace ShipDock.Pooling
 
         public static void To(T target, Pooling<T> customPool = null)
         {
-            if (target == null)
-            {
-                return;
-            }
             TesterBaseApp.Instance.LogWhenPoolingItemDoNotMatch(ref target);
             CheckPoolNull(customPool);
             instance.ToPool(target);
@@ -128,10 +124,14 @@ namespace ShipDock.Pooling
         /// <summary>获取一个对象</summary>
         public virtual T FromPool(Func<T> creater = null)
         {
-            T result = default(T);
+            T result = default;
             if (mPool.Count > 0)
             {
-                result = mPool.Pop();
+                result = mPool.Count > 0 ? mPool.Pop() : default;
+                if (result == default)
+                {
+                    return FromPool(creater);
+                }
             }
             else
             {
@@ -165,7 +165,7 @@ namespace ShipDock.Pooling
         /// <summary>重置并归还一个对象</summary>
         public virtual void ToPool(T target)
         {
-            if ((mPool == null) || (target == default(T)))
+            if (mPool == default)
             {
                 return;
             }

@@ -34,6 +34,7 @@ namespace ShipDock.Applications
         }
 
         private int mFrameSign;
+        private int mFrameSignInScene;
         private Action mAppStarted;
         private KeyValueList<IStateMachine, IUpdate> mFSMUpdaters;
         private KeyValueList<IState, IUpdate> mStateUpdaters;
@@ -49,8 +50,7 @@ namespace ShipDock.Applications
 
             Notificater = new Notifications<int>();
             ABs = new AssetBundles();
-            Servers = new Servers();
-            Servers.OnInit += OnCreateComponentManager;
+            Servers = new Servers(OnCreateComponentManager);
             Datas = new DataWarehouse();
             AssetsPooling = new AssetsPooling();
             StateMachines = new StateMachines
@@ -96,6 +96,10 @@ namespace ShipDock.Applications
 
         private void OnFSMFrameUpdater(IStateMachine fsm, bool isAdd)
         {
+            if (mFSMUpdaters == default)
+            {
+                return;
+            }
             if(isAdd)
             {
                 MethodUpdater updater = new MethodUpdater
@@ -116,35 +120,131 @@ namespace ShipDock.Applications
         {
             Components = new ShipDockComponentManager();
 
-            MethodUpdater updater = new MethodUpdater
-            {
-                Update = ComponentUpdateByTicks
-            };
-            UpdaterNotice notice = new UpdaterNotice
-            {
-                ParamValue = updater
-            };
+            MethodUpdater updater = ShipDockComponentManagerSetting.isMergeUpdateMode ?
+                new MethodUpdater
+                {
+                    Update = MergeComponentUpdateMode
+                } : 
+                new MethodUpdater
+                {
+                    Update = SingleFrameComponentUpdateMode
+                };
+            UpdaterNotice notice = Pooling<UpdaterNotice>.From();
+            notice.ParamValue = updater;
             ShipDockConsts.NOTICE_ADD_UPDATE.Dispatch(notice);
-            notice.Dispose();
+            Pooling<UpdaterNotice>.To(notice);
+
+            ShipDockConsts.NOTICE_SCENE_UPDATE_READY.Add(OnSceneUpdateReady);
         }
 
-        private void ComponentUpdateByTicks(int time)
+        private void SingleFrameComponentUpdateMode(int time)
         {
-            Components.UpdateComponentUnit(ComponentUnitUpdate);
-            if (mFrameSign > 0)
+            if (ShipDockComponentManagerSetting.isUpdateByCallLate)
             {
-                Components.FreeComponentUnit(ComponentUnitUpdate);
+                Components.UpdateComponentUnit(time, ComponentUnitUpdate);
+                if (mFrameSign > 0)
+                {
+                    Components.FreeComponentUnit(time, ComponentUnitUpdate);//奇数帧检测是否有需要释放的实体
+                    Components.RemoveSingedComponents();
+                }
+            }
+            else
+            {
+                Components.UpdateComponentUnit(time);
+                if (mFrameSign > 0)
+                {
+                    Components.FreeComponentUnit(time);//奇数帧检测是否有需要释放的实体
+                    Components.RemoveSingedComponents();
+                }
             }
             mFrameSign++;
-            if (mFrameSign > 1)
+            mFrameSign = mFrameSign > 1 ? 0 : mFrameSign;
+        }
+
+        private void MergeComponentUpdateMode(int time)
+        {
+            if (ShipDockComponentManagerSetting.isUpdateByCallLate)
             {
-                mFrameSign = 0;
+                Components.UpdateComponentUnit(time, ComponentUnitUpdate);
+                Components.FreeComponentUnit(time, ComponentUnitUpdate);
+                Components.RemoveSingedComponents();
+            }
+            else
+            {
+                Components.UpdateComponentUnit(time);
+                Components.FreeComponentUnit(time);
+                Components.RemoveSingedComponents();
             }
         }
 
         private void ComponentUnitUpdate(Action<int> method)
         {
             TicksUpdater.CallLater(method);
+        }
+
+        private void OnSceneUpdateReady(INoticeBase<int> obj)
+        {
+            ShipDockConsts.NOTICE_SCENE_UPDATE_READY.Remove(OnSceneUpdateReady);
+
+            MethodUpdater updater = ShipDockComponentManagerSetting.isMergeUpdateMode ?
+                new MethodUpdater
+                {
+                    Update = MergeComponentUpdateModeInScene
+                } :
+                new MethodUpdater
+                {
+                    Update = SingleFrameComponentUpdateModeInScene
+                };
+
+            UpdaterNotice notice = Pooling<UpdaterNotice>.From();
+            notice.ParamValue = updater;
+            ShipDockConsts.NOTICE_ADD_SCENE_UPDATE.Dispatch(notice);
+            Pooling<UpdaterNotice>.To(notice);
+        }
+
+        private void SingleFrameComponentUpdateModeInScene(int time)
+        {
+            if (ShipDockComponentManagerSetting.isUpdateByCallLate)
+            {
+                Components.UpdateComponentUnitInScene(time, ComponentUnitUpdateInScene);
+                if (mFrameSignInScene > 0)
+                {
+                    Components.FreeComponentUnitInScene(time, ComponentUnitUpdateInScene);//奇数帧检测是否有需要释放的实体
+                    Components.RemoveSingedComponents();
+                }
+            }
+            else
+            {
+                Components.UpdateComponentUnitInScene(time);
+                if (mFrameSignInScene > 0)
+                {
+                    Components.FreeComponentUnitInScene(time);//奇数帧检测是否有需要释放的实体
+                    Components.RemoveSingedComponents();
+                }
+            }
+            mFrameSignInScene++;
+            mFrameSignInScene = mFrameSignInScene > 1 ? 0 : mFrameSignInScene;
+        }
+
+        private void MergeComponentUpdateModeInScene(int time)
+        {
+            if (ShipDockComponentManagerSetting.isUpdateByCallLate)
+            {
+                Components.UpdateComponentUnitInScene(time, ComponentUnitUpdateInScene);
+                Components.FreeComponentUnitInScene(time, ComponentUnitUpdateInScene);
+                Components.RemoveSingedComponents();
+            }
+            else
+            {
+                Components.UpdateComponentUnitInScene(time);
+                Components.FreeComponentUnitInScene(time);
+                Components.RemoveSingedComponents();
+            }
+        }
+
+        private void ComponentUnitUpdateInScene(Action<int> target)
+        {
+            UpdaterNotice.SceneCallLater(target);
         }
 
         public void Clean()
@@ -183,6 +283,11 @@ namespace ShipDock.Applications
             {
                 mAppStarted += method;
             }
+        }
+
+        public void RemoveStart(Action method)
+        {
+            mAppStarted -= method;
         }
 
         public void InitUIRoot(IUIRoot root)

@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace ShipDock.Applications
+﻿namespace ShipDock.Applications
 {
     public static class ShipDockConsts
     {
@@ -14,5 +10,6 @@ namespace ShipDock.Applications
         public const int NOTICE_ADD_SCENE_UPDATE = -1005;
         public const int NOTICE_REMOVE_SCENE_UPDATE = -1006;
         public const int NOTICE_SCENE_UPDATE_READY = -1007;
+        public const int NOTICE_SCENE_CALL_LATE = -1008;
     }
 }

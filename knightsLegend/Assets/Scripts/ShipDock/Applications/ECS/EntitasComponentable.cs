@@ -1,9 +1,18 @@
 ﻿using ShipDock.ECS;
+using ShipDock.Tools;
 
 namespace ShipDock.Applications
 {
     public abstract class EntitasComponentable : ShipDockEntitas
     {
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            int[] list = ComponentIDs;
+            Utils.Reclaim(ref list);
+        }
+
         public override void InitComponents()
         {
             base.InitComponents();
@@ -18,6 +27,17 @@ namespace ShipDock.Applications
                 component = manager.GetComponentByAID(aid);
                 AddComponent(component);
             }
+        }
+
+        public T GetComponentFromEntitas<T>(int aid) where T : IShipDockComponent
+        {
+            T result = default;
+            if (HasComponent(aid))
+            {
+                int index = ComponentList.IndexOf(aid);
+                result = (T)ShipDockApp.Instance.Components.GetComponentByAID(ComponentList[index]);
+            }
+            return result;
         }
 
         protected abstract int[] ComponentIDs { get; }

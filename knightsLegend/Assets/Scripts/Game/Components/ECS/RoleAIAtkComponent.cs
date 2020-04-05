@@ -1,10 +1,5 @@
 ﻿using ShipDock.Applications;
 using ShipDock.ECS;
-using ShipDock.Tools;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace KLGame
 {
@@ -29,14 +24,11 @@ namespace KLGame
 
         private void AfterNormalATK()
         {
+            mAIRole.ResetAIRoleATK();
             if (mPositionComp.IsEntitasStoped(ref mRole))
             {
                 mAIRole.SetShouldAtkAIWork(true);
                 mRoleInput.SetInputPhase(EnemyInputPhases.ENEMY_INPUT_PHASE_SET_NROMAL_ATK_TRIGGER_TIME);
-            }
-            else
-            {
-                mAIRole.ResetAIRoleATK();
             }
         }
 
@@ -48,7 +40,7 @@ namespace KLGame
                 {
                     if(!mAIRole.InATKCycle)
                     {
-                        if (!mAIRole.TimesEntitas.GetRoleTime(RoleTimingTaskNames.NORMAL_ATK_TIME).IsStart)
+                        if (!mAIRole.TimesEntitas.GetRoleTiming(RoleTimingTaskNames.NORMAL_ATK_TIME).IsStart)
                         {
                             mRoleInput.SetInputPhase(EnemyInputPhases.ENEMY_INPUT_PHASE_NROMAL_ATK);
                         }

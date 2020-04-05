@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using ShipDock.Interfaces;
 using ShipDock.Notices;
@@ -11,24 +12,32 @@ namespace ShipDock.Applications
 
         private int mAddItemNoticeName;
         private int mRemoveItemNoticeName;
+        private int mCallLateNoticeName;
         private IUpdate mItem;
         private List<IUpdate> mCacher;
         private List<IUpdate> mDeleted;
+        private TicksLater mTicksLater;
 
-        public UpdatesCacher(int addNoticeName, int removeNoticeName)
+        public UpdatesCacher(int addNoticeName, int removeNoticeName, int callLateNoticeName)
         {
             mCacher = new List<IUpdate>();
             mDeleted = new List<IUpdate>();
+            mTicksLater = new TicksLater();
 
-            if(addNoticeName != int.MaxValue)
+            if (addNoticeName != int.MaxValue)
             {
                 mAddItemNoticeName = addNoticeName;
                 mAddItemNoticeName.Add(OnAddItem);
             }
-            if(removeNoticeName != int.MaxValue)
+            if (removeNoticeName != int.MaxValue)
             {
                 mRemoveItemNoticeName = removeNoticeName;
                 mRemoveItemNoticeName.Add(OnRemoveItem);
+            }
+            if (callLateNoticeName != int.MaxValue)
+            {
+                mCallLateNoticeName = callLateNoticeName;
+                mCallLateNoticeName.Add(OnAddCallLate);
             }
         }
 
@@ -75,6 +84,17 @@ namespace ShipDock.Applications
             {
                 mCacher.Add(target);
             }
+        }
+
+        private void OnAddCallLate(INoticeBase<int> param)
+        {
+            if (IsDisposed)
+            {
+                return;
+            }
+
+            ParamNotice<Action<int>> notice = param as ParamNotice<Action<int>>;
+            mTicksLater.CallLater(notice.ParamValue);
         }
 
         public void Update(int time)

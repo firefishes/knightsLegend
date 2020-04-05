@@ -288,7 +288,7 @@ namespace ShipDock.FSM
             {
                 if (Current != null)
                 {
-                    Current.SetStateParam(ref param);
+                    Current.SetStateParam(param);
                 }
             }
         }

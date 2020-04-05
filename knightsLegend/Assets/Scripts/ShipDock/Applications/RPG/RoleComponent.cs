@@ -1,5 +1,5 @@
-﻿#define TEST_MOVER
-#define _DEBUG_ENMEY_POS
+﻿#define G_LOG
+#define TEST_MOVER
 
 using ShipDock.Notices;
 using ShipDock.Tools;
@@ -27,7 +27,9 @@ namespace ShipDock.Applications
         [SerializeField]
         private CapsuleCollider m_RoleCollider;
         [SerializeField]
-        private Transform m_CameraNode;
+        private Collider m_RoleScanedCollider;
+        [SerializeField]
+        protected Transform m_CameraNode;
         
         [SerializeField]
         protected Animator m_RoleAnimator;
@@ -78,6 +80,7 @@ namespace ShipDock.Applications
             m_RoleMustSubgroup = new CommonRoleMustSubgroup
             {
                 roleColliderID = m_RoleCollider.GetInstanceID(),
+                roleScanedColliderID = m_RoleScanedCollider.GetInstanceID(),
                 animatorID = m_RoleAnimator.GetInstanceID(),
                 rigidbodyID = m_RoleRigidbody.GetInstanceID(),
                 origGroundCheckDistance = mGroundCheckDistance
@@ -116,35 +119,15 @@ namespace ShipDock.Applications
             }
         }
 
-#if UNITY_EDITOR && DEBUG_ENMEY_POS
-        private static RoleComponent sceneSelectedRole;
-
+#if UNITY_EDITOR
         [SerializeField]
-        private bool m_IsShowEnemyPos;
-
-        private GUIStyle mEnemyLabelStyle;
+        protected bool m_IsShowEnemyPos;
 
         private void OnGUI()
         {
             if(m_IsShowEnemyPos)
             {
-                if (sceneSelectedRole != default)
-                {
-                    sceneSelectedRole.CancelShowEnemyPos();
-                }
-                sceneSelectedRole = this;
-
-                if (mEnemyLabelStyle == default)
-                {
-                    mEnemyLabelStyle = new GUIStyle("enemyPosLabel")
-                    {
-                        fontSize = 30
-                    };
-
-                }
-                string content = (mRole != default) ? mRole.GetDistFromMainLockDown().ToString() : string.Empty;
-
-                GUILayout.Label(content, mEnemyLabelStyle);
+                TesterRPG.Instance.ShowRoleInfoInGUI(this);
             }
         }
 
@@ -183,40 +166,99 @@ namespace ShipDock.Applications
 
         protected abstract void SetRoleEntitas();
         protected abstract void OnRoleNotices(INoticeBase<int> obj);
-        protected abstract bool CheckMoveBlock();
-
-        private void UpdateNavMeshAgent()
-        {
-            if (mRole.FindngPath)
-            {
-                if ((mRole.EnemyMainLockDown != default) && !CheckMoveBlock())
-                {
-                    m_NavMeshAgent.destination = mRole.EnemyMainLockDown.Position;
-                    mRoleInput.SetMoveValue(m_NavMeshAgent.velocity);
-                    transform.LookAt(m_NavMeshAgent.destination);
-                }
-            }
-            else
-            {
-                if (mRoleInput != default)
-                {
-                    mRoleInput.SetMoveValue(Vector3.zero);
-                }
-            }
-        }
-
+        protected abstract bool CheckUnableToMove();
+        
         protected void UpdateByPositionComponent()
         {
             mRole.Direction = transform.forward;
             mRole.Position = transform.position;
             if (mRole.PositionEnabled)
             {
-                UpdateNavMeshAgent();
+                AutoPathFinding();
             }
             else
             {
                 UpdateByUserControlled();
             }
+        }
+
+        private void AutoPathFinding()
+        {
+            SetNavMeshAgentStopped(!mRole.FindngPath);
+            if (mRole.FindngPath)
+            {
+                if ((mRole.EnemyMainLockDown != default) && !CheckUnableToMove())
+                {
+                    m_NavMeshAgent.destination = mRole.EnemyMainLockDown.Position;
+                    mRoleInput.SetMoveValue(m_NavMeshAgent.velocity);
+                }
+            }
+            else
+            {
+                if (mRoleInput != default)
+                {
+                    mRoleInput.SetMoveValue(mRoleInput.ForceMove);
+                    if (IsKinematic)
+                    {
+                        transform.position += mRoleInput.GetMoveValue() * Time.deltaTime;
+                    }
+                    else
+                    {
+                        m_RoleRigidbody.velocity += mRoleInput.GetMoveValue();
+                    }
+                }
+            }
+            if (m_NavMeshAgent != default)
+            {
+                transform.LookAt(m_NavMeshAgent.destination);
+            }
+        }
+
+        private void SyncInfos()
+        {
+            m_RoleCompInfo.SetHp(mRole.RoleDataSource.Hp);
+            m_RoleCompInfo.SetSpeed(mRole.SpeedCurrent);
+            if (m_NavMeshAgent != default)
+            {
+                m_NavMeshAgent.speed = mRole.SpeedCurrent;
+            }
+            if (mRoleInput == default)
+            {
+                mRoleInput = mRole.RoleInput;
+            }
+            mRoleInput.SetDeltaTime(Time.deltaTime);
+            if (!mIsRoleNameSynced && !string.IsNullOrEmpty(mRole.Name))
+            {
+                mIsRoleNameSynced = true;
+                name = mRole.Name;
+            }
+        }
+
+        private void Update()
+        {
+            if (mRole != default)
+            {
+                SyncInfos();
+                UpdateByPositionComponent();
+                ExecuteSceneComponentInput();
+                mRoleInput.ShouldGetUserInput = true;
+
+                UpdateAnimations();
+            }
+        }
+
+        protected void ExecuteSceneComponentInput()
+        {
+            if (mRoleInput != default)
+            {
+                int phaseValue = mRoleInput.RoleInputPhase;
+                mSceneCompCallaback = mRoleInputCallbacks[phaseValue];
+                mRoleInput.ExecuteBySceneComponent(ref mSceneCompCallaback);
+            }
+        }
+
+        protected virtual void UpdateAnimations()
+        {
         }
 
         protected virtual void UpdateByUserControlled()
@@ -228,7 +270,7 @@ namespace ShipDock.Applications
 
         protected void SetNavMeshAgentStopped(bool flag)
         {
-            m_NavMeshAgent.isStopped = true;
+            m_NavMeshAgent.isStopped = flag;
         }
 
         protected virtual void UpdateRoleInputMoveValue(out Vector3 v)
@@ -238,12 +280,18 @@ namespace ShipDock.Applications
             mRoleInput.SetMoveValue(v);
         }
 
+        protected virtual Vector3 CreateRoleRigidbodyVelocity(Vector3 v)
+        {
+            return IsKinematic ? v * mRole.SpeedCurrent : v * mRole.SpeedCurrent * 5;
+        }
+
         protected void SetRoleRigidbodyVelocity(Vector3 v)
         {
-            if (CheckMoveBlock())
+            if (CheckUnableToMove())
             {
                 v = Vector3.zero;
             }
+            v += mRoleInput.ForceMove;
             if (IsKinematic)
             {
                 transform.position += v * Time.deltaTime;
@@ -252,11 +300,6 @@ namespace ShipDock.Applications
             {
                 m_RoleRigidbody.velocity = v;
             }
-        }
-
-        protected virtual Vector3 CreateRoleRigidbodyVelocity(Vector3 v)
-        {
-            return IsKinematic ? v * mRole.SpeedCurrent : v * mRole.SpeedCurrent * 10;
         }
 
         protected void CheckRoleInputGroundPhase()
@@ -337,53 +380,6 @@ namespace ShipDock.Applications
             return flag;
         }
 
-        private void SyncInfos()
-        {
-            m_RoleCompInfo.SetHp(mRole.RoleDataSource.Hp);
-            m_RoleCompInfo.SetSpeed(mRole.SpeedCurrent);
-            if (m_NavMeshAgent != default)
-            {
-                m_NavMeshAgent.speed = mRole.SpeedCurrent;
-            }
-            if (mRoleInput == default)
-            {
-                mRoleInput = mRole.RoleInput;
-            }
-            mRoleInput.SetDeltaTime(Time.deltaTime);
-            if (!mIsRoleNameSynced && !string.IsNullOrEmpty(mRole.Name))
-            {
-                mIsRoleNameSynced = true;
-                name = mRole.Name;
-            }
-        }
-
-        private void Update()
-        {
-            if (mRole != default)
-            {
-                SyncInfos();
-                UpdateByPositionComponent();
-                ExecuteSceneComponentInput();
-                mRoleInput.ShouldGetUserInput = true;
-
-                UpdateAnimations();
-            }
-        }
-
-        protected void ExecuteSceneComponentInput()
-        {
-            if (mRoleInput != default)
-            {
-                int phaseValue = mRoleInput.RoleInputPhase;
-                mSceneCompCallaback = mRoleInputCallbacks[phaseValue];
-                mRoleInput.ExecuteBySceneComponent(ref mSceneCompCallaback);
-            }
-        }
-
-        protected virtual void UpdateAnimations()
-        {
-        }
-
         private void CheckRoleInputMovePhase()
         {
             Vector3 v = transform.InverseTransformDirection(mRoleInput.GetMoveValue());
@@ -436,13 +432,25 @@ namespace ShipDock.Applications
             }
         }
 
+        protected virtual bool ShouldUpdateForwardParam()
+        {
+            return true;
+        }
+
         protected virtual void UpdateAnimatorForwardParam()
         {
-            m_RoleAnimator.SetFloat(m_BlendTreeInfo.MoveMotionName, mRoleInput.ForwardAmount, 0.1f, Time.deltaTime);
+            float value = ShouldUpdateForwardParam() ? mRoleInput.ForwardAmount : 0f;
+            m_RoleAnimator.SetFloat(m_BlendTreeInfo.MoveMotionName, value, 0.1f, Time.deltaTime);
+        }
+
+        protected virtual bool ShouldUpdateTurnParam()
+        {
+            return true;
         }
 
         protected virtual void UpdateAnimatorTurnParam()
         {
+            float value = ShouldUpdateTurnParam() ? mRoleInput.TurnAmount : 0f;
             m_RoleAnimator.SetFloat(m_BlendTreeInfo.TurnMotionName, mRoleInput.TurnAmount, 0.1f, Time.deltaTime);
         }
 

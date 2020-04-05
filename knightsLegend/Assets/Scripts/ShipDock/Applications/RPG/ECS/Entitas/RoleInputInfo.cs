@@ -1,5 +1,4 @@
-﻿using ShipDock.FSM;
-using ShipDock.Tools;
+﻿using ShipDock.Tools;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +9,11 @@ namespace ShipDock.Applications
     {
         public int called;
         public Action callbacker;
+    }
+
+    public interface IForceMover
+    {
+        Vector3 GetMoverVector();
     }
 
     [Serializable]
@@ -231,6 +235,13 @@ namespace ShipDock.Applications
             RoleInputPhase++;
         }
 
+        public void AddForceMove(IForceMover mover)
+        {
+            ForceMove += mover.GetMoverVector();
+        }
+
+        private Queue<int> PhaseWillSet { get; set; } = new Queue<int>();
+
         public List<int> FullRoleInputPhases { get; set; }
         public bool ShouldGetUserInput { get; set; }
         public int RoleInputType { get; set; } = 0;
@@ -240,6 +251,7 @@ namespace ShipDock.Applications
         public float ExtraTurnRotationOut { get; private set; }
         public Vector3 ExtraGravityForceOut { get; private set; }
         public ICommonRole RoleEntitas { get; private set; }
+        public Vector3 ForceMove { get; private set; }
     }
 
 }

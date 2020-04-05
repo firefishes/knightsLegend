@@ -1,101 +1,81 @@
-﻿using ShipDock.Tools;
+﻿using ShipDock.FSM;
+using ShipDock.Interfaces;
+using ShipDock.Tools;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace ShipDock.Applications
 {
 
-    public class AnimationInfoUpdater : MethodUpdater
+    public class AnimationInfoUpdater : IDispose
     {
-        private int mMax;
-        private int mFrame;
         private ValueItem mConfItem;
         private ValueItem[] mParamsNew;
-        private KeyValueList<int, TimingCallbacker> mTimings;
+        private List<ValueItem> mParamSet;
+        private List<ValueItem> mParamDamp;
 
         public AnimationInfoUpdater(bool autoDispose = false)
         {
             HasCompleted = true;
             AutoDispose = autoDispose;
-            mTimings = new KeyValueList<int, TimingCallbacker>();
+            mParamDamp = new List<ValueItem>();
+            mParamSet = new List<ValueItem>();
         }
 
-        public override void Dispose()
+        public void Dispose()
         {
-            base.Dispose();
-
-            ResetAllTiming();
-            Stop();
-
-            Utils.Reclaim(ref mTimings, true, true);
-            Completion = default;
             AnimatorTarget = default;
-            ShortNameHash = 0;
         }
 
-        public void ResetAllTiming()
+        public void Stop()
         {
-            Utils.Reclaim(ref mTimings, false, true);
+            Utils.Reclaim(ref mParamsNew, false);
+            Utils.Reclaim(ref mParamDamp, false);
+            Utils.Reclaim(ref mParamSet, false);
         }
         
-        public TimingCallbacker AddTimingCallback(float time, Action method)
-        {
-            TimingCallbacker callbacker;
-
-            int index = Mathf.CeilToInt(Length * 0.8f);
-            if (mTimings.ContainsKey(index))
-            {
-                callbacker = mTimings[index];
-            }
-            else
-            {
-                callbacker = new TimingCallbacker
-                {
-                    timing = time
-                };
-                mTimings[index] = callbacker;
-            }
-            callbacker.callback += method;
-            return callbacker;
-        }
-
-        public void Start(Animator animator, float lengthOffset = 0, params ValueItem[] paramConfs)
-        {
-            Start(animator, lengthOffset, default, paramConfs);
-        }
-        
-        public void Start(Animator animator, float lengthOffset = 0, Action<Animator> method = default, params ValueItem[] paramConfs)
+        public void Start(Animator animator, params ValueItem[] paramConfs)
         {
             HasCompleted = false;
             AnimatorTarget = animator;
 
             if(AnimatorTarget == default)
             {
-                Stop();
                 return;
             }
 
-            mFrame = 0;
             mParamsNew = paramConfs;
-            RefreshParams(ref mParamsNew);
-
-            AnimatorClipInfo[] clips = AnimatorTarget.GetCurrentAnimatorClipInfo(0);
-            ClipInfo = (clips.Length > 0) ? clips[0] : default;
-            Length = (clips.Length > 0) ? ClipInfo.weight : 1f;
-            Length -= lengthOffset;
-
-            ShortNameHash = StateInfo.shortNameHash;
-            Completion = method;
-
-            UpdaterNotice.AddSceneUpdater(this);
+            int max = mParamsNew.Length;
+            for (int i = 0; i < max; i++)
+            {
+                ValueItem item = mParamsNew[i];
+                if (item.DampTime > 0f)
+                {
+                    mParamDamp.Add(item);
+                }
+                else
+                {
+                    mParamSet.Add(item);
+                }
+            }
+            RefreshParams(ref mParamSet);
+            Length = StateInfo.normalizedTime;
         }
 
-        private void RefreshParams(ref ValueItem[] paramConfs, bool checkDampTime = false)
+        public bool Update(IAnimatorState state)
+        {
+            Testers.Tester.Instance.Log(TesterRPG.Instance, TesterRPG.LOG, string.IsNullOrEmpty(state.AnimationName), "error: ".Append(state.ToString(), " animation name is null."));
+            HasCompleted = (StateInfo.normalizedTime > 1f) && StateInfo.IsName(state.AnimationName);
+            return HasCompleted;
+        }
+
+        private void RefreshParams(ref List<ValueItem> paramConfs, bool checkDampTime = false)
         {
             if(paramConfs != default)
             {
-                mMax = paramConfs.Length;
-                for (int i = 0; i < mMax; i++)
+                int max = paramConfs.Count;
+                for (int i = 0; i < max; i++)
                 {
                     mConfItem = paramConfs[i];
                     RefreshParamItem(ref mConfItem, ref checkDampTime);
@@ -113,7 +93,7 @@ namespace ShipDock.Applications
             {
                 if (checkDampTime && conf.DampTime > 0f)
                 {
-                    AnimatorTarget.SetFloat(conf.KeyField, conf.Float, conf.DampTime, Time.deltaTime);
+                    AnimatorTarget.SetFloat(conf.KeyField, conf.Float, conf.DampTime, DeltaTime);
                 }
                 else
                 {
@@ -126,41 +106,6 @@ namespace ShipDock.Applications
             }
         }
 
-        public void Stop()
-        {
-            mFrame = 0;
-            UpdaterNotice.RemoveSceneUpdater(this);
-        }
-
-        public override void OnUpdate(int dTime)
-        {
-            base.OnUpdate(dTime);
-
-            Length -= Time.deltaTime;
-            if (Length <= 0f)
-            {
-                Completion?.Invoke(AnimatorTarget);
-                HasCompleted = true;
-
-                if (AutoDispose)
-                {
-                    Dispose();
-                }
-                else
-                {
-                    Stop();
-                }
-            }
-            else
-            {
-                if(mTimings != default && mTimings.ContainsKey(mFrame))
-                {
-                    mTimings[mFrame].callback?.Invoke();
-                }
-            }
-            mFrame++;
-        }
-
         public AnimatorStateInfo StateInfo
         {
             get
@@ -169,13 +114,11 @@ namespace ShipDock.Applications
             }
         }
 
-        public AnimatorClipInfo ClipInfo { get; private set; }
-        public Action<Animator> Completion { get; set; }
         public Animator AnimatorTarget { get; private set; }
-        public int ShortNameHash { get; private set; }
-        public float Length { get; private set; }
         public bool HasCompleted { get; private set; }
         public bool AutoDispose { get; private set; }
         public bool AutoStop { get; set; }
+        public float Length { get; private set; }
+        public float DeltaTime { get; set; }
     }
 }

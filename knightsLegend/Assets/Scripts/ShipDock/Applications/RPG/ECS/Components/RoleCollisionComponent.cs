@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿#define G_LOG
+#define LOG_TRY_CATCH_TIRGGER
+
+using System.Collections.Generic;
 using ShipDock.ECS;
 using ShipDock.Tools;
 
@@ -26,6 +29,9 @@ namespace ShipDock.Applications
                 ICommonRole role = target as ICommonRole;
                 int subgroupID = role.RoleMustSubgroup.roleColliderID;
                 mRoleColliderMapper[subgroupID] = role;
+
+                subgroupID = role.RoleMustSubgroup.roleScanedColliderID;
+                mRoleColliderMapper[subgroupID] = role;
             }
             return id;
         }
@@ -39,6 +45,9 @@ namespace ShipDock.Applications
                 ICommonRole role = entitas as ICommonRole;
                 int colliderID = role.RoleMustSubgroup.roleColliderID;
                 mRoleColliderMapper.Remove(colliderID);
+
+                colliderID = role.RoleMustSubgroup.roleScanedColliderID;
+                mRoleColliderMapper.Remove(colliderID);
             }
         }
 
@@ -51,16 +60,37 @@ namespace ShipDock.Applications
         {
             base.Execute(time, ref target);
 
+            if (IsUpdating)
+            {
+                return;
+            }
+            IsUpdating = true;
+
             int blockID;
             mRole = target as ICommonRole;
 
             bool isGetEnemy = false;
+#if LOG_TRY_CATCH_TIRGGER && UNITY_EDITOR
+            try
+            {
+#endif
             mRoleColliding = mRole.CollidingRoles;
-            int max = mRoleColliding.Count;
+#if LOG_TRY_CATCH_TIRGGER && UNITY_EDITOR
+            }
+            catch (System.Exception error)
+            {
+                Testers.Tester.Instance.Log(TesterRPG.Instance, TesterRPG.LOG, "error: role is null");
+            }
+#endif
+            int max = mRoleColliding != default ? mRoleColliding.Count : 0;
             if (max > 0)
             {
                 for (int i = 0; i < max; i++)
                 {
+                    if(i >= mRoleColliding.Count)
+                    {
+                        break;
+                    }
                     blockID = mRoleColliding[i];
                     mRoleCollidingTarget = mRoleColliderMapper[blockID];
                     if (mRoleCollidingTarget != default)
@@ -83,6 +113,7 @@ namespace ShipDock.Applications
                 //    mRole.SpeedCurrent = mRole.Speed;
                 //}
             }
+            IsUpdating = false;
         }
     }
 }

@@ -17,5 +17,16 @@ namespace KLGame
 
             Camp = 0;
         }
+        
+        protected override IRoleInput CreateRoleInputInfo()
+        {
+            var fsm = new MainMaleRoleFSM(RoleFSMName)
+            {
+                RoleEntitas = this
+            };
+            return new KLRoleInputInfo(this, fsm);
+        }
+
+        public override int RoleFSMName { get; } = KLConsts.RFSM_MAIN_MALE_ROLE;
     }
 }

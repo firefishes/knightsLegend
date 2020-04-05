@@ -1,10 +1,10 @@
-﻿using ShipDock.Tools;
+﻿using ShipDock.Interfaces;
+using ShipDock.Tools;
 using System;
 
 namespace ShipDock.Applications
 {
-
-    public class TimingTasker
+    public class TimingTasker : IDispose
     {
         public float dTime;
         public TimeGapper timeGapper;
@@ -16,6 +16,17 @@ namespace ShipDock.Applications
             mapper[name] = this;
             completion += UpdateRunCounts;
             Name = name;
+        }
+
+        public void Dispose()
+        {
+            completion = default;
+            timeGapper.totalTime = 0f;
+        }
+
+        public void Start(float totalTime)
+        {
+            timeGapper.Start(totalTime);
         }
 
         public void ResetRunCounts()

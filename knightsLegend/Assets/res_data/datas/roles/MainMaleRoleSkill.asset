@@ -24,28 +24,31 @@ MonoBehaviour:
         str: 
         floatValue: 1
         doubleValue: 0
+        dampTime: 0
         valueTypeInEditor: 5
         valueInEditor: 1
         triggerValue: 0
       - keyField: Forward
         valueType: 5
         str: 
-        floatValue: -0.6
+        floatValue: 0
         doubleValue: 0
+        dampTime: 0
         valueTypeInEditor: 5
-        valueInEditor: -0.6
+        valueInEditor: 0.0
         triggerValue: 0
     - skillName: "\u666E\u901A\u653B\u51FB1--\u89E6\u53D1"
       name: 1
       skillParams:
-      - keyField: IsAtk
-        valueType: 4
+      - keyField: 
+        valueType: -1
         str: 
-        floatValue: 0
+        floatValue: -1
         doubleValue: 0
-        valueTypeInEditor: 4
+        dampTime: 0
+        valueTypeInEditor: -1
         valueInEditor: 
-        triggerValue: 1
+        triggerValue: 0
     - skillName: "\u666E\u901A\u653B\u51FB1--\u52A8\u753B"
       name: 2
       skillParams:
@@ -54,6 +57,7 @@ MonoBehaviour:
         str: 
         floatValue: 1
         doubleValue: 0
+        dampTime: 0
         valueTypeInEditor: 5
         valueInEditor: 1
         triggerValue: 0
@@ -62,6 +66,7 @@ MonoBehaviour:
         str: 
         floatValue: 2
         doubleValue: 0
+        dampTime: 0
         valueTypeInEditor: 5
         valueInEditor: 2
         triggerValue: 0
@@ -70,6 +75,7 @@ MonoBehaviour:
         str: 
         floatValue: 3
         doubleValue: 0
+        dampTime: 0
         valueTypeInEditor: 5
         valueInEditor: 3
         triggerValue: 0
@@ -81,18 +87,8 @@ MonoBehaviour:
       ID: 0
       checkComboTime: 0
       indexsForID: 00000000
-      motionCompletionEvent:
-        m_PersistentCalls:
-          m_Calls: []
-        m_TypeName: ShipDock.Applications.MotionCompletionEvent, Assembly-CSharp,
-          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     - skillName: "\u666E\u901A\u653B\u51FB1--\u89E6\u53D1"
       isCombo: 1
       ID: 1
       checkComboTime: 1.5
       indexsForID: 0100000002000000
-      motionCompletionEvent:
-        m_PersistentCalls:
-          m_Calls: []
-        m_TypeName: ShipDock.Applications.MotionCompletionEvent, Assembly-CSharp,
-          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null

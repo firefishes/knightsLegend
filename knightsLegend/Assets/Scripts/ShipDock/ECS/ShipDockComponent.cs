@@ -5,12 +5,17 @@ namespace ShipDock.ECS
 {
     public class ShipDockComponent : IShipDockComponent
     {
-
         private IShipDockEntitas mEntitasItem;
         private List<int> mEntitasIDs;
         private List<int> mEntitasIDsRelease;
         private List<int> mEntitasIDsRemoved;
         private IntegerMapper<IShipDockEntitas> mEntitas;
+        private KeyValueList<int, IShipDockComponent> mRelatedComponents;
+
+        public ShipDockComponent()
+        {
+            mRelatedComponents = new KeyValueList<int, IShipDockComponent>();
+        }
 
         public virtual void Dispose()
         {
@@ -86,7 +91,13 @@ namespace ShipDock.ECS
 
         public void UpdateComponent(int time)
         {
-            Asynced = false;
+            if(IsUpdating)
+            {
+                return;
+            }
+
+            IsUpdating = true;
+
             int id;
             int max = (mEntitasIDs != default) ? mEntitasIDs.Count : 0;
             for (int i = 0; i < max; i++)
@@ -116,13 +127,12 @@ namespace ShipDock.ECS
                 }
             }
             mEntitasItem = default;
-            Asynced = true;
+            IsUpdating = false;
         }
 
         public void FreeComponent(int time)
         {
             int id;
-            int statu;
             int max = (mEntitasIDsRelease != default) ? mEntitasIDsRelease.Count : 0;
             for (int i = 0; i < max; i++)
             {
@@ -130,7 +140,7 @@ namespace ShipDock.ECS
                 mEntitasItem = GetEntitas(id);
                 if (mEntitasItem != default)
                 {
-                    FreeEntitas(id, ref mEntitasItem, out statu);
+                    FreeEntitas(id, ref mEntitasItem, out int statu);
                 }
                 mEntitasIDsRemoved.Remove(id);
             }
@@ -145,7 +155,59 @@ namespace ShipDock.ECS
             mEntitasIDs.Remove(mid);
         }
 
-        public bool Asynced { get; private set; }
+        public void FillRelateComponents(IShipDockComponentManager manager)
+        {
+            int aid;
+            IShipDockComponent item;
+            int max = RelateComponents != default ? RelateComponents.Length : 0;
+            bool needCheckReFill = max > 0 && mRelatedComponents.Size == 0;
+            for (int i = 0; i < max; i++)
+            {
+                aid = RelateComponents[i];
+                if(!mRelatedComponents.ContainsKey(aid))
+                {
+                    item = manager.GetComponentByAID(aid);
+                    if(item != default)
+                    {
+                        mRelatedComponents[aid] = item;
+                    }
+                }
+            }
+            CheckRelateComponentsReFill(max, needCheckReFill, ref manager);
+        }
+
+        private void CheckRelateComponentsReFill(int count, bool needCheckReFill, ref IShipDockComponentManager manager)
+        {
+            if(count == 0)
+            {
+                return;
+            }
+            if (needCheckReFill)
+            {
+                if (mRelatedComponents.Size != count)
+                {
+                    manager.RelateComponentsReFiller += FillRelateComponents;
+                }
+            }
+            else
+            {
+                manager.RelateComponentsReFiller -= FillRelateComponents;
+            }
+        }
+
+        protected T GetRelatedComponent<T>(int aid) where T : IShipDockComponent
+        {
+            return (T)mRelatedComponents[aid];
+        }
+
+        public void SetSceneUpdate(bool value)
+        {
+            IsSceneUpdate = value;
+        }
+
+        public bool IsUpdating { get; protected set; }
         public int ID { get; private set; } = int.MaxValue;
+        public int[] RelateComponents { get; set; }
+        public bool IsSceneUpdate { get; private set; }
     }
 }

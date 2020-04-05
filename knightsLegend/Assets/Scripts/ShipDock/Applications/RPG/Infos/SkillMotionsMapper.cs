@@ -26,8 +26,7 @@ namespace ShipDock.Applications
 
             if (item.isCombo)
             {
-                ComboMotionCreater target = GetComboMotionCreater(SkillsMapper, item.indexsForID[0], item.indexsForID[1], default, item.checkComboTime);
-                target.MotionCompletionEvent = item.motionCompletionEvent;
+                ComboMotionCreater target = GetComboMotionCreater(SkillsMapper, item.indexsForID[0], item.indexsForID[1], item.checkComboTime);
                 item.ComboMotion = target;
 
                 int index = Values.IndexOf(item);
@@ -45,12 +44,11 @@ namespace ShipDock.Applications
             }
         }
 
-        private ComboMotionCreater GetComboMotionCreater(SkillsMapper mapper, int IDForTriggers = -1, int IDForTrans = -1, Action onCompleted = default, float checkComboTime = 0f)
+        private ComboMotionCreater GetComboMotionCreater(SkillsMapper mapper, int IDForTriggers = -1, int IDForTrans = -1, float checkComboTime = 0f)
         {
             ValueItem[] triggers = (IDForTriggers > -1) ? mapper[IDForTriggers].GetInfos() : emptySkillInfoValueItems;
             ValueItem[] trans = (IDForTrans > -1) ? mapper[IDForTrans].GetInfos() : emptySkillInfoValueItems;
-            ComboMotionCreater result = new ComboMotionCreater(trans.Length, triggers, trans, onCompleted);
-            result.SetCheckComboTime(checkComboTime);
+            ComboMotionCreater result = new ComboMotionCreater(trans.Length, triggers, trans);
             return result;
         }
 
@@ -59,33 +57,34 @@ namespace ShipDock.Applications
             return item.ID;
         }
 
-        public void StartSkill(int id, ref Animator animator, Action<Animator> onMotionCompleted = default)
+        public ComboMotionCreater GetComboMotion(int id, ref Animator animator)
         {
+            ComboMotionCreater result = default;
             MotionSceneInfo sceneInfo = GetValue(id);
             if (sceneInfo != default)
             {
                 if (sceneInfo.isCombo)
                 {
-                    sceneInfo.ComboMotion.AddComboMotion(ref animator);
-                }
-                else
-                {
-                    if (sceneInfo.Motion.HasCompleted)
-                    {
-                        sceneInfo.Motion.Start(animator, 0f, onMotionCompleted, sceneInfo.MotionSkillInfo.GetInfos());
-                    }
+                    result = sceneInfo.ComboMotion;
+                    result.StartComboMotion(ref animator);
                 }
             }
+            return result;
         }
 
-        internal void UpdateMotions(ref Animator m_RoleAnimator)
+        public AnimationInfoUpdater GetMotion(int id, ref Animator animator)
         {
-            int max = mComboMotionIndex.Count;
-            for (int i = 0; i < max; i++)
+            AnimationInfoUpdater result = default;
+            MotionSceneInfo sceneInfo = GetValue(id);
+            if (sceneInfo != default)
             {
-                Values[mComboMotionIndex[i]].ComboMotion?.CheckAnimator(ref m_RoleAnimator);
-                Values[mComboMotionIndex[i]].ComboMotion?.CountComboTime(ref m_RoleAnimator);
+                if (!sceneInfo.isCombo)
+                {
+                    result = sceneInfo.Motion;
+                    result.Start(animator, sceneInfo.MotionSkillInfo.GetInfos());
+                }
             }
+            return result;
         }
 
         public SkillsMapper SkillsMapper { get; set; }

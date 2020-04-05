@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace ShipDock.ECS
@@ -24,6 +25,8 @@ namespace ShipDock.ECS
 
     public interface ICollidableRole
     {
+        void CollidingChanged(int colliderID, bool isTrigger, bool isCollided);
+        Action<int, int, bool, bool> CollidingChanger { get; set; }
         List<int> CollidingRoles { get; }
     }
 

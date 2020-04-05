@@ -28,7 +28,7 @@ namespace ShipDock.Server
         private KeyValueList<int, IResolvableConfig> mResolvableConfigs;
         private IntegerMapper<string> mResolvableNameMapper;
 
-        public Servers()
+        public Servers(params Action[] onInites)
         {
             mServerMapper = new KeyValueList<string, IServer>();
 
@@ -45,6 +45,12 @@ namespace ShipDock.Server
             mBinderMapper = new Dictionary<int, ResolvableBinder>();
             mResolvablesMapper = new Dictionary<int, IResolvable>();
             mResolvableConfigs = new KeyValueList<int, IResolvableConfig>();
+
+            int max = onInites.Length;
+            for (int i = 0; i < max; i++)
+            {
+                OnInit += onInites[i];
+            }
         }
 
         public void Dispose()

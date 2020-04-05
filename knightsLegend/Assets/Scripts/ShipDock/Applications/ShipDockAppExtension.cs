@@ -41,6 +41,11 @@ public static class ShipDockAppExtension
         }
     }
 
+    public static void Broadcast(this INotificationSender target, INoticeBase<int> notice)
+    {
+        ShipDockApp.Instance.Notificater.Broadcast(notice);
+    }
+    
     public static T GetServer<T>(this string serverName) where T : IServer
     {
         return ShipDockApp.Instance.Servers.GetServer<T>(serverName);

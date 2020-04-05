@@ -1,30 +1,24 @@
 ﻿#define _G_LOG
 
+using System;
 using ShipDock.Applications;
+using ShipDock.FSM;
 using ShipDock.Notices;
+using ShipDock.Pooling;
 using ShipDock.Testers;
 using ShipDock.Tools;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace KLGame
 {
-    public class KLRoleComponent : RoleComponent
+    public class KLRoleComponent : RoleComponent, IKLRoleSceneComponent
     {
-        //[SerializeField]
-        //private SkillsMapper m_Skills;
-        //[SerializeField]
-        //protected SkillMotionsMapper m_SkillMotions = new SkillMotionsMapper();
         [SerializeField]
-        protected RoleSkillList m_Skills;
+        protected RoleSkillListSObj m_Skills;
         [SerializeField]
-        private Transform m_BloodyEffectTF;
+        private RoleCollider m_BloodyEffectTF;
 
-        protected string mIsAtkParamName = "IsAtk";
         protected string mFire1ParamName = "Fire1";
-        //protected ComboMotionCreater mNormalAtkMotionCreater;
-        //private AnimationInfoUpdater mUnderAttackUpdater;
 
         protected override void Awake()
         {
@@ -37,23 +31,7 @@ namespace KLGame
         {
             base.Init();
 
-            //ValueItem[] triggers = new ValueItem[]
-            //{
-            //    ValueItem.New("IsAtk", true)
-            //};
-            //ValueItem[] trans = new ValueItem[]
-            //{
-            //    ValueItem.New("Atk1", 1f),
-            //    ValueItem.New("Atk1", 2f),
-            //    ValueItem.New("Atk1", 3f),
-            //};
-            //mNormalAtkMotionCreater = new ComboMotionCreater(3, triggers, trans, OnAtk1Completed);
-            //mNormalAtkMotionCreater.SetCheckComboTime(1.5f);
-
             m_Skills?.Init();
-
-            m_Skills.skillMotions.GetValue(0).motionCompletionEvent.AddListener(OnAtk1Completed);
-
             FreezeAllRotation(false);
         }
 
@@ -62,6 +40,28 @@ namespace KLGame
             base.OnInited();
 
             KLRole = mRole as IKLRole;
+            KLRole.CollidingChanger += OnRoleAttackHitTrigger;
+        }
+
+        protected virtual void OnRoleAttackHitTrigger(int entitasID, int colliderID, bool isTrigger, bool isCollided)
+        {
+            if (isTrigger && isCollided)
+            {
+                var fsm = RoleFSM as IAssailableCommiter;
+                if (fsm.HitCommit())
+                {
+                    ProcessingNotice notice = Pooling<ProcessingNotice>.From();
+                    notice.Reinit(colliderID, ProcessingType.HIT, new ProcessingHitInfo
+                    {
+                        entitasID = entitasID,
+                        hitColliderID = colliderID,
+                        isTrigger = isTrigger,
+                        isCollided = isCollided
+                    });
+                    notice.Commit(KLRole);
+                    Pooling<ProcessingNotice>.To(notice);
+                }
+            }
         }
 
         protected override void InitRoleInputCallbacks()
@@ -71,12 +71,9 @@ namespace KLGame
             SetRoleInputCallback(UserInputPhases.ROLE_INPUT_PHASE_UNDERATTACKED, UnderAttack);
         }
 
-        public virtual void OnAtk1Completed()
+        public virtual void OnATKCompleted()
         {
-            //UnderAttack();
-            //UnderAttack();
-            //UnderAttack();
-            //UnderAttack();
+            AfterCurrentSkillReleased();
         }
 
         protected override void InitRoleData()
@@ -91,37 +88,35 @@ namespace KLGame
         {
         }
 
-        protected void SetUnderAttackParam()
-        {
-            //if (mUnderAttackUpdater == default)
-            //{
-            //    mUnderAttackUpdater = new AnimationInfoUpdater();
-            //}
-            //if (mUnderAttackUpdater.HasCompleted)
-            //{
-            //    mUnderAttackUpdater.Start(m_RoleAnimator, 0f, OnAtkedMotion, ValueItem.New("Atked", 1f), ValueItem.New("Forward", -0.6f));
-            //}
-            m_Skills.skillMotions.StartSkill(0, ref m_RoleAnimator, OnAtkedMotion);
-        }
+        private Vector3 mWeapontPos;
 
         protected override void UpdateAnimations()
         {
             base.UpdateAnimations();
 
-            m_Skills?.skillMotions?.UpdateMotions(ref m_RoleAnimator);
-            //mNormalAtkMotionCreater?.CheckAnimator(ref m_RoleAnimator);
-            //mNormalAtkMotionCreater?.CountComboTime(ref m_RoleAnimator);
-            
+            //m_BloodyEffectTF?.Collider.
+
+            mWeapontPos = m_BloodyEffectTF.transform.position - mWeapontPos;
+            KLRole.WeapontPos = mWeapontPos;
         }
 
         public void UnderAttack()
         {
-            if(MoveBlock)
+            KLRoleFSMStateParam param = Pooling<KLRoleFSMStateParam>.From();
+
+            param.Reinit(this);
+            m_RoleAnimator.SetFloat(m_BlendTreeInfo.MoveMotionName, 0f);
+
+            if (RoleFSM.Current.StateName == NormalRoleStateName.UNDER_ATK)
             {
-                return;
+                RoleFSM.Current.SetStateParam(param);
             }
-            MoveBlock = true;
-            SetUnderAttackParam();
+            else
+            {
+                RoleFSM.ChangeState(NormalRoleStateName.UNDER_ATK, param);
+            }
+
+            KLRole.RoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_EMPTY, false);
         }
 
         private void OnAtkedMotion(Animator target)
@@ -132,12 +127,55 @@ namespace KLGame
             mRole.RoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_AFTER_MOVE, false);
         }
 
-        protected override bool CheckMoveBlock()
+        protected override bool CheckUnableToMove()
         {
             Tester.Instance.Log(KLTester.Instance, KLTester.LOG0, this is KLMainMaleRoleComponent, MoveBlock.ToString());
             return MoveBlock;
         }
 
+        protected override bool ShouldUpdateTurnParam()
+        {
+            return !MoveBlock && base.ShouldUpdateTurnParam();
+        }
+
+        private void LateUpdate()
+        {
+            if (m_CameraNode == default)
+            {
+                return;
+            }
+
+            if(m_CameraNode.parent == transform)
+            {
+                CameraNodePosOffset = m_CameraNode.TransformPoint(m_CameraNode.localPosition);
+                m_CameraNode.SetParent(default);
+            }
+            else
+            {
+                m_CameraNode.position = new Vector3(mRole.Position.x, m_CameraNode.position.y, mRole.Position.z);
+                m_CameraNode.rotation = transform.rotation;
+            }
+        }
+
+        protected void AfterCurrentSkillReleased()
+        {
+            CurrentSkillID = int.MaxValue;
+        }
+
+        public virtual void FillRoleFSMStateParam(IKLRoleFSMParam param)
+        {
+            param.KLRole = KLRole;
+            param.CurrentSkillID = CurrentSkillID;
+            param.SkillMapper = m_Skills.skillMotions;
+            param.StartPos = KLRole.Position;
+            param.StartRotation = transform.rotation;
+        }
+
+        private Vector3 CameraNodePosOffset { get; set; }
+
+        protected IStateMachine RoleFSM { get; set; }
+
+        public int CurrentSkillID { get; protected set; } = int.MaxValue;
         public IKLRole KLRole { get; private set; }
         public bool MoveBlock { get; set; }
     }

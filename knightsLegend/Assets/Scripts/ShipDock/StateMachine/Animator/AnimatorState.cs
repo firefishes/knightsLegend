@@ -5,8 +5,6 @@ namespace ShipDock.FSM
 {
     public class AnimatorState : FState, IAnimatorState
     {
-        protected Animator mAnimator;
-        protected Transform mAnimatorTF;
         protected string mAnimationName;
 
         private bool mCanPlay = true;
@@ -19,8 +17,7 @@ namespace ShipDock.FSM
         {
             base.Dispose();
 
-            mAnimator = null;
-            mAnimatorTF = null;
+            Animator = null;
             mAnimationName = string.Empty;
         }
 
@@ -32,23 +29,17 @@ namespace ShipDock.FSM
 
         protected virtual void PlayAnimation()
         {
-            if (mCanPlay && mAnimator != null)
+            if (mCanPlay && Animator != null)
             {
-                mAnimator.Play(mAnimationName);
+                Animator.Play(mAnimationName);
             }
         }
 
         public virtual void SetAnimator(ref Animator target)
         {
-            mAnimator = target;
-            mAnimatorTF = mAnimator.transform;
+            Animator = target;
         }
-
-        public void SetTransform(ref Transform target)
-        {
-            mAnimatorTF = target;
-        }
-
+        
         public virtual string AnimationName
         {
             get
@@ -73,5 +64,7 @@ namespace ShipDock.FSM
                 mCanPlay = value;
             }
         }
+
+        public Animator Animator { get; private set; }
     }
 }
