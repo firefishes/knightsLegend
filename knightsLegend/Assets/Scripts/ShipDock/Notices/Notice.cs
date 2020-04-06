@@ -26,6 +26,11 @@ namespace ShipDock.Notices
         {
             SetNoticeName(name);
         }
+
+        public virtual void Clean()
+        {
+            Pooling<Notice>.To(this);
+        }
         
         public virtual void Dispose()
         {

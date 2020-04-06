@@ -1,5 +1,6 @@
 ﻿using ShipDock.Applications;
 using ShipDock.ECS;
+using ShipDock.Notices;
 using ShipDock.Tools;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,8 @@ namespace KLGame
         {
             base.Dispose();
 
+            this.Remove(OnRoleNotificationHandler);
+
             Utils.Reclaim(TimesEntitas);
 
             TimesEntitas = default;
@@ -25,10 +28,16 @@ namespace KLGame
         {
             base.InitComponents();
 
+            this.Add(OnRoleNotificationHandler);
+
             ShipDockComponentManager components = ShipDockApp.Instance.Components;
             Processing = components.GetComponentByAID(KLConsts.C_PROCESS) as KLProcessComponent;
 
             TimesEntitas = new TimingTaskEntitas();
+        }
+
+        protected virtual void OnRoleNotificationHandler(INoticeBase<int> obj)
+        {
         }
 
         protected override void SetRoleInputInfo()

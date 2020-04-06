@@ -32,6 +32,7 @@ namespace KLGame
 
         public const int N_TRIGGER_HIT = 1000;
         public const int N_TRIGGER_ROLE_ACTIVE = 1001;
+        public const int N_BRAK_WORKING_AI = 1002;
 
         public const int DC_CAMP_ROLE_CREATED = 2000;
         

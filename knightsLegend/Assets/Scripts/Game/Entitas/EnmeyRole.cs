@@ -1,11 +1,13 @@
 ﻿using ShipDock.Applications;
+using ShipDock.Notices;
+using ShipDock.Pooling;
 using UnityEngine;
 
 namespace KLGame
 {
     public class EnmeyRole : KLRole, IAIRole
     {
-
+        private CommonRoleFSM mFSM;
         private int[] mComponentIDs;
 
         public EnmeyRole()
@@ -20,13 +22,35 @@ namespace KLGame
             Camp = 1;
         }
 
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            mFSM = default;
+        }
+
+        protected override void OnRoleNotificationHandler(INoticeBase<int> param)
+        {
+            base.OnRoleNotificationHandler(param);
+
+            switch(param.Name)
+            {
+                case KLConsts.N_BRAK_WORKING_AI:
+                    if (mFSM.Current.StateName == NormalRoleStateName.GROUNDED)
+                    {
+                        SetShouldAtkAIWork(false);
+                    }
+                    break;
+            }
+        }
+
         protected override IRoleInput CreateRoleInputInfo()
         {
-            var fsm = new NormalEnemyRoleFSM(RoleFSMName)
+            mFSM = new NormalEnemyRoleFSM(RoleFSMName)
             {
                 RoleEntitas = this
             };
-            return new KLRoleInputInfo(this, fsm);
+            return new KLRoleInputInfo(this, mFSM);
         }
         
         protected override void SetRoleInputInfo()
@@ -44,11 +68,18 @@ namespace KLGame
             {
                 return;
             }
-
+            
             if (!ShouldAtkAIWork)
             {
                 SetShouldAtkAIWork(true);
                 RoleInput.SetInputPhase(EnemyInputPhases.ENEMY_INPUT_PHASE_ATTACK_AI);
+            }
+            else
+            {
+                Notice notice = Pooling<Notice>.From();
+                notice.NotifcationSender = this;
+                KLConsts.N_BRAK_WORKING_AI.Dispatch(notice);
+                notice.Clean();
             }
         }
 
@@ -76,7 +107,7 @@ namespace KLGame
 
         public override float GetStopDistance()
         {
-            return 2.5f;
+            return 1.5f;
         }
 
         public void ResetAIRoleATK()

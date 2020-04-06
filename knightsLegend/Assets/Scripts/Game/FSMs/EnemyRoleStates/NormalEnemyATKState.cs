@@ -38,7 +38,7 @@ namespace KLGame
             bool flag = base.BeforeFinish(checkInputWhenFinish);
             if (flag)
             {
-                //mRole.RoleInput.SetInputPhase(EnemyInputPhases.ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK);
+                mRole.RoleInput.SetInputPhase(EnemyInputPhases.ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK);
             }
             return flag;
         }
