@@ -1,4 +1,5 @@
 ﻿using ShipDock.Applications;
+using ShipDock.Pooling;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -31,6 +32,11 @@ namespace KLGame
         public void FillValues()
         {
             RoleSceneComp?.FillRoleFSMStateParam(this);
+        }
+
+        public void Clean()
+        {
+            Pooling<KLRoleFSMStateParam>.To(this);
         }
 
         public Queue<int> Inpunts { get; set; } = new Queue<int>();

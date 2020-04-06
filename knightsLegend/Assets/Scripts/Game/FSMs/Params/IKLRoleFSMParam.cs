@@ -6,15 +6,49 @@ using UnityEngine;
 
 namespace KLGame
 {
-    public interface IKLRoleFSMParam : IStateParam, IPoolable
+    public interface IKLRoleFSMParam : IKLRoleFSMAIParam
     {
-        void FillValues();
         Queue<int> Inpunts { get; set; }
-        IKLRoleSceneComponent RoleSceneComp { get; set; }
-        IKLRole KLRole { get; set; }
         int CurrentSkillID { get; set; }
         Vector3 StartPos { get; set; }
         Quaternion StartRotation { get; set; }
         SkillMotionsMapper SkillMapper { get; set; }
+    }
+
+    public interface IKLRoleFSMAIParam : IStateParam, IPoolable
+    {
+        void Clean();
+        void FillValues();
+        IKLRoleSceneComponent RoleSceneComp { get; set; }
+        IKLRole KLRole { get; set; }
+    }
+
+    public class KLRoleFSMAIStateParam : IKLRoleFSMAIParam
+    {
+
+        public void Reinit(IKLRoleSceneComponent comp)
+        {
+            RoleSceneComp = comp;
+            FillValues();
+        }
+
+        public void FillValues()
+        {
+            RoleSceneComp?.FillRoleFSMAIStateParam(this);
+        }
+
+        public void Revert()
+        {
+            RoleSceneComp = default;
+            KLRole = default;
+        }
+
+        public void Clean()
+        {
+            Pooling<KLRoleFSMAIStateParam>.To(this);
+        }
+
+        public IKLRoleSceneComponent RoleSceneComp { get; set; }
+        public IKLRole KLRole { get; set; }
     }
 }

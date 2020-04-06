@@ -22,7 +22,7 @@ namespace KLGame
 
         protected override IRoleInput CreateRoleInputInfo()
         {
-            var fsm = new MainMaleRoleFSM(RoleFSMName)
+            var fsm = new NormalEnemyRoleFSM(RoleFSMName)
             {
                 RoleEntitas = this
             };
@@ -48,7 +48,7 @@ namespace KLGame
             if (!ShouldAtkAIWork)
             {
                 SetShouldAtkAIWork(true);
-                RoleInput.SetInputPhase(EnemyInputPhases.ENEMY_INPUT_PHASE_SET_NROMAL_ATK_TRIGGER_TIME);
+                RoleInput.SetInputPhase(EnemyInputPhases.ENEMY_INPUT_PHASE_ATTACK_AI);
             }
         }
 
@@ -84,15 +84,13 @@ namespace KLGame
             TimingTasker target = TimesEntitas.GetRoleTiming(RoleTimingTaskNames.NORMAL_ATK_TIME);
             target.ResetRunCounts();
 
-            InATKCycle = false;
             SetShouldAtkAIWork(false);
             RoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_MOVE_READY);
         }
 
         public int ATKID { get; private set; }
-        public bool ShouldAtkAIWork { get; private set; }
-        public bool InATKCycle { get; set; }
         public bool IsInitNormalATKPhases { get; set; }
         public override int RoleFSMName { get; } = KLConsts.RFSM_NORMAL_ENMEY;
+        public bool ShouldAtkAIWork { get; private set; }
     }
 }

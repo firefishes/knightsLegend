@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6225339439489823116}
   - component: {fileID: 3542223938951816631}
   - component: {fileID: 2054711631253515935}
-  m_Layer: 11
+  m_Layer: 14
   m_Name: RoleScaned
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 5547175313309253472}
   - component: {fileID: 8053478013087764001}
   - component: {fileID: 3415619098480930529}
-  m_Layer: 9
+  m_Layer: 13
   m_Name: WeaponPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -139,7 +139,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_IsLogTrigger: 0
   m_IsNotificational: 0
-  m_ActiveColliderNoticeName: 2147483647
+  m_ActiveColliderNoticeName: 1001
   m_RoleSceneComp: {fileID: 4300343183109717744}
   m_Collider: {fileID: 8053478013087764001}
 --- !u!1 &4944680497804059555

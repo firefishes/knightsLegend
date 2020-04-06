@@ -36,6 +36,7 @@ namespace ShipDock.Applications
 
         public void DirectCompletion()
         {
+            timeGapper.Stop();
             completion?.Invoke();
         }
 

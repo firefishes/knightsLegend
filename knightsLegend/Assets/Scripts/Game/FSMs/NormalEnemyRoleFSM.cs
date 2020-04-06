@@ -1,5 +1,6 @@
 ﻿using ShipDock.Applications;
 using ShipDock.FSM;
+using UnityEngine;
 
 namespace KLGame
 {
@@ -10,11 +11,12 @@ namespace KLGame
             IsApplyFastChange = true;
         }
 
-        public bool HitCommit()
+        public bool HitCommit(int hitCollidID)
         {
+            Debug.Log("hit commit");
             if (Current is IAssailableCommiter target)
             {
-                return target.HitCommit();
+                return target.HitCommit(hitCollidID);
             }
             return false;
         }
@@ -25,6 +27,7 @@ namespace KLGame
             new UnderAttackState(NormalRoleStateName.UNDER_ATK),
             new GroundedState(NormalRoleStateName.GROUNDED),
             new NormalEnemyATKState(NormalRoleStateName.NORMAL_ATK),
+            new NormalAttackAIState(NormalRoleStateName.NORMAL_ATTACK_AI),
         };
     }
 }

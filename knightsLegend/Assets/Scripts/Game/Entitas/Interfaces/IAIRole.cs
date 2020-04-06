@@ -5,7 +5,6 @@
         void ResetAIRoleATK();
         void SetShouldAtkAIWork(bool value);
         bool ShouldAtkAIWork { get; }
-        bool InATKCycle { get; set; }
         bool IsInitNormalATKPhases { get; set; }
     }
 }

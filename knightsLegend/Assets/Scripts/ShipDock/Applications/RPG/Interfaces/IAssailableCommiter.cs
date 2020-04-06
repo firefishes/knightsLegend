@@ -2,6 +2,6 @@
 {
     public interface IAssailableCommiter
     {
-        bool HitCommit();
+        bool HitCommit(int hitCollidID);
     }
 }

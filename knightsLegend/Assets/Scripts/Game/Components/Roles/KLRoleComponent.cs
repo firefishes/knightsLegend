@@ -1,12 +1,10 @@
 ﻿#define _G_LOG
 
-using System;
 using ShipDock.Applications;
 using ShipDock.FSM;
 using ShipDock.Notices;
 using ShipDock.Pooling;
 using ShipDock.Testers;
-using ShipDock.Tools;
 using UnityEngine;
 
 namespace KLGame
@@ -48,7 +46,7 @@ namespace KLGame
             if (isTrigger && isCollided)
             {
                 var fsm = RoleFSM as IAssailableCommiter;
-                if (fsm.HitCommit())
+                if (fsm.HitCommit(colliderID))
                 {
                     ProcessingNotice notice = Pooling<ProcessingNotice>.From();
                     notice.Reinit(colliderID, ProcessingType.HIT, new ProcessingHitInfo
@@ -169,6 +167,11 @@ namespace KLGame
             param.SkillMapper = m_Skills.skillMotions;
             param.StartPos = KLRole.Position;
             param.StartRotation = transform.rotation;
+        }
+
+        public virtual void FillRoleFSMAIStateParam(IKLRoleFSMAIParam param)
+        {
+            param.KLRole = KLRole;
         }
 
         private Vector3 CameraNodePosOffset { get; set; }

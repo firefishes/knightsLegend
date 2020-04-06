@@ -60,6 +60,12 @@ namespace KLGame
                     if (flag)
                     {
                         int colliderID = enmeyRole.RoleMustSubgroup.roleColliderID;
+                        if(colliderID != hit.HitColliderID)
+                        {
+                            hit.Clean();
+                            flag = false;
+                            break;
+                        }
                         if (!mHitsMapper.ContainsKey(colliderID))
                         {
                             mHitsMapper[colliderID] = new List<IGameProcessing>();

@@ -153,7 +153,7 @@ namespace ShipDock.Applications
                 mRole.InitComponents();
                 mRole.SpeedCurrent = mRole.Speed;
                 mRoleData = mRole.RoleDataSource;
-                mRole.SetSourceID(GetInstanceID());
+                mRole.SetEntitasID(GetInstanceID());
 
                 InitNotices();
             }

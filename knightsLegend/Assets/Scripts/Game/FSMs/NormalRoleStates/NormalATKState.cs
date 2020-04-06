@@ -7,6 +7,8 @@ namespace KLGame
 {
     public class NormalATKState : KLAnimatorState<NormalATKStateParam>, IAssailableCommiter
     {
+        protected IGameProcessing mHit;
+
         public NormalATKState(int name) : base(name)
         {
         }
@@ -22,6 +24,7 @@ namespace KLGame
             {
                 mStateParam = param;
                 mRole = mStateParam.KLRole;
+                RoleSceneComp = mStateParam.RoleSceneComp;
                 ReadyMotion(mStateParam.CurrentSkillID, mStateParam.SkillMapper, true);
             }
         }
@@ -29,9 +32,17 @@ namespace KLGame
         protected override bool ShouldParamEnqueue(ref NormalATKStateParam param)
         {
             bool result = base.ShouldParamEnqueue(ref param) || IsHit;
-            if (!result && param != default)
+            if (result)
             {
-                Pooling<NormalATKStateParam>.To(param);
+                mHit?.Clean();
+                mHit = default;
+            }
+            else
+            {
+                if(param != default)
+                {
+                    Pooling<NormalATKStateParam>.To(param);
+                }
             }
             return result;
         }
@@ -57,7 +68,7 @@ namespace KLGame
             bool result = base.BeforeFinish(checkInputWhenFinish);
             if(result)
             {
-                mStateParam.RoleSceneComp.MoveBlock = false;
+                RoleSceneComp.MoveBlock = false;
             }
             else
             {
@@ -73,6 +84,9 @@ namespace KLGame
             if(result)
             {
                 IsHit = false;
+                RoleSceneComp = default;
+                mHit?.Clean();
+                mHit = default;
                 GetFSM().ChangeState(NormalRoleStateName.GROUNDED);
             }
 
@@ -117,7 +131,7 @@ namespace KLGame
             KLConsts.S_KL.Revert<KLServer>("Bool", target);
         }
 
-        public virtual bool HitCommit()
+        public virtual bool HitCommit(int hitCollidID)
         {
             if (mStateParam == default)
             {
@@ -125,15 +139,16 @@ namespace KLGame
             }
             mStateParam.FillValues();
 
-            PlayerHit hit = Pooling<PlayerHit>.From();
+            mHit = Pooling<PlayerHit>.From();
+            PlayerHit hit = mHit as PlayerHit;
             hit.Reinit(mRole);
 
+            hit.HitColliderID = hitCollidID;
             hit.AfterProcessing = OnATKHit;
             hit.HitInfoScope.validAngle = 120f;
             hit.HitInfoScope.minDistance = 2.5f;
             hit.HitInfoScope.startPos = mStateParam.StartPos;
             hit.HitInfoScope.startRotation = mStateParam.StartRotation;
-            hit.HitInfoScope.Draws();
 
             return mRole.Processing.AddProcess(hit);
         }
@@ -157,5 +172,6 @@ namespace KLGame
         }
 
         private bool IsHit { get; set; }
+        private IKLRoleSceneComponent RoleSceneComp { get; set; }
     }
 }

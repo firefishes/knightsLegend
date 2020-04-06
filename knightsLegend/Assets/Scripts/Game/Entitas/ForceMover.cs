@@ -6,7 +6,7 @@ using UnityEngine;
 namespace KLGame
 {
 
-    public class ForceMover : IPoolable, IForceMover //EntitasComponentable, IPoolable, IForceMover
+    public class ForceMover : IPoolable, IForceMover
     {
         public static ForceMover Create()
         {
@@ -15,15 +15,11 @@ namespace KLGame
 
         public ForceMover() : base()
         {
-            //InitComponents();
-
             Timing = new TimingTaskEntitas();
         }
 
         public void Dispose()
         {
-            //base.Dispose();
-
             RemoveMover();
             Timing?.Dispose();
             Timing = default;
@@ -44,7 +40,7 @@ namespace KLGame
             V = v;
             MoveTarget.RoleInput.AddForceMove(this);
             
-            TimingTasker = Timing.AddForceMoveTiming(MoveTarget.SourceID);
+            TimingTasker = Timing.AddForceMoveTiming(MoveTarget.ID);
             TimingTasker.Start(time);
             if (onCompletion != default)
             {
@@ -57,7 +53,7 @@ namespace KLGame
         {
             if (MoveTarget != default)
             {
-                Timing.RemoveForceMoveTiming(MoveTarget.SourceID, false, true);
+                Timing.RemoveForceMoveTiming(MoveTarget.ID, false, true);
                 TimingTasker = default;
 
                 V = -V;
@@ -75,12 +71,7 @@ namespace KLGame
                 }
             }
         }
-
-        //protected override int[] ComponentIDs { get; } = new int[]
-        //{
-        //    KLConsts.C_ROLE_TIMES
-        //};
-
+        
         public Vector3 GetMoverVector()
         {
             return V;

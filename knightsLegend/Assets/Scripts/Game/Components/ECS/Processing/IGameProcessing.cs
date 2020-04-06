@@ -5,6 +5,7 @@ namespace KLGame
 {
     public interface IGameProcessing : IPoolable
     {
+        void Clean();
         void OnProcessing();
         void ProcessingReady();
         void ToPooling();

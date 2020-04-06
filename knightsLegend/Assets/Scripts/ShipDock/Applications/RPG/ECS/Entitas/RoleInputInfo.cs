@@ -181,6 +181,10 @@ namespace ShipDock.Applications
                         sceneCompMethod?.Invoke();
                         mEntitasCallbacker.called = 0;
                     }
+                    else
+                    {
+                        sceneCompMethod?.Invoke();
+                    }
                 }
                 else
                 {

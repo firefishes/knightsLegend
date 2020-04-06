@@ -17,6 +17,11 @@ namespace KLGame
 
         public ProcessHit() { }
 
+        public virtual void Clean()
+        {
+            Pooling<ProcessHit>.To(this);
+        }
+
         public virtual void Reinit(IKLRole initiator)
         {
             Initiator = initiator;
@@ -42,7 +47,7 @@ namespace KLGame
                 AfterProcessing?.Invoke();
                 (Initiator as IKLRole).HitSomeOne = true;
                 Vector3 start = Initiator.Position;
-                ForceMover.Create().SetMover(mEnemyRole, new Vector3(Target.WeapontPos.x, 0, Target.WeapontPos.z) * 0.7f, 0.2f);
+                ForceMover.Create().SetMover(mEnemyRole, new Vector3(Initiator.WeapontPos.x, 0, Initiator.WeapontPos.z) * 0.7f, 0.2f);
             }
             Pooling<ProcessHit>.To(this);
         }
@@ -77,5 +82,6 @@ namespace KLGame
         public IKLRole EnemyKLRole { get; private set; }
         public bool Finished { get; set; }
         public int Type { get; } = ProcessingType.HIT;
+        public int HitColliderID { get; set; }
     }
 }

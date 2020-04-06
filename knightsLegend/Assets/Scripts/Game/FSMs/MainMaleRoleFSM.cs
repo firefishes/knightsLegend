@@ -10,11 +10,11 @@ namespace KLGame
             IsApplyFastChange = true;
         }
 
-        public bool HitCommit() 
+        public bool HitCommit(int hitCollidID) 
         {
             if(Current is IAssailableCommiter target)
             {
-                return target.HitCommit();
+                return target.HitCommit(hitCollidID);
             }
             return false;
         }

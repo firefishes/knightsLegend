@@ -12,23 +12,25 @@ namespace KLGame
         {
             base.Init();
 
-            AddAllowCalled(EnemyInputPhases.ENEMY_INPUT_PHASE_NROMAL_ATKED, 0);
+            AddAllowCalled(EnemyInputPhases.ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK, 0);
         }
 
         protected override void InitRolePhases(IRoleInput roleInput)
         {
             mAIRole.IsInitNormalATKPhases = true;
             roleInput.AddEntitasCallback(EnemyInputPhases.ENEMY_INPUT_PHASE_UPDATE_NROMAL_ATK_TRIGGER_TIME, UpdateNormalATKTriggerTime);
-            roleInput.AddEntitasCallback(EnemyInputPhases.ENEMY_INPUT_PHASE_NROMAL_ATKED, AfterNormalATK);
+            roleInput.AddEntitasCallback(EnemyInputPhases.ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK, AfterNormalATK);
         }
 
         private void AfterNormalATK()
         {
-            mAIRole.ResetAIRoleATK();
             if (mPositionComp.IsEntitasStoped(ref mRole))
             {
-                mAIRole.SetShouldAtkAIWork(true);
-                mRoleInput.SetInputPhase(EnemyInputPhases.ENEMY_INPUT_PHASE_SET_NROMAL_ATK_TRIGGER_TIME);
+                mRoleInput.SetInputPhase(EnemyInputPhases.ENEMY_INPUT_PHASE_ATTACK_AI);
+            }
+            else
+            {
+                mAIRole.ResetAIRoleATK();
             }
         }
 
@@ -38,17 +40,14 @@ namespace KLGame
             {
                 if (mAIRole.ShouldAtkAIWork)
                 {
-                    if(!mAIRole.InATKCycle)
+                    if (!mAIRole.TimesEntitas.GetRoleTiming(RoleTimingTaskNames.NORMAL_ATK_TIME).IsStart)
                     {
-                        if (!mAIRole.TimesEntitas.GetRoleTiming(RoleTimingTaskNames.NORMAL_ATK_TIME).IsStart)
-                        {
-                            mRoleInput.SetInputPhase(EnemyInputPhases.ENEMY_INPUT_PHASE_NROMAL_ATK);
-                        }
+                        mRoleInput.SetInputPhase(EnemyInputPhases.ENEMY_INPUT_PHASE_NROMAL_ATK);
                     }
                 }
                 else
                 {
-                    mRoleInput.SetInputPhase(EnemyInputPhases.ENEMY_INPUT_PHASE_SET_NROMAL_ATK_TRIGGER_TIME);
+                    mRoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_AFTER_MOVE);
                 }
             }
             else
