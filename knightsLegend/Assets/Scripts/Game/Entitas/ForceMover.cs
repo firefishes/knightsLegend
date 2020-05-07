@@ -15,7 +15,8 @@ namespace KLGame
 
         public ForceMover() : base()
         {
-            Timing = new TimingTaskEntitas();
+            Timing = TimingTaskEntitas.Create();
+            Timing.CreateMapper();
         }
 
         public void Dispose()
@@ -23,6 +24,11 @@ namespace KLGame
             RemoveMover();
             Timing?.Dispose();
             Timing = default;
+        }
+
+        public void ToPool()
+        {
+            Pooling<ForceMover>.To(this);
         }
 
         public void Revert()
@@ -40,7 +46,7 @@ namespace KLGame
             V = v;
             MoveTarget.RoleInput.AddForceMove(this);
             
-            TimingTasker = Timing.AddForceMoveTiming(MoveTarget.ID);
+            TimingTasker = Timing.AddTiming(MoveTarget.ID, 0);
             TimingTasker.Start(time);
             if (onCompletion != default)
             {
@@ -53,7 +59,7 @@ namespace KLGame
         {
             if (MoveTarget != default)
             {
-                Timing.RemoveForceMoveTiming(MoveTarget.ID, false, true);
+                Timing.RemoveTiming(MoveTarget.ID, 0, false, true);
                 TimingTasker = default;
 
                 V = -V;
@@ -76,7 +82,7 @@ namespace KLGame
         {
             return V;
         }
-        
+
         private ICommonRole MoveTarget { get; set; }
         private TimingTasker TimingTasker { get; set; }
         private TimingTaskEntitas Timing { get; set; }

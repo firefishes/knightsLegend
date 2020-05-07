@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ShipDock.Applications
 {
-    public interface ICommonRole : IPathFindable, ICollidableRole, IStatesRole, IShipDockEntitas
+    public interface ICommonRole : IPathFindable, ICollidableRole, IStatesRole, IEntitasComponentable
     {
         void SetRoleData(IRoleData data);
         float GetDistFromMainLockDown();

@@ -13,10 +13,9 @@ namespace KLGame
 
         public bool HitCommit(int hitCollidID)
         {
-            Debug.Log("hit commit");
             if (Current is IAssailableCommiter target)
             {
-                return target.HitCommit(hitCollidID);
+                return target.HitCommit(hitCollidID);//判定攻击是否有效
             }
             return false;
         }

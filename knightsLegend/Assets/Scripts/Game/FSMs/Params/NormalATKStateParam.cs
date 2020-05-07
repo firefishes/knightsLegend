@@ -34,7 +34,7 @@ namespace KLGame
             RoleSceneComp?.FillRoleFSMStateParam(this);
         }
 
-        public virtual void Clean()
+        public virtual void ToPool()
         {
             Pooling<KLRoleFSMStateParam>.To(this);
         }

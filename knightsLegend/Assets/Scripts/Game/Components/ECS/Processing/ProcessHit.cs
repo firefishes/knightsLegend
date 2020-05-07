@@ -10,14 +10,19 @@ using UnityEngine;
 
 namespace KLGame
 {
-    public class ProcessHit : IGameProcessing
+    public class ProcessHit : IRoleProcessing
     {
         protected ICommonRole mEnemyRole;
         protected List<int> mCollidingRoles;
 
         public ProcessHit() { }
 
-        public virtual void Clean()
+        public void Dispose()
+        {
+            Revert();
+        }
+
+        public virtual void ToPool()
         {
             Pooling<ProcessHit>.To(this);
         }
@@ -49,7 +54,7 @@ namespace KLGame
                 Vector3 start = Initiator.Position;
                 ForceMover.Create().SetMover(mEnemyRole, new Vector3(Initiator.WeapontPos.x, 0, Initiator.WeapontPos.z) * 0.7f, 0.2f);
             }
-            Pooling<ProcessHit>.To(this);
+            ToPool();
         }
 
         public void ProcessingReady()
@@ -68,11 +73,6 @@ namespace KLGame
                     break;
                 }
             }
-        }
-
-        public void ToPooling()
-        {
-            Pooling<ProcessHit>.To(this);
         }
 
         public Action AfterProcessing { get; set; }

@@ -9,7 +9,7 @@ using UnityEngine.AI;
 
 namespace ShipDock.Applications
 {
-    public abstract class RoleComponent : MonoBehaviour
+    public abstract class RoleComponent : MonoBehaviour, INotificationSender
     {
 
 #if TEST_MOVER
@@ -50,6 +50,7 @@ namespace ShipDock.Applications
         private CommonRoleAnimatorInfo mAnimatorInfo;
         private ComponentBridge mBrigae;
         private KeyValueList<int, Action> mRoleInputCallbacks;
+        private KeyValueList<int, bool> mRoleInputCallSwitches;
 
         protected virtual void Awake()
         {
@@ -64,9 +65,10 @@ namespace ShipDock.Applications
             mBrigae?.Dispose();
             mBrigae = default;
             
-            GetInstanceID().Remove(OnRoleNotices);
+            this.Remove(OnRoleNotices);
 
             Utils.Reclaim(ref mRoleInputCallbacks);
+            Utils.Reclaim(ref mRoleInputCallSwitches);
         }
 
         protected abstract void InitRoleData();
@@ -93,6 +95,8 @@ namespace ShipDock.Applications
         protected virtual void InitRoleInputCallbacks()
         {
             mRoleInputCallbacks = new KeyValueList<int, Action>();
+            mRoleInputCallSwitches = new KeyValueList<int, bool>();
+
             SetRoleInputCallback(UserInputPhases.ROLE_INPUT_PHASE_MOVE_READY, CheckRoleInputMovePhase);
             SetRoleInputCallback(UserInputPhases.ROLE_INPUT_PHASE_CHECK_GROUND, CheckRoleInputGroundPhase);
             SetRoleInputCallback(UserInputPhases.ROLE_INPUT_PHASE_CHECK_CROUCH, CheckRoleInputCrouchPhase);
@@ -101,7 +105,13 @@ namespace ShipDock.Applications
 
         protected void SetRoleInputCallback(int phaseName, Action callback)
         {
+            ActiveRoleInputPhase(phaseName, false);
             mRoleInputCallbacks?.Put(phaseName, callback);
+        }
+
+        public void ActiveRoleInputPhase(int phaseName, bool value)
+        {
+            mRoleInputCallSwitches[phaseName] = value;
         }
 
         protected void FreezeAllRotation(bool flag)
@@ -161,7 +171,7 @@ namespace ShipDock.Applications
         
         private void InitNotices()
         {
-            GetInstanceID().Add(OnRoleNotices);
+            this.Add(OnRoleNotices);
         }
 
         protected abstract void SetRoleEntitas();
@@ -252,8 +262,12 @@ namespace ShipDock.Applications
             if (mRoleInput != default)
             {
                 int phaseValue = mRoleInput.RoleInputPhase;
-                mSceneCompCallaback = mRoleInputCallbacks[phaseValue];
-                mRoleInput.ExecuteBySceneComponent(ref mSceneCompCallaback);
+                bool flag = mRoleInputCallSwitches[phaseValue];
+                if (flag)
+                {
+                    mSceneCompCallaback = mRoleInputCallbacks[phaseValue];
+                    mRoleInput.ExecuteBySceneComponent(ref mSceneCompCallaback);
+                }
             }
         }
 
@@ -329,7 +343,7 @@ namespace ShipDock.Applications
                 m_RoleRigidbody.AddForce(mRoleInput.ExtraGravityForceOut);
                 mGroundCheckDistance = velocity.y < 0 ? m_RoleMustSubgroup.origGroundCheckDistance : 0.01f;
             }
-            mRoleInput.NextPhase();
+            mRoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_SCALE_CAPSULE);
             mRoleInput.ResetEntitasCalled(UserInputPhases.ROLE_INPUT_PHASE_AMOUT_EXTRAN_TURN);
         }
 
@@ -359,7 +373,7 @@ namespace ShipDock.Applications
                 UpdateCrouchingByRay();
             }
             UpdateAnimator();
-            mRoleInput.NextPhase();
+            mRoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_AFTER_MOVE);
             mRoleInput.ResetEntitasCalled(UserInputPhases.ROLE_INPUT_PHASE_SCALE_CAPSULE);
         }
 
@@ -387,7 +401,7 @@ namespace ShipDock.Applications
 
             CheckGroundStatus();
 
-            mRoleInput.NextPhase();
+            mRoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_AMOUT_EXTRAN_TURN);
             mRoleInput.ResetEntitasCalled(UserInputPhases.ROLE_INPUT_PHASE_MOVE_READY);
         }
 

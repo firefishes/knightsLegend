@@ -17,7 +17,7 @@ namespace KLGame
 
     public interface IKLRoleFSMAIParam : IStateParam, IPoolable
     {
-        void Clean();
+        void ToPool();
         void FillValues();
         IKLRoleSceneComponent RoleSceneComp { get; set; }
         IKLRole KLRole { get; set; }
@@ -43,7 +43,7 @@ namespace KLGame
             KLRole = default;
         }
 
-        public void Clean()
+        public void ToPool()
         {
             Pooling<KLRoleFSMAIStateParam>.To(this);
         }

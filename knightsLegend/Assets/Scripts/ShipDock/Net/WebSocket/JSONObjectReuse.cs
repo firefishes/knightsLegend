@@ -73,5 +73,7 @@ public class JSONObjectReuse : IPoolable, IDispose
         JSONData = null;
     }
 
+    public void ToPool() { }
+
     public JSONObject JSONData { get; private set; }
 }

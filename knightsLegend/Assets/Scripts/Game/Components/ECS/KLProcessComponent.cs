@@ -3,86 +3,125 @@
 using ShipDock.Applications;
 using ShipDock.ECS;
 using ShipDock.Notices;
+using ShipDock.Pooling;
 using ShipDock.Tools;
+using System;
 using System.Collections.Generic;
 
 namespace KLGame
 {
     public class KLProcessComponent : ShipDockComponent, IProcessingComponent
     {
-
-        private IGameProcessing mProcessItem;
-        private List<IGameProcessing> mWillDeleteds;
-        private KeyValueList<int, IKLRole> mRoleProcessingList;
-        private KeyValueList<int, List<IGameProcessing>> mHitsMapper;
+        private List<IRoleProcessing> mWillDeleteds;
+        private MethodProcessing mProcessingMethod;
+        private Queue<MethodProcessing> mProcessingQueue;
+        private KeyValueList<int, IKLRole> mRoleProcessingMapper;
+        private KeyValueList<int, List<IRoleProcessing>> mHitsMapper;
 
         public override void Init()
         {
             base.Init();
 
-            mWillDeleteds = new List<IGameProcessing>();
-            mHitsMapper = new KeyValueList<int, List<IGameProcessing>>();
-            mRoleProcessingList = new KeyValueList<int, IKLRole>();
+            mProcessingQueue = new Queue<MethodProcessing>();
+            mWillDeleteds = new List<IRoleProcessing>();
+            mHitsMapper = new KeyValueList<int, List<IRoleProcessing>>();
+            mRoleProcessingMapper = new KeyValueList<int, IKLRole>();
 
             RoleCollisionComp = GetRelatedComponent<RoleColliderComponent>(KLConsts.C_ROLE_COLLIDER);
             RoleMustComp = GetRelatedComponent<RoleMustComponent>(KLConsts.C_ROLE_MUST);
 
         }
 
-        public bool AddProcess(IGameProcessing item)
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            Utils.Reclaim(ref mProcessingQueue);
+
+            mProcessingMethod = default;
+        }
+
+        public bool AddProcess(Action<IProcessing> method)
+        {
+            bool result = default;
+            if (mProcessingQueue != default)
+            {
+                result = true;
+                MethodProcessing item = Pooling<MethodProcessing>.From();
+                item.Reinit(method);
+                mProcessingQueue.Enqueue(item);
+            }
+            return result;
+        }
+
+        private bool CheckAndInitRoleProcessingHandler(ref IRoleProcessing item)
         {
             var initiator = item.Initiator;
             if (initiator.WillDestroy)
             {
-                if(mRoleProcessingList.ContainsKey(initiator.ID))
+                if (mRoleProcessingMapper.ContainsKey(initiator.ID))
                 {
-                    ShipDockApp.Instance.Notificater.Remove(initiator, OnProcessingNotice);
-                    mRoleProcessingList.Remove(initiator.ID);
+                    ShipDockApp.Instance.Notificater.Remove(initiator, OnProcessingHandler);
+                    mRoleProcessingMapper.Remove(initiator.ID);
                 }
                 return false;
             }
 
-            if (!mRoleProcessingList.ContainsKey(initiator.ID))
+            if (!mRoleProcessingMapper.ContainsKey(initiator.ID))
             {
-                ShipDockApp.Instance.Notificater.Add(initiator, OnProcessingNotice);
-                mRoleProcessingList[initiator.ID] = initiator;
+                ShipDockApp.Instance.Notificater.Add(initiator, OnProcessingHandler);//然后添加流程事件处理
+                 mRoleProcessingMapper[initiator.ID] = initiator;
+            }
+            return true;
+        }
+
+        private void CheckAndAddHit(ref IRoleProcessing item, out bool flag)
+        {
+            ProcessHit hit = item as ProcessHit;
+            IKLRole enmeyRole = hit.EnemyKLRole;
+            flag = enmeyRole != default;
+            if (flag)
+            {
+                int colliderID = enmeyRole.RoleMustSubgroup.roleColliderID;
+                if (colliderID != hit.HitColliderID)
+                {
+                    hit.ToPool();
+                    flag = false;
+                    return;
+                }
+                if (!mHitsMapper.ContainsKey(colliderID))
+                {
+                    mHitsMapper[colliderID] = new List<IRoleProcessing>();
+                }
+                var hitList = mHitsMapper[colliderID];
+                hitList.Add(item);//加入攻击结算的队列
+            }
+            else
+            {
+                item.ToPool();
+            }
+        }
+
+        public bool AddRoleProcess(IRoleProcessing item)
+        {
+            bool flag = default;
+            if(!CheckAndInitRoleProcessingHandler(ref item))
+            {
+                return flag;
             }
 
             item.ProcessingReady();
 
-            bool flag = default;
             switch(item.Type)
             {
                 case ProcessingType.HIT:
-                    ProcessHit hit = item as ProcessHit;
-                    IKLRole enmeyRole = hit.EnemyKLRole;
-                    flag = enmeyRole != default;
-                    if (flag)
-                    {
-                        int colliderID = enmeyRole.RoleMustSubgroup.roleColliderID;
-                        if(colliderID != hit.HitColliderID)
-                        {
-                            hit.Clean();
-                            flag = false;
-                            break;
-                        }
-                        if (!mHitsMapper.ContainsKey(colliderID))
-                        {
-                            mHitsMapper[colliderID] = new List<IGameProcessing>();
-                        }
-                        var hitList = mHitsMapper[colliderID];
-                        hitList.Add(item);
-                    }
-                    else
-                    {
-                        item.ToPooling();
-                    }
+                    CheckAndAddHit(ref item, out flag);
                     break;
             }
             return flag;
         }
 
-        private void OnProcessingNotice(INoticeBase<int> param)
+        private void OnProcessingHandler(INoticeBase<int> param)
         {
             ProcessingNotice notice = param as ProcessingNotice;
 
@@ -101,37 +140,39 @@ namespace KLGame
         private void ProcessHit(ref ProcessingNotice notice)
         {
             int entitasID = notice.HitInfo.entitasID;
-            if (mRoleProcessingList.ContainsKey(entitasID))
+            if (mRoleProcessingMapper.ContainsKey(entitasID))
             {
-                IKLRole role = mRoleProcessingList[entitasID];
-                if (!role.WillDestroy)
+                IKLRole role = mRoleProcessingMapper[entitasID];
+                if (role.WillDestroy)
                 {
-                    int colliderID = notice.HitInfo.hitColliderID;
-                    var hitList = mHitsMapper[colliderID];
+                    return;
+                }
 
-                    if (hitList != default)
+                int colliderID = notice.HitInfo.hitColliderID;
+                var hitList = mHitsMapper[colliderID];
+
+                if (hitList != default)
+                {
+                    IRoleProcessing item;
+                    int max = hitList.Count;
+                    for (int i = 0; i < max; i++)
                     {
-                        IGameProcessing item;
-                        int max = hitList.Count;
-                        for (int i = 0; i < max; i++)
+                        item = hitList[i];
+                        if (!item.Finished && (item.Initiator == role))
                         {
-                            item = hitList[i];
-                            if (!item.Finished && (item.Initiator == role))
-                            {
-                                item.Finished = true;
-                                item.OnProcessing();
-                                mWillDeleteds.Add(item);
-                            }
+                            item.Finished = true;
+                            item.OnProcessing();
+                            mWillDeleteds.Add(item);
                         }
-                        max = mWillDeleteds.Count;
-                        if (max > 0)
+                    }
+                    max = mWillDeleteds.Count;
+                    if (max > 0)
+                    {
+                        foreach (var d in mWillDeleteds)
                         {
-                            foreach(var d in mWillDeleteds)
-                            {
-                                hitList.Remove(d);
-                            }
-                            hitList.Clear();
+                            hitList.Remove(d);
                         }
+                        hitList.Clear();
                     }
                 }
             }
@@ -141,7 +182,18 @@ namespace KLGame
         {
             base.Execute(time, ref target);
 
-
+            if (mProcessingQueue.Count > 0)
+            {
+                mProcessingMethod = mProcessingQueue.Peek();
+                mProcessingMethod.OnProcessing();
+                if(mProcessingMethod.Finished)
+                {
+                    mProcessingQueue.Dequeue();
+                    mProcessingMethod.AfterProcessing?.Invoke();
+                    mProcessingMethod.ToPool();
+                    mProcessingMethod = default;
+                }
+            }
         }
 
         public RoleColliderComponent RoleCollisionComp { get; private set; }

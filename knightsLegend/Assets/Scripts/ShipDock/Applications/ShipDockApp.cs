@@ -50,7 +50,7 @@ namespace ShipDock.Applications
 
             Notificater = new Notifications<int>();
             ABs = new AssetBundles();
-            Servers = new Servers(OnCreateComponentManager);
+            Servers = new Servers(OnServersInit);
             Datas = new DataWarehouse();
             AssetsPooling = new AssetsPooling();
             StateMachines = new StateMachines
@@ -116,9 +116,10 @@ namespace ShipDock.Applications
             }
         }
 
-        private void OnCreateComponentManager()
+        private void OnServersInit()
         {
             Components = new ShipDockComponentManager();
+            Components.FrameTimeInScene = (int)(UnityEngine.Time.deltaTime * 1000);
 
             MethodUpdater updater = ShipDockComponentManagerSetting.isMergeUpdateMode ?
                 new MethodUpdater

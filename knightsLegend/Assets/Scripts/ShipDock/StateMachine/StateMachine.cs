@@ -94,7 +94,7 @@ namespace ShipDock.FSM
             mStateIndex = 0;
             mStates = new KeyValueList<int, IState>();
             SubStateWillChange = int.MaxValue;
-
+            
             IState state;
             int max = StateInfos.Length;
             mStateList = new List<IState>(max);
@@ -166,7 +166,7 @@ namespace ShipDock.FSM
         /// <summary>移除状态</summary>
         public void RemoveState(int name)
         {
-            if (mStates == null)
+            if (mStates == default)
             {
                 return; 
             }

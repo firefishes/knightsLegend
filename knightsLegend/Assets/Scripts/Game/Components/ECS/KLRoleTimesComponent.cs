@@ -1,6 +1,5 @@
 ﻿using ShipDock.Applications;
 using ShipDock.ECS;
-using System.Collections.Generic;
 
 namespace KLGame
 {

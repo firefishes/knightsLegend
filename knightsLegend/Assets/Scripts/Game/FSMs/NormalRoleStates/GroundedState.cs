@@ -13,7 +13,7 @@
 
         protected override void RevertStateParam()
         {
-            mStateParam?.Clean();
+            mStateParam?.ToPool();
         }
     }
 }

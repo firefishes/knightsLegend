@@ -18,25 +18,9 @@ namespace KLGame
             m_RoleRigidbody.mass = 20;
         }
 
-        protected override void OnInited()
-        {
-            base.OnInited();
-
-            RoleFSM = (mRole.RoleInput as KLRoleInputInfo).AnimatorFSM;
-            (RoleFSM as CommonRoleFSM).SetAnimator(ref m_RoleAnimator);
-            RoleFSM.Run(default, NormalRoleStateName.GROUNDED);
-
-        }
-
-        protected override void UpdateAnimations()
-        {
-            base.UpdateAnimations();
-            
-        }
-
         protected override void SetRoleEntitas()
         {
-            mRole = new MainMaleRole();
+            mRole = new MainMaleRole(m_FSMStates);
 
             KLConsts.S_LENS.DeliveParam<KLCameraServer, KLRoleComponent>("InitPlayerRoleLen", "PlayerRole_0", OnSetRoleInitParam, true);
         }
@@ -60,6 +44,11 @@ namespace KLGame
             mRoleInput.SetMoveValue(v);
         }
 
+        protected override Vector3 CreateRoleRigidbodyVelocity(Vector3 v)
+        {
+            return base.CreateRoleRigidbodyVelocity(v);
+        }
+
         protected override void UpdateAnimatorParams()
         {
             base.UpdateAnimatorParams();
@@ -69,7 +58,7 @@ namespace KLGame
                 mRoleInput.SetUserInputValue(mFire1ParamName, false);
 
                 CurrentSkillID = 1;
-                MoveBlock = true;
+                //MoveBlock = true;
 
                 NormalATKStateParam param = Pooling<NormalATKStateParam>.From();
                 param.Reinit(this, 1);

@@ -91,13 +91,6 @@ namespace ShipDock.ECS
 
         public void UpdateComponent(int time)
         {
-            if(IsUpdating)
-            {
-                return;
-            }
-
-            IsUpdating = true;
-
             int id;
             int max = (mEntitasIDs != default) ? mEntitasIDs.Count : 0;
             for (int i = 0; i < max; i++)
@@ -127,7 +120,6 @@ namespace ShipDock.ECS
                 }
             }
             mEntitasItem = default;
-            IsUpdating = false;
         }
 
         public void FreeComponent(int time)
@@ -205,9 +197,10 @@ namespace ShipDock.ECS
             IsSceneUpdate = value;
         }
 
-        public bool IsUpdating { get; protected set; }
+        //public bool IsUpdating { get; protected set; }
         public int ID { get; private set; } = int.MaxValue;
         public int[] RelateComponents { get; set; }
         public bool IsSceneUpdate { get; private set; }
+        public bool IsVariableFrame { get; set; }
     }
 }

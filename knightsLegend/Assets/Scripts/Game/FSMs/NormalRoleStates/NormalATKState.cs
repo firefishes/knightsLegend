@@ -7,7 +7,7 @@ namespace KLGame
 {
     public class NormalATKState : KLAnimatorState<NormalATKStateParam>, IAssailableCommiter
     {
-        protected IGameProcessing mHit;
+        protected IRoleProcessing mHit;
 
         public NormalATKState(int name) : base(name)
         {
@@ -25,6 +25,8 @@ namespace KLGame
                 mStateParam = param;
                 mRole = mStateParam.KLRole;
                 RoleSceneComp = mStateParam.RoleSceneComp;
+
+                RoleSceneComp.RoleFSMChanged(StateName);
                 ReadyMotion(mStateParam.CurrentSkillID, mStateParam.SkillMapper, true);
             }
         }
@@ -34,15 +36,12 @@ namespace KLGame
             bool result = base.ShouldParamEnqueue(ref param) || IsHit;
             if (result)
             {
-                mHit?.Clean();
+                mHit?.ToPool();
                 mHit = default;
             }
             else
             {
-                if(param != default)
-                {
-                    Pooling<NormalATKStateParam>.To(param);
-                }
+                param?.ToPool();
             }
             return result;
         }
@@ -53,7 +52,7 @@ namespace KLGame
 
             switch (StateFeedback)
             {
-                case 0:
+                case RoleAnimationFeedBackConsts.FEED_BACK_BY_HIT:
                     DeActiveCollider();
                     break;
                 case 1:
@@ -69,6 +68,7 @@ namespace KLGame
             if(result)
             {
                 RoleSceneComp.MoveBlock = false;
+                Animator.SetFloat("Atk1", 0f);
             }
             else
             {
@@ -85,7 +85,7 @@ namespace KLGame
             {
                 IsHit = false;
                 RoleSceneComp = default;
-                mHit?.Clean();
+                mHit?.ToPool();
                 mHit = default;
                 GetFSM().ChangeState(NormalRoleStateName.GROUNDED);
             }
@@ -97,7 +97,7 @@ namespace KLGame
         {
             if (mStateParam != default)
             {
-                Pooling<NormalATKStateParam>.To(mStateParam);
+                mStateParam.ToPool();
             }
         }
 
@@ -105,7 +105,7 @@ namespace KLGame
         {
             foreach (var item in mStateParamQueue)
             {
-                Pooling<NormalATKStateParam>.To(item);
+                item.ToPool();
             }
         }
 
@@ -124,10 +124,7 @@ namespace KLGame
 
         private void OnTriggerRoleActive(ref IParamNotice<bool> target)
         {
-            target.SetNoticeName(KLConsts.N_TRIGGER_ROLE_ACTIVE);
-            target.NotifcationSender = mRole;
-            mRole.Broadcast(target);
-
+            mRole.Broadcast(KLConsts.N_TRIGGER_ROLE_ACTIVE, target);
             KLConsts.S_KL.Revert<KLServer>("Bool", target);
         }
 
@@ -150,28 +147,42 @@ namespace KLGame
             hit.HitInfoScope.startPos = mStateParam.StartPos;
             hit.HitInfoScope.startRotation = mStateParam.StartRotation;
 
-            return mRole.Processing.AddProcess(hit);
+            return mRole.Processing.AddRoleProcess(hit);
         }
 
         protected void OnATKHit()
         {
             IsHit = true;
-            StartFeedbackTime(0, 2f, 0.3f);
-
-            Debug.Log("hit");
+            StartFeedbackTime(RoleAnimationFeedBackConsts.FEED_BACK_BY_HIT, 0.1f, 0f);
         }
+
+        //protected override void StartFeedbackTime(int feedback, float time, float speed = 1)
+        //{
+        //    base.StartFeedbackTime(feedback, time, speed);
+
+        //    switch(StateFeedback)
+        //    {
+        //        case RoleAnimationFeedBackConsts.FEED_BACK_BY_HIT:
+        //            //mFeedbackTime.completion += OnFeedBackByHit;
+        //            break;
+        //    }
+        //}
+
+        //private void OnFeedBackByHit()
+        //{
+
+        //}
 
         private void DeActiveCollider()
         {
             var notice = Pooling<ParamNotice<bool>>.From();
-            notice.SetNoticeName(KLConsts.N_TRIGGER_ROLE_ACTIVE);
-            notice.NotifcationSender = mRole;
             notice.ParamValue = false;
-            mRole.Broadcast(notice);
-            Pooling<ParamNotice<bool>>.To(notice);
+            mRole.Broadcast(KLConsts.N_TRIGGER_ROLE_ACTIVE, notice);
+
+            notice.ToPool();
         }
 
         private bool IsHit { get; set; }
-        private IKLRoleSceneComponent RoleSceneComp { get; set; }
+        protected IKLRoleSceneComponent RoleSceneComp { get; set; }
     }
 }

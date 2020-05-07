@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿#define G_LOG
+
+using System.Collections.Generic;
 using ShipDock.Applications;
 using ShipDock.FSM;
+using ShipDock.Testers;
 using ShipDock.Tools;
 using UnityEngine;
 
@@ -15,10 +18,10 @@ namespace KLGame
         protected Queue<P> mStateParamQueue;
         protected ComboMotionCreater mComboMotion;
         protected AnimationInfoUpdater mAniUpdater;
-        protected TimeGapper mDelayFinishTime = new TimeGapper();
+        protected TimingTasker mFeedbackTime;
 
-        private TimeGapper mFeedbackTime = new TimeGapper();
         private MethodUpdater mMethodUpdater;
+        protected TimingTaskEntitas mRoleStateTimings;
 
         public KLAnimatorState(int name) : base(name)
         {
@@ -27,20 +30,49 @@ namespace KLGame
                 FixedUpdate = DuringState
             };
             mStateParamQueue = new Queue<P>();
+            mRoleStateTimings = TimingTaskEntitas.Create();
+            mRoleStateTimings.CreateMapper();
+            mRoleStateTimings.AddTiming(KLConsts.T_ROLE_STATE_FEED_BACK, 0);
+
+            mFeedbackTime = mRoleStateTimings.GetTimingTasker(KLConsts.T_ROLE_STATE_FEED_BACK, 0);
+            mFeedbackTime.TotalCount = 1;
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            mRoleStateTimings?.ToPool();
+
+            UpdaterNotice.RemoveSceneUpdater(mMethodUpdater);
+
+            RevertAllStateParams();
+            RevertStateParam();
+
+            Utils.Reclaim(mMethodUpdater);
+            Utils.Reclaim(ref mStateParamQueue);
+            Utils.Reclaim(mComboMotion);
+
+            mRole = default;
+            mStateParam = default;
+            mSkillMapper = default;
+            mComboMotion = default;
+            mAniUpdater = default;
+            mRoleStateTimings = default;
         }
 
         public override void InitState(IStateParam param = null)
         {
             base.InitState(param);
 
-            StateFeedback = -1;
+            StateFeedback = RoleAnimationFeedBackConsts.FEED_BACK_DEFAULT;
 
             if (param is P item)
             {
                 OnEnter(ref item);
             }
         }
-
+        
         protected virtual void OnEnter(ref P param)
         {
 
@@ -58,7 +90,6 @@ namespace KLGame
 
         protected virtual void OnParamEnqueue(ref P param)
         {
-            mDelayFinishTime.Stop();
 
             bool result = ShouldParamEnqueue(ref param);
             if (result)
@@ -67,7 +98,7 @@ namespace KLGame
             }
             else
             {
-                if(mComboMotion != default && mComboMotion.ShouldCombo())
+                if (mComboMotion != default && mComboMotion.ShouldCombo())
                 {
                     mComboMotion.Reset(true);
 
@@ -107,6 +138,13 @@ namespace KLGame
             return result;
         }
 
+        private void StartFromNextParam(bool isCombo)
+        {
+            RevertStateParam();
+            mStateParam = mStateParamQueue.Dequeue();
+            ReadyMotion(mCurrentSkillID, mSkillMapper, isCombo);
+        }
+
         protected virtual void DuringState(int time)
         {
             if (mAniUpdater != default)
@@ -119,25 +157,24 @@ namespace KLGame
                         bool isCombo = mComboMotion != default;
                         if (mStateParamQueue.Count > 0)
                         {
-                            RevertStateParam();
-                            mStateParam = mStateParamQueue.Dequeue();
-                            ReadyMotion(mCurrentSkillID, mSkillMapper, isCombo);
+                            StartFromNextParam(isCombo);
                         }
-                        else if (!mDelayFinishTime.isStart && isCombo)
+                        else
                         {
-                            Finish(true);
+                            Finish(false);
                         }
                     }
                 }
             }
-            OnDelayFinish(time);
         }
 
-        protected void StartFeedbackTime(int feedback, float time, float speed = 1f)
+        protected virtual void StartFeedbackTime(int feedback, float time, float speed = 1f)
         {
             StateFeedback = feedback;
             mFeedbackTime.Start(time);
             Animator.SetFloat("Speed", speed);
+
+            Debug.Log("StartFeedbackTime");
         }
 
         protected virtual bool ShouldUpdateMotion(int time)
@@ -147,17 +184,16 @@ namespace KLGame
 
         protected virtual bool FrameFrozen(int time)
         {
-            bool result = StateFeedback >= 0;
+            bool result = StateFeedback >= RoleAnimationFeedBackConsts.FEED_BACK_BY_HIT;
             if (result)
             {
-                if (mFeedbackTime.isStart)
+                if (mFeedbackTime.IsFinish)
                 {
-                    if (mFeedbackTime.TimeAdvanced(time * 0.001f))
-                    {
-                        SpeedFrozenEnd();
-                        StateFeedback = -1;
-                        result = false;
-                    }
+                    Debug.Log("FrameFrozen finish");
+                    SpeedFrozenEnd();
+                    mFeedbackTime.Reset();
+                    StateFeedback = RoleAnimationFeedBackConsts.FEED_BACK_DEFAULT;
+                    result = false;
                 }
             }
             return result;
@@ -166,17 +202,6 @@ namespace KLGame
         protected virtual void SpeedFrozenEnd()
         {
             Animator.SetFloat("Speed", 1f);
-        }
-
-        private void OnDelayFinish(int time)
-        {
-            if (mDelayFinishTime.isStart)
-            {
-                if (mDelayFinishTime.TimeAdvanced(time * 0.001f))
-                {
-                    Finish(false);
-                }
-            }
         }
 
         protected void InitMotion(bool isCombo, Animator animator)
@@ -226,32 +251,12 @@ namespace KLGame
         
         protected virtual bool BeforeFinish(bool checkInputWhenFinish)
         {
-            bool shouldFinish = true;
-            if(mComboMotion != default)
-            {
-                if (checkInputWhenFinish && mComboMotion.ShouldCombo())//连续动画模式
-                {
-                    IsFeedbackChecked = false;
-                    mDelayFinishTime.Start(0.5f);
-                    shouldFinish = false;
-                }
-            }
-            else
-            {
-                if (mAniUpdater != default && mStateParamQueue.Count > 0)//单一动画循环模式
-                {
-                    RevertStateParam();
-                    mStateParam = mStateParamQueue.Dequeue();
-                    shouldFinish = false;
-                }
-            }
-            return shouldFinish;
+            return true;
         }
 
         protected virtual bool Finish(bool checkInputWhenFinish)
         {
             mFeedbackTime.Stop();
-            mDelayFinishTime.Stop();
 
             bool result = BeforeFinish(checkInputWhenFinish);
             if (result)
@@ -259,10 +264,10 @@ namespace KLGame
                 RevertStateParam();
                 RevertAllStateParams();
                 Utils.Reclaim(ref mStateParamQueue, false);
-
+                
                 mComboMotion?.Reset(true);
 
-                StateFeedback = -1;
+                StateFeedback = RoleAnimationFeedBackConsts.FEED_BACK_DEFAULT;
                 mStateParam = default;
                 mComboMotion = default;
                 mAniUpdater = default;

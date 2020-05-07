@@ -17,7 +17,7 @@ namespace ShipDock.Applications
         {
             base.InitMapper();
 
-            m_DisposeSkillInfos = false;
+            m_DisposeInfos = false;
         }
 
         protected override void AfterInitItem(ref MotionSceneInfo item)

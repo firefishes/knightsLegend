@@ -2,24 +2,28 @@
 using ShipDock.Pooling;
 using ShipDock.Tools;
 using System.Collections.Generic;
+using UnityEngine;
+using TimingMapper = ShipDock.Tools.KeyValueList<int, ShipDock.Applications.TimingTasker>;
 
 namespace KLGame
 {
     public class TimingTaskEntitas : EntitasComponentable, IPoolable
     {
+        public static TimingTaskEntitas Create()
+        {
+            return Pooling<TimingTaskEntitas>.From();
+        }
+
         private List<TimingTasker> mTaskers;
-        private KeyValueList<int, TimingTasker> mTaskMapper;
-        private KeyValueList<int, TimingTasker> mForceMoveTaskMapper;
+        private TimingMapper mMapperItem;
+        private List<TimingMapper> mMappers;
 
         public TimingTaskEntitas() : base()
         {
             InitComponents();
 
-            mTaskMapper = new KeyValueList<int, TimingTasker>();
-            mForceMoveTaskMapper = new KeyValueList<int, TimingTasker>();
-
-            AddRoleTiming(RoleTimingTaskNames.NORMAL_ATK_TIME);
-            AddRoleTiming(RoleTimingTaskNames.NORMAL_ATK_HIT_TIME);
+            mMappers = new List<TimingMapper>();
+            CreateMapper();
         }
 
         public override void Dispose()
@@ -27,37 +31,38 @@ namespace KLGame
             base.Dispose();
 
             mTaskers = default;
-            Utils.Reclaim(ref mTaskMapper, true, true);
-            Utils.Reclaim(ref mForceMoveTaskMapper, true, true);
+            Utils.Reclaim(ref mMappers, true, true);
         }
         
         public void Revert()
         {
-            Utils.Reclaim(ref mTaskMapper, false, true);
-            Utils.Reclaim(ref mForceMoveTaskMapper, false, true);
+            Utils.Reclaim(ref mMappers, false, true);
         }
 
-        public TimingTasker AddRoleTiming(int name)
+        public void ToPool()
         {
-            return new TimingTasker(name, ref mTaskMapper);
+            Pooling<TimingTaskEntitas>.To(this);
         }
 
-        public TimingTasker AddForceMoveTiming(int name)
+        public int CreateMapper()
         {
-            return new TimingTasker(name, ref mForceMoveTaskMapper);
+            mMappers.Add(new KeyValueList<int, TimingTasker>());
+            return mMappers.Count;
         }
 
-        public void RemoveRoleTiming(int name, bool isFinish = false, bool isDispose = false)
+        public TimingTasker AddTiming(int name, int mapperIndex)
         {
-            RemvoeTiming(ref mTaskMapper, name, isFinish, isDispose);
+            TimingMapper mapper = mMappers[mapperIndex];
+            return new TimingTasker(name, ref mapper);
         }
 
-        public void RemoveForceMoveTiming(int name, bool isFinish = false, bool isDispose = false)
+        public void RemoveTiming(int name, int mapperIndex, bool isFinish = false, bool isDispose = false)
         {
-            RemvoeTiming(ref mForceMoveTaskMapper, name, isFinish, isDispose);
+            TimingMapper mapper = mMappers[mapperIndex];
+            RemvoeTiming(ref mapper, name, isFinish, isDispose);
         }
 
-        private void RemvoeTiming(ref KeyValueList<int, TimingTasker> mapper, int name, bool isFinish = false, bool isDispose = false)
+        private void RemvoeTiming(ref TimingMapper mapper, int name, bool isFinish = false, bool isDispose = false)
         {
             TimingTasker target = mapper.Remove(name);
             if (target == default)
@@ -74,9 +79,10 @@ namespace KLGame
             }
         }
 
-        public TimingTasker GetRoleTiming(int name)
+        public TimingTasker GetTimingTasker(int name, int mapperIndex)
         {
-            return mTaskMapper[name];
+            TimingMapper mapper = mMappers[mapperIndex];
+            return mapper[name];
         }
 
         public void UpdateAllTimes(float dTime, ref TimingTasker item)
@@ -87,11 +93,13 @@ namespace KLGame
             }
             TaskersUpdating = true;
 
-            mTaskers = (mTaskMapper != default) ? mTaskMapper.Values : default;
-            UpdateTaskers(ref mTaskers, dTime, ref item);
-
-            mTaskers = (mForceMoveTaskMapper != default) ? mForceMoveTaskMapper.Values : default;
-            UpdateTaskers(ref mTaskers, dTime, ref item);
+            int max = mMappers.Count;
+            for (int i = 0; i < max; i++)
+            {
+                mMapperItem = mMappers[i];
+                mTaskers = mMapperItem.Values;
+                UpdateTaskers(ref mTaskers, dTime, ref item);
+            }
 
             TaskersUpdating = false;
         }
@@ -103,13 +111,20 @@ namespace KLGame
                 return;
             }
             bool flag;
+            TimeGapper timer;
             int max = taskers.Count;
             for (int i = 0; i < max; i++)
             {
                 item = taskers[i];
                 if (item != default && item.IsStart)
                 {
-                    flag = item.timeGapper.TimeAdvanced(dTime);
+                    timer = item.timeGapper;
+                    flag = timer.TimeAdvanced(dTime);
+                    item.timeGapper = timer;
+                    if (!item.IsStart)
+                    {
+                        item.Stop(true);
+                    }
                     if (flag)
                     {
                         item.completion?.Invoke();

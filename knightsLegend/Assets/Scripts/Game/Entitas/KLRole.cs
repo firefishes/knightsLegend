@@ -17,8 +17,7 @@ namespace KLGame
 
             this.Remove(OnRoleNotificationHandler);
 
-            Utils.Reclaim(TimesEntitas);
-
+            TimesEntitas?.ToPool();
             TimesEntitas = default;
             Processing = default;
             CollidingChanger = default;
@@ -33,26 +32,35 @@ namespace KLGame
             ShipDockComponentManager components = ShipDockApp.Instance.Components;
             Processing = components.GetComponentByAID(KLConsts.C_PROCESS) as KLProcessComponent;
 
-            TimesEntitas = new TimingTaskEntitas();
+            TimesEntitas = TimingTaskEntitas.Create();
+            TimesEntitas.CreateMapper();
+            TimesEntitas.AddTiming(KLConsts.T_AI_ATK_TIME, 0);
+            TimesEntitas.AddTiming(KLConsts.T_AI_ATK_HIT_TIME, 0);
         }
 
-        protected virtual void OnRoleNotificationHandler(INoticeBase<int> obj)
+        protected virtual void OnRoleNotificationHandler(INoticeBase<int> param)
         {
+            switch(param.Name)
+            {
+                case KLConsts.N_INIT_ENTITAS_CALLBACKS:
+
+                    break;
+            }
         }
 
         protected override void SetRoleInputInfo()
         {
             base.SetRoleInputInfo();
 
-            RoleInput.FullRoleInputPhases = new List<int>()
-            {
-                UserInputPhases.ROLE_INPUT_PHASE_UNDERATTACKED
-            };
+            //RoleInput.FullRoleInputPhases = new List<int>()
+            //{
+            //    UserInputPhases.ROLE_INPUT_PHASE_UNDERATTACKED
+            //};
         }
 
-        public void StartTimingTask(int name, float time, Action completion = default)
+        public void StartTimingTask(int name, int mapperIndex, float time, Action completion = default)
         {
-            TimingTasker roleTime = TimesEntitas.GetRoleTiming(name);
+            TimingTasker roleTime = TimesEntitas.GetTimingTasker(name, mapperIndex);
             if (roleTime != default)
             {
                 if (completion != default)
@@ -85,10 +93,12 @@ namespace KLGame
             KLConsts.C_ROLE_CAMP
         };
 
-        public abstract int RoleFSMName { get; }
+        public abstract int RoleFSMName { get; set; }
         public KLProcessComponent Processing { get; private set; }
         public TimingTaskEntitas TimesEntitas { get; private set; }
         public bool HitSomeOne { get; set; }
         public Vector3 WeapontPos { get; set; }
+        public CommonRoleFSM RoleFSM { get; protected set; }
+        public RoleFSMObj FSMStates { get; set; }
     }
 }

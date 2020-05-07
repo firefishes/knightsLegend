@@ -1,23 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using ShipDock.Applications;
-using ShipDock.ECS;
+using ShipDock.Notices;
 using ShipDock.Pooling;
 
 namespace KLGame
 {
     public class KLEnemyRoleComponent : KLRoleComponent
     {
+
+        private MethodUpdater mKeepStandingUpdater;
         private IAIRole mRoleATkAI;
 
-        protected override void OnInited()
+        protected override void Init()
         {
-            base.OnInited();
+            base.Init();
 
-            RoleFSM = (mRole.RoleInput as KLRoleInputInfo).AnimatorFSM;
-            (RoleFSM as CommonRoleFSM).SetAnimator(ref m_RoleAnimator);
-            RoleFSM.Run(default, NormalRoleStateName.GROUNDED);
+            mKeepStandingUpdater = new MethodUpdater
+            {
+                Update = KeepStanding
+            };
+        }
 
+        private void KeepStanding(int dTime)
+        {
+            m_RoleAnimator.SetFloat(m_BlendTreeInfo.MoveMotionName, 0f);
+            m_RoleAnimator.SetFloat(m_BlendTreeInfo.TurnMotionName, 0f);
         }
 
         protected override void SetRoleEntitas()
@@ -30,33 +38,29 @@ namespace KLGame
         {
             base.InitRoleInputCallbacks();
             
-            SetRoleInputCallback(EnemyInputPhases.ENEMY_INPUT_PHASE_ATTACK_AI, OnAttackIAStart);
-            SetRoleInputCallback(EnemyInputPhases.ENEMY_INPUT_PHASE_NROMAL_ATK, OnEnemyNormalATK);
-            SetRoleInputCallback(EnemyInputPhases.ENEMY_INPUT_PHASE_UPDATE_NROMAL_ATK_TRIGGER_TIME, OnUpdateNormalAtkTriggerTime);
+            SetRoleInputCallback(KLConsts.ENEMY_INPUT_PHASE_ATTACK_AI, OnAttackIAStart);
+            SetRoleInputCallback(KLConsts.ENEMY_INPUT_PHASE_UPDATE_NROMAL_ATK_TRIGGER_TIME, OnUpdateNormalAtkTriggerTime);
+            SetRoleInputCallback(KLConsts.ENEMY_INPUT_PHASE_NROMAL_ATK, OnEnemyNormalATK);
+
         }
 
         private void OnUpdateNormalAtkTriggerTime()
         {
-            m_RoleAnimator.SetFloat(m_BlendTreeInfo.MoveMotionName, 0f);
-            m_RoleAnimator.SetFloat(m_BlendTreeInfo.TurnMotionName, 0f);
+            mRoleATkAI.RoleInput.SetInputPhase(KLConsts.ENEMY_INPUT_PHASE_NROMAL_ATK);
         }
 
         private void OnEnemyNormalATK()
         {
+            ActiveRoleInputPhase(KLConsts.ENEMY_INPUT_PHASE_NROMAL_ATK, false);
+
             CurrentSkillID = 1;
             MoveBlock = true;
 
             NormalATKStateParam param = Pooling<NormalATKStateParam>.From();
             param.Reinit(this, 1);
+            RoleFSM.ChangeState(NormalRoleStateName.NORMAL_ATK, param);
 
-            if (RoleFSM.Current.StateName == NormalRoleStateName.NORMAL_ATK)
-            {
-                RoleFSM.Current.SetStateParam(param);
-            }
-            else
-            {
-                RoleFSM.ChangeState(NormalRoleStateName.NORMAL_ATK, param);
-            }
+            UpdaterNotice.AddSceneUpdater(mKeepStandingUpdater);
         }
 
         private void OnAttackIAStart()
@@ -66,9 +70,10 @@ namespace KLGame
                 return;
             }
 
+            ActiveRoleInputPhase(KLConsts.ENEMY_INPUT_PHASE_ATTACK_AI, false);
+
             KLRoleFSMAIStateParam param = Pooling<KLRoleFSMAIStateParam>.From();
             param.Reinit(this);
-
             RoleFSM.ChangeState(NormalRoleStateName.NORMAL_ATTACK_AI, param);
         }
 
@@ -77,7 +82,7 @@ namespace KLGame
             switch(CurrentSkillID)
             {
                 case 1:
-                    mRoleInput.SetInputPhase(EnemyInputPhases.ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK);
+                    mRoleInput.SetInputPhase(KLConsts.ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK);
                     break;
             }
 
@@ -92,6 +97,21 @@ namespace KLGame
                 mRoleATkAI.ResetAIRoleATK();
             }
             return flag;
+        }
+
+        protected override void OnRoleNotices(INoticeBase<int> obj)
+        {
+            base.OnRoleNotices(obj);
+
+            switch (obj.Name)
+            {
+                case KLConsts.N_AI_RESET:
+                    UpdaterNotice.RemoveSceneUpdater(mKeepStandingUpdater);
+                    ActiveRoleInputPhase(UserInputPhases.ROLE_INPUT_PHASE_AFTER_MOVE, true);
+                    ActiveRoleInputPhase(KLConsts.ENEMY_INPUT_PHASE_ATTACK_AI, true);
+                    ActiveRoleInputPhase(KLConsts.ENEMY_INPUT_PHASE_NROMAL_ATK, true);
+                    break;
+            }
         }
 
         protected virtual List<int> BlockingToAIStates { get; } = new List<int>

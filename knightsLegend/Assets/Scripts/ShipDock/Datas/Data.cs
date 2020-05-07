@@ -1,9 +1,11 @@
-﻿using System;
+﻿using ShipDock.Interfaces;
+using ShipDock.Tools;
+using System;
 using System.Collections.Generic;
 
 namespace ShipDock.Datas
 {
-    public class Data : IData
+    public class Data : IData, IDispose
     {
         private List<IDataExtracter> mDataHandlers;
         private Action<IData, int> mOnDataChanged;
@@ -12,6 +14,12 @@ namespace ShipDock.Datas
         {
             DataName = dataName;
             mDataHandlers = new List<IDataExtracter>();
+        }
+
+        public virtual void Dispose()
+        {
+            Utils.Reclaim(ref mDataHandlers);
+            mOnDataChanged = default;
         }
 
         public void DataChanged(params int[] keys)
@@ -44,7 +52,50 @@ namespace ShipDock.Datas
             mDataHandlers.Remove(dataHandler);
             mOnDataChanged -= dataHandler.OnDataChanged;
         }
-        
+
         public int DataName { get; private set; }
+    }
+
+    public class DataStorager : Data
+    {
+        private KeyValueList<int, IDataUnit> mStorager;
+
+        public DataStorager(int dataName) : base(dataName)
+        {
+            mStorager = new KeyValueList<int, IDataUnit>();
+        }
+
+        public bool HasDataUnit(int key)
+        {
+            return mStorager.ContainsKey(key);
+        }
+
+        public void SetDataUnit(int key, IDataUnit data)
+        {
+            if (data == default)
+            {
+                mStorager.Remove(key);
+            }
+            else
+            {
+                mStorager.Put(key, data);
+            }
+        }
+
+        public IDataUnit GetDataUnit<T>(int key) where T : IDataUnit
+        {
+            IDataUnit result = mStorager[key];
+            return result == default ? default : (T)result;
+        }
+    }
+
+    public class DataUnit
+    {
+
+    }
+
+    public interface IDataUnit
+    {
+
     }
 }

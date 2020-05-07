@@ -7,6 +7,7 @@ namespace ShipDock.Applications
     public interface IRoleInput
     {
         void AddEntitasCallback(int phaseName, Action callback);
+        void ActiveEntitasPhase(int phaseName, bool isActive);
         void SetUserInputValue(Vector3 value);
         void SetUserInputValue(string key, bool value);
         bool GetUserInputValue(string key);
@@ -15,7 +16,6 @@ namespace ShipDock.Applications
         void SetMoveValue(Vector3 value);
         void MoveValueNormalize();
         void SetInputPhase(int phaseName, bool isCheckFullPhase = true);
-        void NextPhase();
         void ResetEntitasCalled(int phaseName);
         void AdvancedInputPhase(int rolePhase, int allowCalled);
         void ExecuteBySceneComponent(ref Action sceneCompMethod, int calledMustValue = 1);

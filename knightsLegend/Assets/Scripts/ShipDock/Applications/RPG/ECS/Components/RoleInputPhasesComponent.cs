@@ -2,12 +2,13 @@
 #define LOG_TRY_CATCH_ROLE
 
 using ShipDock.ECS;
+using ShipDock.Notices;
 using ShipDock.Tools;
 
 namespace ShipDock.Applications
 {
 
-    public class RoleInputPhasesComponent : ShipDockComponent
+    public class RoleInputPhasesComponent : ShipDockComponent, INotificationSender
     {
         protected ICommonRole mRole;
         protected IRoleInput mRoleInput;
@@ -22,7 +23,7 @@ namespace ShipDock.Applications
             mAllowCalleds = new KeyValueList<int, int>();
         }
 
-        protected void AddAllowCalled(int phaseName, int allowCalled = 1)
+        public void AddAllowCalled(int phaseName, int allowCalled = 1)
         {
             mAllowCalleds[phaseName] = allowCalled;
         }
@@ -54,7 +55,7 @@ namespace ShipDock.Applications
             switch (phaseName)
             {
                 case UserInputPhases.ROLE_INPUT_PHASE_NONE:
-                    InitRolePhases((target as ICommonRole).RoleInput);
+                    InitRolePhases(mRoleInput);
                     break;
                 default:
                     int allowCalled = mAllowCalleds.ContainsKey(phaseName) ? mAllowCalleds[phaseName] : 0;

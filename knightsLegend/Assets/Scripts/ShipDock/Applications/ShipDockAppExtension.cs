@@ -43,6 +43,14 @@ public static class ShipDockAppExtension
 
     public static void Broadcast(this INotificationSender target, INoticeBase<int> notice)
     {
+        notice.NotifcationSender = target;
+        ShipDockApp.Instance.Notificater.Broadcast(notice);
+    }
+
+    public static void Broadcast(this INotificationSender target, int noticeName, INoticeBase<int> notice)
+    {
+        notice.SetNoticeName(noticeName);
+        notice.NotifcationSender = target;
         ShipDockApp.Instance.Notificater.Broadcast(notice);
     }
     

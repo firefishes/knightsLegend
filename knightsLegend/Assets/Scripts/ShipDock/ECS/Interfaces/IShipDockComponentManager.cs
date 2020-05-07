@@ -15,5 +15,7 @@ namespace ShipDock.ECS
         IShipDockComponent GetComponentByAID(int aid);
         void RemoveComponent(IShipDockComponent target);
         Action<IShipDockComponentManager> RelateComponentsReFiller { get; set; }
+        int CountTime { get; }
+        int FrameTimeInScene { get; set; }
     }
 }

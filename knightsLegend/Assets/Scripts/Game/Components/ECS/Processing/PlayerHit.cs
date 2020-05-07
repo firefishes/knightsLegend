@@ -13,7 +13,7 @@ namespace KLGame
         {
         }
 
-        public override void Clean()
+        public override void ToPool()
         {
             Pooling<PlayerHit>.To(this);
         }
@@ -43,10 +43,10 @@ namespace KLGame
                     PlayerRole.EnemyMainLockDown = mEnemyRole;
                     AfterProcessing?.Invoke();
                     PlayerRole.HitSomeOne = true;
-                    ForceMover.Create().SetMover(mEnemyRole, new Vector3(PlayerRole.WeapontPos.x, 0, PlayerRole.WeapontPos.z) * 0.4f, 0.2f);
+                    ForceMover.Create().SetMover(mEnemyRole, new Vector3(PlayerRole.WeapontPos.x, 0, PlayerRole.WeapontPos.z) * 0.4f, 0.1f);
                 }
             }
-            Pooling<PlayerHit>.To(this);
+            ToPool();
         }
 
         public IKLRole PlayerRole { get; set; }

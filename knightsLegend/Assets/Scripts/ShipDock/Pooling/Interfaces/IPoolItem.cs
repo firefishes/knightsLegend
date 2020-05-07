@@ -11,5 +11,6 @@ namespace ShipDock.Pooling
     public interface IPoolable
     {
         void Revert();
+        void ToPool();
     }
 }

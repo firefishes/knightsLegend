@@ -45,5 +45,10 @@ namespace ShipDock.Applications
             ShipDockConsts.NOTICE_SCENE_CALL_LATE.Dispatch(notice);
             Pooling<ParamNotice<Action<int>>>.To(notice);
         }
+
+        internal static void AddSceneUpdater(object keepStanding)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -38,7 +38,7 @@ namespace ShipDock.FSM
 
         public void SetAnimator(ref Animator animator)
         {
-            InitAnimatorStateMachine(ref animator);
+            InitAnimatorStateMachine(ref animator);            
         }
     }
 }

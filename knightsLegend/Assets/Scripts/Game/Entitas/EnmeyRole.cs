@@ -29,27 +29,36 @@ namespace KLGame
             mFSM = default;
         }
 
+        public override void InitComponents()
+        {
+            base.InitComponents();
+
+            TimesEntitas.AddTiming(KLConsts.T_AI_THINKING, 0);
+        }
+
         protected override void OnRoleNotificationHandler(INoticeBase<int> param)
         {
             base.OnRoleNotificationHandler(param);
 
-            switch(param.Name)
-            {
-                case KLConsts.N_BRAK_WORKING_AI:
-                    if (mFSM.Current.StateName == NormalRoleStateName.GROUNDED)
-                    {
-                        SetShouldAtkAIWork(false);
-                    }
-                    break;
-            }
+            //switch(param.Name)
+            //{
+            //    case KLConsts.N_BRAK_WORKING_AI:
+            //        if (mFSM.Current.StateName == NormalRoleStateName.GROUNDED)
+            //        {
+            //            SetShouldAtkAIWork(false);
+            //        }
+            //        break;
+            //}
         }
 
         protected override IRoleInput CreateRoleInputInfo()
         {
+            RoleFSMName = RoleMustSubgroup.animatorID;
             mFSM = new NormalEnemyRoleFSM(RoleFSMName)
             {
                 RoleEntitas = this
             };
+            RoleFSM = mFSM;
             return new KLRoleInputInfo(this, mFSM);
         }
         
@@ -60,27 +69,32 @@ namespace KLGame
             RoleInput.RoleInputType = KLConsts.ROLE_INPUT_TYPE_ENEMY;
         }
 
-        public override void AfterGetStopDistance(float dist, Vector3 entitasPos)
+        public override bool AfterGetStopDistance(float dist, Vector3 entitasPos)
         {
-            base.AfterGetStopDistance(dist, entitasPos);
+            bool result = base.AfterGetStopDistance(dist, entitasPos);
 
             if (RoleInput.RoleInputPhase == UserInputPhases.ROLE_INPUT_PHASE_NONE)
             {
-                return;
+                return false;
             }
-            
+            else
+            {
+                result = true;
+            }
+
             if (!ShouldAtkAIWork)
             {
                 SetShouldAtkAIWork(true);
-                RoleInput.SetInputPhase(EnemyInputPhases.ENEMY_INPUT_PHASE_ATTACK_AI);
+                RoleInput.SetInputPhase(KLConsts.ENEMY_INPUT_PHASE_ATTACK_AI);
             }
             else
             {
                 Notice notice = Pooling<Notice>.From();
                 notice.NotifcationSender = this;
                 KLConsts.N_BRAK_WORKING_AI.Dispatch(notice);
-                notice.Clean();
+                notice.ToPool();
             }
+            return true;
         }
 
         public void SetATKID(int value)
@@ -99,7 +113,9 @@ namespace KLGame
             {
                 if (mComponentIDs == default)
                 {
-                    base.ComponentIDs.ContactToArr(new int[] { KLConsts.C_ROLE_AI_ATK }, out mComponentIDs);
+                    base.ComponentIDs.ContactToArr(new int[] {
+                        KLConsts.C_ROLE_AI_ATK
+                    }, out mComponentIDs);
                 }
                 return mComponentIDs;
             }
@@ -112,7 +128,7 @@ namespace KLGame
 
         public void ResetAIRoleATK()
         {
-            TimingTasker target = TimesEntitas.GetRoleTiming(RoleTimingTaskNames.NORMAL_ATK_TIME);
+            TimingTasker target = TimesEntitas.GetTimingTasker(KLConsts.T_AI_ATK_TIME, 0);
             target.ResetRunCounts();
 
             SetShouldAtkAIWork(false);
@@ -121,7 +137,7 @@ namespace KLGame
 
         public int ATKID { get; private set; }
         public bool IsInitNormalATKPhases { get; set; }
-        public override int RoleFSMName { get; } = KLConsts.RFSM_NORMAL_ENMEY;
+        public override int RoleFSMName { get; set; }// = KLConsts.RFSM_NORMAL_ENMEY;
         public bool ShouldAtkAIWork { get; private set; }
     }
 }

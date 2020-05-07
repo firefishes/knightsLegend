@@ -14,7 +14,7 @@ namespace KLGame
         {
             if(Current is IAssailableCommiter target)
             {
-                return target.HitCommit(hitCollidID);
+                return target.HitCommit(hitCollidID);//判定攻击是否有效
             }
             return false;
         }

@@ -17,11 +17,6 @@ namespace ShipDock.Applications
 
         }
 
-        public override void Execute(int time, ref IShipDockEntitas target)
-        {
-            base.Execute(time, ref target);
-        }
-
         protected override void InitRolePhases(IRoleInput roleInput)
         {
             base.InitRolePhases(roleInput);
@@ -29,7 +24,7 @@ namespace ShipDock.Applications
             roleInput.AddEntitasCallback(UserInputPhases.ROLE_INPUT_PHASE_MOVE_READY, RoleMove);
             roleInput.AddEntitasCallback(UserInputPhases.ROLE_INPUT_PHASE_AMOUT_EXTRAN_TURN, RoleAmoutExtranTurn);
             roleInput.AddEntitasCallback(UserInputPhases.ROLE_INPUT_PHASE_SCALE_CAPSULE, RoleScaleCapsule);
-
+            
             roleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_MOVE_READY);
 
         }
@@ -54,13 +49,13 @@ namespace ShipDock.Applications
             mRoleInput.SetMoveValue(move);
             mRoleInput.UpdateAmout(ref mRole);
             mRoleInput.UpdateRoleExtraTurnRotation(ref mRoleData);
-            mRoleInput.NextPhase();
+            mRoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_CHECK_GROUND);
         }
 
         private void RoleScaleCapsule()
         {
             mRoleInput?.ScaleCapsuleForCrouching(ref mRole, ref mRoleInput);
-            mRoleInput.NextPhase();
+            mRoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_CHECK_CROUCH);
         }
     }
 

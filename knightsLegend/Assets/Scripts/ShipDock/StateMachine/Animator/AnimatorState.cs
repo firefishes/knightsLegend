@@ -21,12 +21,6 @@ namespace ShipDock.FSM
             mAnimationName = string.Empty;
         }
 
-        public override void InitState(IStateParam param = null)
-        {
-            base.InitState(param);
-            
-        }
-
         protected virtual void PlayAnimation()
         {
             if (mCanPlay && Animator != null)

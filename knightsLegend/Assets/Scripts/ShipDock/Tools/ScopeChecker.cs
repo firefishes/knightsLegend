@@ -48,6 +48,11 @@ namespace ShipDock.Tools
             startPos = Vector3.zero;
         }
 
+        public void ToPool()
+        {
+            Pooling<ScopeChecker>.To(this);
+        }
+
         public bool CheckScope(Vector3 targetPos)
         {
             mTargetVec = targetPos;

@@ -42,9 +42,12 @@ namespace ShipDock.Applications
 
         private void PositionStoped()
         {
-            mRole.FindngPath = false;
-            mRole.SpeedCurrent = 0;
-            mRole.AfterGetStopDistance(mDistance, mRole.Position);
+            if(mRole.FindngPath || !mRole.AfterGetStopDistChecked)
+            {
+                mRole.FindngPath = false;
+                mRole.SpeedCurrent = 0;
+                mRole.AfterGetStopDistChecked = mRole.AfterGetStopDistance(mDistance, mRole.Position);
+            }
         }
 
         public override void Execute(int time, ref IShipDockEntitas target)

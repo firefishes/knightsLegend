@@ -1,11 +1,10 @@
-﻿using System;
-using ShipDock.Applications;
+﻿using ShipDock.Applications;
 
 namespace KLGame
 {
     public class MainMaleRole : KLRole
     {
-        public MainMaleRole()
+        public MainMaleRole(RoleFSMObj fsmStates) : base()
         {
             IRoleData data = KLRoleData.GetRoleDataByRandom();
             data.Speed = 18f;
@@ -16,17 +15,21 @@ namespace KLGame
             PositionEnabled = false;
 
             Camp = 0;
+
+            FSMStates = fsmStates;
         }
         
         protected override IRoleInput CreateRoleInputInfo()
         {
-            var fsm = new MainMaleRoleFSM(RoleFSMName)
+            RoleFSMName = RoleMustSubgroup.animatorID;
+            MainMaleRoleFSM fsm = new MainMaleRoleFSM(RoleFSMName)
             {
                 RoleEntitas = this
             };
+            RoleFSM = fsm;
             return new KLRoleInputInfo(this, fsm);
         }
 
-        public override int RoleFSMName { get; } = KLConsts.RFSM_MAIN_MALE_ROLE;
+        public override int RoleFSMName { get; set; }
     }
 }

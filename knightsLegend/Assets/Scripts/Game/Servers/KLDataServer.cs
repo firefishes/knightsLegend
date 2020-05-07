@@ -33,6 +33,7 @@ namespace KLGame
 
             Add<IParamNotice<ICommonRole>>(AddCampRole);
             Add<IParamNotice<ICommonRole>>(SetUserRole);
+            
         }
 
         [Resolvable("SetUserRole")]
@@ -76,7 +77,8 @@ namespace KLGame
 
         public override IData[] DataList { get; } = new IData[]
         {
-            new KLPlayerData()
+            new KLPlayerData(),
+            new KLConfigData(),
         };
 
         public override string DataServerName { get; } = KLConsts.S_DATAS;

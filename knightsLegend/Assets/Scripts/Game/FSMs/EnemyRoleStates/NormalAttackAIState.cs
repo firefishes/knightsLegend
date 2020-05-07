@@ -1,14 +1,17 @@
-﻿using ShipDock.Applications;
+﻿#define G_LOG
+
+using ShipDock.Applications;
 using ShipDock.FSM;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+using ShipDock.Notices;
+using ShipDock.Pooling;
+using ShipDock.Testers;
 using UnityEngine;
 
 namespace KLGame
 {
     public class NormalAttackAIState : FState
     {
+        private TimingTasker mThinkingTime;
         private TimingTasker mNormalATKTime;
         private IKLRoleFSMAIParam mStateParam;
         private MethodUpdater mStateUpdater;
@@ -25,17 +28,22 @@ namespace KLGame
         {
             base.InitState(param);
 
-            Debug.Log("ai atk state");
-
             mStateParam = param as IKLRoleFSMAIParam;
-
             AIRole = mStateParam.KLRole as IAIRole;
-            AIRole.SetShouldAtkAIWork(true);
+            RoleSceneComp = mStateParam.RoleSceneComp;
 
-            mNormalATKTime = AIRole.TimesEntitas.GetRoleTiming(RoleTimingTaskNames.NORMAL_ATK_TIME);
-            AIRole.RoleInput.NextPhase();
-            float time = mNormalATKTime.RunCounts == 0 ? 0.1f : UnityEngine.Random.Range(1f, 5f);
-            AIRole.StartTimingTask(RoleTimingTaskNames.NORMAL_ATK_TIME, time);
+            if (mThinkingTime == default)
+            {
+                mThinkingTime = AIRole.TimesEntitas.GetTimingTasker(KLConsts.T_AI_THINKING, 0);
+                mNormalATKTime = AIRole.TimesEntitas.GetTimingTasker(KLConsts.T_AI_ATK_TIME, 0);
+
+                mThinkingTime.TotalCount = 1;
+                mThinkingTime.completion += ExecuteNormalAtk;
+                mNormalATKTime.TotalCount = 1;
+                mNormalATKTime.completion += Atked;
+            }
+
+            mThinkingTime.Start(0.2f);
 
             UpdaterNotice.AddUpdater(mStateUpdater);
         }
@@ -44,14 +52,41 @@ namespace KLGame
         {
             base.DeinitState();
 
+            UpdaterNotice.RemoveUpdater(mStateUpdater);
+
+            mThinkingTime.Stop();
+            mNormalATKTime.Stop();
+
             AIRole.SetShouldAtkAIWork(false);
 
-            mStateParam?.Clean();
+            mStateParam?.ToPool();
             mStateParam = default;
             AIRole = default;
-            mNormalATKTime = default;
+            RoleSceneComp = default;
 
-            UpdaterNotice.RemoveUpdater(mStateUpdater);
+        }
+
+        private void ExecuteNormalAtk()
+        {
+            Tester.Instance.Log(TesterRPG.Instance, TesterRPG.LOG, "log: Enemy executeNormalAtk");
+            mThinkingTime.Reset();
+
+            AIRole.SetShouldAtkAIWork(true);
+
+            float time = mNormalATKTime.RunCounts == 0 ? 0.1f : new System.Random().Next(1, 5);
+            mNormalATKTime.Start(time);
+        }
+
+        private void Atked()
+        {
+            Tester.Instance.Log(TesterRPG.Instance, TesterRPG.LOG, "log: Enemy Atked");
+            mNormalATKTime.Reset();
+
+            if(AIRole != default && AIRole.ShouldAtkAIWork)
+            {
+                AIRole.RoleInput.SetInputPhase(KLConsts.ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK);
+                Tester.Instance.Log(TesterRPG.Instance, TesterRPG.LOG, "log: Enemy phase ".Append(AIRole.RoleInput.RoleInputPhase.ToString()));
+            }
         }
 
         private void OnStateUpdate(int time)
@@ -60,12 +95,17 @@ namespace KLGame
             {
                 if (AIRole.FindngPath)
                 {
+                    Notice notice = Pooling<Notice>.From();
+                    RoleSceneComp.Broadcast(KLConsts.N_AI_RESET, notice);
+                    notice.ToPool();
+
                     ChangeToPreviousState();
                 }
             }
         }
 
         public IAIRole AIRole { get; set; }
+        public IKLRoleSceneComponent RoleSceneComp { get; private set; }
     }
 
 }

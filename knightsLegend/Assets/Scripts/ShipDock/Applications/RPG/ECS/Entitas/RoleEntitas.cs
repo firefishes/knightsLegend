@@ -42,8 +42,9 @@ namespace ShipDock.Applications
             return EnemyMainLockDown != default ? Vector3.Distance(Position, EnemyMainLockDown.Position) : float.MaxValue;
         }
 
-        public virtual void AfterGetStopDistance(float dist, Vector3 entitasPos)
+        public virtual bool AfterGetStopDistance(float dist, Vector3 entitasPos)
         {
+            return false;
         }
 
         public virtual float GetStopDistance()
@@ -100,9 +101,17 @@ namespace ShipDock.Applications
         public ICommonRole EnemyMainLockDown { get; set; }
         public IRoleData RoleDataSource { get; private set; }
         public IRoleInput RoleInput { get; set; }
+        /// <summary>
+        /// 角色的碰撞触发回调函数
+        /// </summary>
+        /// <param name="entitasID">角色实体id</param>
+        /// <param name="colliderID">角色检测到的碰撞体id</param>
+        /// <param name="isTrigger">是否为触发器</param>
+        /// <param name="isCollided">如果为触发器，其值是否为已触发</param>
         public Action<int, int, bool, bool> CollidingChanger { get; set; }
         public CommonRoleMustSubgroup RoleMustSubgroup { get; set; }
         public CommonRoleAnimatorInfo RoleAnimatorInfo { get; private set; }
+        public bool AfterGetStopDistChecked { get; set; }
 
         protected override int[] ComponentIDs { get; } = default;
     }

@@ -7,7 +7,7 @@ namespace ShipDock.Applications
     public abstract class SceneInfosMapper<K, V> : KeyValueList<K, V>
     {
         [SerializeField]
-        protected bool m_DisposeSkillInfos;
+        protected bool m_DisposeInfos;
 
         [SerializeField]
         public V[] infos;
@@ -28,7 +28,7 @@ namespace ShipDock.Applications
         {
             base.Dispose();
 
-            Utils.Reclaim(ref infos, true, m_DisposeSkillInfos);
+            Utils.Reclaim(ref infos, true, m_DisposeInfos);
         }
 
         protected virtual void AfterInitItem(ref V item) { }

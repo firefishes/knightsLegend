@@ -108,24 +108,25 @@ namespace ShipDock.Applications
             {
                 CurrentCombo = 0;
             }
+            Animator animator = AniUpdater.AnimatorTarget;
             int max = MotionTriggerParam.Length;
             for (int i = 0; i < max; i++)
             {
                 mValueItem = MotionTriggerParam[i];
                 if (!string.IsNullOrEmpty(mValueItem.KeyField))
                 {
-                    AniUpdater.AnimatorTarget.SetBool(mValueItem.KeyField, !mValueItem.Bool);
+                    animator?.SetBool(mValueItem.KeyField, !mValueItem.Bool);
                 }
             }
             
             string keyField = mValueItemForRevert.KeyField;
             if (mValueItemForRevert.IsInt)
             {
-                AniUpdater.AnimatorTarget.SetInteger(keyField, mValueItemForRevert.Int);
+                animator?.SetInteger(keyField, mValueItemForRevert.Int);
             }
             else if (mValueItemForRevert.IsFloat)
             {
-                AniUpdater.AnimatorTarget.SetFloat(keyField, mValueItemForRevert.Float);
+                animator?.SetFloat(keyField, mValueItemForRevert.Float);
             }
 
             Stop();

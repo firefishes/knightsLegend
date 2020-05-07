@@ -79,7 +79,7 @@ namespace ShipDock.ECS
         {
             T result = new T();
             int max = aidArgs.Length;
-            int id, aid;
+            int aid;
             IShipDockComponent component;
             for (int i = 0; i < max; i++)
             {
@@ -144,13 +144,9 @@ namespace ShipDock.ECS
 
         public void UpdateAndFreeComponents(int time, Action<Action<int>> method = default)
         {
-            //int id;
-            //int max = mMapper.Size;
             int max = mUpdateByTicks.Count;
             for (int i = 0; i < max; i++)
             {
-                //id = mMapper.GetIDByIndex(i);
-                //mComponent = mMapper.Get(id);
                 mComponent = mUpdateByTicks[i];
 
                 if (!mDeletdComponents.Contains(mComponent.ID))
@@ -172,38 +168,36 @@ namespace ShipDock.ECS
 
         public void UpdateComponentUnit(int time, Action<Action<int>> method = default)
         {
-            //int id;
-            //int max = mMapper.Size;
-            int max = mUpdateByTicks.Count;
-            for (int i = 0; i < max; i++)
-            {
-                //id = mMapper.GetIDByIndex(i);
-                //mComponent = mMapper.Get(id);
-                mComponent = mUpdateByTicks[i];
+            CountTime += time;
 
-                if(!mDeletdComponents.Contains(mComponent.ID))
+            while (CountTime > FrameTimeInScene)
+            {
+                int max = mUpdateByTicks.Count;
+                for (int i = 0; i < max; i++)
                 {
-                    if (method == default)
+                    mComponent = mUpdateByTicks[i];
+
+                    if (!mDeletdComponents.Contains(mComponent.ID))
                     {
-                        mComponent.UpdateComponent(time);
-                    }
-                    else
-                    {
-                        method.Invoke(mComponent.UpdateComponent);
+                        if (method == default)
+                        {
+                            mComponent.UpdateComponent(time);
+                        }
+                        else
+                        {
+                            method.Invoke(mComponent.UpdateComponent);
+                        }
                     }
                 }
+                CountTime -= FrameTimeInScene;
             }
         }
 
         public void FreeComponentUnit(int time, Action<Action<int>> method = default)
         {
-            //int id;
-            //int max = mMapper.Size;
             int max = mUpdateByTicks.Count;
             for (int i = 0; i < max; i++)
             {
-                //id = mMapper.GetIDByIndex(i);
-                //mComponent = mMapper.Get(id);
                 mComponent = mUpdateByTicks[i];
                 
                 if (!mDeletdComponents.Contains(mComponent.ID))
@@ -222,13 +216,9 @@ namespace ShipDock.ECS
 
         public void UpdateAndFreeComponentsInScene(int time, Action<Action<int>> method = default)
         {
-            //int id;
-            //int max = mMapper.Size;
             int max = mUpdateByScene.Count;
             for (int i = 0; i < max; i++)
             {
-                //id = mMapper.GetIDByIndex(i);
-                //mComponent = mMapper.Get(id);
                 mComponent = mUpdateByScene[i];
 
                 if (!mDeletdComponents.Contains(mComponent.ID))
@@ -250,13 +240,9 @@ namespace ShipDock.ECS
 
         public void UpdateComponentUnitInScene(int time, Action<Action<int>> method = default)
         {
-            //int id;
-            //int max = mMapper.Size;
             int max = mUpdateByScene.Count;
             for (int i = 0; i < max; i++)
             {
-                //id = mMapper.GetIDByIndex(i);
-                //mComponent = mMapper.Get(id);
                 mComponent = mUpdateByScene[i];
 
                 if (!mDeletdComponents.Contains(mComponent.ID))
@@ -275,13 +261,9 @@ namespace ShipDock.ECS
 
         public void FreeComponentUnitInScene(int time, Action<Action<int>> method = default)
         {
-            //int id;
-            //int max = mMapper.Size;
             int max = mUpdateByScene.Count;
             for (int i = 0; i < max; i++)
             {
-                //id = mMapper.GetIDByIndex(i);
-                //mComponent = mMapper.Get(id);
                 mComponent = mUpdateByScene[i];
 
                 if (!mDeletdComponents.Contains(mComponent.ID))
@@ -301,5 +283,7 @@ namespace ShipDock.ECS
         public bool Asynced { get; private set; }
         public Action<IShipDockComponent> CustomUpdate { get; set; }
         public Action<IShipDockComponentManager> RelateComponentsReFiller { get; set; }
+        public int CountTime { get; private set; }
+        public int FrameTimeInScene { get; set; }
     }
 }

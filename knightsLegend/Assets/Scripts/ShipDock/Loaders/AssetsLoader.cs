@@ -113,7 +113,14 @@ namespace ShipDock.Loader
                 {
                     source = mCurrentOption.url;
                 }
-                mLoader.Load(source);
+                if(!string.IsNullOrEmpty(source))
+                {
+                    mLoader.Load(source);
+                }
+                else
+                {
+                    statu = 2;
+                }
             }
             else
             {
@@ -136,6 +143,10 @@ namespace ShipDock.Loader
 
         private string GetValidSourceByIndex(ref string source)
         {
+            if(mIndex >= mDependences.Count)
+            {
+                return string.Empty;
+            }
             source = mDependences[mIndex];
             if (ABs.HasBundel(source))
             {

@@ -59,13 +59,7 @@ namespace ShipDock.Applications
         public override void Execute(int time, ref IShipDockEntitas target)
         {
             base.Execute(time, ref target);
-
-            if (IsUpdating)
-            {
-                return;
-            }
-            IsUpdating = true;
-
+            
             int blockID;
             mRole = target as ICommonRole;
 
@@ -104,7 +98,6 @@ namespace ShipDock.Applications
                 if(isGetEnemy)
                 {
                     mRole.FindngPath = false;
-                    mRole.SpeedCurrent = 0;
                 }
                 //else
                 //{
@@ -113,7 +106,6 @@ namespace ShipDock.Applications
                 //    mRole.SpeedCurrent = mRole.Speed;
                 //}
             }
-            IsUpdating = false;
         }
     }
 }

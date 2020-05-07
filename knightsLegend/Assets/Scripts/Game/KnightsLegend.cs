@@ -28,6 +28,7 @@ namespace KLGame
 
         void Start()
         {
+            //Debug.unityLogger.logEnabled = false;
             Application.targetFrameRate = m_FrameRate;
             ShipDockApp.StartUp(m_FrameRate, OnShipDockStart);
         }
@@ -92,7 +93,7 @@ namespace KLGame
             int max = m_EnmeyCount;// 0;
             for (int i = 0; i < max; i++)
             {
-                role = Instantiate(prefab);
+                var enemy = Instantiate(prefab);
             }
             //UIManager uis = ShipDockApp.Instance.UIs;
             //uis.Open<RoleChooser>(FWConsts.UI_NAME_ROLE_CHOOSER);

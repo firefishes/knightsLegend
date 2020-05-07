@@ -1,6 +1,7 @@
 ﻿using ShipDock.Interfaces;
 using ShipDock.Tools;
 using System;
+using UnityEngine;
 
 namespace ShipDock.Applications
 {
@@ -10,8 +11,11 @@ namespace ShipDock.Applications
         public TimeGapper timeGapper;
         public Action completion;
 
+        private int mState;
+
         public TimingTasker(int name, ref KeyValueList<int, TimingTasker> mapper)
         {
+            mState = 0;
             timeGapper = new TimeGapper();
             mapper[name] = this;
             completion += UpdateRunCounts;
@@ -24,9 +28,36 @@ namespace ShipDock.Applications
             timeGapper.totalTime = 0f;
         }
 
+        public void Stop(bool onlyChangeState = false)
+        {
+            mState = 2;
+            if (!onlyChangeState)
+            {
+                timeGapper.Stop();
+            }
+        }
+
         public void Start(float totalTime)
         {
+            if (!ShouldRun())
+            {
+                return;
+            }
+            mState = 1;
             timeGapper.Start(totalTime);
+        }
+        
+        public void Restart()
+        {
+            mState = 1;
+            timeGapper.Start();
+        }
+
+        public void Reset()
+        {
+            RunCounts = 0;
+            mState = mState != 0 ? 1 : mState;
+            timeGapper.Stop();
         }
 
         public void ResetRunCounts()
@@ -45,6 +76,11 @@ namespace ShipDock.Applications
             RunCounts++;
         }
 
+        public bool ShouldRun()
+        {
+            return (TotalCount > 0) ? RunCounts < TotalCount : true;
+        }
+
         public bool IsStart
         {
             get
@@ -53,6 +89,15 @@ namespace ShipDock.Applications
             }
         }
 
+        public bool IsFinish
+        {
+            get
+            {
+                return !timeGapper.isStart && mState > 1;
+            }
+        }
+
+        public int TotalCount { get; set; } = 0;
         public int RunCounts { get; private set; }
         public int Name { get; private set; }
     }

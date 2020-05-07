@@ -8,11 +8,12 @@ namespace KLGame
     public interface IKLRole : ICommonRole, INotificationSender
     {
         void UnderAttack();
-        void StartTimingTask(int name, float time, Action completion = default);
+        void StartTimingTask(int name, int mapperIndex, float time, Action completion = default);
         TimingTaskEntitas TimesEntitas { get; }
         KLProcessComponent Processing { get; }
         bool HitSomeOne { get; set; }
         Vector3 WeapontPos { get; set; }
+        CommonRoleFSM RoleFSM { get; }
     }
 
 }

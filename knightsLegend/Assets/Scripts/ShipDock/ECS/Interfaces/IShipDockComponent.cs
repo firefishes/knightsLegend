@@ -14,7 +14,7 @@ namespace ShipDock.ECS
         void FreeComponent(int time);
         void SetComponentID(int id);
         void SetSceneUpdate(bool value);
-        bool IsUpdating { get; }
+        bool IsVariableFrame { get; set; }
         int ID { get; }
         bool IsSceneUpdate { get; }
         int[] RelateComponents { get; set; }

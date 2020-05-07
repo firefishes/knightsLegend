@@ -1,4 +1,5 @@
 ﻿using ShipDock.Applications;
+using ShipDock.Notices;
 using ShipDock.Pooling;
 
 namespace KLGame
@@ -30,7 +31,7 @@ namespace KLGame
             hit.HitInfoScope.startPos = mStateParam.StartPos;
             hit.HitInfoScope.startRotation = mStateParam.StartRotation;
 
-            return mRole.Processing.AddProcess(hit);
+            return mRole.Processing.AddRoleProcess(hit);
         }
 
         protected override bool BeforeFinish(bool checkInputWhenFinish)
@@ -38,7 +39,11 @@ namespace KLGame
             bool flag = base.BeforeFinish(checkInputWhenFinish);
             if (flag)
             {
-                mRole.RoleInput.SetInputPhase(EnemyInputPhases.ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK);
+                Notice notice = Pooling<Notice>.From();
+                RoleSceneComp.Broadcast(KLConsts.N_AI_RESET, notice);
+                notice.ToPool();
+
+                mRole.RoleInput.SetInputPhase(KLConsts.ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK);
             }
             return flag;
         }

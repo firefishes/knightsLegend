@@ -1,4 +1,5 @@
 ﻿using ShipDock.Applications;
+using ShipDock.Notices;
 using ShipDock.Pooling;
 using UnityEngine;
 
@@ -7,9 +8,37 @@ namespace KLGame
 
     public class UnderAttackState : KLAnimatorState<KLRoleFSMStateParam>
     {
+        private IKLRoleSceneComponent mSceneComp;
+
         public UnderAttackState(int name) : base(name)
         {
             AnimationName = "UnderAttack";
+        }
+
+        protected override void OnEnter(ref KLRoleFSMStateParam param)
+        {
+            base.OnEnter(ref param);
+
+            mStateParam = param;
+            if (mStateParam != default)
+            {
+                if (mRole == default)
+                {
+                    mRole = mStateParam.KLRole;
+                }
+                if (mSceneComp == default)
+                {
+                    mSceneComp = mStateParam.RoleSceneComp;
+                }
+            }
+            mSceneComp.MoveBlock = true;
+            ReadyMotion(0, mStateParam.SkillMapper, false);
+        }
+
+        protected override void OnParamEnqueue(ref KLRoleFSMStateParam param)
+        {
+            InitMotion(false, Animator);
+            Animator.SetBool("IsAtkedCombo", true);
         }
 
         protected override void DuringState(int time)
@@ -34,15 +63,18 @@ namespace KLGame
             if(flag)
             {
                 Animator.SetFloat("Atked", 0f);
-                try
-                {
-                    mStateParam.KLRole.RoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_AFTER_MOVE, false);
-                    mStateParam.RoleSceneComp.MoveBlock = false;
-                }
-                catch(System.Exception e)
-                {
-                    Debug.Log(e.Message);
-                }
+                //try
+                //{
+                //mRole.RoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_AFTER_MOVE, false);
+                //mStateParam.RoleSceneComp.MoveBlock = false;
+                //}
+                //catch(System.Exception e)
+                //{
+                //    Debug.Log(e.Message);
+                //}
+                Notice notice = Pooling<Notice>.From();
+                mSceneComp.Broadcast(KLConsts.N_AFTER_UNDER_ATTACK, notice);
+                notice.ToPool();
             }
             return flag;
         }
@@ -59,27 +91,11 @@ namespace KLGame
             return result;
         }
 
-        protected override void OnEnter(ref KLRoleFSMStateParam param)
-        {
-            base.OnEnter(ref param);
-            
-            mStateParam = param;
-            mRole = mStateParam.KLRole;
-            mStateParam.RoleSceneComp.MoveBlock = true;
-            ReadyMotion(0, mStateParam.SkillMapper, false);
-        }
-
-        protected override void OnParamEnqueue(ref KLRoleFSMStateParam param)
-        {
-            InitMotion(false, Animator);
-            Animator.SetBool("IsAtkedCombo", true);
-        }
-
         protected override void RevertAllStateParams()
         {
             foreach (var item in mStateParamQueue)
             {
-                Pooling<KLRoleFSMStateParam>.To(item);
+                item.ToPool();
             }
         }
 
@@ -87,7 +103,7 @@ namespace KLGame
         {
             if (mStateParam != default)
             {
-                Pooling<KLRoleFSMStateParam>.To(mStateParam);
+                mStateParam.ToPool();
             }
         }
     }

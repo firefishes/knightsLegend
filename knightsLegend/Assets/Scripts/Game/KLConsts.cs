@@ -4,6 +4,12 @@ using ShipDock.Server;
 
 namespace KLGame
 {
+    public static class RoleAnimationFeedBackConsts
+    {
+        public const int FEED_BACK_DEFAULT = -1;
+        public const int FEED_BACK_BY_HIT = 0;
+    }
+
     public static class KLConsts
     {
         public const string A_RES_DATA = "res_data/res_data";
@@ -29,10 +35,15 @@ namespace KLGame
 
         public const int D_GAME = 0;
         public const int D_PLAYER = 1;
+        public const int D_CONFIG = 2;
 
         public const int N_TRIGGER_HIT = 1000;
         public const int N_TRIGGER_ROLE_ACTIVE = 1001;
         public const int N_BRAK_WORKING_AI = 1002;
+        public const int N_AI_RESET = 1003;
+        public const int N_AFTER_UNDER_ATTACK = 1004;
+        public const int N_INIT_ENTITAS_CALLBACKS = 1005;
+        public const int N_MOVE_BLOCK = 1006;
 
         public const int DC_CAMP_ROLE_CREATED = 2000;
         
@@ -42,6 +53,19 @@ namespace KLGame
         public const int RFSM_MAIN_MALE_ROLE = 0;
         public const int RFSM_NORMAL_ENMEY = 1;
 
+        public const int T_ROLE_1 = 0;
+        public const int T_ROLE_2 = 1;
+        public const int T_ROLE_STATE_DELAY_FINISH = 2;
+        public const int T_ROLE_STATE_FEED_BACK = 3;
+        public const int T_AI_ATK_TIME = 4;
+        public const int T_AI_ATK_HIT_TIME = 5;
+        public const int T_AI_THINKING = 6;
+        
+        public const int ENEMY_INPUT_PHASE_ATTACK_AI = 6;
+        public const int ENEMY_INPUT_PHASE_UPDATE_NROMAL_ATK_TRIGGER_TIME = 7;
+        public const int ENEMY_INPUT_PHASE_NROMAL_ATK = 8;
+        public const int ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK = 9;
+        
         private static readonly IResolvableConfig[] KLServerConfigs =
         {
             //new ResolvableConfigItem<INotice, GameNotice>("GameNotice"),

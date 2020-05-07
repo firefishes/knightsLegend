@@ -3,7 +3,12 @@ using ShipDock.Tools;
 
 namespace ShipDock.Applications
 {
-    public abstract class EntitasComponentable : ShipDockEntitas
+    public interface IEntitasComponentable : IShipDockEntitas
+    {
+        T GetComponentFromEntitas<T>(int aid) where T : IShipDockComponent;
+    }
+    
+    public abstract class EntitasComponentable : ShipDockEntitas, IEntitasComponentable
     {
         public override void Dispose()
         {

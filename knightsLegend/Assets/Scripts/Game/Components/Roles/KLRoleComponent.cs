@@ -12,12 +12,16 @@ namespace KLGame
     public class KLRoleComponent : RoleComponent, IKLRoleSceneComponent
     {
         [SerializeField]
+        protected RoleFSMObj m_FSMStates;
+        [SerializeField]
         protected RoleSkillListSObj m_Skills;
         [SerializeField]
         private RoleCollider m_BloodyEffectTF;
 
         protected string mFire1ParamName = "Fire1";
 
+        private Vector3 mWeapontPos;
+        
         protected override void Awake()
         {
             base.Awake();
@@ -39,14 +43,34 @@ namespace KLGame
 
             KLRole = mRole as IKLRole;
             KLRole.CollidingChanger += OnRoleAttackHitTrigger;
+            
+            KLConfigData configData = ShipDockApp.Instance.Datas.GetData<KLConfigData>(KLConsts.D_CONFIG);
+            if(!configData.HasDataUnit(m_FSMStates.fsmType))
+            {
+                m_FSMStates.Init();
+                configData.SetDataUnit(m_FSMStates.fsmType, m_FSMStates);
+            }
+
+            m_FSMStates.FillToSceneComponent(this);
+
+            RoleFSM = (mRole.RoleInput as KLRoleInputInfo).AnimatorFSM;
+            (RoleFSM as CommonRoleFSM).SetAnimator(ref m_RoleAnimator);
+            RoleFSM.Run(default, NormalRoleStateName.GROUNDED);
         }
 
+        /// <summary>
+        /// 角色的碰撞触发
+        /// </summary>
+        /// <param name="entitasID">角色实体id</param>
+        /// <param name="colliderID">角色检测到的碰撞体id</param>
+        /// <param name="isTrigger">是否为触发器</param>
+        /// <param name="isCollided">如果为触发器，其值是否为已触发</param>
         protected virtual void OnRoleAttackHitTrigger(int entitasID, int colliderID, bool isTrigger, bool isCollided)
         {
             if (isTrigger && isCollided)
             {
                 var fsm = RoleFSM as IAssailableCommiter;
-                if (fsm.HitCommit(colliderID))
+                if (fsm.HitCommit(colliderID))//先判定攻击是否有效，然后添加流程事件处理，最后加入攻击结算的队列
                 {
                     ProcessingNotice notice = Pooling<ProcessingNotice>.From();
                     notice.Reinit(colliderID, ProcessingType.HIT, new ProcessingHitInfo
@@ -57,7 +81,7 @@ namespace KLGame
                         isCollided = isCollided
                     });
                     notice.Commit(KLRole);
-                    Pooling<ProcessingNotice>.To(notice);
+                    notice.ToPool();
                 }
             }
         }
@@ -65,7 +89,7 @@ namespace KLGame
         protected override void InitRoleInputCallbacks()
         {
             base.InitRoleInputCallbacks();
-
+            
             SetRoleInputCallback(UserInputPhases.ROLE_INPUT_PHASE_UNDERATTACKED, UnderAttack);
         }
 
@@ -84,9 +108,19 @@ namespace KLGame
 
         protected override void OnRoleNotices(INoticeBase<int> obj)
         {
+            switch (obj.Name)
+            {
+                case KLConsts.N_MOVE_BLOCK:
+                    MoveBlock = true;
+                    break;
+                case KLConsts.N_AFTER_UNDER_ATTACK:
+                    ActiveRoleInputPhase(UserInputPhases.ROLE_INPUT_PHASE_UNDERATTACKED, true);
+                    ActiveRoleInputPhase(UserInputPhases.ROLE_INPUT_PHASE_AFTER_MOVE, true);
+                    mRole.RoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_AFTER_MOVE);
+                    MoveBlock = false;
+                    break;
+            }
         }
-
-        private Vector3 mWeapontPos;
 
         protected override void UpdateAnimations()
         {
@@ -100,6 +134,8 @@ namespace KLGame
 
         public void UnderAttack()
         {
+            ActiveRoleInputPhase(UserInputPhases.ROLE_INPUT_PHASE_UNDERATTACKED, false);
+
             KLRoleFSMStateParam param = Pooling<KLRoleFSMStateParam>.From();
 
             param.Reinit(this);
@@ -113,21 +149,11 @@ namespace KLGame
             {
                 RoleFSM.ChangeState(NormalRoleStateName.UNDER_ATK, param);
             }
-
-            KLRole.RoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_EMPTY, false);
-        }
-
-        private void OnAtkedMotion(Animator target)
-        {
-            MoveBlock = false;
-            m_RoleAnimator.SetFloat("Atked", 0f);
-            m_RoleAnimator.SetFloat(m_BlendTreeInfo.MoveMotionName, 0f);
-            mRole.RoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_AFTER_MOVE, false);
         }
 
         protected override bool CheckUnableToMove()
         {
-            Tester.Instance.Log(KLTester.Instance, KLTester.LOG0, this is KLMainMaleRoleComponent, MoveBlock.ToString());
+            Tester.Instance.Log(KLTester.Instance, KLTester.LOG0, !MoveBlock, "warnning: MoveBlock ".Append(MoveBlock.ToString()));
             return MoveBlock;
         }
 
@@ -172,6 +198,11 @@ namespace KLGame
         public virtual void FillRoleFSMAIStateParam(IKLRoleFSMAIParam param)
         {
             param.KLRole = KLRole;
+        }
+
+        public void RoleFSMChanged(int stateName)
+        {
+            //m_FSMStates.fsmStateInfo
         }
 
         private Vector3 CameraNodePosOffset { get; set; }
