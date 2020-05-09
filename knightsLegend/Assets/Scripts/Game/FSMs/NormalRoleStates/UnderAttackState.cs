@@ -1,5 +1,4 @@
-﻿using ShipDock.Applications;
-using ShipDock.Notices;
+﻿using ShipDock.Notices;
 using ShipDock.Pooling;
 using UnityEngine;
 
@@ -8,11 +7,16 @@ namespace KLGame
 
     public class UnderAttackState : KLAnimatorState<KLRoleFSMStateParam>
     {
-        private IKLRoleSceneComponent mSceneComp;
 
         public UnderAttackState(int name) : base(name)
         {
             AnimationName = "UnderAttack";
+        }
+
+        protected override bool ShouldEnter(ref KLRoleFSMStateParam param)
+        {
+            RoleSceneComp = param.RoleSceneComp;
+            return true;
         }
 
         protected override void OnEnter(ref KLRoleFSMStateParam param)
@@ -26,12 +30,7 @@ namespace KLGame
                 {
                     mRole = mStateParam.KLRole;
                 }
-                if (mSceneComp == default)
-                {
-                    mSceneComp = mStateParam.RoleSceneComp;
-                }
             }
-            mSceneComp.MoveBlock = true;
             ReadyMotion(0, mStateParam.SkillMapper, false);
         }
 
@@ -73,7 +72,7 @@ namespace KLGame
                 //    Debug.Log(e.Message);
                 //}
                 Notice notice = Pooling<Notice>.From();
-                mSceneComp.Broadcast(KLConsts.N_AFTER_UNDER_ATTACK, notice);
+                RoleSceneComp.Broadcast(KLConsts.N_AFTER_UNDER_ATTACK, notice);
                 notice.ToPool();
             }
             return flag;

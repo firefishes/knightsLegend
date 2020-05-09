@@ -96,11 +96,6 @@ namespace ShipDock.Applications
         {
             mRoleInputCallbacks = new KeyValueList<int, Action>();
             mRoleInputCallSwitches = new KeyValueList<int, bool>();
-
-            SetRoleInputCallback(UserInputPhases.ROLE_INPUT_PHASE_MOVE_READY, CheckRoleInputMovePhase);
-            SetRoleInputCallback(UserInputPhases.ROLE_INPUT_PHASE_CHECK_GROUND, CheckRoleInputGroundPhase);
-            SetRoleInputCallback(UserInputPhases.ROLE_INPUT_PHASE_CHECK_CROUCH, CheckRoleInputCrouchPhase);
-            SetRoleInputCallback(UserInputPhases.ROLE_INPUT_PHASE_AFTER_MOVE, CheckRoleAfterMovePhase);
         }
 
         protected void SetRoleInputCallback(int phaseName, Action callback)
@@ -121,7 +116,6 @@ namespace ShipDock.Applications
                 m_RoleRigidbody.constraints = RigidbodyConstraints.FreezeRotationX |
                                               RigidbodyConstraints.FreezeRotationY |
                                               RigidbodyConstraints.FreezeRotationZ;
-
             }
             else
             {
@@ -273,6 +267,11 @@ namespace ShipDock.Applications
 
         protected virtual void UpdateAnimations()
         {
+            CheckRoleInputMovePhase();
+            RoleAmoutExtranTurn();
+            CheckRoleInputGroundPhase();
+            RoleScaleCapsule();
+            CheckRoleInputCrouchPhase();
         }
 
         protected virtual void UpdateByUserControlled()
@@ -318,7 +317,7 @@ namespace ShipDock.Applications
 
         protected void CheckRoleInputGroundPhase()
         {
-            transform.Rotate(0, mRoleInput.ExtraTurnRotationOut, 0);
+            transform.Rotate(0, mRoleInput.ExtraTurnRotationRef, 0);
 
             mAnimatorInfo = mRole.RoleAnimatorInfo;
             mAnimatorStateInfo = m_RoleAnimator.GetCurrentAnimatorStateInfo(0);
@@ -340,11 +339,14 @@ namespace ShipDock.Applications
             else
             {
                 mRoleInput.HandleAirborneMovement(ref mRoleData);
-                m_RoleRigidbody.AddForce(mRoleInput.ExtraGravityForceOut);
+                m_RoleRigidbody.AddForce(mRoleInput.ExtraGravityForceRef);
                 mGroundCheckDistance = velocity.y < 0 ? m_RoleMustSubgroup.origGroundCheckDistance : 0.01f;
             }
-            mRoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_SCALE_CAPSULE);
-            mRoleInput.ResetEntitasCalled(UserInputPhases.ROLE_INPUT_PHASE_AMOUT_EXTRAN_TURN);
+        }
+
+        private void RoleScaleCapsule()
+        {
+            mRoleInput?.ScaleCapsuleForCrouching(RoleEntitas, ref mRoleInput);
         }
 
         protected void CheckRoleInputCrouchPhase()
@@ -362,7 +364,7 @@ namespace ShipDock.Applications
             {
                 if(!UpdateCrouchingByRay())
                 {
-                    mRoleInput.SetCrouching (false);
+                    mRoleInput.SetCrouching(false);
                     m_RoleCollider.height = m_RoleMustSubgroup.capsuleHeight;
                     m_RoleCollider.center = m_RoleMustSubgroup.capsuleCenter;
                 }
@@ -373,13 +375,10 @@ namespace ShipDock.Applications
                 UpdateCrouchingByRay();
             }
             UpdateAnimator();
-            mRoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_AFTER_MOVE);
-            mRoleInput.ResetEntitasCalled(UserInputPhases.ROLE_INPUT_PHASE_SCALE_CAPSULE);
         }
 
         protected virtual void CheckRoleAfterMovePhase()
         {
-            mRoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_MOVE_READY);
         }
 
         private bool UpdateCrouchingByRay()
@@ -396,13 +395,29 @@ namespace ShipDock.Applications
 
         private void CheckRoleInputMovePhase()
         {
+            if (mRoleInput != default && mRoleInput.GetMoveValue().magnitude > 1f)
+            {
+                mRoleInput.MoveValueNormalize();
+            }
+
             Vector3 v = transform.InverseTransformDirection(mRoleInput.GetMoveValue());
             mRoleInput.SetMoveValue(v);
 
             CheckGroundStatus();
+        }
 
-            mRoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_AMOUT_EXTRAN_TURN);
-            mRoleInput.ResetEntitasCalled(UserInputPhases.ROLE_INPUT_PHASE_MOVE_READY);
+        private void RoleAmoutExtranTurn()
+        {
+            if (mRole == default || mRoleInput == default)
+            {
+                return;
+            }
+            mRoleData = mRole.RoleDataSource;
+
+            Vector3 move = Vector3.ProjectOnPlane(mRoleInput.GetMoveValue(), mRole.GroundNormal);
+            mRoleInput.SetMoveValue(move);
+            mRoleInput.UpdateAmout(RoleEntitas);
+            mRoleInput.UpdateRoleExtraTurnRotation(ref mRoleData);
         }
 
         private void CheckGroundStatus()
@@ -533,6 +548,13 @@ namespace ShipDock.Applications
             get
             {
                 return m_RoleRigidbody != default ? m_RoleRigidbody.isKinematic : false;
+            }
+            set
+            {
+                if (m_RoleRigidbody != default)
+                {
+                    m_RoleRigidbody.isKinematic = value;
+                }
             }
         }
 

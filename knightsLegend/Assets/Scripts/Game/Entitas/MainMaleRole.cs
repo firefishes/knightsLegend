@@ -7,7 +7,8 @@ namespace KLGame
         public MainMaleRole(RoleFSMObj fsmStates) : base()
         {
             IRoleData data = KLRoleData.GetRoleDataByRandom();
-            data.Speed = 18f;
+            data.StationaryTurnSpeed = 30f;
+            data.Speed = 5f;
             data.ConfigID = 0;
             SetRoleData(data);
             

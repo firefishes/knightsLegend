@@ -72,16 +72,7 @@ namespace KLGame
         public override bool AfterGetStopDistance(float dist, Vector3 entitasPos)
         {
             bool result = base.AfterGetStopDistance(dist, entitasPos);
-
-            if (RoleInput.RoleInputPhase == UserInputPhases.ROLE_INPUT_PHASE_NONE)
-            {
-                return false;
-            }
-            else
-            {
-                result = true;
-            }
-
+            
             if (!ShouldAtkAIWork)
             {
                 SetShouldAtkAIWork(true);
@@ -132,7 +123,6 @@ namespace KLGame
             target.ResetRunCounts();
 
             SetShouldAtkAIWork(false);
-            RoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_MOVE_READY);
         }
 
         public int ATKID { get; private set; }

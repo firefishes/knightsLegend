@@ -1,4 +1,5 @@
 ﻿using ShipDock.Applications;
+using ShipDock.FSM;
 using ShipDock.Notices;
 using ShipDock.Pooling;
 using UnityEngine;
@@ -13,22 +14,27 @@ namespace KLGame
         {
         }
 
+        protected override bool ShouldEnter(ref NormalATKStateParam param)
+        {
+            var input = param.Inpunts;
+            int sValue = input.Dequeue();
+            bool result = sValue == 1;//按下攻击键
+            if(result)
+            {
+                RoleSceneComp = param.RoleSceneComp;
+            }
+            return result;
+        }
+
         protected override void OnEnter(ref NormalATKStateParam param)
         {
             base.OnEnter(ref param);
 
-            var input = param.Inpunts;
-            int sValue = input.Dequeue();
+            mStateParam = param;
+            mRole = mStateParam.KLRole;
+            RoleSceneComp = mStateParam.RoleSceneComp;
 
-            if (sValue == 1)
-            {
-                mStateParam = param;
-                mRole = mStateParam.KLRole;
-                RoleSceneComp = mStateParam.RoleSceneComp;
-
-                RoleSceneComp.RoleFSMChanged(StateName);
-                ReadyMotion(mStateParam.CurrentSkillID, mStateParam.SkillMapper, true);
-            }
+            ReadyMotion(mStateParam.CurrentSkillID, mStateParam.SkillMapper, true);
         }
 
         protected override bool ShouldParamEnqueue(ref NormalATKStateParam param)
@@ -183,6 +189,5 @@ namespace KLGame
         }
 
         private bool IsHit { get; set; }
-        protected IKLRoleSceneComponent RoleSceneComp { get; set; }
     }
 }

@@ -3,7 +3,6 @@
 using System.Collections.Generic;
 using ShipDock.Applications;
 using ShipDock.FSM;
-using ShipDock.Testers;
 using ShipDock.Tools;
 using UnityEngine;
 
@@ -59,6 +58,7 @@ namespace KLGame
             mComboMotion = default;
             mAniUpdater = default;
             mRoleStateTimings = default;
+            RoleSceneComp = default;
         }
 
         public override void InitState(IStateParam param = null)
@@ -69,13 +69,21 @@ namespace KLGame
 
             if (param is P item)
             {
-                OnEnter(ref item);
+                if(ShouldEnter(ref item))
+                {
+                    OnEnter(ref item);
+                }
             }
         }
         
         protected virtual void OnEnter(ref P param)
         {
+            RoleSceneComp?.RoleFSMChanged(StateName);
+        }
 
+        protected virtual bool ShouldEnter(ref P param)
+        {
+            return true;
         }
 
         public override void SetStateParam(IStateParam param)
@@ -173,8 +181,6 @@ namespace KLGame
             StateFeedback = feedback;
             mFeedbackTime.Start(time);
             Animator.SetFloat("Speed", speed);
-
-            Debug.Log("StartFeedbackTime");
         }
 
         protected virtual bool ShouldUpdateMotion(int time)
@@ -272,6 +278,7 @@ namespace KLGame
                 mComboMotion = default;
                 mAniUpdater = default;
                 mRole = default;
+                RoleSceneComp = default;
 
                 UpdaterNotice.RemoveSceneUpdater(mMethodUpdater);
             }
@@ -283,6 +290,7 @@ namespace KLGame
 
         protected bool IsFeedbackChecked { get; set; }
         protected int StateFeedback { get; private set; }
+        protected IKLRoleSceneComponent RoleSceneComp { get; set; }
 
     }
 }

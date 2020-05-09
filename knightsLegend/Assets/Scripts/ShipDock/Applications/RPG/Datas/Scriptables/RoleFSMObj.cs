@@ -1,5 +1,8 @@
 ﻿using ShipDock.Datas;
 using ShipDock.Interfaces;
+using ShipDock.Notices;
+using ShipDock.Pooling;
+using ShipDock.Tools;
 using System;
 using UnityEngine;
 
@@ -15,15 +18,31 @@ namespace ShipDock.Applications
 
         public void Init()
         {
+            StatesMapper = new KeyValueList<int, RoleFSMStateInfo>();
+
+            RoleFSMStateInfo item;
             int max = fsmStateInfo.Length;
             for (int i = 0; i < max; i++)
             {
-                fsmStateInfo[i].InitMapper();
+                item = fsmStateInfo[i];
+                item.InitMapper();
+                StatesMapper.Put(item.stateName, item);
             }
         }
 
         public void Dispose()
         {
+            Destroy(this);
+        }
+
+        private void OnDestroy()
+        {
+            var target = StatesMapper;
+            Utils.Reclaim(ref target);
+            Utils.Reclaim(ref fsmStateInfo, true, true);
+
+            StatesMapper = default;
+            
         }
 
         public void FillToSceneComponent(RoleComponent roleComponent)
@@ -49,6 +68,27 @@ namespace ShipDock.Applications
                 }
             }
         }
+
+        public void RoleFSMChanged(INotificationSender target, int stateName)
+        {
+            RoleFSMStateInfo info = StatesMapper[stateName];
+
+            if (info == default)
+            {
+                return;
+            }
+
+            Notice notice = Pooling<Notice>.From();
+            RoleFSMStateNotificationer[] list = info.enterStateNotice;
+            int max = list.Length;
+            for (int i = 0; i < max; i++)
+            {
+                target.Broadcast(list[i].noticeName, notice);
+            }
+            notice.ToPool();
+        }
+
+        public KeyValueList<int, RoleFSMStateInfo> StatesMapper { get; private set; }
     }
 
     [Serializable]
@@ -60,6 +100,15 @@ namespace ShipDock.Applications
         public override int GetInfoKey(ref RoleFSMStateExecuableInfo item)
         {
             return item.phaseName;
+        }
+
+        public override void Dispose()
+        {
+            m_DisposeInfos = true;
+
+            base.Dispose();
+
+            Utils.Reclaim(ref enterStateNotice);
         }
     }
 

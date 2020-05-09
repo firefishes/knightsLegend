@@ -26,7 +26,7 @@ namespace KLGame
         {
             base.Awake();
 
-            m_RoleRigidbody.isKinematic = true;
+            IsKinematic = true;
         }
 
         protected override void Init()
@@ -115,8 +115,6 @@ namespace KLGame
                     break;
                 case KLConsts.N_AFTER_UNDER_ATTACK:
                     ActiveRoleInputPhase(UserInputPhases.ROLE_INPUT_PHASE_UNDERATTACKED, true);
-                    ActiveRoleInputPhase(UserInputPhases.ROLE_INPUT_PHASE_AFTER_MOVE, true);
-                    mRole.RoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_AFTER_MOVE);
                     MoveBlock = false;
                     break;
             }
@@ -202,7 +200,7 @@ namespace KLGame
 
         public void RoleFSMChanged(int stateName)
         {
-            //m_FSMStates.fsmStateInfo
+            m_FSMStates.RoleFSMChanged(this, stateName);
         }
 
         private Vector3 CameraNodePosOffset { get; set; }

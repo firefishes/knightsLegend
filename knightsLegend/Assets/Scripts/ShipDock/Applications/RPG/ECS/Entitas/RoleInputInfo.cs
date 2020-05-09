@@ -37,14 +37,11 @@ namespace ShipDock.Applications
         {
             mInputKeys = new KeyValueList<string, bool>();
             RoleEntitas = roleEntitas;
+            mEntitasCallbackers = new KeyValueList<int, RoleEntitasCallbacker>();
         }
 
         public void AddEntitasCallback(int phaseName, Action callback)
         {
-            if(mEntitasCallbackers == default)
-            {
-                mEntitasCallbackers = new KeyValueList<int, RoleEntitasCallbacker>();
-            }
             RoleEntitasCallbacker item;
             if (mEntitasCallbackers.IsContainsKey(phaseName))
             {
@@ -58,7 +55,7 @@ namespace ShipDock.Applications
             item.callbacker += callback;
         }
 
-        public void UpdateAmout(ref ICommonRole roleEntitas)
+        public void UpdateAmout(ICommonRole roleEntitas)
         {
             move = Vector3.ProjectOnPlane(move, roleEntitas.GroundNormal);
             TurnAmount = Mathf.Atan2(move.x, move.z);
@@ -68,13 +65,13 @@ namespace ShipDock.Applications
         public float UpdateRoleExtraTurnRotation(ref IRoleData roleData)
         {
             turnSpeed = Mathf.Lerp(roleData.StationaryTurnSpeed, roleData.MovingTurnSpeed, ForwardAmount);
-            ExtraTurnRotationOut = TurnAmount * turnSpeed * deltaTime;
-            return ExtraTurnRotationOut;
+            ExtraTurnRotationRef = TurnAmount * turnSpeed * deltaTime;
+            return ExtraTurnRotationRef;
         }
 
         public void HandleAirborneMovement(ref IRoleData roleData)
         {
-            ExtraGravityForceOut = (Physics.gravity * roleData.GravityMultiplier) - Physics.gravity;
+            ExtraGravityForceRef = (Physics.gravity * roleData.GravityMultiplier) - Physics.gravity;
         }
 
         public bool HandleGroundedMovement(ref IRoleInput input, ref CommonRoleAnimatorInfo animatorInfo)
@@ -85,7 +82,7 @@ namespace ShipDock.Applications
             return result;
         }
 
-        public void ScaleCapsuleForCrouching(ref ICommonRole roleEntitas, ref IRoleInput roleInput)
+        public void ScaleCapsuleForCrouching(ICommonRole roleEntitas, ref IRoleInput roleInput)
         {
             roleEntitas.IsGroundedAndCrouch = roleEntitas.IsGrounded && roleInput.IsCrouch();
             if (roleEntitas.IsGroundedAndCrouch)
@@ -213,7 +210,10 @@ namespace ShipDock.Applications
             }
 
             RoleEntitasCallbacker item = mEntitasCallbackers[phaseName];
-            item.actived = isActive;
+            if(item != default)
+            {
+                item.actived = isActive;
+            }
         }
 
         public void ResetMovePhase()
@@ -255,11 +255,11 @@ namespace ShipDock.Applications
         public List<int> FullRoleInputPhases { get; set; } = new List<int>();
         public bool ShouldGetUserInput { get; set; }
         public int RoleInputType { get; set; } = 0;
-        public int RoleInputPhase { get; private set; } = UserInputPhases.ROLE_INPUT_PHASE_NONE;
+        public int RoleInputPhase { get; private set; }
         public float TurnAmount { get; private set; }
         public float ForwardAmount { get; private set; }
-        public float ExtraTurnRotationOut { get; private set; }
-        public Vector3 ExtraGravityForceOut { get; private set; }
+        public float ExtraTurnRotationRef { get; private set; }
+        public Vector3 ExtraGravityForceRef { get; private set; }
         public ICommonRole RoleEntitas { get; private set; }
         public Vector3 ForceMove { get; private set; }
     }

@@ -19,9 +19,9 @@ namespace ShipDock.Applications
         void ResetEntitasCalled(int phaseName);
         void AdvancedInputPhase(int rolePhase, int allowCalled);
         void ExecuteBySceneComponent(ref Action sceneCompMethod, int calledMustValue = 1);
-        void UpdateAmout(ref ICommonRole roleEntitas);
+        void UpdateAmout(ICommonRole roleEntitas);
         void HandleAirborneMovement(ref IRoleData roleData);
-        void ScaleCapsuleForCrouching(ref ICommonRole roleEntitas, ref IRoleInput roleInput);
+        void ScaleCapsuleForCrouching(ICommonRole roleEntitas, ref IRoleInput roleInput);
         float UpdateRoleExtraTurnRotation(ref IRoleData roleData);
         bool HandleGroundedMovement(ref IRoleInput input, ref CommonRoleAnimatorInfo animatorInfo);
         bool ShouldGetUserInput { get; set; }
@@ -32,12 +32,12 @@ namespace ShipDock.Applications
         List<int> FullRoleInputPhases { get; set; }
         int RoleInputPhase { get; }
         int RoleInputType { get; set; }
-        float ExtraTurnRotationOut { get; }
+        float ExtraTurnRotationRef { get; }
         float ForwardAmount { get; }
         float TurnAmount { get; }
         Vector3 GetUserInputValue();
         Vector3 GetMoveValue();
-        Vector3 ExtraGravityForceOut { get; }
+        Vector3 ExtraGravityForceRef { get; }
         Vector3 ForceMove { get; } 
         ICommonRole RoleEntitas { get; }
     }

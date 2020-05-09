@@ -107,7 +107,6 @@ namespace KLGame
             {
                 case KLConsts.N_AI_RESET:
                     UpdaterNotice.RemoveSceneUpdater(mKeepStandingUpdater);
-                    ActiveRoleInputPhase(UserInputPhases.ROLE_INPUT_PHASE_AFTER_MOVE, true);
                     ActiveRoleInputPhase(KLConsts.ENEMY_INPUT_PHASE_ATTACK_AI, true);
                     ActiveRoleInputPhase(KLConsts.ENEMY_INPUT_PHASE_NROMAL_ATK, true);
                     break;

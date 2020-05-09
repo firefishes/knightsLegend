@@ -15,30 +15,12 @@ MonoBehaviour:
   fsmType: 0
   fsmStateInfo:
   - m_DisposeInfos: 0
-    infos:
-    - phaseName: 0
-      allowCalledInEntitas: 0
-      callbackID: 0
-      isExecuteInScene: 1
-    - phaseName: 1
-      allowCalledInEntitas: 0
-      callbackID: 0
-      isExecuteInScene: 0
-    - phaseName: 2
-      allowCalledInEntitas: 0
-      callbackID: 0
-      isExecuteInScene: 1
-    - phaseName: 3
-      allowCalledInEntitas: 0
-      callbackID: 0
-      isExecuteInScene: 0
-    - phaseName: 4
-      allowCalledInEntitas: 0
-      callbackID: 0
-      isExecuteInScene: 1
-    - phaseName: 5
-      allowCalledInEntitas: 0
-      callbackID: 0
-      isExecuteInScene: 1
+    infos: []
     stateName: 1
-    enterStateNotice: 1006
+    enterStateNotice:
+    - noticeName: 1006
+  - m_DisposeInfos: 0
+    infos: []
+    stateName: 3
+    enterStateNotice:
+    - noticeName: 1006

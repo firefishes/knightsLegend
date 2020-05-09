@@ -86,7 +86,7 @@ namespace KLGame
         {
             KLConsts.C_PROCESS,
             KLConsts.C_ROLE_INPUT,
-            KLConsts.C_ROLE_MOVE,
+            //KLConsts.C_ROLE_MOVE,
             KLConsts.C_POSITION,
             KLConsts.C_ROLE_COLLIDER,
             KLConsts.C_ROLE_MUST,

@@ -54,9 +54,6 @@ namespace ShipDock.Applications
             int phaseName = mRoleInput.RoleInputPhase;
             switch (phaseName)
             {
-                case UserInputPhases.ROLE_INPUT_PHASE_NONE:
-                    InitRolePhases(mRoleInput);
-                    break;
                 default:
                     int allowCalled = mAllowCalleds.ContainsKey(phaseName) ? mAllowCalleds[phaseName] : 0;
                     mRoleInput.AdvancedInputPhase(phaseName, allowCalled);
