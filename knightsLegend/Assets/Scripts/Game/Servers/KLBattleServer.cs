@@ -11,9 +11,25 @@ namespace KLGame
 {
     public class KLBattleServer : Server
     {
+        private ServerRelater mRelater;
+
         public KLBattleServer() : base()
         {
             ServerName = KLConsts.S_BATTLE;
+
+            mRelater = new ServerRelater
+            {
+                DataNames = new int[]
+                {
+                    KLConsts.D_BATTLE
+                }
+            };
+        }
+
+        protected override void Purge()
+        {
+            base.Purge();
+            
         }
 
         public override void InitServer()
@@ -30,14 +46,17 @@ namespace KLGame
         {
             base.ServerReady();
 
+            mRelater.CommitRelate();
+
             Add<IParamNotice<ICommonRole>>(EnterBattle);
         }
 
         [Callable("EnterBattle", "SetBattleRoleParam")]
         private void EnterBattle(ref IParamNotice<ICommonRole> target)
         {
-            Debug.Log("EnterBattle");
-            Debug.Log(target.ParamValue);
+            KLBattleData data = mRelater.DataRef<KLBattleData>(KLConsts.D_BATTLE);
+            data.AddBattleUnit(target.ParamValue);
+
             Revert(target, "SetBattleRoleParam");
         }
     }

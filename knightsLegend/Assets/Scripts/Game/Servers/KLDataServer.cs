@@ -31,6 +31,9 @@ namespace KLGame
         {
             base.ServerReady();
 
+            KLBattleData battleData = mRelater.DataRef<KLBattleData>(KLConsts.D_BATTLE);
+            KLBattleServer battleServer = mRelater.ServerRef<KLBattleServer>(KLConsts.S_BATTLE);
+            
             Add<IParamNotice<ICommonRole>>(AddCampRole);
             Add<IParamNotice<ICommonRole>>(SetUserRole);
             

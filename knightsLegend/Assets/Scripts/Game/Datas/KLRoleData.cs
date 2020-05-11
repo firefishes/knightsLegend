@@ -35,7 +35,7 @@ namespace KLGame
         public float GravityMultiplier { get; set; }
         public float JumpPower { get; set; }
 
-        override public List<int> FieldNames { get; protected set; } = new List<int>
+        override public List<int> IntFieldNames { get; protected set; } = new List<int>
         {
             KLConsts.FIELD_HP,
             KLConsts.FIELD_QI,

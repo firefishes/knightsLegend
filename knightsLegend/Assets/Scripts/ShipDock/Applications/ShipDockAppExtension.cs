@@ -1,7 +1,6 @@
 ﻿using ShipDock.Applications;
 using ShipDock.Datas;
 using ShipDock.Notices;
-using ShipDock.Pooling;
 using ShipDock.Server;
 using System;
 

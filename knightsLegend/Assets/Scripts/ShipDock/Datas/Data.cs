@@ -89,48 +89,79 @@ namespace ShipDock.Datas
         }
     }
 
-    public class FieldableData : IFieldableData, IDataUnit
+    public abstract class FieldableData : IFieldableData, IDataUnit
     {
-        private float[] mValues;
-        private float[] mMaxValues;
+        private int[] mIntValues;
+        private float[] mFloatValues;
+        private string[] mStringValues;
 
         public FieldableData()
         {
-            int max = FieldNames.Count;
-            mValues = new float[max];
-            mMaxValues = new float[max];
+            int max = IntFieldNames.Count;
+            mFloatValues = new float[max];
             for (int i = 0; i < max; i++)
             {
-                mValues[i] = 0f;
-                mMaxValues[i] = 0f;
+                mFloatValues[i] = 0f;
             }
         }
 
-        public float GetFieldValue(int fieldName)
+        public abstract List<int> GetIntFieldSource();
+        public abstract List<float> GetFloatFieldSource();
+        public abstract List<string> GetStringFieldSource();
+
+        public void FillValues()
         {
-            int index = FieldNames.IndexOf(fieldName);
-            return mValues[index];
         }
 
-        public void SetFieldValue(int fieldName, float value)
+        protected void FillValuesByFields<T>(List<T> fields, ref T[] values, T[] willFillIn)
         {
-            int index = FieldNames.IndexOf(fieldName);
-            mValues[index] = value;
+            int max = fields.Count;
+            values = new T[max];
+            for (int i = 0; i < max; i++)
+            {
+                values[i] = willFillIn != null ? willFillIn[i] : default;
+            }
         }
 
-        public float GetFieldMaxValue(int fieldName)
+        public float GetIntData(int fieldName)
         {
-            int index = FieldNames.IndexOf(fieldName);
-            return mMaxValues[index];
+            int index = IntFieldNames.IndexOf(fieldName);
+            return mIntValues[index];
         }
 
-        public void SetFieldMaxValue(int fieldName, float value)
+        public void SetIntData(int fieldName, int value)
         {
-            int index = FieldNames.IndexOf(fieldName);
-            mMaxValues[index] = value;
+            int index = IntFieldNames.IndexOf(fieldName);
+            mIntValues[index] = value;
         }
 
-        public virtual List<int> FieldNames { get; protected set; }
+        public float GetFloatData(int fieldName)
+        {
+            int index = FloatFieldNames.IndexOf(fieldName);
+            return mFloatValues[index];
+        }
+
+        public void SetFloatData(int fieldName, float value)
+        {
+            int index = FloatFieldNames.IndexOf(fieldName);
+            mFloatValues[index] = value;
+        }
+
+        public string GetStringData(int fieldName)
+        {
+            int index = StringFieldNames.IndexOf(fieldName);
+            return mStringValues[index];
+        }
+
+        public void SetStringData(int fieldName, string value)
+        {
+            int index = StringFieldNames.IndexOf(fieldName);
+            mStringValues[index] = value;
+        }
+
+        public List<int> IntFieldNames { get; protected set; }
+        public List<int> FloatFieldNames { get; protected set; }
+        public List<int> StringFieldNames { get; protected set; }
     }
 
     public interface IDataUnit
@@ -140,11 +171,15 @@ namespace ShipDock.Datas
 
     public interface IFieldableData
     {
-        float GetFieldValue(int fieldName);
-        void SetFieldValue(int fieldName, float value);
-        float GetFieldMaxValue(int fieldName);
-        void SetFieldMaxValue(int fieldName, float value);
-        List<int> FieldNames { get; }
+        float GetIntData(int fieldName);
+        void SetIntData(int fieldName, int value);
+        float GetFloatData(int fieldName);
+        void SetFloatData(int fieldName, float value);
+        string GetStringData(int fieldName);
+        void SetStringData(int fieldName, string value);
+        List<int> IntFieldNames { get; }
+        List<int> FloatFieldNames { get; }
+        List<int> StringFieldNames { get; }
     }
 
     public interface ISourceData

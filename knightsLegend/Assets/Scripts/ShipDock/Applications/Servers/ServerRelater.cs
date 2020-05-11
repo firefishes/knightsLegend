@@ -7,7 +7,6 @@ namespace ShipDock.Applications
 {
     public class ServerRelater
     {
-
         private KeyValueList<int, IData> mDataCached;
         private KeyValueList<int, IShipDockComponent> mCompCached;
         private KeyValueList<string, IServer> mServerCached;
