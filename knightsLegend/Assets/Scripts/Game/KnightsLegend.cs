@@ -50,6 +50,7 @@ namespace KLGame
             servers.Add(new KLDataServer());
             servers.Add(new KLComponentServer());
             servers.Add(new KLCameraServer());
+            servers.Add(new KLBattleServer());
             servers.AddOnServerFinished(OnFinished);
         }
 

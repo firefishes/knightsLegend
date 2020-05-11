@@ -13,6 +13,7 @@ namespace ShipDock.Server
         ResolveDelegate<InterfaceT> Reregister<InterfaceT>(ResolveDelegate<InterfaceT> target, string alias);
         void Unregister<InterfaceT>(string alias);
         InterfaceT Resolve<InterfaceT>(string alias,  string resolverName = "");
+        int MakeResolver<InterfaceT>(string alias, string resolverName, ResolveDelegate<InterfaceT> target);
         void Add<InterfaceT>(ResolveDelegate<InterfaceT> target, bool onlyOnce = false);
         InterfaceT Delive<InterfaceT>(string resolverName, string alias);
         void Revert(IPoolable target, string alias);

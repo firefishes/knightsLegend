@@ -3,11 +3,11 @@ using ShipDock.Notices;
 
 namespace ShipDock.Applications
 {
-    public abstract class RolesDataServer : Server.Server, IDataServer
+    public abstract class DataServer : Server.Server, IDataServer
     {
         protected ServerRelater mRelater;
 
-        public RolesDataServer()
+        public DataServer()
         {
             ServerName = DataServerName;
             mRelater = new ServerRelater

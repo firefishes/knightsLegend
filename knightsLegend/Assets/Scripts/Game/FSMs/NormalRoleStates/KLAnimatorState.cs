@@ -234,8 +234,8 @@ namespace KLGame
             
             if (isBeginning)
             {
-                mCurrentSkillID = skillID;
                 mSkillMapper = mapper;
+                mCurrentSkillID = skillID;
 
                 InitMotion(isCombo, animator);//重新开始
 

@@ -1,9 +1,11 @@
 ﻿#define _G_LOG
 
+using System;
 using ShipDock.Applications;
 using ShipDock.FSM;
 using ShipDock.Notices;
 using ShipDock.Pooling;
+using ShipDock.Server;
 using ShipDock.Testers;
 using UnityEngine;
 
@@ -56,6 +58,15 @@ namespace KLGame
             RoleFSM = (mRole.RoleInput as KLRoleInputInfo).AnimatorFSM;
             (RoleFSM as CommonRoleFSM).SetAnimator(ref m_RoleAnimator);
             RoleFSM.Run(default, NormalRoleStateName.GROUNDED);
+
+            KLConsts.S_BATTLE.MakeResolver<IParamNotice<ICommonRole>>("SetBattleRoleParam", "EnterBattle", OnSetEnterBattleParam);
+
+            KLConsts.S_BATTLE.DeliveParam<KLBattleServer, ICommonRole>("EnterBattle", "SetBattleRoleParam");
+        }
+        
+        private void OnSetEnterBattleParam(ref IParamNotice<ICommonRole> target)
+        {
+            target.ParamValue = RoleEntitas;
         }
 
         /// <summary>

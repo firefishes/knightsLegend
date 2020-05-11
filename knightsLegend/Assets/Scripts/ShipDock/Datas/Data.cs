@@ -89,12 +89,65 @@ namespace ShipDock.Datas
         }
     }
 
-    public class DataUnit
+    public class FieldableData : IFieldableData, IDataUnit
+    {
+        private float[] mValues;
+        private float[] mMaxValues;
+
+        public FieldableData()
+        {
+            int max = FieldNames.Count;
+            mValues = new float[max];
+            mMaxValues = new float[max];
+            for (int i = 0; i < max; i++)
+            {
+                mValues[i] = 0f;
+                mMaxValues[i] = 0f;
+            }
+        }
+
+        public float GetFieldValue(int fieldName)
+        {
+            int index = FieldNames.IndexOf(fieldName);
+            return mValues[index];
+        }
+
+        public void SetFieldValue(int fieldName, float value)
+        {
+            int index = FieldNames.IndexOf(fieldName);
+            mValues[index] = value;
+        }
+
+        public float GetFieldMaxValue(int fieldName)
+        {
+            int index = FieldNames.IndexOf(fieldName);
+            return mMaxValues[index];
+        }
+
+        public void SetFieldMaxValue(int fieldName, float value)
+        {
+            int index = FieldNames.IndexOf(fieldName);
+            mMaxValues[index] = value;
+        }
+
+        public virtual List<int> FieldNames { get; protected set; }
+    }
+
+    public interface IDataUnit
     {
 
     }
 
-    public interface IDataUnit
+    public interface IFieldableData
+    {
+        float GetFieldValue(int fieldName);
+        void SetFieldValue(int fieldName, float value);
+        float GetFieldMaxValue(int fieldName);
+        void SetFieldMaxValue(int fieldName, float value);
+        List<int> FieldNames { get; }
+    }
+
+    public interface ISourceData
     {
 
     }

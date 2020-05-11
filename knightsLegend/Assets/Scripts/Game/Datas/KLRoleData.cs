@@ -1,13 +1,13 @@
 ﻿using ShipDock.Applications;
+using ShipDock.Datas;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace KLGame
 {
+
     [Serializable]
-    public struct KLRoleData : IRoleData
+    public class KLRoleData : FieldableData, IRoleData
     {
         public static KLRoleData GetRoleDataByRandom()
         {
@@ -23,6 +23,10 @@ namespace KLGame
             return result;
         }
 
+        public KLRoleData() : base()
+        {
+        }
+
         public int ConfigID { get; set; }
         public float Hp { get; set; }
         public float Speed { get; set; }
@@ -30,5 +34,12 @@ namespace KLGame
         public float StationaryTurnSpeed { get; set; }
         public float GravityMultiplier { get; set; }
         public float JumpPower { get; set; }
+
+        override public List<int> FieldNames { get; protected set; } = new List<int>
+        {
+            KLConsts.FIELD_HP,
+            KLConsts.FIELD_QI,
+            KLConsts.FIELD_IN_POWER,
+        };
     }
 }

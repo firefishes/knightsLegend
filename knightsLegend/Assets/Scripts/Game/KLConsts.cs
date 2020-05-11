@@ -21,6 +21,7 @@ namespace KLGame
         public const string S_DATAS = "ServerDatas";
         public const string S_FW_COMPONENTS = "ServerComponents";
         public const string S_LENS = "ServerLens";
+        public const string S_BATTLE = "ServerBattle";
 
         public const int C_ROLE_MUST = 0;
         public const int C_ROLE_INPUT = 1;
@@ -36,6 +37,7 @@ namespace KLGame
         public const int D_GAME = 0;
         public const int D_PLAYER = 1;
         public const int D_CONFIG = 2;
+        public const int D_BATTLE = 3;
 
         public const int N_TRIGGER_HIT = 1000;
         public const int N_TRIGGER_ROLE_ACTIVE = 1001;
@@ -66,11 +68,21 @@ namespace KLGame
         public const int ENEMY_INPUT_PHASE_NROMAL_ATK = 8;
         public const int ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK = 9;
         
+        public const int FIELD_HP = 0;
+        public const int FIELD_QI = 2;
+        public const int FIELD_IN_POWER = 3;
+        public const int FIELD_FlAWS = 4;
+
+        public const int FIELD_MOVE_SPEED = 105;
+        public const int FIELD_MOVING_TURN_SPEED = 106;
+        public const int FIELD_STATIONARY_TURN_SPEED = 107;
+
         private static readonly IResolvableConfig[] KLServerConfigs =
         {
             //new ResolvableConfigItem<INotice, GameNotice>("GameNotice"),
             new ResolvableConfigItem<IParamNotice<ICommonRole>, CampRoleNotice>("CampRoleCreated"),
             new ResolvableConfigItem<IParamNotice<ICommonRole>, ParamNotice<ICommonRole>>("SetUserRole"),
+            new ResolvableConfigItem<IParamNotice<ICommonRole>, ParamNotice<ICommonRole>>("SetBattleRoleParam"),
             new ResolvableConfigItem<IParamNotice<KLRoleComponent>, ParamNotice<KLRoleComponent>>("PlayerRole_0"),
             new ResolvableConfigItem<IParamNotice<KLCamerasComponent>, ParamNotice<KLCamerasComponent>>("SetLensParamer"),
             new ResolvableConfigItem<IParamNotice<NormalATKStateParam>, ParamNotice<NormalATKStateParam>>("NormalATKStateParam"),

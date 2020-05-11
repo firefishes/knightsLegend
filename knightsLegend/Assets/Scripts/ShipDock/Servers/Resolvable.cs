@@ -62,22 +62,44 @@ namespace ShipDock.Server
             }
         }
 
-        public void SetResolver<InterfaceT>(string resolverName, ResolveDelegate<InterfaceT> resolveDelgate, out int statu, bool onlyOnce = false)
+        public void SetResolver<InterfaceT>(string resolverName, ResolveDelegate<InterfaceT> resolveDelgate, out int statu, bool onlyOnce = false, bool isMakeResolver = false)
         {
             statu = 0;
-            bool hasRef = mResolverIDMapper.ContainsKey(ref resolverName, out _);
+            ResolverHandler<InterfaceT> handler;
+            bool hasRef = mResolverIDMapper.ContainsKey(ref resolverName, out int id);
             if(hasRef)
             {
                 statu = 1;
+                if (isMakeResolver)
+                {
+                    handler = mResolvers[id] as ResolverHandler<InterfaceT>;
+                    handler.AddDelegate(resolveDelgate);
+                }
             }
             else
             {
-                int id = mResolverIDMapper.Add(resolverName, out _);
-                ResolverHandler<InterfaceT> handler = new ResolverHandler<InterfaceT>();
+                if (isMakeResolver)
+                {
+                    statu = 2;
+                    return;
+                }
+                id = mResolverIDMapper.Add(resolverName, out _);
+                handler = new ResolverHandler<InterfaceT>();
                 handler.SetDelegate(resolveDelgate);
                 handler.OnlyOnce = onlyOnce;
                 handler.SetID(id);
                 mResolvers[id] = handler;
+            }
+        }
+        
+        public void RevokeResolver<InterfaceT>(string resolverName, ResolveDelegate<InterfaceT> resolveDelgate)
+        {
+            ResolverHandler<InterfaceT> handler;
+            bool hasRef = mResolverIDMapper.ContainsKey(ref resolverName, out int id);
+            if (hasRef)
+            {
+                handler = mResolvers[id] as ResolverHandler<InterfaceT>;
+                handler.RemoveDelegate(resolveDelgate);
             }
         }
 

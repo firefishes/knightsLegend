@@ -1,6 +1,7 @@
 ﻿using ShipDock.Applications;
 using ShipDock.Datas;
 using ShipDock.Notices;
+using ShipDock.Pooling;
 using ShipDock.Server;
 using System;
 
@@ -57,6 +58,11 @@ public static class ShipDockAppExtension
     public static T GetServer<T>(this string serverName) where T : IServer
     {
         return ShipDockApp.Instance.Servers.GetServer<T>(serverName);
+    }
+
+    public static void MakeResolver<I>(this string serverName, string alias, string resolverName, ResolveDelegate<I> handler)
+    {
+        serverName.GetServer<IServer>().MakeResolver(alias, resolverName, handler);
     }
 
     public static void AddToWarehouse(this IData target)

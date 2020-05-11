@@ -19,6 +19,19 @@
             DelegateTarget = target;
         }
 
+        public void AddDelegate(ResolveDelegate<InterfaceT> target)
+        {
+            ResolveDelegate<InterfaceT> cur = default;
+            cur += target;
+            cur += DelegateTarget;
+            DelegateTarget = cur;
+        }
+
+        public void RemoveDelegate(ResolveDelegate<InterfaceT> target)
+        {
+            DelegateTarget -= target;
+        }
+
         public void InvokeResolver()
         {
             mParamTemp = (InterfaceT)ResolverParam;

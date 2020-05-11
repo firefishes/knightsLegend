@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace KLGame
 {
-    public class KLDataServer : RolesDataServer
+    public class KLDataServer : DataServer
     {
         private int mRoleIndex;
 
@@ -67,7 +67,9 @@ namespace KLGame
 
         public override int[] RelatedDataNames { get; } = new int[]
         {
-            KLConsts.D_PLAYER
+            KLConsts.D_PLAYER,
+            KLConsts.D_CONFIG,
+            KLConsts.D_BATTLE,
         };
 
         public override int[] RelatedComponentNames { get; } = new int[]
@@ -79,6 +81,7 @@ namespace KLGame
         {
             new KLPlayerData(),
             new KLConfigData(),
+            new KLBattleData(),
         };
 
         public override string DataServerName { get; } = KLConsts.S_DATAS;
