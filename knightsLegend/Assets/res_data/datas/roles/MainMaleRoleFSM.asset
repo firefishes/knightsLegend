@@ -17,10 +17,18 @@ MonoBehaviour:
   - m_DisposeInfos: 0
     infos: []
     stateName: 1
-    enterStateNotice:
-    - noticeName: 1006
+    enterStateNotice: []
+    willFinishStateNotice: []
   - m_DisposeInfos: 0
     infos: []
     stateName: 3
     enterStateNotice:
     - noticeName: 1006
+    willFinishStateNotice: []
+  - m_DisposeInfos: 0
+    infos: []
+    stateName: 2
+    enterStateNotice:
+    - noticeName: 1006
+    willFinishStateNotice:
+    - noticeName: 1007

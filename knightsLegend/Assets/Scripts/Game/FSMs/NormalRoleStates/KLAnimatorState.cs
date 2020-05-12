@@ -78,7 +78,7 @@ namespace KLGame
         
         protected virtual void OnEnter(ref P param)
         {
-            RoleSceneComp?.RoleFSMChanged(StateName);
+            RoleSceneComp?.RoleFSMStateEntered(StateName);
         }
 
         protected virtual bool ShouldEnter(ref P param)
@@ -256,6 +256,16 @@ namespace KLGame
         }
         
         protected virtual bool BeforeFinish(bool checkInputWhenFinish)
+        {
+            bool result = CheckBeforeFinish();
+            if (result)
+            {
+                RoleSceneComp?.RoleFSMStateWillFinish(StateName);
+            }
+            return result;
+        }
+
+        protected virtual bool CheckBeforeFinish()
         {
             return true;
         }

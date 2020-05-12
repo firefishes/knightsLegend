@@ -124,6 +124,9 @@ namespace KLGame
                 case KLConsts.N_MOVE_BLOCK:
                     MoveBlock = true;
                     break;
+                case KLConsts.N_MOVE_UNBLOCK:
+                    MoveBlock = false;
+                    break;
                 case KLConsts.N_AFTER_UNDER_ATTACK:
                     ActiveRoleInputPhase(UserInputPhases.ROLE_INPUT_PHASE_UNDERATTACKED, true);
                     MoveBlock = false;
@@ -209,9 +212,14 @@ namespace KLGame
             param.KLRole = KLRole;
         }
 
-        public void RoleFSMChanged(int stateName)
+        public void RoleFSMStateEntered(int stateName)
         {
-            m_FSMStates.RoleFSMChanged(this, stateName);
+            m_FSMStates.RoleFSMStateEntered(this, stateName);
+        }
+
+        public void RoleFSMStateWillFinish(int stateName)
+        {
+            m_FSMStates.RoleFSMStateWillFinish(this, stateName);
         }
 
         private Vector3 CameraNodePosOffset { get; set; }

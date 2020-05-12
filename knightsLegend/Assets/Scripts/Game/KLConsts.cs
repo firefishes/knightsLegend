@@ -46,6 +46,7 @@ namespace KLGame
         public const int N_AFTER_UNDER_ATTACK = 1004;
         public const int N_INIT_ENTITAS_CALLBACKS = 1005;
         public const int N_MOVE_BLOCK = 1006;
+        public const int N_MOVE_UNBLOCK = 1007;
 
         public const int DC_CAMP_ROLE_CREATED = 2000;
         
@@ -69,9 +70,13 @@ namespace KLGame
         public const int ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK = 9;
         
         public const int FIELD_HP = 0;
+        public const int FIELD_M_HP = 0;
         public const int FIELD_QI = 2;
+        public const int FIELD_M_QI = 0;
         public const int FIELD_IN_POWER = 3;
+        public const int FIELD_M_IN_POWER = 0;
         public const int FIELD_FlAWS = 4;
+        public const int FIELD_M_FlAWS = 4;
 
         public const int FIELD_MOVE_SPEED = 105;
         public const int FIELD_MOVING_TURN_SPEED = 106;

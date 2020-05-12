@@ -27,6 +27,35 @@ namespace KLGame
         {
         }
 
+        public void SetSource()
+        {
+            FillValues();
+        }
+
+        public override List<int> GetIntFieldSource()
+        {
+            return default;
+        }
+
+        public override List<float> GetFloatFieldSource()
+        {
+            return new List<float>
+            {
+                Hp,
+                Hp,
+                100f,
+                100f,
+                200f,
+                200f,
+
+            };
+        }
+
+        public override List<string> GetStringFieldSource()
+        {
+            return default;
+        }
+
         public int ConfigID { get; set; }
         public float Hp { get; set; }
         public float Speed { get; set; }
@@ -35,11 +64,14 @@ namespace KLGame
         public float GravityMultiplier { get; set; }
         public float JumpPower { get; set; }
 
-        override public List<int> IntFieldNames { get; protected set; } = new List<int>
+        override public List<int> FloatFieldNames { get; protected set; } = new List<int>
         {
             KLConsts.FIELD_HP,
+            KLConsts.FIELD_M_HP,
             KLConsts.FIELD_QI,
+            KLConsts.FIELD_M_QI,
             KLConsts.FIELD_IN_POWER,
+            KLConsts.FIELD_M_IN_POWER,
         };
     }
 }

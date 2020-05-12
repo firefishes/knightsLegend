@@ -1,4 +1,5 @@
 ﻿using ShipDock.Datas;
+using ShipDock.Infos;
 using ShipDock.Interfaces;
 using ShipDock.Notices;
 using ShipDock.Pooling;
@@ -69,7 +70,7 @@ namespace ShipDock.Applications
             }
         }
 
-        public void RoleFSMChanged(INotificationSender target, int stateName)
+        public void RoleFSMStateEntered(INotificationSender target, int stateName)
         {
             RoleFSMStateInfo info = StatesMapper[stateName];
 
@@ -78,8 +79,26 @@ namespace ShipDock.Applications
                 return;
             }
 
+            NotificationInfo[] list = info.enterStateNotice;
+            SendRoleFSMStateNotifications(ref target, ref list);
+        }
+
+        public void RoleFSMStateWillFinish(INotificationSender target, int stateName)
+        {
+            RoleFSMStateInfo info = StatesMapper[stateName];
+
+            if (info == default)
+            {
+                return;
+            }
+
+            NotificationInfo[] list = info.willFinishStateNotice;
+            SendRoleFSMStateNotifications(ref target, ref list);
+        }
+
+        private void SendRoleFSMStateNotifications(ref INotificationSender target, ref NotificationInfo[] list)
+        {
             Notice notice = Pooling<Notice>.From();
-            RoleFSMStateNotificationer[] list = info.enterStateNotice;
             int max = list.Length;
             for (int i = 0; i < max; i++)
             {
@@ -89,44 +108,6 @@ namespace ShipDock.Applications
         }
 
         public KeyValueList<int, RoleFSMStateInfo> StatesMapper { get; private set; }
-    }
-
-    [Serializable]
-    public class RoleFSMStateInfo : SceneInfosMapper<int, RoleFSMStateExecuableInfo>
-    {
-        public int stateName;
-        public RoleFSMStateNotificationer[] enterStateNotice;
-
-        public override int GetInfoKey(ref RoleFSMStateExecuableInfo item)
-        {
-            return item.phaseName;
-        }
-
-        public override void Dispose()
-        {
-            m_DisposeInfos = true;
-
-            base.Dispose();
-
-            Utils.Reclaim(ref enterStateNotice);
-        }
-    }
-
-    [Serializable]
-    public class RoleFSMStateNotificationer
-    {
-        public int noticeName;
-    }
-
-    [Serializable]
-    public class RoleFSMStateExecuableInfo
-    {
-        #region TODO Editorable
-        public int phaseName;
-        public int allowCalledInEntitas;
-        public int callbackID;
-        public bool isExecuteInScene;
-        #endregion
     }
 
 }

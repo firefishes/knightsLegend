@@ -6,7 +6,8 @@ namespace KLGame
     {
         void FillRoleFSMStateParam(IKLRoleFSMParam param);
         void FillRoleFSMAIStateParam(IKLRoleFSMAIParam param);
-        void RoleFSMChanged(int stateName);
+        void RoleFSMStateEntered(int stateName);
+        void RoleFSMStateWillFinish(int stateName);
         IKLRole KLRole { get; }
         bool MoveBlock { get; set; }
         int CurrentSkillID { get; }

@@ -40,7 +40,7 @@ namespace KLGame
             {
                 x = (Mathf.Abs(userInputValue.y) < 0.1f) ? x : -x;
             }
-            v = Quaternion.Euler(transform.eulerAngles) * new Vector3(x, 0, userInputValue.y * 0.5f);
+            v = Quaternion.Euler(transform.eulerAngles) * new Vector3(x, 0, userInputValue.y);
             mRoleInput.SetMoveValue(v);
         }
 

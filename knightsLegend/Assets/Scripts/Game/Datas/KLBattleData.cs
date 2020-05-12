@@ -7,19 +7,30 @@ namespace KLGame
 {
     public class BattleUnit : FieldableData, IDataUnit
     {
+
+        private KLRoleData mRoleData;
+
         public BattleUnit() : base()
         {
 
         }
 
-        public void FillData(ICommonRole source)
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            mRoleData = default;
+        }
+
+        public void SetSource(ICommonRole source)
         {
             EntitasID = source.ID;
 
-            IRoleData data = source.RoleDataSource;
+            mRoleData = source.RoleDataSource as KLRoleData;
 
-            SetIntData(KLConsts.FIELD_HP, data.Hp);
-            SetFieldMaxValue(KLConsts.FIELD_HP, data.Hp);
+            FillValues();
+
+            mRoleData = default;
         }
 
         public void SetUnitID(int id)
@@ -27,11 +38,38 @@ namespace KLGame
             UnitID = id;
         }
 
-        override public List<int> IntFieldNames { get; protected set; } = new List<int>
+        public override List<int> GetIntFieldSource()
+        {
+            return default;
+        }
+
+        public override List<float> GetFloatFieldSource()
+        {
+            return new List<float>
+            {
+                mRoleData.GetFloatData(KLConsts.FIELD_HP),
+                mRoleData.GetFloatData(KLConsts.FIELD_M_HP),
+                mRoleData.GetFloatData(KLConsts.FIELD_QI),
+                mRoleData.GetFloatData(KLConsts.FIELD_M_QI),
+                mRoleData.GetFloatData(KLConsts.FIELD_IN_POWER),
+                mRoleData.GetFloatData(KLConsts.FIELD_M_IN_POWER),
+                100f,
+            };
+        }
+
+        public override List<string> GetStringFieldSource()
+        {
+            return default;
+        }
+
+        override public List<int> FloatFieldNames { get; protected set; } = new List<int>
         {
             KLConsts.FIELD_HP,
+            KLConsts.FIELD_M_HP,
             KLConsts.FIELD_QI,
+            KLConsts.FIELD_M_QI,
             KLConsts.FIELD_IN_POWER,
+            KLConsts.FIELD_M_IN_POWER,
             KLConsts.FIELD_FlAWS,
         };
 
@@ -50,7 +88,7 @@ namespace KLGame
         public void AddBattleUnit(ICommonRole role)
         {
             BattleUnit battleUnit = new BattleUnit();
-            battleUnit.FillData(role);
+            battleUnit.SetSource(role);
             battleUnit.SetUnitID(mBattleIDIncrease);
             mBattleIDIncrease++;
 

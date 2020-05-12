@@ -12,8 +12,9 @@ namespace KLGame
 
         public EnmeyRole()
         {
-            IRoleData data = KLRoleData.GetRoleDataByRandom();
+            KLRoleData data = KLRoleData.GetRoleDataByRandom();
             data.ConfigID = 1;
+            data.SetSource();
             SetRoleData(data);
 
             IsUserControlling = false;
