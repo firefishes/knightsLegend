@@ -32,7 +32,6 @@ namespace KLGame
 
             mStateParam = param;
             mRole = mStateParam.KLRole;
-            RoleSceneComp = mStateParam.RoleSceneComp;
 
             ReadyMotion(mStateParam.CurrentSkillID, mStateParam.SkillMapper, true);
         }
@@ -63,17 +62,16 @@ namespace KLGame
                     break;
                 case 1:
                     DeActiveCollider();
-                    Finish(true);
+                    Finish();
                     break;
             }
         }
 
-        protected override bool BeforeFinish(bool checkInputWhenFinish)
+        protected override bool CheckBeforeFinish()
         {
-            bool result = base.BeforeFinish(checkInputWhenFinish);
-            if(result)
+            bool result = base.CheckBeforeFinish();
+            if (result)
             {
-                RoleSceneComp.MoveBlock = false;
                 Animator.SetFloat("Atk1", 0f);
             }
             else
@@ -83,9 +81,9 @@ namespace KLGame
             return result;
         }
 
-        override protected bool Finish(bool checkInputWhenFinish)
+        override protected bool Finish()
         {
-            bool result = base.Finish(checkInputWhenFinish);
+            bool result = base.Finish();
 
             if(result)
             {
@@ -97,22 +95,6 @@ namespace KLGame
             }
 
             return result;
-        }
-
-        protected override void RevertStateParam()
-        {
-            if (mStateParam != default)
-            {
-                mStateParam.ToPool();
-            }
-        }
-
-        protected override void RevertAllStateParams()
-        {
-            foreach (var item in mStateParamQueue)
-            {
-                item.ToPool();
-            }
         }
 
         protected override bool ReadyMotion(int skillID, SkillMotionsMapper mapper, bool isCombo)
@@ -161,23 +143,6 @@ namespace KLGame
             IsHit = true;
             StartFeedbackTime(RoleAnimationFeedBackConsts.FEED_BACK_BY_HIT, 0.1f, 0f);
         }
-
-        //protected override void StartFeedbackTime(int feedback, float time, float speed = 1)
-        //{
-        //    base.StartFeedbackTime(feedback, time, speed);
-
-        //    switch(StateFeedback)
-        //    {
-        //        case RoleAnimationFeedBackConsts.FEED_BACK_BY_HIT:
-        //            //mFeedbackTime.completion += OnFeedBackByHit;
-        //            break;
-        //    }
-        //}
-
-        //private void OnFeedBackByHit()
-        //{
-
-        //}
 
         private void DeActiveCollider()
         {

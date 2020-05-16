@@ -29,8 +29,9 @@ namespace KLGame
             components.Create<RoleAIAtkComponent>(KLConsts.C_ROLE_AI_ATK);
             components.Create<RoleMustComponent>(KLConsts.C_ROLE_MUST);
             components.Create<KLRoleCampComponent>(KLConsts.C_ROLE_CAMP);
-            components.Create<KLInputComponent>(KLConsts.C_ROLE_INPUT, false);
+            components.Create<KLInputComponent>(KLConsts.C_ROLE_INPUT);
             components.Create<PositionComponent>(KLConsts.C_POSITION);
+            components.Create<RoleBattleDataComponent>(KLConsts.C_ROLE_BATTLE_DATA);
         }
 
         public override void ServerReady()

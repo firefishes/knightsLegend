@@ -1,4 +1,6 @@
-﻿using ShipDock.FSM;
+﻿#define G_LOG
+
+using ShipDock.FSM;
 using ShipDock.Interfaces;
 using ShipDock.Tools;
 using System.Collections.Generic;
@@ -97,6 +99,7 @@ namespace ShipDock.Applications
                 else
                 {
                     AnimatorTarget.SetFloat(conf.KeyField, conf.Float);
+                    Testers.Tester.Instance.Log(TesterRPG.Instance, TesterRPG.LOG, "log: ".Append(mConfItem.KeyField, " = ", mConfItem.Value));
                 }
             }
             else if (conf.IsInt)

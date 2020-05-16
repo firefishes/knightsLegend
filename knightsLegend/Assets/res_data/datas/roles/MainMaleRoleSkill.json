@@ -60,6 +60,26 @@
 				"floatValue": 3,
 				"triggerValue": false
 			}]
+		}, {
+			"name": 3,
+			"skillName": "普通防御",
+			"skillParams": [{
+				"valueTypeInEditor": 5,
+				"valueInEditor": "1",
+				"keyField": "DefenceType",
+				"valueType": 5,
+				"str": "",
+				"floatValue": 1,
+				"triggerValue": false
+			}, {
+				"valueTypeInEditor": 5,
+				"valueInEditor": "0",
+				"keyField": "DefenceTimeScale",
+				"valueType": 5,
+				"str": "",
+				"floatValue": 0,
+				"triggerValue": false
+			}]
 		}]
 	},
 	"skillMotions": {
@@ -75,6 +95,12 @@
 			"isCombo": true,
 			"indexsForID": [1, 2],
 			"checkComboTime": 1.5
+		}, {
+			"ID": 3,
+			"skillName": "普通攻击1--动画",
+			"isCombo": true,
+			"indexsForID": [3],
+			"checkComboTime": 0
 		}]
 	}
 }

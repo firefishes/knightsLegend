@@ -39,7 +39,16 @@ namespace KLGame
                 if (mEnemyRole != default && HitInfoScope.CheckScope(mEnemyRole.Position))
                 {
                     Tester.Instance.Log(KLTester.Instance, KLTester.LOG0, mEnemyRole != default, "log: Player attack enemy ".Append(mEnemyRole.Name));
-                    (mEnemyRole as IKLRole).UnderAttack();
+                    
+                    IKLRole role = mEnemyRole as IKLRole;
+                    BattleUnit data = role.BattleDataUnit;
+                    float flaws = data.GetFloatData(KLConsts.FIELD_FlAWS);
+                    flaws += 10f;
+                    Debug.Log(mEnemyRole + " 破绽：" + flaws);
+                    data.SetFloatData(KLConsts.FIELD_FlAWS, flaws);
+
+                    KLBattleData battleData = PlayerRole.Processing.BattleData;
+
                     PlayerRole.EnemyMainLockDown = mEnemyRole;
                     AfterProcessing?.Invoke();
                     PlayerRole.HitSomeOne = true;

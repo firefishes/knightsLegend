@@ -877,7 +877,7 @@ PrefabInstance:
     - target: {fileID: 698715321385314088, guid: f7058fa0ebfad9c4d8eca6c45363f629,
         type: 3}
       propertyPath: m_EnmeyCount
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 698715321385314088, guid: f7058fa0ebfad9c4d8eca6c45363f629,
         type: 3}

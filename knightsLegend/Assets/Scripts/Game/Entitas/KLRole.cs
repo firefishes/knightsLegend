@@ -1,6 +1,7 @@
 ﻿using ShipDock.Applications;
 using ShipDock.ECS;
 using ShipDock.Notices;
+using ShipDock.Pooling;
 using ShipDock.Tools;
 using System;
 using System.Collections.Generic;
@@ -17,10 +18,13 @@ namespace KLGame
 
             this.Remove(OnRoleNotificationHandler);
 
+            Utils.Reclaim(BattleDataUnit);
+
             TimesEntitas?.ToPool();
             TimesEntitas = default;
             Processing = default;
             CollidingChanger = default;
+            BattleDataUnit = default;
         }
 
         public override void InitComponents()
@@ -74,12 +78,17 @@ namespace KLGame
 
         public void UnderAttack()
         {
-            RoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_UNDERATTACKED);
+            //RoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_UNDERATTACKED);
         }
 
         public override void CollidingChanged(int colliderID, bool isTrigger, bool isCollided)
         {
             CollidingChanger?.Invoke(ID, colliderID, isTrigger, isCollided);
+        }
+
+        public void SetBattleUnit(BattleUnit battleUnit)
+        {
+            BattleDataUnit = battleUnit;
         }
 
         protected override int[] ComponentIDs { get; } = new int[]
@@ -90,7 +99,8 @@ namespace KLGame
             KLConsts.C_POSITION,
             KLConsts.C_ROLE_COLLIDER,
             KLConsts.C_ROLE_MUST,
-            KLConsts.C_ROLE_CAMP
+            KLConsts.C_ROLE_CAMP,
+            KLConsts.C_ROLE_BATTLE_DATA,
         };
 
         public abstract int RoleFSMName { get; set; }
@@ -100,5 +110,6 @@ namespace KLGame
         public Vector3 WeapontPos { get; set; }
         public CommonRoleFSM RoleFSM { get; protected set; }
         public RoleFSMObj FSMStates { get; set; }
+        public BattleUnit BattleDataUnit { get; private set; }
     }
 }

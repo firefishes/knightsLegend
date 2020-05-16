@@ -33,6 +33,7 @@ namespace KLGame
         public const int C_ROLE_MOVE = 7;
         public const int C_ROLE_TIMES = 8;
         public const int C_PROCESS = 9;
+        public const int C_ROLE_BATTLE_DATA = 10;
 
         public const int D_GAME = 0;
         public const int D_PLAYER = 1;

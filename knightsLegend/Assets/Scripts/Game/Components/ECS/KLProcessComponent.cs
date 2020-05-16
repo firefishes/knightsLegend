@@ -12,6 +12,7 @@ namespace KLGame
 {
     public class KLProcessComponent : ShipDockComponent, IProcessingComponent
     {
+        private ServerRelater mRelater;
         private List<IRoleProcessing> mWillDeleteds;
         private MethodProcessing mProcessingMethod;
         private Queue<MethodProcessing> mProcessingQueue;
@@ -30,6 +31,14 @@ namespace KLGame
             RoleCollisionComp = GetRelatedComponent<RoleColliderComponent>(KLConsts.C_ROLE_COLLIDER);
             RoleMustComp = GetRelatedComponent<RoleMustComponent>(KLConsts.C_ROLE_MUST);
 
+            mRelater = new ServerRelater
+            {
+                DataNames = new int[]
+                {
+                    KLConsts.D_BATTLE
+                }
+            };
+            mRelater.CommitRelate();
         }
 
         public override void Dispose()
@@ -70,7 +79,7 @@ namespace KLGame
             if (!mRoleProcessingMapper.ContainsKey(initiator.ID))
             {
                 ShipDockApp.Instance.Notificater.Add(initiator, OnProcessingHandler);//然后添加流程事件处理
-                 mRoleProcessingMapper[initiator.ID] = initiator;
+                mRoleProcessingMapper[initiator.ID] = initiator;
             }
             return true;
         }
@@ -193,6 +202,14 @@ namespace KLGame
                     mProcessingMethod.ToPool();
                     mProcessingMethod = default;
                 }
+            }
+        }
+
+        public KLBattleData BattleData
+        {
+            get
+            {
+                return mRelater.DataRef<KLBattleData>(KLConsts.D_BATTLE);
             }
         }
 

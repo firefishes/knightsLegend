@@ -1,6 +1,4 @@
-﻿using ShipDock.Applications;
-using ShipDock.Notices;
-using ShipDock.Pooling;
+﻿using ShipDock.Pooling;
 
 namespace KLGame
 {
@@ -34,18 +32,11 @@ namespace KLGame
             return mRole.Processing.AddRoleProcess(hit);
         }
 
-        protected override bool BeforeFinish(bool checkInputWhenFinish)
+        protected override bool CheckBeforeFinish()
         {
-            bool flag = base.BeforeFinish(checkInputWhenFinish);
-            if (flag)
-            {
-                Notice notice = Pooling<Notice>.From();
-                RoleSceneComp.Broadcast(KLConsts.N_AI_RESET, notice);
-                notice.ToPool();
-
-                mRole.RoleInput.SetInputPhase(KLConsts.ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK);
-            }
-            return flag;
+            //TODO add config notice 1003
+            mRole.RoleInput.SetInputPhase(KLConsts.ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK);
+            return true;
         }
     }
 

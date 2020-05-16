@@ -1,6 +1,4 @@
 ﻿using ShipDock.Applications;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace KLGame
@@ -8,7 +6,9 @@ namespace KLGame
     public class KLHostGameInputer : HostGameInputer
     {
         public readonly static string[] atkButtonNames = new string[] { "Fire1", "Fire2", "Fire3" };
+        public readonly static bool[] atkButtonKeeps = new bool[] { false, true, false };
 
+        private bool mButtonKeppable;
         private string mAtkButtonName;
 
         protected override void CheckCustomButtons()
@@ -17,9 +17,14 @@ namespace KLGame
             for (int i = 0; i < max; i++)
             {
                 mAtkButtonName = atkButtonNames[i];
-                if (Input.GetButtonDown(mAtkButtonName))
+                mButtonKeppable = atkButtonKeeps[i];
+                if (mButtonKeppable)
                 {
-                    m_InputerButtons.SetActiveButton(mAtkButtonName, true);
+                    m_InputerButtons.SetActiveButton(mAtkButtonName, Input.GetButton(mAtkButtonName));
+                }
+                else
+                {
+                    m_InputerButtons.SetActiveButton(mAtkButtonName, Input.GetButtonDown(mAtkButtonName));
                 }
             }
         }

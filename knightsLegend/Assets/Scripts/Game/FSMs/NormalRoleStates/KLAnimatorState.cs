@@ -3,12 +3,13 @@
 using System.Collections.Generic;
 using ShipDock.Applications;
 using ShipDock.FSM;
+using ShipDock.Pooling;
 using ShipDock.Tools;
 using UnityEngine;
 
 namespace KLGame
 {
-    public abstract class KLAnimatorState<P> : AnimatorState where P : IStateParam
+    public class KLAnimatorState<P> : AnimatorState where P : IStateParam
     {
         protected IKLRole mRole;
         protected P mStateParam;
@@ -169,7 +170,7 @@ namespace KLGame
                         }
                         else
                         {
-                            Finish(false);
+                            Finish();
                         }
                     }
                 }
@@ -249,13 +250,13 @@ namespace KLGame
                 }
                 else
                 {
-                    Finish(false);
+                    Finish();
                 }
             }
             return result;
         }
         
-        protected virtual bool BeforeFinish(bool checkInputWhenFinish)
+        private bool BeforeFinish()
         {
             bool result = CheckBeforeFinish();
             if (result)
@@ -270,11 +271,11 @@ namespace KLGame
             return true;
         }
 
-        protected virtual bool Finish(bool checkInputWhenFinish)
+        protected virtual bool Finish()
         {
             mFeedbackTime.Stop();
 
-            bool result = BeforeFinish(checkInputWhenFinish);
+            bool result = BeforeFinish();
             if (result)
             {
                 RevertStateParam();
@@ -295,8 +296,26 @@ namespace KLGame
             return result;
         }
 
-        protected abstract void RevertAllStateParams();
-        protected abstract void RevertStateParam();
+        protected virtual void RevertAllStateParams()
+        {
+            IPoolable poolable;
+            foreach (var item in mStateParamQueue)
+            {
+                poolable = item as IPoolable;
+                if (poolable != default)
+                {
+                    poolable.ToPool();
+                }
+            }
+        }
+
+        protected virtual void RevertStateParam()
+        {
+            if (mStateParam != default && mStateParam is IPoolable)
+            {
+                (mStateParam as IPoolable).ToPool();
+            }
+        }
 
         protected bool IsFeedbackChecked { get; set; }
         protected int StateFeedback { get; private set; }

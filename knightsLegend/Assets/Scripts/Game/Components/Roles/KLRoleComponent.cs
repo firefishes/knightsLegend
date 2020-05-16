@@ -21,6 +21,7 @@ namespace KLGame
         private RoleCollider m_BloodyEffectTF;
 
         protected string mFire1ParamName = "Fire1";
+        protected string mFire2ParamName = "Fire2";
 
         private Vector3 mWeapontPos;
         
@@ -59,15 +60,15 @@ namespace KLGame
             (RoleFSM as CommonRoleFSM).SetAnimator(ref m_RoleAnimator);
             RoleFSM.Run(default, NormalRoleStateName.GROUNDED);
 
-            KLConsts.S_BATTLE.MakeResolver<IParamNotice<ICommonRole>>("SetBattleRoleParam", "EnterBattle", OnSetEnterBattleParam);
+            //KLConsts.S_BATTLE.MakeResolver<IParamNotice<ICommonRole>>("SetBattleRoleParam", "EnterBattle", OnSetEnterBattleParam);
 
-            KLConsts.S_BATTLE.DeliveParam<KLBattleServer, ICommonRole>("EnterBattle", "SetBattleRoleParam");
+            //KLConsts.S_BATTLE.DeliveParam<KLBattleServer, ICommonRole>("EnterBattle", "SetBattleRoleParam");
         }
         
-        private void OnSetEnterBattleParam(ref IParamNotice<ICommonRole> target)
-        {
-            target.ParamValue = RoleEntitas;
-        }
+        //private void OnSetEnterBattleParam(ref IParamNotice<ICommonRole> target)
+        //{
+        //    target.ParamValue = RoleEntitas;
+        //}
 
         /// <summary>
         /// 角色的碰撞触发
@@ -137,8 +138,6 @@ namespace KLGame
         protected override void UpdateAnimations()
         {
             base.UpdateAnimations();
-
-            //m_BloodyEffectTF?.Collider.
 
             mWeapontPos = m_BloodyEffectTF.transform.position - mWeapontPos;
             KLRole.WeapontPos = mWeapontPos;

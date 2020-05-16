@@ -58,7 +58,6 @@ namespace KLGame
                 mRoleInput.SetUserInputValue(mFire1ParamName, false);
 
                 CurrentSkillID = 1;
-                //MoveBlock = true;
 
                 NormalATKStateParam param = Pooling<NormalATKStateParam>.From();
                 param.Reinit(this, 1);
@@ -72,6 +71,24 @@ namespace KLGame
                     RoleFSM.ChangeState(NormalRoleStateName.NORMAL_ATK, param);
                 }
 
+            }
+            else if (mRoleInput.GetUserInputValue(mFire2ParamName))
+            {
+                if (RoleFSM.Current.StateName != NormalRoleStateName.NORMAL_DEF)
+                {
+                    CurrentSkillID = 3;
+                    KLRoleFSMStateParam param = Pooling<KLRoleFSMStateParam>.From();
+                    param.Reinit(this, 2);
+                    RoleFSM.ChangeState(NormalRoleStateName.NORMAL_DEF, param);
+                }
+            }
+            else
+            {
+                if (!mRoleInput.GetUserInputValue(mFire2ParamName) && (RoleFSM.Current.StateName == NormalRoleStateName.NORMAL_DEF))
+                {
+                    m_RoleAnimator.SetFloat("DefenceType", 0f);
+                    RoleFSM.ChangeState(NormalRoleStateName.GROUNDED);
+                }
             }
         }
 

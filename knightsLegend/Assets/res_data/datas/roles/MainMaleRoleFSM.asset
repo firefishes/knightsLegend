@@ -32,3 +32,10 @@ MonoBehaviour:
     - noticeName: 1006
     willFinishStateNotice:
     - noticeName: 1007
+  - m_DisposeInfos: 0
+    infos: []
+    stateName: 5
+    enterStateNotice:
+    - noticeName: 1006
+    willFinishStateNotice:
+    - noticeName: 1007

@@ -1,12 +1,10 @@
 ﻿using ShipDock.Applications;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace KLGame
 {
     public class KLInputComponent : HostGameInputComponent<KLServer>
     {
+        private bool[] mAtkButtonKeeps;
         private string mAtkButtonName;
         private string[] mAtkButtonNames;
 
@@ -17,6 +15,7 @@ namespace KLGame
             if(mAtkButtonNames == default)
             {
                 mAtkButtonNames = KLHostGameInputer.atkButtonNames;
+                mAtkButtonKeeps = KLHostGameInputer.atkButtonKeeps;
             }
 
             int max = mAtkButtonNames.Length;
@@ -29,7 +28,13 @@ namespace KLGame
                     {
                         mRoleInput.SetUserInputValue(mAtkButtonName, true);
                     }
-                    UserInputButtons.SetActiveButton(mAtkButtonName, false);
+                }
+                else
+                {
+                    if (mRoleInput.GetUserInputValue(mAtkButtonName))
+                    {
+                        mRoleInput.SetUserInputValue(mAtkButtonName, false);
+                    }
                 }
             }
 

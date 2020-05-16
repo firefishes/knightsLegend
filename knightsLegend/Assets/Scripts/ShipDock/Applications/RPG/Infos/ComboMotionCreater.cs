@@ -74,16 +74,19 @@ namespace ShipDock.Applications
                         animator.SetBool(mValueItem.KeyField, mValueItem.Bool);
                     }
                 }
-                var item = MotionTransParam[0];
-                string keyField = item.KeyField;
-                mValueItemForRevert.KeyField = keyField;
-                if (item.IsInt)
+                if (MotionTransParam.Length > 0)
                 {
-                    mValueItemForRevert.Int = animator.GetInteger(keyField);
-                }
-                else if (item.IsFloat)
-                {
-                    mValueItemForRevert.Float = animator.GetFloat(keyField);
+                    var item = MotionTransParam[0];
+                    string keyField = item.KeyField;
+                    mValueItemForRevert.KeyField = keyField;
+                    if (item.IsInt)
+                    {
+                        mValueItemForRevert.Int = animator.GetInteger(keyField);
+                    }
+                    else if (item.IsFloat)
+                    {
+                        mValueItemForRevert.Float = animator.GetFloat(keyField);
+                    }
                 }
             }
             CreateCombo(ref animator, true);
@@ -91,15 +94,21 @@ namespace ShipDock.Applications
 
         private void CreateCombo(ref Animator animator, bool isFirstCreate)
         {
-            mValueItem = MotionTransParam[CurrentCombo];
             if (!isFirstCreate)
             {
                 AniUpdater.Dispose();
                 AniUpdater = new AnimationInfoUpdater();
             }
-
-            AniUpdater.Start(animator, mValueItem);
-            CurrentCombo++;
+            if (MotionTransParam.Length == 0)
+            {
+                AniUpdater.Start(animator);
+            }
+            else
+            {
+                mValueItem = MotionTransParam[CurrentCombo];
+                AniUpdater.Start(animator, mValueItem);
+                CurrentCombo++;
+            }
         }
 
         public void Reset(bool revertCombo)

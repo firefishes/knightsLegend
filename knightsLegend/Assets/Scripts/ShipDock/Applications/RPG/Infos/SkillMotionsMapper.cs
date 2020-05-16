@@ -24,9 +24,11 @@ namespace ShipDock.Applications
         {
             base.AfterInitItem(ref item);
 
+            int triggerIDIndex = item.indexsForID.Length >= 1 ? item.indexsForID[0] : -1;
             if (item.isCombo)
             {
-                ComboMotionCreater target = GetComboMotionCreater(SkillsMapper, item.indexsForID[0], item.indexsForID[1], item.checkComboTime);
+                int transIDIndex = item.indexsForID.Length >= 2 ? item.indexsForID[1] : -1;
+                ComboMotionCreater target = GetComboMotionCreater(SkillsMapper, triggerIDIndex, transIDIndex, item.checkComboTime);
                 item.ComboMotion = target;
 
                 int index = Values.IndexOf(item);

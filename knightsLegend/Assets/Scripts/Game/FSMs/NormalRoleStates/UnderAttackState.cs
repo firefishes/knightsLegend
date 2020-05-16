@@ -50,37 +50,27 @@ namespace KLGame
             }
             else if(mAniUpdater != default && mAniUpdater.HasCompleted)
             {
-                Finish(false);
+                Finish();
             }
         }
 
-        protected override bool BeforeFinish(bool checkInputWhenFinish)
+        protected override bool CheckBeforeFinish()
         {
-            bool isAtkedCombo = Animator.GetBool("IsAtkedCombo");
-            bool flag = base.BeforeFinish(checkInputWhenFinish) && !isAtkedCombo;
-            
-            if(flag)
+            bool flag = !Animator.GetBool("IsAtkedCombo");
+
+            if (flag)
             {
                 Animator.SetFloat("Atked", 0f);
-                //try
-                //{
-                //mRole.RoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_AFTER_MOVE, false);
-                //mStateParam.RoleSceneComp.MoveBlock = false;
-                //}
-                //catch(System.Exception e)
-                //{
-                //    Debug.Log(e.Message);
-                //}
                 Notice notice = Pooling<Notice>.From();
                 RoleSceneComp.Broadcast(KLConsts.N_AFTER_UNDER_ATTACK, notice);
                 notice.ToPool();
             }
             return flag;
         }
-
-        protected override bool Finish(bool checkInputWhenFinish)
+        
+        protected override bool Finish()
         {
-            bool result = base.Finish(checkInputWhenFinish);
+            bool result = base.Finish();
             
             if (result)
             {
@@ -88,22 +78,6 @@ namespace KLGame
             }
 
             return result;
-        }
-
-        protected override void RevertAllStateParams()
-        {
-            foreach (var item in mStateParamQueue)
-            {
-                item.ToPool();
-            }
-        }
-
-        protected override void RevertStateParam()
-        {
-            if (mStateParam != default)
-            {
-                mStateParam.ToPool();
-            }
         }
     }
 }

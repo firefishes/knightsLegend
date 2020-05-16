@@ -68,7 +68,7 @@ namespace KLGame
             
             base.Execute(time, ref target);
 
-            if(!mAIRole.IsInitNormalATKPhases)
+            if(mRoleInput != default && !mAIRole.IsInitNormalATKPhases)
             {
                 InitRolePhases(mRoleInput);
             }
