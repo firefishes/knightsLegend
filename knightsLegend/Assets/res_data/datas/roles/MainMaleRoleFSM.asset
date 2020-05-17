@@ -20,7 +20,11 @@ MonoBehaviour:
     enterStateNotice: []
     willFinishStateNotice: []
   - m_DisposeInfos: 0
-    infos: []
+    infos:
+    - phaseName: 100
+      allowCalledInEntitas: 0
+      callbackID: 0
+      isExecuteInScene: 1
     stateName: 3
     enterStateNotice:
     - noticeName: 1006

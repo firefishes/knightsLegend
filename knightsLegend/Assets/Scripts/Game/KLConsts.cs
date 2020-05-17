@@ -77,7 +77,7 @@ namespace KLGame
         public const int FIELD_IN_POWER = 3;
         public const int FIELD_M_IN_POWER = 0;
         public const int FIELD_FlAWS = 4;
-        public const int FIELD_M_FlAWS = 4;
+        public const int FIELD_M_FlAWS = 5;
 
         public const int FIELD_MOVE_SPEED = 105;
         public const int FIELD_MOVING_TURN_SPEED = 106;

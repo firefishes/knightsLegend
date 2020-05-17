@@ -37,6 +37,10 @@ namespace KLGame
 
             mRole = target as IKLRole;
             int id = target.ID;
+            if (id == int.MaxValue)
+            {
+                return;
+            }
             if (mRole.WillDestroy)
             {
                 KLBattleData data = mRelater.DataRef<KLBattleData>(KLConsts.D_BATTLE);

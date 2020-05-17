@@ -42,13 +42,12 @@ namespace KLGame
                     
                     IKLRole role = mEnemyRole as IKLRole;
                     BattleUnit data = role.BattleDataUnit;
-                    float flaws = data.GetFloatData(KLConsts.FIELD_FlAWS);
-                    flaws += 10f;
-                    Debug.Log(mEnemyRole + " 破绽：" + flaws);
-                    data.SetFloatData(KLConsts.FIELD_FlAWS, flaws);
+                    data.UpdateFlaws(10, out int result);
 
-                    KLBattleData battleData = PlayerRole.Processing.BattleData;
-
+                    if (result == 1)
+                    {
+                        role.UnderAttack();
+                    }
                     PlayerRole.EnemyMainLockDown = mEnemyRole;
                     AfterProcessing?.Invoke();
                     PlayerRole.HitSomeOne = true;

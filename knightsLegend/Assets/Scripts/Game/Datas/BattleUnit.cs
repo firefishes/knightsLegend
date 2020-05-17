@@ -37,6 +37,25 @@ namespace KLGame
             UnitID = id;
         }
 
+        public void UpdateFlaws(float value, out int result)
+        {
+            result = 0;
+            float flaws = GetFloatData(KLConsts.FIELD_FlAWS);
+            float flawsMax = GetFloatData(KLConsts.FIELD_M_FlAWS);
+            if (flaws + value > flawsMax)
+            {
+                result = 1;
+                flaws = flawsMax;
+            }
+            else
+            {
+                flaws += value;
+            }
+
+            UnityEngine.Debug.Log("破绽：" + flaws + "/" + flawsMax);
+            SetFloatData(KLConsts.FIELD_FlAWS, flaws);
+        }
+
         public override List<int> GetIntFieldSource()
         {
             return default;
@@ -53,7 +72,7 @@ namespace KLGame
                 mRoleData.GetFloatData(KLConsts.FIELD_IN_POWER),
                 mRoleData.GetFloatData(KLConsts.FIELD_M_IN_POWER),
                 0f,
-                100f,
+                50f,
             };
         }
 

@@ -130,6 +130,7 @@ namespace KLGame
                     break;
                 case KLConsts.N_AFTER_UNDER_ATTACK:
                     ActiveRoleInputPhase(UserInputPhases.ROLE_INPUT_PHASE_UNDERATTACKED, true);
+                    mRoleInput.SetInputPhase(KLConsts.ENEMY_INPUT_PHASE_ATTACK_AI);
                     MoveBlock = false;
                     break;
             }
