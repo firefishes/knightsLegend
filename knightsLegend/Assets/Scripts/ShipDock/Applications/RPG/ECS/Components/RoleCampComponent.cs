@@ -94,7 +94,7 @@ namespace ShipDock.Applications
                         (mRoleTarget != mRoleEntitas) &&
                         (mRoleEntitas.Camp != mRoleTarget.Camp))
                     {
-                        mRoleTarget.FindngPath = true;
+                        mRoleTarget.FindingPath = true;
                         mRoleTarget.EnemyMainLockDown = mRoleEntitas;
                         break;
                     }

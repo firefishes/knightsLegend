@@ -23,6 +23,7 @@ namespace KLGame
             base.OnEnter(ref param);
 
             ReadyMotion(mStateParam.CurrentSkillID, mStateParam.SkillMapper, false);
+            mRole.DefenceType = (int)Animator.GetFloat("DefenceType");
         }
 
         protected override void DuringState(int time)
@@ -33,7 +34,13 @@ namespace KLGame
 
         protected override bool CheckBeforeFinish()
         {
-            return Animator.GetFloat("DefenceType") < 1f;
+            float defenceType = Animator.GetFloat("DefenceType");
+            bool result = defenceType < 1f;
+            if (result)
+            {
+                mRole.DefenceType = (int)Animator.GetFloat("DefenceType");
+            }
+            return result;
         }
     }
 }

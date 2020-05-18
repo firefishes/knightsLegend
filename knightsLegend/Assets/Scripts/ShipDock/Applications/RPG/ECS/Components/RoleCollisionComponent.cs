@@ -97,7 +97,7 @@ namespace ShipDock.Applications
                 }
                 if(isGetEnemy)
                 {
-                    mRole.FindngPath = false;
+                    mRole.FindingPath = false;
                 }
                 //else
                 //{

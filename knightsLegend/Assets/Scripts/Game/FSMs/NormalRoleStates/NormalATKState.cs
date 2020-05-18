@@ -1,5 +1,4 @@
 ﻿using ShipDock.Applications;
-using ShipDock.FSM;
 using ShipDock.Notices;
 using ShipDock.Pooling;
 using UnityEngine;
@@ -141,7 +140,7 @@ namespace KLGame
         protected void OnATKHit()
         {
             IsHit = true;
-            StartFeedbackTime(RoleAnimationFeedBackConsts.FEED_BACK_BY_HIT, 0.1f, 0f);
+            StartFeedbackTime(RoleAnimationFeedBackConsts.FEED_BACK_BY_HIT, 0.007f, 0f);
         }
 
         private void DeActiveCollider()

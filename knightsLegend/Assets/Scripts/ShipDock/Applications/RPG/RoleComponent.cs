@@ -188,8 +188,8 @@ namespace ShipDock.Applications
 
         private void AutoPathFinding()
         {
-            SetNavMeshAgentStopped(!mRole.FindngPath);
-            if (mRole.FindngPath)
+            SetNavMeshAgentStopped(!mRole.FindingPath);
+            if (mRole.FindingPath)
             {
                 if ((mRole.EnemyMainLockDown != default) && !CheckUnableToMove())
                 {

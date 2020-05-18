@@ -30,7 +30,7 @@ namespace KLGame
             components.Create<RoleMustComponent>(KLConsts.C_ROLE_MUST);
             components.Create<KLRoleCampComponent>(KLConsts.C_ROLE_CAMP);
             components.Create<KLInputComponent>(KLConsts.C_ROLE_INPUT);
-            components.Create<PositionComponent>(KLConsts.C_POSITION);
+            components.Create<KLPositionComponent>(KLConsts.C_POSITION);
             components.Create<RoleBattleDataComponent>(KLConsts.C_ROLE_BATTLE_DATA);
         }
 

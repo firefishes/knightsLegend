@@ -111,5 +111,7 @@ namespace KLGame
         public CommonRoleFSM RoleFSM { get; protected set; }
         public RoleFSMObj FSMStates { get; set; }
         public BattleUnit BattleDataUnit { get; private set; }
+        public bool IsDead { get; set; } = false;
+        public int DefenceType { get; set; } = 0;
     }
 }

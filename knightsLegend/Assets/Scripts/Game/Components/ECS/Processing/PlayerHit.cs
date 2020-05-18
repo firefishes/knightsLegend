@@ -44,7 +44,7 @@ namespace KLGame
                     BattleUnit data = role.BattleDataUnit;
                     data.UpdateFlaws(10, out int result);
 
-                    if (result == 1)
+                    if ((result == 1) || (role.DefenceType == 0f))
                     {
                         role.UnderAttack();
                     }

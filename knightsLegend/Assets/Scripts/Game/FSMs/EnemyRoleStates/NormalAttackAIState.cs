@@ -13,8 +13,8 @@ namespace KLGame
     {
         private TimingTasker mThinkingTime;
         private TimingTasker mNormalATKTime;
-        private IKLRoleFSMAIParam mStateParam;
         private MethodUpdater mStateUpdater;
+        private IKLRoleFSMAIParam mStateParam;
 
         public NormalAttackAIState(int name) : base(name)
         {
@@ -34,8 +34,9 @@ namespace KLGame
 
             if (mThinkingTime == default)
             {
-                mThinkingTime = AIRole.TimesEntitas.GetTimingTasker(KLConsts.T_AI_THINKING, 0);
-                mNormalATKTime = AIRole.TimesEntitas.GetTimingTasker(KLConsts.T_AI_ATK_TIME, 0);
+                TimingTaskEntitas timingTaskEntitas = AIRole.TimesEntitas;
+                mThinkingTime = timingTaskEntitas.GetTimingTasker(KLConsts.T_AI_THINKING, 0);
+                mNormalATKTime = timingTaskEntitas.GetTimingTasker(KLConsts.T_AI_ATK_TIME, 0);
 
                 mThinkingTime.TotalCount = 1;
                 mThinkingTime.completion += ExecuteNormalAtk;
@@ -82,7 +83,7 @@ namespace KLGame
             Tester.Instance.Log(TesterRPG.Instance, TesterRPG.LOG, "log: Enemy Atked");
             mNormalATKTime.Reset();
 
-            if(AIRole != default && AIRole.ShouldAtkAIWork)
+            if((AIRole != default) && AIRole.ShouldAtkAIWork)
             {
                 AIRole.RoleInput.SetInputPhase(KLConsts.ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK);
                 Tester.Instance.Log(TesterRPG.Instance, TesterRPG.LOG, "log: Enemy phase ".Append(AIRole.RoleInput.RoleInputPhase.ToString()));
@@ -93,7 +94,7 @@ namespace KLGame
         {
             if(AIRole != default)
             {
-                if (AIRole.FindngPath)
+                if (AIRole.FindingPath)
                 {
                     Notice notice = Pooling<Notice>.From();
                     RoleSceneComp.Broadcast(KLConsts.N_AI_RESET, notice);

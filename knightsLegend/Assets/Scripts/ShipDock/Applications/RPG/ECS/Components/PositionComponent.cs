@@ -22,7 +22,7 @@ namespace ShipDock.Applications
             }
             else
             {
-                mRole.FindngPath = false;
+                mRole.FindingPath = false;
             }
         }
 
@@ -31,7 +31,7 @@ namespace ShipDock.Applications
             mDistance = mRole.GetDistFromMainLockDown();
             if(ShouldMove())
             {
-                mRole.FindngPath = true;
+                mRole.FindingPath = true;
                 mRole.SpeedCurrent = mRole.Speed;
             }
             else
@@ -42,9 +42,9 @@ namespace ShipDock.Applications
 
         private void PositionStoped()
         {
-            if(mRole.FindngPath || !mRole.AfterGetStopDistChecked)
+            if(mRole.FindingPath || !mRole.AfterGetStopDistChecked)
             {
-                mRole.FindngPath = false;
+                mRole.FindingPath = false;
                 mRole.SpeedCurrent = 0;
                 mRole.AfterGetStopDistChecked = mRole.AfterGetStopDistance(mDistance, mRole.Position);
             }

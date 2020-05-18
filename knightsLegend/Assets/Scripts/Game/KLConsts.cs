@@ -71,13 +71,13 @@ namespace KLGame
         public const int ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK = 9;
         
         public const int FIELD_HP = 0;
-        public const int FIELD_M_HP = 0;
+        public const int FIELD_M_HP = 1;
         public const int FIELD_QI = 2;
-        public const int FIELD_M_QI = 0;
-        public const int FIELD_IN_POWER = 3;
-        public const int FIELD_M_IN_POWER = 0;
-        public const int FIELD_FlAWS = 4;
-        public const int FIELD_M_FlAWS = 5;
+        public const int FIELD_M_QI = 3;
+        public const int FIELD_IN_POWER = 4;
+        public const int FIELD_M_IN_POWER = 5;
+        public const int FIELD_FlAWS = 6;
+        public const int FIELD_M_FlAWS = 7;
 
         public const int FIELD_MOVE_SPEED = 105;
         public const int FIELD_MOVING_TURN_SPEED = 106;

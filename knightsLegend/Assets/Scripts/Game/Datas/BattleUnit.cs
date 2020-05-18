@@ -95,7 +95,6 @@ namespace KLGame
 
         public int UnitID { get; private set; }
         public int EntitasID { get; private set; }
-        public bool HasChanged { get; set; }
     }
 
 }
