@@ -2,7 +2,7 @@
 
 namespace KLGame
 {
-    public class MainMaleRole : KLRole
+    public class MainMaleRole : KLRole, IMainRole
     {
         public MainMaleRole(RoleFSMObj fsmStates) : base()
         {

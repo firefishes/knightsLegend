@@ -1,20 +1,14 @@
 ﻿using ShipDock.ECS;
 using ShipDock.Notices;
-using ShipDock.Server;
 using ShipDock.Tools;
 using System.Collections.Generic;
 
 namespace ShipDock.Applications
 {
-    public interface IDataServer : IServer
-    {
-
-    }
-
     public abstract class RoleCampComponent : ShipDockComponent
     {
         protected IDataServer mDataServer;
-        private ICommonRole mRoleTarget;
+        protected ICommonRole mRoleTarget;
         private ICommonRole mRoleEntitas;
         private List<int> mAllRoles;
         private KeyValueList<int, List<int>> mCampRoles;
@@ -89,10 +83,7 @@ namespace ShipDock.Applications
                 mRoleEntitas = GetEntitas(id) as ICommonRole;
                 if ((mRoleEntitas != default) && (mRoleTarget != default))
                 {
-                    if (!mRoleTarget.IsUserControlling &&
-                        (mRoleTarget.EnemyMainLockDown == default) &&
-                        (mRoleTarget != mRoleEntitas) &&
-                        (mRoleEntitas.Camp != mRoleTarget.Camp))
+                    if (!IsIgnoreCheckEnemyByCamp() && IsAIControllingTarget() && HasEnemySet() && CheckCamp())
                     {
                         mRoleTarget.FindingPath = true;
                         mRoleTarget.EnemyMainLockDown = mRoleEntitas;
@@ -100,6 +91,26 @@ namespace ShipDock.Applications
                     }
                 }
             }
+        }
+
+        protected virtual bool IsIgnoreCheckEnemyByCamp()
+        {
+            return false;
+        }
+
+        protected virtual bool IsAIControllingTarget()
+        {
+            return !mRoleTarget.IsUserControlling;
+        }
+
+        protected virtual bool HasEnemySet()
+        {
+            return (mRoleTarget.EnemyMainLockDown == default) && (mRoleTarget != mRoleEntitas);
+        }
+
+        protected virtual bool CheckCamp()
+        {
+            return mRoleEntitas.Camp != mRoleTarget.Camp;
         }
 
         public ICommonRole RoleCreated { get; private set; }

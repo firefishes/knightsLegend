@@ -20,4 +20,8 @@ namespace KLGame
         int DefenceType { get; set; }
     }
 
+    public interface IMainRole : IKLRole
+    {
+    }
+    
 }
