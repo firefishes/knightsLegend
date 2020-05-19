@@ -113,5 +113,6 @@ namespace KLGame
         public BattleUnit BattleDataUnit { get; private set; }
         public bool IsDead { get; set; } = false;
         public int DefenceType { get; set; } = 0;
+        public Quaternion CurQuaternaion { get; set; } = Quaternion.identity;
     }
 }

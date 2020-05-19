@@ -18,6 +18,7 @@ namespace KLGame
         bool HitSomeOne { get; set; }
         bool IsDead { get; set; }
         int DefenceType { get; set; }
+        Quaternion CurQuaternaion { get; set; }
     }
 
     public interface IMainRole : IKLRole

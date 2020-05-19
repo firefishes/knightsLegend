@@ -1,44 +1,31 @@
 ﻿using ShipDock.Applications;
-using ShipDock.ECS;
 using ShipDock.Tools;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace KLGame
 {
 
     public class KLRoleCampComponent : RoleCampComponent
     {
-        private ServerRelater mRelater;
+        private IKLRole mMainRoleTarget;
         private ScopeChecker mInMainRoleFrontChecker = new ScopeChecker();
-
-        public override void Execute(int time, ref IShipDockEntitas target)
+        
+        protected override void BeforeAITargetEnemyCheck()
         {
-            base.Execute(time, ref target);
-
-            //if (mMainRole == default)
-            //{
-            //    mMainRole = target as IMainRole;
-            //}
-            //else
-            //{
-            //    mInMainRoleFrontChecker.validAngle = 120f;//巡逻家教
-            //    mInMainRoleFrontChecker.minDistance = 2.5f;
-            //    mInMainRoleFrontChecker.startPos = mMainRole.Position;
-            //    mInMainRoleFrontChecker.startRotation = mStateParam.StartRotation;
-            //}
+            if (mRoleEntitas.Camp == 0)
+            {
+                mMainRoleTarget = mRoleEntitas as IKLRole;
+                mInMainRoleFrontChecker.validAngle = 120f;
+                mInMainRoleFrontChecker.minDistance = 2.5f;
+                mInMainRoleFrontChecker.startPos = mMainRoleTarget.Position;
+                mInMainRoleFrontChecker.startRotation = mMainRoleTarget.CurQuaternaion;
+                
+                mMainRoleTarget.EnemyMainLockDown = mInMainRoleFrontChecker.CheckScope(mRoleTarget.Position) ? mRoleTarget : default;
+            }
         }
 
-        private void CheckMainRolesFrontEnemy()
+        protected override void AfterAITargetEnemyCheck()
         {
-            //if (mRoleTarget.Camp == 0)
-            //{
-            //    mInMainRoleFrontChecker.validAngle = 120f;//巡逻家教
-            //    mInMainRoleFrontChecker.minDistance = 2.5f;
-            //    mInMainRoleFrontChecker.startPos = mMainRole.Position;
-            //    mInMainRoleFrontChecker.startRotation = mStateParam.StartRotation;
-            //}
+
         }
 
         public override string DataServerName { get; } = KLConsts.S_DATAS;

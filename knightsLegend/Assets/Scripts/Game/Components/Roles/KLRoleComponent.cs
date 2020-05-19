@@ -140,6 +140,8 @@ namespace KLGame
         {
             base.UpdateAnimations();
 
+            KLRole.CurQuaternaion = transform.rotation;
+
             mWeapontPos = m_BloodyEffectTF.transform.position - mWeapontPos;
             KLRole.WeapontPos = mWeapontPos;
         }

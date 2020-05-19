@@ -9,7 +9,7 @@ namespace ShipDock.Applications
     {
         protected IDataServer mDataServer;
         protected ICommonRole mRoleTarget;
-        private ICommonRole mRoleEntitas;
+        protected ICommonRole mRoleEntitas;
         private List<int> mAllRoles;
         private KeyValueList<int, List<int>> mCampRoles;
 
@@ -81,33 +81,62 @@ namespace ShipDock.Applications
             {
                 id = mAllRoles[i];
                 mRoleEntitas = GetEntitas(id) as ICommonRole;
-                if ((mRoleEntitas != default) && (mRoleTarget != default))
+
+                if (WillWalkForRoleEnemyTarget())
                 {
-                    if (!IsIgnoreCheckEnemyByCamp() && IsAIControllingTarget() && HasEnemySet() && CheckCamp())
+                    BeforeAITargetEnemyCheck();
+                    if (WillCheckAIRoleEnemyTarget())
                     {
                         mRoleTarget.FindingPath = true;
                         mRoleTarget.EnemyMainLockDown = mRoleEntitas;
+                        AfterAITargetEnemyCheck();
                         break;
                     }
                 }
             }
+            AfterAITargetEnemyCheck();
         }
 
+        protected abstract void BeforeAITargetEnemyCheck();
+        protected abstract void AfterAITargetEnemyCheck();
+
+        private bool WillCheckAIRoleEnemyTarget()
+        {
+            return !IsIgnoreCheckEnemyByCamp() && IsAIControllingTarget() && HasEnemySet() && CheckCamp();
+        }
+
+        private bool WillWalkForRoleEnemyTarget()
+        {
+            return (mRoleEntitas != default) && (mRoleTarget != default) && (mRoleEntitas.ID != mRoleTarget.ID);
+        }
+
+        /// <summary>
+        /// 是否忽略敌对阵营目标的检测检测
+        /// </summary>
         protected virtual bool IsIgnoreCheckEnemyByCamp()
         {
             return false;
         }
 
+        /// <summary>
+        /// 是否为人工智能控制的角色
+        /// </summary>
         protected virtual bool IsAIControllingTarget()
         {
             return !mRoleTarget.IsUserControlling;
         }
 
+        /// <summary>
+        /// 是否设置过敌对目标
+        /// </summary>
         protected virtual bool HasEnemySet()
         {
             return (mRoleTarget.EnemyMainLockDown == default) && (mRoleTarget != mRoleEntitas);
         }
 
+        /// <summary>
+        /// 检测角色阵营
+        /// </summary>
         protected virtual bool CheckCamp()
         {
             return mRoleEntitas.Camp != mRoleTarget.Camp;
