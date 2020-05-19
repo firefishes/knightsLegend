@@ -36,7 +36,6 @@ MonoBehaviour:
     stateName: 2
     enterStateNotice:
     - noticeName: 1006
-    - noticeName: 1008
     stateComboNotice:
     - noticeName: 1008
     willFinishStateNotice:

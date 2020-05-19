@@ -101,7 +101,7 @@ namespace KLGame
             bool result = base.ReadyMotion(skillID, mapper, isCombo);
             if (result)
             {
-                RoleSceneComp?.RoleFSMStateEntered(StateName);
+                RoleSceneComp?.RoleFSMStateCombo(StateName);
 
                 IsFeedbackChecked = false;
                 mAnimationName = "NormalAttack_".Append(mComboMotion.CurrentCombo.ToString());
