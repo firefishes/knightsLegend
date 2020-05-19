@@ -48,6 +48,7 @@ namespace KLGame
         public const int N_INIT_ENTITAS_CALLBACKS = 1005;
         public const int N_MOVE_BLOCK = 1006;
         public const int N_MOVE_UNBLOCK = 1007;
+        public const int N_ENEMY_AI_ANTICIPATION = 1008;
 
         public const int DC_CAMP_ROLE_CREATED = 2000;
         

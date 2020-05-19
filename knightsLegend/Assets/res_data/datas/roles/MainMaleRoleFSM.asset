@@ -18,6 +18,7 @@ MonoBehaviour:
     infos: []
     stateName: 1
     enterStateNotice: []
+    stateComboNotice: []
     willFinishStateNotice: []
   - m_DisposeInfos: 0
     infos:
@@ -28,12 +29,16 @@ MonoBehaviour:
     stateName: 3
     enterStateNotice:
     - noticeName: 1006
+    stateComboNotice: []
     willFinishStateNotice: []
   - m_DisposeInfos: 0
     infos: []
     stateName: 2
     enterStateNotice:
     - noticeName: 1006
+    - noticeName: 1008
+    stateComboNotice:
+    - noticeName: 1008
     willFinishStateNotice:
     - noticeName: 1007
   - m_DisposeInfos: 0
@@ -41,5 +46,6 @@ MonoBehaviour:
     stateName: 5
     enterStateNotice:
     - noticeName: 1006
+    stateComboNotice: []
     willFinishStateNotice:
     - noticeName: 1007

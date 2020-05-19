@@ -9,6 +9,7 @@ namespace ShipDock.Applications
     {
         public int stateName;
         public NotificationInfo[] enterStateNotice;
+        public NotificationInfo[] stateComboNotice;
         public NotificationInfo[] willFinishStateNotice;
 
         public override int GetInfoKey(ref RoleFSMStateExecuableInfo item)

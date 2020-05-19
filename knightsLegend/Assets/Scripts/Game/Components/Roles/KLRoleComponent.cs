@@ -224,6 +224,11 @@ namespace KLGame
             m_FSMStates.RoleFSMStateWillFinish(this, stateName);
         }
 
+        public void RoleFSMStateCombo(int stateName)
+        {
+            m_FSMStates.RoleFSMStateCombo(this, stateName);
+        }
+
         private Vector3 CameraNodePosOffset { get; set; }
 
         protected IStateMachine RoleFSM { get; set; }

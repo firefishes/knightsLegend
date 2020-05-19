@@ -1,4 +1,5 @@
-﻿using ShipDock.Applications;
+﻿using System;
+using ShipDock.Applications;
 using ShipDock.Tools;
 
 namespace KLGame
@@ -11,7 +12,7 @@ namespace KLGame
         
         protected override void BeforeAITargetEnemyCheck()
         {
-            if (mRoleEntitas.Camp == 0)
+            if ((mRoleEntitas.Camp == 0) && PreCheckMainRoleFrontEnemy())
             {
                 mMainRoleTarget = mRoleEntitas as IKLRole;
                 mInMainRoleFrontChecker.validAngle = 120f;
@@ -21,6 +22,11 @@ namespace KLGame
                 
                 mMainRoleTarget.EnemyMainLockDown = mInMainRoleFrontChecker.CheckScope(mRoleTarget.Position) ? mRoleTarget : default;
             }
+        }
+
+        private bool PreCheckMainRoleFrontEnemy()
+        {
+            return true;//TODO 增加预判
         }
 
         protected override void AfterAITargetEnemyCheck()

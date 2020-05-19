@@ -83,6 +83,19 @@ namespace ShipDock.Applications
             SendRoleFSMStateNotifications(ref target, ref list);
         }
 
+        internal void RoleFSMStateCombo(INotificationSender target, int stateName)
+        {
+            RoleFSMStateInfo info = StatesMapper[stateName];
+
+            if (info == default)
+            {
+                return;
+            }
+
+            NotificationInfo[] list = info.stateComboNotice;
+            SendRoleFSMStateNotifications(ref target, ref list);
+        }
+
         public void RoleFSMStateWillFinish(INotificationSender target, int stateName)
         {
             RoleFSMStateInfo info = StatesMapper[stateName];
@@ -108,6 +121,7 @@ namespace ShipDock.Applications
         }
 
         public KeyValueList<int, RoleFSMStateInfo> StatesMapper { get; private set; }
+
     }
 
 }

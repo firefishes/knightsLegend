@@ -96,5 +96,18 @@ namespace KLGame
         {
             base.OnATKCompleted();
         }
+
+        protected override void OnRoleNotices(INoticeBase<int> param)
+        {
+            base.OnRoleNotices(param);
+
+            switch(param.Name)
+            {
+                case KLConsts.N_ENEMY_AI_ANTICIPATION:
+                    //TODO AI敌人预判
+                    Debug.Log("我要格挡了！！");
+                    break;
+            }
+        }
     }
 }
