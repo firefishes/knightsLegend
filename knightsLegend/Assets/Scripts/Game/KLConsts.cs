@@ -34,6 +34,7 @@ namespace KLGame
         public const int C_ROLE_TIMES = 8;
         public const int C_PROCESS = 9;
         public const int C_ROLE_BATTLE_DATA = 10;
+        public const int C_ROLE_AI_DEF = 11;
 
         public const int D_GAME = 0;
         public const int D_PLAYER = 1;
@@ -45,10 +46,11 @@ namespace KLGame
         public const int N_BRAK_WORKING_AI = 1002;
         public const int N_AI_RESET = 1003;
         public const int N_AFTER_UNDER_ATTACK = 1004;
-        public const int N_INIT_ENTITAS_CALLBACKS = 1005;
+        //public const int N_INIT_ENTITAS_CALLBACKS = 1005;
         public const int N_MOVE_BLOCK = 1006;
         public const int N_MOVE_UNBLOCK = 1007;
         public const int N_ENEMY_AI_ANTICIPATION = 1008;
+        public const int N_AI_ANTICIPATION = 1009;
 
         public const int DC_CAMP_ROLE_CREATED = 2000;
         
@@ -65,7 +67,7 @@ namespace KLGame
         public const int T_AI_ATK_TIME = 4;
         public const int T_AI_ATK_HIT_TIME = 5;
         public const int T_AI_THINKING = 6;
-        
+
         public const int ENEMY_INPUT_PHASE_ATTACK_AI = 6;
         public const int ENEMY_INPUT_PHASE_UPDATE_NROMAL_ATK_TRIGGER_TIME = 7;
         public const int ENEMY_INPUT_PHASE_NROMAL_ATK = 8;

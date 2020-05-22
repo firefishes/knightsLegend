@@ -34,6 +34,26 @@ namespace KLGame
             mRoleATkAI = mRole as IAIRole;
         }
 
+        protected override void UpdateAnimatorParams()
+        {
+            base.UpdateAnimatorParams();
+
+            if (mRoleATkAI != default)
+            {
+                IAnticipathioner anticipathioner = mRoleATkAI.Anticipathioner;
+                AIStateWill stateWill = anticipathioner.AIStateWillChange;
+                if (stateWill != default)
+                {
+                    CurrentSkillID = stateWill.SkillID;
+                    stateWill.RoleFSMParam?.Reinit(this);
+                    RoleFSM.ChangeState(stateWill.StateWill, stateWill.RoleFSMParam);
+                    stateWill.ToPool();
+                    anticipathioner.AIStateWillChange = default;
+                }
+                anticipathioner.IsExecuted = false;
+            }
+        }
+
         protected override void InitRoleInputCallbacks()
         {
             base.InitRoleInputCallbacks();

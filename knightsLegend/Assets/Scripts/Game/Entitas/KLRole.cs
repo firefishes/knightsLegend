@@ -44,12 +44,12 @@ namespace KLGame
 
         protected virtual void OnRoleNotificationHandler(INoticeBase<int> param)
         {
-            switch(param.Name)
-            {
-                case KLConsts.N_INIT_ENTITAS_CALLBACKS:
+            //switch(param.Name)
+            //{
+            //    case KLConsts.N_INIT_ENTITAS_CALLBACKS:
 
-                    break;
-            }
+            //        break;
+            //}
         }
 
         protected override void SetRoleInputInfo()

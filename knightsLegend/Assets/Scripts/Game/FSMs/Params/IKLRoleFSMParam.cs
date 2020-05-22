@@ -8,6 +8,7 @@ namespace KLGame
 {
     public interface IKLRoleFSMParam : IKLRoleFSMAIParam
     {
+        void Reinit(IKLRoleSceneComponent comp, params int[] inputs);
         Queue<int> Inpunts { get; set; }
         int CurrentSkillID { get; set; }
         Vector3 StartPos { get; set; }

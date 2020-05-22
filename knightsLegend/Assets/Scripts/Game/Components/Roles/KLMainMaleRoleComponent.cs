@@ -78,7 +78,7 @@ namespace KLGame
                 {
                     CurrentSkillID = 3;
                     KLRoleFSMStateParam param = Pooling<KLRoleFSMStateParam>.From();
-                    param.Reinit(this, 2);
+                    param.Reinit(this);
                     RoleFSM.ChangeState(NormalRoleStateName.NORMAL_DEF, param);
                 }
             }
@@ -104,10 +104,33 @@ namespace KLGame
             switch(param.Name)
             {
                 case KLConsts.N_ENEMY_AI_ANTICIPATION:
-                    //TODO AI敌人预判
-                    Debug.Log("我要格挡了！！");
+                    if (KLRole.EnemyMainLockDown is IAIRole role)
+                    {
+                        if(role != default && role.Anticipathioner.AIStateWillChange == default)
+                        {
+                            role.Anticipathioner.StateFrom = KLRole.RoleFSM.Current.StateName;
+                        }
+                    }
                     break;
             }
         }
+    }
+
+    public class AIAnticipathionNotice : Notice
+    {
+
+        public override void Revert()
+        {
+            base.Revert();
+
+            FromRole = default;
+        }
+
+        public override void ToPool()
+        {
+            Pooling<AIAnticipathionNotice>.To(this);
+        }
+
+        public IKLRole FromRole { get; set; }
     }
 }

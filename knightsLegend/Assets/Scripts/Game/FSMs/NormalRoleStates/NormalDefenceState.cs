@@ -23,6 +23,10 @@ namespace KLGame
             base.OnEnter(ref param);
 
             ReadyMotion(mStateParam.CurrentSkillID, mStateParam.SkillMapper, false);
+            if (mRole is IAIRole)
+            {
+                Animator.SetFloat("DefenceType", 1f);
+            }
             mRole.DefenceType = (int)Animator.GetFloat("DefenceType");
         }
 

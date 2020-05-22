@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   raw: {fileID: 4900000, guid: ddfc269de9f07424f9885aec5ff1e473, type: 3}
   skills:
-    m_DisposeSkillInfos: 0
+    m_DisposeInfos: 0
     infos:
     - skillName: "\u88AB\u653B\u51FB"
       name: 0
@@ -79,8 +79,29 @@ MonoBehaviour:
         valueTypeInEditor: 5
         valueInEditor: 3
         triggerValue: 0
+    - skillName: "\u666E\u901A\u9632\u5FA1"
+      name: 3
+      skillParams:
+      - keyField: DefenceType
+        valueType: 5
+        str: 
+        floatValue: 1
+        doubleValue: 0
+        dampTime: 0
+        valueTypeInEditor: 5
+        valueInEditor: 1
+        triggerValue: 0
+      - keyField: DefenceTimeScale
+        valueType: 5
+        str: 
+        floatValue: 0
+        doubleValue: 0
+        dampTime: 0
+        valueTypeInEditor: 5
+        valueInEditor: 0
+        triggerValue: 0
   skillMotions:
-    m_DisposeSkillInfos: 0
+    m_DisposeInfos: 0
     infos:
     - skillName: "\u88AB\u653B\u51FB"
       isCombo: 0
@@ -92,3 +113,8 @@ MonoBehaviour:
       ID: 1
       checkComboTime: 1.5
       indexsForID: 0100000002000000
+    - skillName: "\u666E\u901A\u9632\u5FA1"
+      isCombo: 0
+      ID: 3
+      checkComboTime: 0
+      indexsForID: 03000000

@@ -2,7 +2,6 @@
 using ShipDock.Pooling;
 using ShipDock.Tools;
 using System.Collections.Generic;
-using UnityEngine;
 using TimingMapper = ShipDock.Tools.KeyValueList<int, ShipDock.Applications.TimingTasker>;
 
 namespace KLGame
@@ -14,8 +13,8 @@ namespace KLGame
             return Pooling<TimingTaskEntitas>.From();
         }
 
-        private List<TimingTasker> mTaskers;
         private TimingMapper mMapperItem;
+        private List<TimingTasker> mTaskers;
         private List<TimingMapper> mMappers;
 
         public TimingTaskEntitas() : base()
@@ -50,6 +49,12 @@ namespace KLGame
             return mMappers.Count;
         }
 
+        /// <summary>
+        /// 添加时机
+        /// </summary>
+        /// <param name="name">时机名</param>
+        /// <param name="mapperIndex">时机所处的类别索引</param>
+        /// <returns>返回时机事务处理器</returns>
         public TimingTasker AddTiming(int name, int mapperIndex)
         {
             TimingMapper mapper = mMappers[mapperIndex];
