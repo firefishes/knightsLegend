@@ -26,7 +26,7 @@ namespace KLGame
             new UnderAttackState(NormalRoleStateName.UNDER_ATK),
             new GroundedState(NormalRoleStateName.GROUNDED),
             //new NormalEnemyATKState(NormalRoleStateName.NORMAL_ATK),
-            //new NormalAttackAIState(NormalRoleStateName.NORMAL_ATTACK_AI),
+            new NormalAttackAIState(NormalRoleStateName.NORMAL_ATTACK_AI),
             new NormalDefenceState(NormalRoleStateName.NORMAL_DEF),
         };
     }

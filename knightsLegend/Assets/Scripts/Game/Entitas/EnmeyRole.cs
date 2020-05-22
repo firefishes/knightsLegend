@@ -1,6 +1,8 @@
 ﻿using ShipDock.Applications;
 using ShipDock.Notices;
 using ShipDock.Pooling;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace KLGame
@@ -23,6 +25,7 @@ namespace KLGame
             Camp = 1;
 
             Anticipathioner = new Anticipathioner();
+            AISensor = new Sensor();
         }
 
         public override void Dispose()
@@ -36,12 +39,31 @@ namespace KLGame
         {
             base.InitComponents();
 
-            TimesEntitas.AddTiming(KLConsts.T_AI_THINKING, 0);
-            TimesEntitas.AddTiming(KLConsts.T_AI_THINKING, 1);
+            TimesEntitas.AddTiming(KLConsts.T_AI_THINKING, KLConsts.T_AI_THINKING_TIME_TASK_ATK);
+            TimesEntitas.AddTiming(KLConsts.T_AI_THINKING, KLConsts.T_AI_THINKING_TIME_TASK_DEF);
 
-            TimingTasker timingTasker = TimesEntitas.GetTimingTasker(KLConsts.T_AI_THINKING, 1);
-            //timingTasker.TotalCount = 1;
+            TimingTasker timingTasker = TimesEntitas.GetTimingTasker(KLConsts.T_AI_THINKING, KLConsts.T_AI_THINKING_TIME_TASK_ATK);
+            timingTasker.completion += OnNormalAtk;
+
+            timingTasker = TimesEntitas.GetTimingTasker(KLConsts.T_AI_THINKING, KLConsts.T_AI_THINKING_TIME_TASK_DEF);
             timingTasker.completion += OnNormalDef;
+        }
+
+        private void OnNormalAtk()
+        {
+            if (Anticipathioner != default)
+            {
+                if (Anticipathioner.StateFrom == int.MaxValue && Anticipathioner.AIStateWillChange == default)
+                {
+                    Anticipathioner.AIStateWillChange = new AIStateWill
+                    {
+                        SkillID = 1,
+                        Inputs = new int[] { 1 },
+                        StateWill = NormalRoleStateName.NORMAL_ATK,
+                        RoleFSMParam = Pooling<NormalATKStateParam>.From()
+                    };
+                }
+            }
         }
 
         private void OnNormalDef()
@@ -56,6 +78,13 @@ namespace KLGame
                     RoleFSMParam = Pooling<KLRoleFSMStateParam>.From()
                 };
             }
+        }
+
+        public override void SetRoleData(IRoleData data)
+        {
+            base.SetRoleData(data);
+            
+            TrackViewField = 15f;//TODO 从配置的数据获取追踪视野
         }
 
         protected override void OnRoleNotificationHandler(INoticeBase<int> param)
@@ -98,18 +127,18 @@ namespace KLGame
         {
             bool result = base.AfterGetStopDistance(dist, entitasPos);
             
-            if (!ShouldAtkAIWork)
-            {
-                SetShouldAtkAIWork(true);
-                RoleInput.SetInputPhase(KLConsts.ENEMY_INPUT_PHASE_ATTACK_AI);
-            }
-            else
-            {
+            //if (!true)
+            //{
+            //    SetShouldAtkAIWork(true);
+            //    RoleInput.SetInputPhase(KLConsts.ENEMY_INPUT_PHASE_ATTACK_AI);
+            //}
+            //else
+            //{
                 Notice notice = Pooling<Notice>.From();
                 notice.NotifcationSender = this;
                 KLConsts.N_BRAK_WORKING_AI.Dispatch(notice);
                 notice.ToPool();
-            }
+            //}
             return true;
         }
 
@@ -120,7 +149,7 @@ namespace KLGame
 
         public void SetShouldAtkAIWork(bool value)
         {
-            ShouldAtkAIWork = value;
+            //ShouldAtkAIWork = value;
         }
 
         protected override int[] ComponentIDs
@@ -143,18 +172,37 @@ namespace KLGame
             return 1.5f;
         }
 
+        /// <summary>
+        /// TODO deleted
+        /// </summary>
         public void ResetAIRoleATK()
         {
-            TimingTasker target = TimesEntitas.GetTimingTasker(KLConsts.T_AI_ATK_TIME, 0);
-            target.ResetRunCounts();
+            //TimingTasker target = TimesEntitas.GetTimingTasker(KLConsts.T_AI_ATK_TIME, 0);
+            //target.ResetRunCounts();
 
-            SetShouldAtkAIWork(false);
+            //SetShouldAtkAIWork(false);
+            
         }
+
+        public bool ShouldAIThinking()
+        {
+            if (RoleFSM == default)
+            {
+                return false;
+            }
+            int stateName = RoleFSM.Current.StateName;
+            return AIThinkingStates.IndexOf(stateName) >= 0;
+        }
+
+        public List<int> AIThinkingStates { get; } = new List<int>
+        {
+            NormalRoleStateName.GROUNDED,
+        };
 
         public int ATKID { get; private set; }
         public bool IsInitNormalATKPhases { get; set; }
         public override int RoleFSMName { get; set; }// = KLConsts.RFSM_NORMAL_ENMEY;
-        public bool ShouldAtkAIWork { get; private set; }
         public IAnticipathioner Anticipathioner { get; set; }
+        public ISensor AISensor { get; set; }
     }
 }

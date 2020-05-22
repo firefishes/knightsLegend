@@ -12,15 +12,15 @@ namespace KLGame
         
         protected override void BeforeAITargetEnemyCheck()
         {
-            if ((mRoleEntitas.Camp == 0) && PreCheckMainRoleFrontEnemy())
+            if ((mRoleTarget.Camp == 0) && PreCheckMainRoleFrontEnemy())
             {
-                mMainRoleTarget = mRoleEntitas as IKLRole;
+                mMainRoleTarget = mRoleTarget as IKLRole;
                 mInMainRoleFrontChecker.validAngle = 120f;
                 mInMainRoleFrontChecker.minDistance = 2.5f;
                 mInMainRoleFrontChecker.startPos = mMainRoleTarget.Position;
                 mInMainRoleFrontChecker.startRotation = mMainRoleTarget.CurQuaternaion;
                 
-                mMainRoleTarget.EnemyMainLockDown = mInMainRoleFrontChecker.CheckScope(mRoleTarget.Position) ? mRoleTarget : default;
+                mMainRoleTarget.EnemyTracking = mInMainRoleFrontChecker.CheckScope(mRoleExecuting.Position) ? mRoleExecuting : default;
             }
         }
 

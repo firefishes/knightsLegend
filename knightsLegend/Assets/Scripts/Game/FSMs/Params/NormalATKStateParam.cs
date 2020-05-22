@@ -19,7 +19,7 @@ namespace KLGame
 
         public void Reinit(IKLRoleSceneComponent comp, params int[] inputs)
         {
-            int max = inputs.Length;
+            int max = inputs != default ? inputs.Length : 0;
             for (int i = 0; i < max; i++)
             {
                 Inpunts.Enqueue(inputs[i]);

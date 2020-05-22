@@ -64,13 +64,16 @@ namespace KLGame
         public const int T_ROLE_2 = 1;
         public const int T_ROLE_STATE_DELAY_FINISH = 2;
         public const int T_ROLE_STATE_FEED_BACK = 3;
-        public const int T_AI_ATK_TIME = 4;
+        //public const int T_AI_ATK_TIME = 4;
         public const int T_AI_ATK_HIT_TIME = 5;
         public const int T_AI_THINKING = 6;
 
+        public const int T_AI_THINKING_TIME_TASK_ATK = 0;
+        public const int T_AI_THINKING_TIME_TASK_DEF = 1;
+
         public const int ENEMY_INPUT_PHASE_ATTACK_AI = 6;
-        public const int ENEMY_INPUT_PHASE_UPDATE_NROMAL_ATK_TRIGGER_TIME = 7;
-        public const int ENEMY_INPUT_PHASE_NROMAL_ATK = 8;
+        //public const int ENEMY_INPUT_PHASE_UPDATE_NROMAL_ATK_TRIGGER_TIME = 7;
+        //public const int ENEMY_INPUT_PHASE_NROMAL_ATK = 8;
         public const int ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK = 9;
         
         public const int FIELD_HP = 0;

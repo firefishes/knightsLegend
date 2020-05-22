@@ -29,7 +29,7 @@ namespace ShipDock.Applications
             for (int i = 0; i < max; i++)
             {
                 aid = ComponentIDs[i];
-                component = manager.GetComponentByAID(aid);
+                component = manager.RefComponentByName(aid);
                 AddComponent(component);
             }
         }
@@ -40,7 +40,7 @@ namespace ShipDock.Applications
             if (HasComponent(aid))
             {
                 int index = ComponentList.IndexOf(aid);
-                result = (T)ShipDockApp.Instance.Components.GetComponentByAID(ComponentList[index]);
+                result = (T)ShipDockApp.Instance.Components.RefComponentByName(ComponentList[index]);
             }
             return result;
         }

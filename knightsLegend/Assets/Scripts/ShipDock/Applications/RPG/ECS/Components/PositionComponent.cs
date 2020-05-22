@@ -16,7 +16,7 @@ namespace ShipDock.Applications
 
         private void CheckEnemyLockDown()
         {
-            if (mRole.EnemyMainLockDown != default)
+            if (mRole.EnemyTracking != default)
             {
                 CheckPosistionInLockDown();
             }

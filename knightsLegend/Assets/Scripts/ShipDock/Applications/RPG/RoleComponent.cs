@@ -191,9 +191,9 @@ namespace ShipDock.Applications
             SetNavMeshAgentStopped(!mRole.FindingPath);
             if (mRole.FindingPath)
             {
-                if ((mRole.EnemyMainLockDown != default) && !CheckUnableToMove())
+                if ((mRole.EnemyTracking != default) && !CheckUnableToMove())
                 {
-                    m_NavMeshAgent.destination = mRole.EnemyMainLockDown.Position;
+                    m_NavMeshAgent.destination = mRole.EnemyTracking.Position;
                     mRoleInput.SetMoveValue(m_NavMeshAgent.velocity);
                 }
             }

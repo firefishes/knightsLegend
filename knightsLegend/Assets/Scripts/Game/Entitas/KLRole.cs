@@ -34,11 +34,11 @@ namespace KLGame
             this.Add(OnRoleNotificationHandler);
 
             ShipDockComponentManager components = ShipDockApp.Instance.Components;
-            Processing = components.GetComponentByAID(KLConsts.C_PROCESS) as KLProcessComponent;
+            Processing = components.RefComponentByName(KLConsts.C_PROCESS) as KLProcessComponent;
 
             TimesEntitas = TimingTaskEntitas.Create();
             TimesEntitas.CreateMapper();
-            TimesEntitas.AddTiming(KLConsts.T_AI_ATK_TIME, 0);
+            //TimesEntitas.AddTiming(KLConsts.T_AI_ATK_TIME, 0);
             TimesEntitas.AddTiming(KLConsts.T_AI_ATK_HIT_TIME, 0);
         }
 

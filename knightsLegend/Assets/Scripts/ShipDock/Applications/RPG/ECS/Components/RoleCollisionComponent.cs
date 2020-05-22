@@ -89,7 +89,7 @@ namespace ShipDock.Applications
                     mRoleCollidingTarget = mRoleColliderMapper[blockID];
                     if (mRoleCollidingTarget != default)
                     {
-                        if(mRoleCollidingTarget == mRole.EnemyMainLockDown)
+                        if(mRoleCollidingTarget == mRole.EnemyTracking)
                         {
                             isGetEnemy = true;
                         }

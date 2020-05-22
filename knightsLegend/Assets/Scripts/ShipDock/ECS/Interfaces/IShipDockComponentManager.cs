@@ -12,9 +12,9 @@ namespace ShipDock.ECS
         void FreeComponentUnitInScene(int time, Action<Action<int>> method);
         void UpdateAndFreeComponentsInScene(int time, Action<Action<int>> method);
         int Create<T>(int aid, bool isUpdateByScene = false, params int[] willRelateComponents) where T : IShipDockComponent, new();
-        IShipDockComponent GetComponentByAID(int aid);
+        IShipDockComponent RefComponentByName(int aid);
         void RemoveComponent(IShipDockComponent target);
-        Action<IShipDockComponentManager> RelateComponentsReFiller { get; set; }
+        Action<int, IShipDockComponent, IShipDockComponentManager> RelateComponentsReFiller { get; set; }
         int CountTime { get; }
         int FrameTimeInScene { get; set; }
     }

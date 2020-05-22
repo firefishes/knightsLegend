@@ -28,7 +28,7 @@ namespace KLGame
                 {
                     case NormalRoleStateName.NORMAL_ATK:
                         mRole.Anticipathioner.IsExecuted = true;
-                        mDefTimingTask = mRole.TimesEntitas.GetTimingTasker(KLConsts.T_AI_THINKING, 1);
+                        mDefTimingTask = mRole.TimesEntitas.GetTimingTasker(KLConsts.T_AI_THINKING, KLConsts.T_AI_THINKING_TIME_TASK_DEF);
                         if (!mDefTimingTask.IsStart)
                         {
                             mDefTimingTask.Start(0f);

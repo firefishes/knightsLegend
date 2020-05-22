@@ -1,4 +1,5 @@
 ﻿using ShipDock.Tools;
+using System;
 using System.Collections.Generic;
 
 namespace ShipDock.ECS
@@ -149,41 +150,49 @@ namespace ShipDock.ECS
 
         public void FillRelateComponents(IShipDockComponentManager manager)
         {
-            int aid;
+            int name;
             IShipDockComponent item;
             int max = RelateComponents != default ? RelateComponents.Length : 0;
-            bool needCheckReFill = max > 0 && mRelatedComponents.Size == 0;
             for (int i = 0; i < max; i++)
             {
-                aid = RelateComponents[i];
-                if(!mRelatedComponents.ContainsKey(aid))
+                name = RelateComponents[i];
+                if(!mRelatedComponents.ContainsKey(name))
                 {
-                    item = manager.GetComponentByAID(aid);
+                    item = manager.RefComponentByName(name);
                     if(item != default)
                     {
-                        mRelatedComponents[aid] = item;
+                        mRelatedComponents[name] = item;
                     }
                 }
             }
-            CheckRelateComponentsReFill(max, needCheckReFill, ref manager);
-        }
-
-        private void CheckRelateComponentsReFill(int count, bool needCheckReFill, ref IShipDockComponentManager manager)
-        {
-            if(count == 0)
-            {
-                return;
-            }
+            bool needCheckReFill = (max > 0) && (mRelatedComponents.Size != max);
             if (needCheckReFill)
             {
-                if (mRelatedComponents.Size != count)
+                manager.RelateComponentsReFiller += ReFillRelateComponents;
+            }
+        }
+
+        protected virtual void ReFillRelateComponents(int name, IShipDockComponent target, IShipDockComponentManager manager)
+        {
+            int item;
+            int max = RelateComponents != default ? RelateComponents.Length : 0;
+            for (int i = 0; i < max; i++)
+            {
+                item = RelateComponents[i];
+                if (item == name)
                 {
-                    manager.RelateComponentsReFiller += FillRelateComponents;
+                    if (!mRelatedComponents.ContainsKey(name))
+                    {
+                        mRelatedComponents[name] = target;
+                    }
+                    break;
                 }
             }
-            else
+
+            bool needCheckReFill = (max > 0) && (mRelatedComponents.Size != max);
+            if (!needCheckReFill)
             {
-                manager.RelateComponentsReFiller -= FillRelateComponents;
+                manager.RelateComponentsReFiller -= ReFillRelateComponents;
             }
         }
 

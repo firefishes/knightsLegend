@@ -3,22 +3,36 @@ using ShipDock.ECS;
 
 namespace KLGame
 {
-    public class RoleAIAtkComponent : RoleInputPhasesComponent
+    public class RoleAIAtkComponent : ShipDockComponent//RoleInputPhasesComponent
     {
         private IAIRole mAIRole;
+        private ICommonRole mRole;
         private PositionComponent mPositionComp;
+        private TimingTasker mAtkTimingTask;
 
         public override void Init()
         {
             base.Init();
 
-            AddAllowCalled(KLConsts.ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK, 1);
+            //AddAllowCalled(KLConsts.ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK, 1);
         }
 
-        protected override void InitRolePhases(IRoleInput roleInput)
+        public override void Execute(int time, ref IShipDockEntitas target)
         {
-            mAIRole.IsInitNormalATKPhases = true;
-            roleInput.AddEntitasCallback(KLConsts.ENEMY_INPUT_PHASE_UPDATE_NROMAL_ATK_TRIGGER_TIME, UpdateNormalATKTriggerTime);
+            base.Execute(time, ref target);
+
+            mRole = target as ICommonRole;
+            mAIRole = target as IAIRole;
+            //if (mRoleInput != default)// && !mAIRole.IsInitNormalATKPhases)
+            //{
+            //    InitRolePhases(mRoleInput);
+            //}
+            CheckAttackAI();
+        }
+
+        protected void InitRolePhases(IRoleInput roleInput)
+        {
+            //roleInput.AddEntitasCallback(KLConsts.ENEMY_INPUT_PHASE_UPDATE_NROMAL_ATK_TRIGGER_TIME, CheckAttackAI);
             roleInput.AddEntitasCallback(KLConsts.ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK, AfterNormalATK);
         }
 
@@ -26,22 +40,32 @@ namespace KLGame
         {
             if (mPositionComp.IsEntitasStoped(ref mRole))
             {
-                mRoleInput.SetInputPhase(KLConsts.ENEMY_INPUT_PHASE_ATTACK_AI);
+                //mRoleInput.SetInputPhase(KLConsts.ENEMY_INPUT_PHASE_ATTACK_AI);
                 //mAIRole.RoleFSM.ChangeState(NormalRoleStateName.GROUNDED);
             }
             else
             {
-                mAIRole.ResetAIRoleATK();
+                //mAIRole.ResetAIRoleATK();
             }
         }
 
-        private void UpdateNormalATKTriggerTime()
+        private void CheckAttackAI()
         {
-            //if (mPositionComp.IsEntitasStoped(ref mRole))
-            //{
+            mAtkTimingTask = mAIRole.TimesEntitas.GetTimingTasker(KLConsts.T_AI_THINKING, KLConsts.T_AI_THINKING_TIME_TASK_ATK);
+            if (mAtkTimingTask.IsStart)
+            {
+                return;
+            }
+
+            bool hasTrackedEnemy = mAIRole.EnemyTracking != default;
+            bool isRoleStoped = mPositionComp.IsEntitasStoped(ref mRole);
+            if (hasTrackedEnemy && isRoleStoped && mAIRole.ShouldAIThinking())
+            {
+                float time = mAIRole.AISensor.GetAtkThinkingTime();
+                mAtkTimingTask.Start(time);
             //    if (mAIRole.ShouldAtkAIWork)
             //    {
-            //        if (mAIRole.TimesEntitas.GetTimingTasker(KLConsts.T_AI_ATK_TIME, 0).IsFinish)
+            //        if (mAIRole.TimesEntitas.GetTimingTasker(KLConsts.T_AI_ATK_TIME, KLConsts.T_AI_ATK_TIME_TASK_THIKING).IsFinish)
             //        {
             //            mRoleInput.SetInputPhase(KLConsts.ENEMY_INPUT_PHASE_NROMAL_ATK);
             //        }
@@ -54,25 +78,17 @@ namespace KLGame
             //else
             //{
             //    mAIRole.ResetAIRoleATK();
-            //}
+            }
         }
 
-        public override void Execute(int time, ref IShipDockEntitas target)
+        protected override void ReFillRelateComponents(int name, IShipDockComponent target, IShipDockComponentManager manager)
         {
+            base.ReFillRelateComponents(name, target, manager);
+
             if (mPositionComp == default)
             {
-                mPositionComp = ShipDockApp.Instance.Components.GetComponentByAID(KLConsts.C_POSITION) as PositionComponent;
+                mPositionComp = GetRelatedComponent<PositionComponent>(KLConsts.C_POSITION);
             }
-            
-            mAIRole = target as IAIRole;
-            
-            base.Execute(time, ref target);
-
-            if(mRoleInput != default && !mAIRole.IsInitNormalATKPhases)
-            {
-                InitRolePhases(mRoleInput);
-            }
-
         }
     }
 

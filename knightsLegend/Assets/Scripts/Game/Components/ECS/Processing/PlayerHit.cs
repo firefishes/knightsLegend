@@ -42,13 +42,12 @@ namespace KLGame
                     
                     IKLRole role = mEnemyRole as IKLRole;
                     BattleUnit data = role.BattleDataUnit;
-                    data.UpdateFlaws(10, out int result);
+                    data.UpdateFlaws(10, out int result);//TODO 这里需要再看下如何合理的修改，既要保证正确检测碰撞，又要正确触发AI预判
 
-                    if ((result == 1) || (role.RoleFSM.Current.StateName != NormalRoleStateName.NORMAL_DEF))
+                    if ((result == 1) || (role.DefenceType == 0f))
                     {
                         role.UnderAttack();
                     }
-                    PlayerRole.EnemyMainLockDown = mEnemyRole;
                     AfterProcessing?.Invoke();
                     PlayerRole.HitSomeOne = true;
                     ForceMover.Create().SetMover(mEnemyRole, new Vector3(PlayerRole.WeapontPos.x, 0, PlayerRole.WeapontPos.z) * 0.4f, 0.1f);

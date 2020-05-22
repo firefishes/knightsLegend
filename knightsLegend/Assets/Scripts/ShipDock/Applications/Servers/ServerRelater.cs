@@ -26,7 +26,7 @@ namespace ShipDock.Applications
                 for (int i = 0; i < max; i++)
                 {
                     name = ComponentNames[i];
-                    mCompCached[name] = components.GetComponentByAID(name);
+                    mCompCached[name] = components.RefComponentByName(name);
                 }
             }
             max = (DataNames != default) ? DataNames.Length : 0;

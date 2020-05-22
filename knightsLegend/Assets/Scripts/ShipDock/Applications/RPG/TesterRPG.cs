@@ -60,7 +60,7 @@ namespace ShipDock.Applications
         private void ShowRoleLockDownEnemyInGUI(ref ICommonRole roleEntitas, ref string content)
         {
             content = (roleEntitas != default) ? roleEntitas.GetDistFromMainLockDown().ToString() : string.Empty;
-            if (roleEntitas.EnemyMainLockDown != default)
+            if (roleEntitas.EnemyTracking != default)
             {
                 GUILayout.Label("Locked down enemy distance：".Append(content), mEnemyLabelStyle);
             }

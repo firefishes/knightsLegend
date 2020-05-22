@@ -7,20 +7,21 @@ namespace ShipDock.Applications
     public interface ICommonRole : IPathFindable, ICollidableRole, IStatesRole, IEntitasComponentable
     {
         void SetRoleData(IRoleData data);
+        void AddCollidingPos(int cid, Vector3 pos);
         float GetDistFromMainLockDown();
+        List<RoleColldingPos> ColldingList(int cid);
+        IRoleInput RoleInput { get; set; }
+        IRoleData RoleDataSource { get; }
+        ICommonRole EnemyTracking { get; set; }
+        CommonRoleMustSubgroup RoleMustSubgroup { get; set; }
+        CommonRoleAnimatorInfo RoleAnimatorInfo { get; }
+        Vector3 GroundNormal { get; set; }
+        Vector3 CameraForward { get; set; }
+        float TrackViewField { get; set; }
+        string Name { get; set; }
         bool IsUserControlling { get; set; }
         bool IsGrounded { get; set; }
         bool IsGroundedAndCrouch { get; set; }
-        void AddCollidingPos(int cid, Vector3 pos);
-        List<RoleColldingPos> ColldingList(int cid);
         int Camp { get; }
-        string Name { get; set; }
-        IRoleInput RoleInput { get; set; }
-        IRoleData RoleDataSource { get; }
-        ICommonRole EnemyMainLockDown { get; set; }
-        Vector3 GroundNormal { get; set; }
-        Vector3 CameraForward { get; set; }
-        CommonRoleMustSubgroup RoleMustSubgroup { get; set; }
-        CommonRoleAnimatorInfo RoleAnimatorInfo { get; }
     }
 }

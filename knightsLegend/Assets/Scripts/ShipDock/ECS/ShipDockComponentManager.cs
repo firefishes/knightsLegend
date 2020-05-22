@@ -66,7 +66,7 @@ namespace ShipDock.ECS
                 target.SetComponentID(aid);
                 target.FillRelateComponents(this);
                 target.Init();
-                RelateComponentsReFiller?.Invoke(this);
+                RelateComponentsReFiller?.Invoke(name, target, this);
             }
             else
             {
@@ -84,7 +84,7 @@ namespace ShipDock.ECS
             for (int i = 0; i < max; i++)
             {
                 aid = aidArgs[i];
-                component = GetComponentByAID(aid);
+                component = RefComponentByName(aid);
                 if (component != default)
                 {
                     result.AddComponent(component);
@@ -93,12 +93,12 @@ namespace ShipDock.ECS
             return result;
         }
 
-        public IShipDockComponent GetComponentByAID(int aid)
+        public IShipDockComponent RefComponentByName(int name)
         {
             IShipDockComponent component = default;
-            if (mIDMapper.IsContainsKey(aid))
+            if (mIDMapper.IsContainsKey(name))
             {
-                int id = mIDMapper[aid];
+                int id = mIDMapper[name];
                 component = mMapper.Get(id);
             }
             return component;
@@ -282,7 +282,7 @@ namespace ShipDock.ECS
 
         public bool Asynced { get; private set; }
         public Action<IShipDockComponent> CustomUpdate { get; set; }
-        public Action<IShipDockComponentManager> RelateComponentsReFiller { get; set; }
+        public Action<int, IShipDockComponent, IShipDockComponentManager> RelateComponentsReFiller { get; set; }
         public int CountTime { get; private set; }
         public int FrameTimeInScene { get; set; }
     }

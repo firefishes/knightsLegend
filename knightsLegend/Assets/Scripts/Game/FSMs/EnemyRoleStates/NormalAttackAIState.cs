@@ -12,7 +12,6 @@ namespace KLGame
     public class NormalAttackAIState : FState
     {
         private TimingTasker mThinkingTime;
-        private TimingTasker mNormalATKTime;
         private MethodUpdater mStateUpdater;
         private IKLRoleFSMAIParam mStateParam;
 
@@ -35,13 +34,11 @@ namespace KLGame
             if (mThinkingTime == default)
             {
                 TimingTaskEntitas timingTaskEntitas = AIRole.TimesEntitas;
-                mThinkingTime = timingTaskEntitas.GetTimingTasker(KLConsts.T_AI_THINKING, 0);
-                mNormalATKTime = timingTaskEntitas.GetTimingTasker(KLConsts.T_AI_ATK_TIME, 0);
+                mThinkingTime = timingTaskEntitas.GetTimingTasker(KLConsts.T_AI_THINKING, KLConsts.T_AI_THINKING_TIME_TASK_ATK);
+                //mNormalATKTime = timingTaskEntitas.GetTimingTasker(KLConsts.T_AI_ATK_TIME, KLConsts.T_AI_THINKING_TIME_TASK_ATK);
 
                 mThinkingTime.TotalCount = 1;
                 mThinkingTime.completion += ExecuteNormalAtk;
-                mNormalATKTime.TotalCount = 1;
-                mNormalATKTime.completion += Atked;
             }
 
             mThinkingTime.Start(0.2f);
@@ -56,9 +53,8 @@ namespace KLGame
             UpdaterNotice.RemoveUpdater(mStateUpdater);
 
             mThinkingTime.Stop();
-            mNormalATKTime.Stop();
 
-            AIRole.SetShouldAtkAIWork(false);
+            //AIRole.SetShouldAtkAIWork(false);
 
             mStateParam?.ToPool();
             mStateParam = default;
@@ -72,18 +68,17 @@ namespace KLGame
             Tester.Instance.Log(TesterRPG.Instance, TesterRPG.LOG, "log: Enemy executeNormalAtk");
             mThinkingTime.Reset();
 
-            AIRole.SetShouldAtkAIWork(true);
+            //AIRole.SetShouldAtkAIWork(true);
 
-            float time = mNormalATKTime.RunCounts == 0 ? 0.1f : new System.Random().Next(1, 5);
-            mNormalATKTime.Start(time);
+            //float time = mNormalATKTime.RunCounts == 0 ? 0.1f : new System.Random().Next(1, 5);
+            //mNormalATKTime.Start(time);
         }
 
         private void Atked()
         {
             Tester.Instance.Log(TesterRPG.Instance, TesterRPG.LOG, "log: Enemy Atked");
-            mNormalATKTime.Reset();
 
-            if((AIRole != default) && AIRole.ShouldAtkAIWork)
+            if(AIRole != default)// && AIRole.ShouldAtkAIWork)
             {
                 AIRole.RoleInput.SetInputPhase(KLConsts.ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK);
                 Tester.Instance.Log(TesterRPG.Instance, TesterRPG.LOG, "log: Enemy phase ".Append(AIRole.RoleInput.RoleInputPhase.ToString()));

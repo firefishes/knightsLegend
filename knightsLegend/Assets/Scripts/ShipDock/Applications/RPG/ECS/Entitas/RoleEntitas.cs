@@ -26,7 +26,7 @@ namespace ShipDock.Applications
             return new RoleInputInfo(this);
         }
 
-        public void SetRoleData(IRoleData data)
+        public virtual void SetRoleData(IRoleData data)
         {
             RoleDataSource = data;
             Speed = RoleDataSource.Speed;
@@ -39,7 +39,7 @@ namespace ShipDock.Applications
 
         public float GetDistFromMainLockDown()
         {
-            return EnemyMainLockDown != default ? Vector3.Distance(Position, EnemyMainLockDown.Position) : float.MaxValue;
+            return EnemyTracking != default ? Vector3.Distance(Position, EnemyTracking.Position) : float.MaxValue;
         }
 
         public virtual bool AfterGetStopDistance(float dist, Vector3 entitasPos)
@@ -98,7 +98,7 @@ namespace ShipDock.Applications
         public Vector3 CameraForward { get; set; }
         public List<int> CollidingRoles { get; } = new List<int>();
         public KeyValueList<int, List<RoleColldingPos>> CollidingPos { get; } = new KeyValueList<int, List<RoleColldingPos>>();
-        public ICommonRole EnemyMainLockDown { get; set; }
+        public ICommonRole EnemyTracking { get; set; }
         public IRoleData RoleDataSource { get; private set; }
         public IRoleInput RoleInput { get; set; }
         /// <summary>
@@ -112,7 +112,7 @@ namespace ShipDock.Applications
         public CommonRoleMustSubgroup RoleMustSubgroup { get; set; }
         public CommonRoleAnimatorInfo RoleAnimatorInfo { get; private set; }
         public bool AfterGetStopDistChecked { get; set; }
-
+        public virtual float TrackViewField { get; set; }
         protected override int[] ComponentIDs { get; } = default;
     }
 
