@@ -30,7 +30,7 @@ namespace Tkzs.Game
             notice.ParamValue = mUpdater;
             (notice.ParamValue as Updater).Update = UpdatePos;
 
-            ShipDockConsts.NOTICE_ADD_UPDATE.Dispatch(notice);
+            ShipDockConsts.NOTICE_ADD_UPDATE.Broadcast(notice);
 
             notice.Dispose();
         }

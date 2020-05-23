@@ -3,7 +3,7 @@ using ShipDock.Tools;
 
 namespace KLGame
 {
-    public class AIStateWill : IPoolable
+    public class AIStateWillChange : IPoolable
     {
         public void Revert()
         {
@@ -20,7 +20,7 @@ namespace KLGame
 
         public void ToPool()
         {
-            Pooling<AIStateWill>.To(this);
+            Pooling<AIStateWillChange>.To(this);
         }
 
         public int SkillID { get; set; }

@@ -20,7 +20,7 @@ namespace ShipDock.Applications
         public void Commit(INotificationSender sender)
         {
             NotifcationSender = sender;
-            ShipDockApp.Instance.Notificater.Broadcast(this);
+            ShipDockApp.Instance.Notificater.Dispatch(this);
         }
 
         public ProcessingHitInfo HitInfo { get; set; }

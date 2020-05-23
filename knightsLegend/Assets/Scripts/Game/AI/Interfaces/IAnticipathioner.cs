@@ -6,6 +6,6 @@ namespace KLGame
     {
         bool IsExecuted { get; set; }
         int StateFrom { get; set; }
-        AIStateWill AIStateWillChange { get; set; }
+        AIStateWillChange AIStateWillChange { get; set; }
     }
 }

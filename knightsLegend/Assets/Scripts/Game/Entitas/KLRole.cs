@@ -1,10 +1,8 @@
 ﻿using ShipDock.Applications;
 using ShipDock.ECS;
 using ShipDock.Notices;
-using ShipDock.Pooling;
 using ShipDock.Tools;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace KLGame
@@ -50,6 +48,34 @@ namespace KLGame
 
             //        break;
             //}
+            switch (param.Name)
+            {
+                case KLConsts.N_ROLE_TIMING:
+                    TimingControll(param as TimingTaskNotice);
+                    break;
+            }
+        }
+
+        private void TimingControll(TimingTaskNotice notice)
+        {
+            int name = notice.Name;
+            TimingTasker timingTasker = TimesEntitas.GetTimingTasker(notice.TimingName, notice.MapperIndex);
+
+            if (timingTasker != default)
+            {
+                if (notice.IsStart)
+                {
+                    timingTasker.Start(notice.Time);
+                }
+                else if(notice.IsReset)
+                {
+                    timingTasker.Reset();
+                }
+                else
+                {
+                    timingTasker.Stop(notice.OnlyChangeState);
+                }
+            }
         }
 
         protected override void SetRoleInputInfo()

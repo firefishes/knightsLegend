@@ -66,7 +66,7 @@ namespace ShipDock.Applications
                 TicksUpdater = new TicksUpdater(ticks);
             }
 
-            ShipDockConsts.NOTICE_APPLICATION_STARTUP.Dispatch();
+            ShipDockConsts.NOTICE_APPLICATION_STARTUP.Broadcast();
 
             IsStarted = true;
             mAppStarted?.Invoke();
@@ -132,7 +132,7 @@ namespace ShipDock.Applications
                 };
             UpdaterNotice notice = Pooling<UpdaterNotice>.From();
             notice.ParamValue = updater;
-            ShipDockConsts.NOTICE_ADD_UPDATE.Dispatch(notice);
+            ShipDockConsts.NOTICE_ADD_UPDATE.Broadcast(notice);
             Pooling<UpdaterNotice>.To(notice);
 
             ShipDockConsts.NOTICE_SCENE_UPDATE_READY.Add(OnSceneUpdateReady);
@@ -199,7 +199,7 @@ namespace ShipDock.Applications
 
             UpdaterNotice notice = Pooling<UpdaterNotice>.From();
             notice.ParamValue = updater;
-            ShipDockConsts.NOTICE_ADD_SCENE_UPDATE.Dispatch(notice);
+            ShipDockConsts.NOTICE_ADD_SCENE_UPDATE.Broadcast(notice);
             Pooling<UpdaterNotice>.To(notice);
         }
 
@@ -252,7 +252,7 @@ namespace ShipDock.Applications
         {
             Utils.Reclaim(ref mFSMUpdaters);
             Utils.Reclaim(ref mStateUpdaters);
-            ShipDockConsts.NOTICE_APPLICATION_CLOSE.Dispatch();
+            ShipDockConsts.NOTICE_APPLICATION_CLOSE.Broadcast();
 
             Utils.Reclaim(Notificater);
             Utils.Reclaim(TicksUpdater);

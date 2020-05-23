@@ -74,7 +74,7 @@ namespace ShipDock.Applications
             }
             ShipDockConsts.NOTICE_REMOVE_UPDATE.Add(RemoveUpdate);
             ShipDockConsts.NOTICE_ADD_UPDATE.Add(AddUpdate);
-            ShipDockConsts.NOTICE_FRAME_UPDATER_COMP_READY.Dispatch();
+            ShipDockConsts.NOTICE_FRAME_UPDATER_COMP_READY.Broadcast();
             //GameUpdater.Instance.RegisteredOnFrameUpdaterReady();
         }
 

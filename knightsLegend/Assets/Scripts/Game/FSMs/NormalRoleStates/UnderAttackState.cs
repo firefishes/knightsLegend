@@ -62,7 +62,7 @@ namespace KLGame
             {
                 Animator.SetFloat("Atked", 0f);
                 Notice notice = Pooling<Notice>.From();
-                RoleSceneComp.Broadcast(KLConsts.N_AFTER_UNDER_ATTACK, notice);
+                RoleSceneComp.Dispatch(KLConsts.N_AFTER_UNDER_ATTACK, notice);
                 notice.ToPool();
             }
             return flag;

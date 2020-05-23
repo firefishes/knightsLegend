@@ -127,7 +127,7 @@ namespace ShipDock.Notices
             }
         }
         
-        public void SendNotice(INoticeBase<NameT> notice)
+        public void Broadcast(INoticeBase<NameT> notice)
         {
             if ((notice == default) || (mNoticeHandlers == default))
             {
@@ -141,7 +141,7 @@ namespace ShipDock.Notices
             }
         }
 
-        public void Broadcast(INoticeBase<NameT> notice)
+        public void Dispatch(INoticeBase<NameT> notice)
         {
             if ((notice == default) || 
                 (mHandlersWithSender == default) || 

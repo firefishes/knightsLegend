@@ -36,6 +36,12 @@ namespace KLGame
         {
             //TODO add config notice 1003
             mRole.RoleInput.SetInputPhase(KLConsts.ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK);
+
+            TimingTaskNotice notice = Pooling<TimingTaskNotice>.From();
+            notice.ReinitForReset(KLConsts.T_AI_THINKING, KLConsts.T_AI_THINKING_TIME_TASK_ATK);
+            mRole.Dispatch(KLConsts.N_ROLE_TIMING, notice);
+            notice.ToPool();
+
             return true;
         }
     }

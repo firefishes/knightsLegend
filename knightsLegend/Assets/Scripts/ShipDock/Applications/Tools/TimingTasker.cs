@@ -18,7 +18,6 @@ namespace ShipDock.Applications
             mState = 0;
             timeGapper = new TimeGapper();
             mapper[name] = this;
-            completion += UpdateRunCounts;
             Name = name;
         }
 
@@ -42,6 +41,10 @@ namespace ShipDock.Applications
             if (!ShouldRun())
             {
                 return;
+            }
+            if (TotalCount > 0)
+            {
+                RunCounts++;
             }
             mState = 1;
             timeGapper.Start(totalTime);
@@ -69,11 +72,6 @@ namespace ShipDock.Applications
         {
             timeGapper.Stop();
             completion?.Invoke();
-        }
-
-        private void UpdateRunCounts()
-        {
-            RunCounts++;
         }
 
         public bool ShouldRun()

@@ -43,6 +43,7 @@ namespace KLGame
             TimesEntitas.AddTiming(KLConsts.T_AI_THINKING, KLConsts.T_AI_THINKING_TIME_TASK_DEF);
 
             TimingTasker timingTasker = TimesEntitas.GetTimingTasker(KLConsts.T_AI_THINKING, KLConsts.T_AI_THINKING_TIME_TASK_ATK);
+            timingTasker.TotalCount = 1;
             timingTasker.completion += OnNormalAtk;
 
             timingTasker = TimesEntitas.GetTimingTasker(KLConsts.T_AI_THINKING, KLConsts.T_AI_THINKING_TIME_TASK_DEF);
@@ -55,7 +56,7 @@ namespace KLGame
             {
                 if (Anticipathioner.StateFrom == int.MaxValue && Anticipathioner.AIStateWillChange == default)
                 {
-                    Anticipathioner.AIStateWillChange = new AIStateWill
+                    Anticipathioner.AIStateWillChange = new AIStateWillChange
                     {
                         SkillID = 1,
                         Inputs = new int[] { 1 },
@@ -71,7 +72,7 @@ namespace KLGame
             if (Anticipathioner != default)
             {
                 Anticipathioner.StateFrom = int.MaxValue;
-                Anticipathioner.AIStateWillChange = new AIStateWill
+                Anticipathioner.AIStateWillChange = new AIStateWillChange
                 {
                     SkillID = 3,
                     StateWill = NormalRoleStateName.NORMAL_DEF,
@@ -136,7 +137,7 @@ namespace KLGame
             //{
                 Notice notice = Pooling<Notice>.From();
                 notice.NotifcationSender = this;
-                KLConsts.N_BRAK_WORKING_AI.Dispatch(notice);
+                KLConsts.N_BRAK_WORKING_AI.Broadcast(notice);
                 notice.ToPool();
             //}
             return true;

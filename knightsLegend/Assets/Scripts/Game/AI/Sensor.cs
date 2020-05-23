@@ -4,7 +4,7 @@
     {
         public float GetAtkThinkingTime()
         {
-            return 0.02f;
+            return 0.1f;
         }
 
         public float Excited { get; set; }

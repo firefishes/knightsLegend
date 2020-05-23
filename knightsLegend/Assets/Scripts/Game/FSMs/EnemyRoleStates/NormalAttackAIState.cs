@@ -92,7 +92,7 @@ namespace KLGame
                 if (AIRole.FindingPath)
                 {
                     Notice notice = Pooling<Notice>.From();
-                    RoleSceneComp.Broadcast(KLConsts.N_AI_RESET, notice);
+                    RoleSceneComp.Dispatch(KLConsts.N_AI_RESET, notice);
                     notice.ToPool();
 
                     ChangeToPreviousState();

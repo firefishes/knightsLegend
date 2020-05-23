@@ -52,7 +52,7 @@ namespace KLGame
         private void CheckAttackAI()
         {
             mAtkTimingTask = mAIRole.TimesEntitas.GetTimingTasker(KLConsts.T_AI_THINKING, KLConsts.T_AI_THINKING_TIME_TASK_ATK);
-            if (mAtkTimingTask.IsStart)
+            if (!mAtkTimingTask.ShouldRun())
             {
                 return;
             }
@@ -63,21 +63,6 @@ namespace KLGame
             {
                 float time = mAIRole.AISensor.GetAtkThinkingTime();
                 mAtkTimingTask.Start(time);
-            //    if (mAIRole.ShouldAtkAIWork)
-            //    {
-            //        if (mAIRole.TimesEntitas.GetTimingTasker(KLConsts.T_AI_ATK_TIME, KLConsts.T_AI_ATK_TIME_TASK_THIKING).IsFinish)
-            //        {
-            //            mRoleInput.SetInputPhase(KLConsts.ENEMY_INPUT_PHASE_NROMAL_ATK);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        mRoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_AFTER_MOVE);
-            //    }
-            //}
-            //else
-            //{
-            //    mAIRole.ResetAIRoleATK();
             }
         }
 

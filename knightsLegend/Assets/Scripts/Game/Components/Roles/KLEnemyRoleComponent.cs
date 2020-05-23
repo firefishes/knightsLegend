@@ -41,7 +41,7 @@ namespace KLGame
             if (mRoleATkAI != default)
             {
                 IAnticipathioner anticipathioner = mRoleATkAI.Anticipathioner;
-                AIStateWill stateWill = anticipathioner.AIStateWillChange;
+                AIStateWillChange stateWill = anticipathioner.AIStateWillChange;
                 if (stateWill != default)
                 {
                     CurrentSkillID = stateWill.SkillID;

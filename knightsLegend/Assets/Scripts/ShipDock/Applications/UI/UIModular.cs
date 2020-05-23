@@ -24,7 +24,7 @@ namespace ShipDock.Applications
 
             ParamNotice<MonoBehaviour> notice = Pooling<ParamNotice<MonoBehaviour>>.From();
             int id = ui.GetInstanceID();
-            id.Dispatch(notice);
+            id.Broadcast(notice);
 
             mUI = (T)notice.ParamValue;
             Pooling<ParamNotice<MonoBehaviour>>.To(notice);

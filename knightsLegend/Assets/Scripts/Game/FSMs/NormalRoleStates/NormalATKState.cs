@@ -113,7 +113,7 @@ namespace KLGame
 
         private void OnTriggerRoleActive(ref IParamNotice<bool> target)
         {
-            mRole.Broadcast(KLConsts.N_TRIGGER_ROLE_ACTIVE, target);
+            mRole.Dispatch(KLConsts.N_TRIGGER_ROLE_ACTIVE, target);
             KLConsts.S_KL.Revert<KLServer>("Bool", target);
         }
 
@@ -149,7 +149,7 @@ namespace KLGame
         {
             var notice = Pooling<ParamNotice<bool>>.From();
             notice.ParamValue = false;
-            mRole.Broadcast(KLConsts.N_TRIGGER_ROLE_ACTIVE, notice);
+            mRole.Dispatch(KLConsts.N_TRIGGER_ROLE_ACTIVE, notice);
 
             notice.ToPool();
         }

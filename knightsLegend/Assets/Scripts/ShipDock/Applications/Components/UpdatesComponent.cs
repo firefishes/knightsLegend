@@ -32,7 +32,7 @@ namespace ShipDock.Applications
 
             if(m_ReadyNoticeName != int.MaxValue)
             {
-                m_ReadyNoticeName.Dispatch();
+                m_ReadyNoticeName.Broadcast();
             }
         }
 

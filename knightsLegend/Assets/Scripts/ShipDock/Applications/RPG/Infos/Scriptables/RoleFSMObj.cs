@@ -115,7 +115,7 @@ namespace ShipDock.Applications
             int max = list.Length;
             for (int i = 0; i < max; i++)
             {
-                target.Broadcast(list[i].noticeName, notice);
+                target.Dispatch(list[i].noticeName, notice);
             }
             notice.ToPool();
         }
