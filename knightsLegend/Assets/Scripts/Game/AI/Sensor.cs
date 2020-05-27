@@ -4,6 +4,11 @@
     {
         public float GetAtkThinkingTime()
         {
+            return 0.5f;
+        }
+
+        public float GetDefThinkingTime()
+        {
             return 0.1f;
         }
 

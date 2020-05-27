@@ -8,6 +8,7 @@ namespace KLGame
     public class KLRoleCampComponent : RoleCampComponent
     {
         private IKLRole mMainRoleTarget;
+        private ICommonRole mEnemyTracking;
         private ScopeChecker mInMainRoleFrontChecker = new ScopeChecker();
         
         protected override void BeforeAITargetEnemyCheck()
@@ -20,7 +21,21 @@ namespace KLGame
                 mInMainRoleFrontChecker.startPos = mMainRoleTarget.Position;
                 mInMainRoleFrontChecker.startRotation = mMainRoleTarget.CurQuaternaion;
                 
-                mMainRoleTarget.EnemyTracking = mInMainRoleFrontChecker.CheckScope(mRoleExecuting.Position) ? mRoleExecuting : default;
+                if (mInMainRoleFrontChecker.CheckScope(mRoleExecuting.Position))
+                {
+                    mMainRoleTarget.EnemyTracking = mRoleExecuting;//更新主角追踪的目标
+                }
+                else
+                {
+                    mEnemyTracking = mMainRoleTarget.EnemyTracking;
+                    if (mEnemyTracking != default)
+                    {
+                        if (!mInMainRoleFrontChecker.CheckScope(mEnemyTracking.Position))
+                        {
+                            mMainRoleTarget.EnemyTracking = default;//主角失去追踪的目标
+                        }
+                    }
+                }
             }
         }
 

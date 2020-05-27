@@ -2,40 +2,9 @@
 using ShipDock.Tools;
 using System;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace ShipDock.Applications
 {
-    [Serializable]
-    public class MotionCompletionEvent : UnityEvent { }
-
-    [Serializable]
-    public class MotionSceneInfo : IDispose
-    {
-#if UNITY_EDITOR
-        public string skillName;
-#endif
-
-        public bool isCombo;
-        public int ID;
-        public float checkComboTime;
-        public int[] indexsForID;
-
-        public void Dispose()
-        {
-            Utils.Reclaim(Motion);
-            Utils.Reclaim(ComboMotion);
-            
-            ComboMotion = default;
-            Motion = default;
-            MotionSkillInfo = default;
-        }
-        
-        public ComboMotionCreater ComboMotion { get; set; }
-        public SkillInfo MotionSkillInfo { get; set; }
-        public AnimationInfoUpdater Motion { get; set; }
-    }
-
     public class ComboMotionCreater : IDispose
     {
         private ValueItem mValueItem;
@@ -59,6 +28,8 @@ namespace ShipDock.Applications
             Utils.Reclaim(AniUpdater);
             AniUpdater = default;
             mValueItem = default;
+            MotionTransParam = default;
+            MotionTriggerParam = default;
         }
 
         public void StartComboMotion(ref Animator animator)

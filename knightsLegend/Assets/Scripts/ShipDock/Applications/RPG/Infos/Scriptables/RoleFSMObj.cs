@@ -72,6 +72,10 @@ namespace ShipDock.Applications
 
         public void RoleFSMStateEntered(INotificationSender target, int stateName)
         {
+            if (StatesMapper == default)
+            {
+                return;
+            }
             RoleFSMStateInfo info = StatesMapper[stateName];
 
             if (info == default)
@@ -85,6 +89,10 @@ namespace ShipDock.Applications
 
         internal void RoleFSMStateCombo(INotificationSender target, int stateName)
         {
+            if (StatesMapper == default)
+            {
+                return;
+            }
             RoleFSMStateInfo info = StatesMapper[stateName];
 
             if (info == default)
@@ -98,6 +106,10 @@ namespace ShipDock.Applications
 
         public void RoleFSMStateWillFinish(INotificationSender target, int stateName)
         {
+            if (StatesMapper == default)
+            {
+                return;
+            }
             RoleFSMStateInfo info = StatesMapper[stateName];
 
             if (info == default)
@@ -118,6 +130,11 @@ namespace ShipDock.Applications
                 target.Dispatch(list[i].noticeName, notice);
             }
             notice.ToPool();
+        }
+
+        public RoleFSMObj LoadObj()
+        {
+            return Instantiate(this);
         }
 
         public KeyValueList<int, RoleFSMStateInfo> StatesMapper { get; private set; }

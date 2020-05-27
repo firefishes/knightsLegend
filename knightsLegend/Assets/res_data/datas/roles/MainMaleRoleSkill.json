@@ -59,7 +59,9 @@
 				"str": "",
 				"floatValue": 3,
 				"triggerValue": false
-			}]
+			}],
+			"attackFrames":
+			[0, 0, 8, 14, 0, 0]
 		}, {
 			"name": 3,
 			"skillName": "普通防御",

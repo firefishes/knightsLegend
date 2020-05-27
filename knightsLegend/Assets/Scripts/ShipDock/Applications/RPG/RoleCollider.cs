@@ -1,7 +1,7 @@
 ﻿#define G_LOG
 
 using ShipDock.Notices;
-using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace ShipDock.Applications
@@ -20,13 +20,16 @@ namespace ShipDock.Applications
         private RoleComponent m_RoleSceneComp;
         [SerializeField]
         private Collider m_Collider;
-
+        
+        private bool mIsTrigger = true;
+        private List<int> mCollidingRoles;
         private ICommonRole mRoleEnitas;
         private ComponentBridge mBridge;
 
         private void Awake()
         {
             mRoleEnitas = m_RoleSceneComp.RoleEntitas;
+            mCollidingRoles = mRoleEnitas.CollidingRoles;
             mBridge = new ComponentBridge(OnInit);
             mBridge.Start();
         }
@@ -49,6 +52,7 @@ namespace ShipDock.Applications
 
         private void OnDestroy()
         {
+            mCollidingRoles = default;
             m_RoleSceneComp = default;
             mRoleEnitas = default;
         }
@@ -57,7 +61,11 @@ namespace ShipDock.Applications
         {
             if (mRoleEnitas != default)
             {
-                mRoleEnitas.CollidingRoles.Add(id);
+                if (mCollidingRoles.Contains(id))
+                {
+                    return;
+                }
+                mCollidingRoles.Add(id);
                 if (m_IsNotificational)
                 {
                     mRoleEnitas.CollidingChanged(id, isTrigger, true);
@@ -69,7 +77,7 @@ namespace ShipDock.Applications
         {
             if (mRoleEnitas != default)
             {
-                mRoleEnitas.CollidingRoles.Remove(id);
+                mCollidingRoles.Remove(id);
                 if (m_IsNotificational)
                 {
                     mRoleEnitas.CollidingChanged(id, isTrigger, false);
@@ -85,8 +93,6 @@ namespace ShipDock.Applications
 #endif
             AddColliding(id, true);
         }
-
-        private bool mIsTrigger = true;
 
         private void OnTriggerExit(Collider other)
         {

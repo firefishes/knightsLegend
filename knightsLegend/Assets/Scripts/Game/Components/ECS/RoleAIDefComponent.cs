@@ -1,8 +1,5 @@
 ﻿using ShipDock.Applications;
 using ShipDock.ECS;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace KLGame
 {
@@ -31,7 +28,7 @@ namespace KLGame
                         mDefTimingTask = mRole.TimesEntitas.GetTimingTasker(KLConsts.T_AI_THINKING, KLConsts.T_AI_THINKING_TIME_TASK_DEF);
                         if (!mDefTimingTask.IsStart)
                         {
-                            mDefTimingTask.Start(0f);
+                            mDefTimingTask.Start(mRole.AISensor.GetDefThinkingTime());
                         }
                         break;
                 }

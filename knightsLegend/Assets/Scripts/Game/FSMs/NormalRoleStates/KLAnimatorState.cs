@@ -60,6 +60,7 @@ namespace KLGame
             mAniUpdater = default;
             mRoleStateTimings = default;
             RoleSceneComp = default;
+            mFeedbackTime = default;
         }
 
         public override void InitState(IStateParam param = null)

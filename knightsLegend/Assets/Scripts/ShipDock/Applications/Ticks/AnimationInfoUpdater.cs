@@ -61,11 +61,13 @@ namespace ShipDock.Applications
                 }
             }
             RefreshParams(ref mParamSet);
+            Frame = 0;
             Length = StateInfo.normalizedTime;
         }
 
         public bool Update(IAnimatorState state)
         {
+            Frame++;
             Testers.Tester.Instance.Log(TesterRPG.Instance, TesterRPG.LOG, string.IsNullOrEmpty(state.AnimationName), "error: ".Append(state.ToString(), " animation name is null."));
             HasCompleted = (StateInfo.normalizedTime > 1f) && StateInfo.IsName(state.AnimationName);
             return HasCompleted;
@@ -116,11 +118,20 @@ namespace ShipDock.Applications
             }
         }
 
+        public float NormalizedTime
+        {
+            get
+            {
+                return StateInfo.normalizedTime;
+            }
+        }
+
         public Animator AnimatorTarget { get; private set; }
         public bool HasCompleted { get; private set; }
         public bool AutoDispose { get; private set; }
         public bool AutoStop { get; set; }
         public float Length { get; private set; }
         public float DeltaTime { get; set; }
+        public int Frame { get; private set; }
     }
 }

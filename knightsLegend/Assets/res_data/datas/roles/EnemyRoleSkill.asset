@@ -108,13 +108,22 @@ MonoBehaviour:
       ID: 0
       checkComboTime: 0
       indexsForID: 00000000
+      attackFrameInfo: []
     - skillName: "\u666E\u901A\u653B\u51FB1--\u89E6\u53D1"
       isCombo: 1
       ID: 1
       checkComboTime: 1.5
       indexsForID: 0100000002000000
+      attackFrameInfo:
+      - frameMin: 8
+        frameMax: 16
+      - frameMin: 8
+        frameMax: 16
+      - frameMin: 8
+        frameMax: 16
     - skillName: "\u666E\u901A\u9632\u5FA1"
       isCombo: 0
       ID: 3
       checkComboTime: 0
       indexsForID: 03000000
+      attackFrameInfo: []

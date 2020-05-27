@@ -18,6 +18,11 @@ namespace KLGame
             
             mStateParam.FillValues();
 
+            if(!ShouldCheckHit())
+            {
+                return false;
+            }
+
             mHit = Pooling<ProcessHit>.From();
             ProcessHit hit = mHit as ProcessHit;
             hit.Reinit(mRole);

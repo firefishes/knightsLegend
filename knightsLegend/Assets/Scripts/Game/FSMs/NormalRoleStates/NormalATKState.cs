@@ -9,8 +9,20 @@ namespace KLGame
     {
         protected IRoleProcessing mHit;
 
+        private SkillAttackFrameInfo mAttackFrameInfo;
+        private SkillAttackFrameInfo[] mAttackFrameInfos;
+
         public NormalATKState(int name) : base(name)
         {
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            mHit?.ToPool();
+            mHit = default;
+            mAttackFrameInfo = default;
         }
 
         protected override bool ShouldEnter(ref NormalATKStateParam param)
@@ -125,6 +137,11 @@ namespace KLGame
             }
             mStateParam.FillValues();
 
+            if (!ShouldCheckHit())
+            {
+                return false;
+            }
+
             mHit = Pooling<PlayerHit>.From();
             PlayerHit hit = mHit as PlayerHit;
             hit.Reinit(mRole);
@@ -137,6 +154,25 @@ namespace KLGame
             hit.HitInfoScope.startRotation = mStateParam.StartRotation;
 
             return mRole.Processing.AddRoleProcess(hit);
+        }
+
+        protected bool ShouldCheckHit()
+        {
+            return (mAniUpdater != default) && IsAttackFrame(mAniUpdater.Frame);
+        }
+
+        private bool IsAttackFrame(int frame)
+        {
+            int currentCombo = mComboMotion.CurrentCombo;
+            mAttackFrameInfos = mSkillMapper[mCurrentSkillID].attackFrameInfo;
+            if (currentCombo >= mAttackFrameInfos.Length)
+            {
+                return false;
+            }
+            mAttackFrameInfo = mAttackFrameInfos[currentCombo];
+            int max = mAttackFrameInfo.frameMax;
+            int min = mAttackFrameInfo.frameMin;
+            return (frame >= min) && (frame <= max);
         }
 
         protected void OnATKHit()

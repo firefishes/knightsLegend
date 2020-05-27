@@ -33,6 +33,11 @@ namespace ShipDock.Applications
             skills = default;
             skillMotions = default;
         }
+
+        public RoleSkillListSObj LoadObj()
+        {
+            return Instantiate(this);
+        }
     }
 
 }

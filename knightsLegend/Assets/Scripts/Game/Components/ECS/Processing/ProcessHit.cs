@@ -69,6 +69,7 @@ namespace KLGame
                 if (mEnemyRole != default)
                 {
                     EnemyKLRole = mEnemyRole as IKLRole;
+                    Debug.Log("ProcessingReady enemy is " + EnemyKLRole.Name + " id = " + id);
                     //TODO 需要支持多个敌人
                     break;
                 }

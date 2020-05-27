@@ -36,6 +36,7 @@ namespace KLGame
         {
             base.Init();
 
+            m_Skills = m_Skills.LoadObj();
             m_Skills?.Init();
             FreezeAllRotation(false);
         }
@@ -46,29 +47,15 @@ namespace KLGame
 
             KLRole = mRole as IKLRole;
             KLRole.CollidingChanger += OnRoleAttackHitTrigger;
-            
-            KLConfigData configData = ShipDockApp.Instance.Datas.GetData<KLConfigData>(KLConsts.D_CONFIG);
-            if(!configData.HasDataUnit(m_FSMStates.fsmType))
-            {
-                m_FSMStates.Init();
-                configData.SetDataUnit(m_FSMStates.fsmType, m_FSMStates);
-            }
 
+            m_FSMStates = m_FSMStates.LoadObj();
+            m_FSMStates.Init();
             m_FSMStates.FillToSceneComponent(this);
 
             RoleFSM = (mRole.RoleInput as KLRoleInputInfo).AnimatorFSM;
             (RoleFSM as CommonRoleFSM).SetAnimator(ref m_RoleAnimator);
             RoleFSM.Run(default, NormalRoleStateName.GROUNDED);
-
-            //KLConsts.S_BATTLE.MakeResolver<IParamNotice<ICommonRole>>("SetBattleRoleParam", "EnterBattle", OnSetEnterBattleParam);
-
-            //KLConsts.S_BATTLE.DeliveParam<KLBattleServer, ICommonRole>("EnterBattle", "SetBattleRoleParam");
         }
-        
-        //private void OnSetEnterBattleParam(ref IParamNotice<ICommonRole> target)
-        //{
-        //    target.ParamValue = RoleEntitas;
-        //}
 
         /// <summary>
         /// 角色的碰撞触发
@@ -92,7 +79,7 @@ namespace KLGame
                         isTrigger = isTrigger,
                         isCollided = isCollided
                     });
-                    notice.Commit(KLRole);
+                    KLRole.Dispatch(notice);
                     notice.ToPool();
                 }
             }

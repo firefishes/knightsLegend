@@ -16,13 +16,7 @@ namespace ShipDock.Applications
             ProcessingType = processingType;
             HitInfo = hitInfo;
         }
-
-        public void Commit(INotificationSender sender)
-        {
-            NotifcationSender = sender;
-            ShipDockApp.Instance.Notificater.Dispatch(this);
-        }
-
+        
         public ProcessingHitInfo HitInfo { get; set; }
         public int HitColliderID { get; set; }
         public int ProcessingType { set; get; }
