@@ -248,6 +248,8 @@ namespace KLGame
                 if(shouldCombo)
                 {
                     mComboMotion.StartComboMotion(ref animator);//开始下一个连续动画
+                    mAniUpdater = mComboMotion.AniUpdater;
+                    Debug.Log("Frame " + mAniUpdater.Frame);
                 }
                 else
                 {

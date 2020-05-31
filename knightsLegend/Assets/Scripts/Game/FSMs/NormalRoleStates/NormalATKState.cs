@@ -139,7 +139,7 @@ namespace KLGame
 
             if (!ShouldCheckHit())
             {
-                return false;
+                //return false;
             }
 
             mHit = Pooling<PlayerHit>.From();
@@ -172,13 +172,14 @@ namespace KLGame
             mAttackFrameInfo = mAttackFrameInfos[currentCombo];
             int max = mAttackFrameInfo.frameMax;
             int min = mAttackFrameInfo.frameMin;
+            Debug.Log("frame = " + frame + " min = " + min + " max = " + max);
             return (frame >= min) && (frame <= max);
         }
 
         protected void OnATKHit()
         {
             IsHit = true;
-            StartFeedbackTime(RoleAnimationFeedBackConsts.FEED_BACK_BY_HIT, 0.007f, 0f);
+            StartFeedbackTime(RoleAnimationFeedBackConsts.FEED_BACK_BY_HIT, 0.02f, 0f);
         }
 
         private void DeActiveCollider()

@@ -1,4 +1,4 @@
-﻿#define G_LOG
+﻿#define _G_LOG
 
 using ShipDock.FSM;
 using ShipDock.Interfaces;
@@ -46,6 +46,7 @@ namespace ShipDock.Applications
                 return;
             }
 
+            Frame = 0;
             mParamsNew = paramConfs;
             int max = mParamsNew.Length;
             for (int i = 0; i < max; i++)
@@ -61,7 +62,6 @@ namespace ShipDock.Applications
                 }
             }
             RefreshParams(ref mParamSet);
-            Frame = 0;
             Length = StateInfo.normalizedTime;
         }
 

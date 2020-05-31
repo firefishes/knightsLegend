@@ -4,7 +4,7 @@
     {
         public float GetAtkThinkingTime()
         {
-            return 0.5f;
+            return 50f;
         }
 
         public float GetDefThinkingTime()

@@ -51,8 +51,8 @@ namespace KLGame
                 (mEnemyRole as IKLRole).UnderAttack();
                 AfterProcessing?.Invoke();
                 (Initiator as IKLRole).HitSomeOne = true;
-                Vector3 start = Initiator.Position;
-                ForceMover.Create().SetMover(mEnemyRole, new Vector3(Initiator.WeapontPos.x, 0, Initiator.WeapontPos.z) * 0.7f, 0.2f);
+                //Vector3 start = Initiator.Position;
+                //ForceMover.Create().SetMover(mEnemyRole, new Vector3(Initiator.WeapontPos.x, 0, Initiator.WeapontPos.z) * 0.7f, 0.2f);
             }
             ToPool();
         }

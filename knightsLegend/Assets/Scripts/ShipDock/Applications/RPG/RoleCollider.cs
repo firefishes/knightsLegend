@@ -57,62 +57,92 @@ namespace ShipDock.Applications
             mRoleEnitas = default;
         }
 
-        private void AddColliding(int id, bool isTrigger)
+        private void AddColliding(int id, bool isTrigger, out int statu)
         {
             if (mRoleEnitas != default)
             {
                 if (mCollidingRoles.Contains(id))
                 {
-                    return;
+                    statu = 1;
                 }
-                mCollidingRoles.Add(id);
+                else
+                {
+                    statu = 0;
+                    mCollidingRoles.Add(id);
+                }
                 if (m_IsNotificational)
                 {
                     mRoleEnitas.CollidingChanged(id, isTrigger, true);
                 }
             }
+            else
+            {
+                statu = 2;
+            }
         }
 
-        private void RemoveColliding(int id, bool isTrigger)
+        private void RemoveColliding(int id, bool isTrigger, out int statu)
         {
             if (mRoleEnitas != default)
             {
-                mCollidingRoles.Remove(id);
+                if (mCollidingRoles.Contains(id))
+                {
+                    statu = 0;
+                    mCollidingRoles.Remove(id);
+                }
+                else
+                {
+                    statu = 1;
+                }
                 if (m_IsNotificational)
                 {
                     mRoleEnitas.CollidingChanged(id, isTrigger, false);
                 }
+            }
+            else
+            {
+                statu = 2;
             }
         }
 
         private void OnTriggerEnter(Collider other)
         {
             int id = other.GetInstanceID();
+            AddColliding(id, true, out int statu);
 #if UNITY_EDITOR
-            Testers.Tester.Instance.Log(TesterRPG.Instance, TesterRPG.LOG, m_IsLogTrigger, "log: Collider trigger: ".Append(m_RoleSceneComp.name, " - ", other.transform.name, ", ", name));
+            switch (statu)
+            {
+                case 0:
+                    Testers.Tester.Instance.Log(TesterRPG.Instance, TesterRPG.LOG, m_IsLogTrigger, "log: Collider trigger: ".Append(m_RoleSceneComp.name, " - ", other.transform.name, ", ", name));
+                    break;
+            }
 #endif
-            AddColliding(id, true);
         }
 
         private void OnTriggerExit(Collider other)
         {
             int id = other.GetInstanceID();
+            RemoveColliding(id, true, out int statu);
 #if UNITY_EDITOR
-            Testers.Tester.Instance.Log(TesterRPG.Instance, TesterRPG.LOG, m_IsLogTrigger, "log: Collider trigger exit: ".Append(m_RoleSceneComp.name, " - ", other.transform.name, ", ", name));
+            switch (statu)
+            {
+                case 0:
+                    Testers.Tester.Instance.Log(TesterRPG.Instance, TesterRPG.LOG, m_IsLogTrigger, "log: Collider trigger exit: ".Append(m_RoleSceneComp.name, " - ", other.transform.name, ", ", name));
+                    break;
+            }
 #endif
-            RemoveColliding(id, true);
         }
 
         private void OnCollisionEnter(Collision collision)
         {
             int id = collision.collider.GetInstanceID();
-            AddColliding(id, false);
+            AddColliding(id, false, out _);
         }
 
         private void OnCollisionExit(Collision collision)
         {
             int id = collision.collider.GetInstanceID();
-            RemoveColliding(id, false);
+            RemoveColliding(id, false, out _);
         }
 
         public Collider Collider

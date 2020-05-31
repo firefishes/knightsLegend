@@ -57,7 +57,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1d4d04a80cd25848a9c3b4d85c08659, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_IsLogTrigger: 1
+  m_IsLogTrigger: 0
   m_IsNotificational: 0
   m_ActiveColliderNoticeName: 1001
   m_RoleSceneComp: {fileID: 4846574002514047421}
@@ -228,6 +228,30 @@ MonoBehaviour:
   m_FSMStates: {fileID: 11400000, guid: 88835327892d4ae4781b538598f06fae, type: 2}
   m_Skills: {fileID: 11400000, guid: d382eba0d43e20d4283c712260d9c172, type: 2}
   m_BloodyEffectTF: {fileID: 646065033916583758}
+  m_HitFrozenCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &7953394926964178204
 GameObject:
   m_ObjectHideFlags: 0

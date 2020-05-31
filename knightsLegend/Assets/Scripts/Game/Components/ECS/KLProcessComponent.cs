@@ -94,6 +94,7 @@ namespace KLGame
                 int colliderID = enmeyRole.RoleMustSubgroup.roleColliderID;
                 if (colliderID != hit.HitColliderID)
                 {
+                    UnityEngine.Debug.Log("hit process droped, colliderID = " + colliderID + " hit colliderID = " + hit.HitColliderID);
                     hit.ToPool();
                     flag = false;
                     return;

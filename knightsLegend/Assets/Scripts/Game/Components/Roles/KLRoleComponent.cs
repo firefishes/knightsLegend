@@ -19,6 +19,8 @@ namespace KLGame
         protected RoleSkillListSObj m_Skills;
         [SerializeField]
         private RoleCollider m_BloodyEffectTF;
+        [SerializeField]
+        private AnimationCurve m_HitFrozenCurve;
 
         protected string mFire1ParamName = "Fire1";
         protected string mFire2ParamName = "Fire2";
@@ -131,6 +133,15 @@ namespace KLGame
 
             mWeapontPos = m_BloodyEffectTF.transform.position - mWeapontPos;
             KLRole.WeapontPos = mWeapontPos;
+
+            if (m_RoleAnimator.GetFloat("Speed") != 1f)
+            {
+                Time.timeScale = Time.timeScale * m_HitFrozenCurve.Evaluate(Time.deltaTime);
+            }
+            else
+            {
+                Time.timeScale = 1f;
+            }
         }
 
         public void UnderAttack()
