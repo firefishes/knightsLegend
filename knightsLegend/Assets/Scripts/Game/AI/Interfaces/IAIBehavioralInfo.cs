@@ -2,7 +2,7 @@
 
 namespace KLGame
 {
-    public interface IAnticipathioner : INotificationSender
+    public interface IAIBehavioralInfo : INotificationSender
     {
         bool IsExecuted { get; set; }
         int StateFrom { get; set; }

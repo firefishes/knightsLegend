@@ -281,6 +281,8 @@ namespace KLGame
             bool result = BeforeFinish();
             if (result)
             {
+                UpdaterNotice.RemoveSceneUpdater(mMethodUpdater);
+
                 RevertStateParam();
                 RevertAllStateParams();
                 Utils.Reclaim(ref mStateParamQueue, false);
@@ -294,7 +296,6 @@ namespace KLGame
                 mRole = default;
                 RoleSceneComp = default;
 
-                UpdaterNotice.RemoveSceneUpdater(mMethodUpdater);
             }
             return result;
         }

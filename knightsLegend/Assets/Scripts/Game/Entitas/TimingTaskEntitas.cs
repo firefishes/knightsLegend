@@ -57,6 +57,10 @@ namespace KLGame
         /// <returns>返回时机事务处理器</returns>
         public TimingTasker AddTiming(int name, int mapperIndex)
         {
+            if (mMappers.Count <= mapperIndex)
+            {
+                CreateMapper();
+            }
             TimingMapper mapper = mMappers[mapperIndex];
             return new TimingTasker(name, ref mapper);
         }
@@ -128,7 +132,7 @@ namespace KLGame
                     item.timeGapper = timer;
                     if (!item.IsStart)
                     {
-                        item.Stop(true);
+                        item.SetStateToFinish();
                     }
                     if (flag)
                     {
@@ -138,7 +142,7 @@ namespace KLGame
             }
         }
 
-        protected override int[] ComponentIDs { get; } = new int[]
+        protected override int[] ComponentNames { get; } = new int[]
         {
             KLConsts.C_ROLE_TIMES
         };

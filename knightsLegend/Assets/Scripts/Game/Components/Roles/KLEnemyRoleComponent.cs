@@ -22,6 +22,13 @@ namespace KLGame
             //};
         }
 
+        protected override void OnInited()
+        {
+            base.OnInited();
+            
+            RoleFSM.Run(default, NormalRoleStateName.FS_AI_IDLE);
+        }
+
         //private void KeepStanding(int dTime)
         //{
         //    m_RoleAnimator.SetFloat(m_BlendTreeInfo.MoveMotionName, 0f);
@@ -38,19 +45,27 @@ namespace KLGame
         {
             base.UpdateAnimatorParams();
             
-            if (mRoleATkAI != default)
+            if (mRoleATkAI != default && mRoleATkAI.AIBrain != default)
             {
-                IAnticipathioner anticipathioner = mRoleATkAI.Anticipathioner;
-                AIStateWillChange stateWill = anticipathioner.AIStateWillChange;
-                if (stateWill != default)
-                {
-                    CurrentSkillID = stateWill.SkillID;
-                    stateWill.RoleFSMParam?.Reinit(this, stateWill.Inputs);
-                    RoleFSM.ChangeState(stateWill.StateWill, stateWill.RoleFSMParam);
-                    stateWill.ToPool();
-                    anticipathioner.AIStateWillChange = default;
-                }
-                anticipathioner.IsExecuted = false;
+                mRoleATkAI.AIBrain.ExecuteDecision(mRoleATkAI, this);
+                //IAIBehavioralInfo behavioralInfo = mRoleATkAI.Anticipathioner;
+                //AIStateWillChange stateWill = behavioralInfo.AIStateWillChange;
+                //if (stateWill != default)
+                //{
+                //    CurrentSkillID = stateWill.SkillID;
+                //    stateWill.RoleFSMParam?.Reinit(this, stateWill.Inputs);
+                //    UnityEngine.Debug.Log(stateWill.StateWill);
+                //    RoleFSM.ChangeState(stateWill.StateWill, stateWill.RoleFSMParam);
+                //    stateWill.ToPool();
+                //    behavioralInfo.AIStateWillChange = default;
+                //}
+                //else
+                //{
+                //    behavioralInfo = mRoleATkAI.PolicyAnalyzer;
+                //    stateWill = behavioralInfo.AIStateWillChange;
+
+                //}
+                //behavioralInfo.IsExecuted = false;
             }
         }
 
@@ -85,7 +100,9 @@ namespace KLGame
 
         private void OnAttackIAStart()
         {
-            if(BlockingToAIStates.IndexOf(RoleFSM.Current.StateName) >= 0)
+            bool isBlockingToAIStates = BlockingToAIStates.IndexOf(RoleFSM.Current.StateName) >= 0;
+            bool isAIThikingStates = mRoleATkAI.ShouldAIThinking();
+            if (isBlockingToAIStates || !isAIThikingStates)
             {
                 return;
             }
@@ -94,7 +111,7 @@ namespace KLGame
 
             KLRoleFSMAIStateParam param = Pooling<KLRoleFSMAIStateParam>.From();
             param.Reinit(this);
-            RoleFSM.ChangeState(NormalRoleStateName.NORMAL_ATTACK_AI, param);
+            RoleFSM.ChangeState(NormalRoleStateName.NORMAL_AI, param);
         }
 
         public override void OnATKCompleted()
@@ -130,12 +147,15 @@ namespace KLGame
                     ActiveRoleInputPhase(KLConsts.ENEMY_INPUT_PHASE_ATTACK_AI, true);
                     //ActiveRoleInputPhase(KLConsts.ENEMY_INPUT_PHASE_NROMAL_ATK, true);
                     break;
+                case KLConsts.N_ROLE_START_MOVING:
+                    
+                    break;
             }
         }
 
         protected virtual List<int> BlockingToAIStates { get; } = new List<int>
         {
-            NormalRoleStateName.NORMAL_ATTACK_AI,
+            NormalRoleStateName.NORMAL_AI,
             NormalRoleStateName.NORMAL_ATK
         };
     }

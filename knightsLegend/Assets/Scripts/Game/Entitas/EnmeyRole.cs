@@ -16,6 +16,7 @@ namespace KLGame
         {
             KLRoleData data = KLRoleData.GetRoleDataByRandom();
             data.ConfigID = 1;
+            data.Speed = 2f;
             data.SetSource();
             SetRoleData(data);
 
@@ -24,14 +25,43 @@ namespace KLGame
 
             Camp = 1;
 
-            Anticipathioner = new Anticipathioner();
-            AISensor = new Sensor();
+            ProvideGoals = new IGoal[]
+            {
+                new WillKillGoal(),
+                new MoveToTargetGoal(),
+            };
+
+            ProvideWorldStates = new IWorldState[]
+            {
+                new RoleAliveState(this)
+            };
+
+            AIExecutables = new IAIExecutable[]
+            {
+                new SerachTargetExecutable(this)
+            };
+
+            GoalPlanner = new NormalEnemyGoalPlanner();
+
+            AIBrain = new AIBrain();
+            AISensor = new NormalSensor();
+            Anticipathioner = new AIBehavioralInfo();
+            PolicyAnalyzer = new AIBehavioralInfo();
+
+            AIBrain.InitAIBrain(AISensor, Anticipathioner, PolicyAnalyzer);
         }
 
         public override void Dispose()
         {
             base.Dispose();
 
+            if (CurrentGoal != default)
+            {
+                KLConsts.S_KL.DeliveParam<KLServer, IGoalExecuter>("GoalExecuterParam", OnRemoveFollowGoal);
+            }
+
+            AIBrain?.Clean();
+            AIBrain = default;
             mFSM = default;
         }
 
@@ -39,47 +69,65 @@ namespace KLGame
         {
             base.InitComponents();
 
-            TimesEntitas.AddTiming(KLConsts.T_AI_THINKING, KLConsts.T_AI_THINKING_TIME_TASK_ATK);
-            TimesEntitas.AddTiming(KLConsts.T_AI_THINKING, KLConsts.T_AI_THINKING_TIME_TASK_DEF);
+            //TimesEntitas.AddTiming(KLConsts.T_AI_THINKING, KLConsts.T_AI_THINKING_TIME_TASK_ATK);
+            //TimesEntitas.AddTiming(KLConsts.T_AI_THINKING, KLConsts.T_AI_THINKING_TIME_TASK_DEF);
+            //TimesEntitas.AddTiming(KLConsts.T_AI_THINKING, KLConsts.T_AI_THINKING_TIME_TASK_AI_WAITED);
 
-            TimingTasker timingTasker = TimesEntitas.GetTimingTasker(KLConsts.T_AI_THINKING, KLConsts.T_AI_THINKING_TIME_TASK_ATK);
-            timingTasker.TotalCount = 1;
-            timingTasker.completion += OnNormalAtk;
+            //TimingTasker timingTasker = TimesEntitas.GetTimingTasker(KLConsts.T_AI_THINKING, KLConsts.T_AI_THINKING_TIME_TASK_ATK);
+            //timingTasker.TotalCount = 1;
+            //timingTasker.completion += OnNormalAtk;
+            //timingTasker.completion += timingTasker.Reset;
 
-            timingTasker = TimesEntitas.GetTimingTasker(KLConsts.T_AI_THINKING, KLConsts.T_AI_THINKING_TIME_TASK_DEF);
-            timingTasker.completion += OnNormalDef;
+            //timingTasker = TimesEntitas.GetTimingTasker(KLConsts.T_AI_THINKING, KLConsts.T_AI_THINKING_TIME_TASK_DEF);
+            //timingTasker.completion += OnNormalDef;
+
+            //timingTasker = TimesEntitas.GetTimingTasker(KLConsts.T_AI_THINKING, KLConsts.T_AI_THINKING_TIME_TASK_AI_WAITED);
+            //timingTasker.TotalCount = 1;
+            //timingTasker.completion += OnAIWaited;
+            //timingTasker.completion += timingTasker.Reset;
+
+            AIBrain.SetRole(this);
         }
 
-        private void OnNormalAtk()
-        {
-            if (Anticipathioner != default)
-            {
-                if (Anticipathioner.StateFrom == int.MaxValue && Anticipathioner.AIStateWillChange == default)
-                {
-                    Anticipathioner.AIStateWillChange = new AIStateWillChange
-                    {
-                        SkillID = 1,
-                        Inputs = new int[] { 1 },
-                        StateWill = NormalRoleStateName.NORMAL_ATK,
-                        RoleFSMParam = Pooling<NormalATKStateParam>.From()
-                    };
-                }
-            }
-        }
+        //private void OnAIWaited()
+        //{
+        //    if (RoleFSM.Current is IAIState state)
+        //    {
+        //        state.AIConduct();
+        //    }
+        //}
 
-        private void OnNormalDef()
-        {
-            if (Anticipathioner != default)
-            {
-                Anticipathioner.StateFrom = int.MaxValue;
-                Anticipathioner.AIStateWillChange = new AIStateWillChange
-                {
-                    SkillID = 3,
-                    StateWill = NormalRoleStateName.NORMAL_DEF,
-                    RoleFSMParam = Pooling<KLRoleFSMStateParam>.From()
-                };
-            }
-        }
+        //private void OnNormalAtk()
+        //{
+        //    if (Anticipathioner != default)
+        //    {
+        //        if (Anticipathioner.StateFrom == int.MaxValue && Anticipathioner.AIStateWillChange == default)
+        //        {
+        //            PolicyAnalyzer.AIStateWillChange = new AIStateWillChange
+        //            {
+        //                SkillID = 1,
+        //                Inputs = new int[] { 1 },
+        //                StateWill = NormalRoleStateName.NORMAL_ATK,
+        //                RoleFSMParam = Pooling<NormalATKStateParam>.From()
+        //            };
+        //            ConductTimingTask = int.MaxValue;
+        //        }
+        //    }
+        //}
+
+        //private void OnNormalDef()
+        //{
+        //    if (Anticipathioner != default)
+        //    {
+        //        Anticipathioner.StateFrom = int.MaxValue;
+        //        Anticipathioner.AIStateWillChange = new AIStateWillChange
+        //        {
+        //            SkillID = 3,
+        //            StateWill = NormalRoleStateName.NORMAL_DEF,
+        //            RoleFSMParam = Pooling<KLRoleFSMStateParam>.From()
+        //        };
+        //    }
+        //}
 
         public override void SetRoleData(IRoleData data)
         {
@@ -128,6 +176,10 @@ namespace KLGame
         {
             bool result = base.AfterGetStopDistance(dist, entitasPos);
             
+            if (result)
+            {
+                RoleInput.SetInputPhase(KLConsts.ENEMY_INPUT_PHASE_ATTACK_AI);
+            }
             //if (!true)
             //{
             //    SetShouldAtkAIWork(true);
@@ -135,12 +187,12 @@ namespace KLGame
             //}
             //else
             //{
-                Notice notice = Pooling<Notice>.From();
-                notice.NotifcationSender = this;
-                KLConsts.N_BRAK_WORKING_AI.Broadcast(notice);
-                notice.ToPool();
+                //Notice notice = Pooling<Notice>.From();
+                //notice.NotifcationSender = this;
+                //KLConsts.N_BRAK_WORKING_AI.Broadcast(notice);
+                //notice.ToPool();
             //}
-            return true;
+            return result;
         }
 
         public void SetATKID(int value)
@@ -153,13 +205,13 @@ namespace KLGame
             //ShouldAtkAIWork = value;
         }
 
-        protected override int[] ComponentIDs
+        protected override int[] ComponentNames
         {
             get
             {
                 if (mComponentIDs == default)
                 {
-                    base.ComponentIDs.ContactToArr(new int[] {
+                    base.ComponentNames.ContactToArr(new int[] {
                         KLConsts.C_ROLE_AI_ATK,
                         KLConsts.C_ROLE_AI_DEF,
                     }, out mComponentIDs);
@@ -170,7 +222,7 @@ namespace KLGame
 
         public override float GetStopDistance()
         {
-            return 1.5f;
+            return StopDistance;
         }
 
         /// <summary>
@@ -198,12 +250,83 @@ namespace KLGame
         public List<int> AIThinkingStates { get; } = new List<int>
         {
             NormalRoleStateName.GROUNDED,
+            NormalRoleStateName.NORMAL_AI,
         };
+
+        protected override void OnAddToWorld()
+        {
+            base.OnAddToWorld();
+
+            WorldStates?.AddGoalExecuter(this);
+        }
+
+        protected override void OnRemoveFormWorld()
+        {
+            base.OnRemoveFormWorld();
+
+            WorldStates?.RemoveGoalExecuter(this);
+        }
+
+        public override void SetEntitasID(int id)
+        {
+            base.SetEntitasID(id);
+
+            if (ID != int.MaxValue)
+            {
+                GoalExecuterID = ID;
+            }
+        }
+
+        public void SetGoal(IGoal goal)
+        {
+            if (CurrentGoal != default)
+            {
+                KLConsts.S_KL.DeliveParam<KLServer, IGoalExecuter>("GoalExecuterParam", OnRemoveFollowGoal);
+            }
+
+            CurrentGoal = goal;
+            
+            KLConsts.S_KL.DeliveParam<KLServer, IGoalExecuter>("GoalExecuterParam", OnSetFollowGoal);
+        }
+
+        private void OnSetFollowGoal(ref IParamNotice<IGoalExecuter> target)
+        {
+            GoalExecuterNotice notice = target as GoalExecuterNotice;
+            notice.IsAdd = true;
+            notice.FollowGoal = CurrentGoal;
+
+            KLConsts.N_GOAL_FOLLOWER.Broadcast(target);
+            KLConsts.S_KL.Revert<KLServer>("GoalExecuterParam", target);
+        }
+
+        private void OnRemoveFollowGoal(ref IParamNotice<IGoalExecuter> target)
+        {
+            GoalExecuterNotice notice = target as GoalExecuterNotice;
+            notice.FollowGoal = CurrentGoal;
+
+            KLConsts.N_GOAL_FOLLOWER.Broadcast(target);
+            KLConsts.S_KL.Revert<KLServer>("GoalExecuterParam", target);
+        }
+
+        public bool HasPlanned
+        {
+            get
+            {
+                return CurrentGoal != default;
+            }
+        }
 
         public int ATKID { get; private set; }
         public bool IsInitNormalATKPhases { get; set; }
         public override int RoleFSMName { get; set; }// = KLConsts.RFSM_NORMAL_ENMEY;
-        public IAnticipathioner Anticipathioner { get; set; }
-        public ISensor AISensor { get; set; }
+        public IAIBrain AIBrain { get; private set; }
+        public ISensor AISensor { get; private set; }
+        public IAIBehavioralInfo Anticipathioner { get; set; }
+        public IAIBehavioralInfo PolicyAnalyzer { get; set; }
+        public IGoal CurrentGoal { get; private set; }
+        public int ConductTimingTask { get; set; } = int.MaxValue;
+        public int GoalExecuterID { get; private set; }
+        public virtual IAIExecutable[] AIExecutables { get; } = default;
+        public IGoalPlanner GoalPlanner { get; private set; }
     }
 }

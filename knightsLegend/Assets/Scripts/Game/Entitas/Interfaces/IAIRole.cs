@@ -2,11 +2,14 @@
 
 namespace KLGame
 {
-    public interface IAIRole : IKLRole
+    public interface IAIRole : IKLRole, IGoalExecuter
     {
         bool ShouldAIThinking();
-        ISensor AISensor { get; set; }
-        IAnticipathioner Anticipathioner { get; set; }
+        IAIBrain AIBrain { get; }
+        ISensor AISensor { get; }
+        IAIBehavioralInfo Anticipathioner { get; set; }
+        IAIBehavioralInfo PolicyAnalyzer { get; set; }
+        int ConductTimingTask { get; set; }
         List<int> AIThinkingStates { get; }
     }
 }

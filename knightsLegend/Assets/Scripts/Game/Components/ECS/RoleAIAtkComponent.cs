@@ -1,19 +1,24 @@
 ﻿using ShipDock.Applications;
 using ShipDock.ECS;
+using ShipDock.Pooling;
+using ShipDock.Tools;
 
 namespace KLGame
 {
     public class RoleAIAtkComponent : ShipDockComponent//RoleInputPhasesComponent
     {
         private IAIRole mAIRole;
+        private IAIBrain mBrain;
         private ICommonRole mRole;
         private PositionComponent mPositionComp;
         private TimingTasker mAtkTimingTask;
+        private KeyValueList<int, IAIBrain> mAIBrains;
 
         public override void Init()
         {
             base.Init();
 
+            mAIBrains = new KeyValueList<int, IAIBrain>();
             //AddAllowCalled(KLConsts.ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK, 1);
         }
 
@@ -27,6 +32,23 @@ namespace KLGame
             //{
             //    InitRolePhases(mRoleInput);
             //}
+            if (mAIRole.WillDestroy)
+            {
+                mAIBrains.Remove(mAIRole.ID);
+            }
+            else if (!mAIBrains.ContainsKey(mAIRole.ID))
+            {
+                mAIBrains.Put(mAIRole.ID, mAIRole.AIBrain);
+            }
+
+            mBrain = mAIRole.AIBrain;
+
+            if (mAIRole.AfterGetStopDistChecked)
+            {
+                TimingTaskNotice notice = Pooling<TimingTaskNotice>.From();
+                notice.ReinitForStart(KLConsts.T_AI_THINKING, KLConsts.T_AI_THINKING_TIME_TASK_AI_WAITED, mAIRole.AISensor.GetDecisionTime());
+            }
+
             CheckAttackAI();
         }
 
@@ -51,7 +73,11 @@ namespace KLGame
 
         private void CheckAttackAI()
         {
-            mAtkTimingTask = mAIRole.TimesEntitas.GetTimingTasker(KLConsts.T_AI_THINKING, KLConsts.T_AI_THINKING_TIME_TASK_ATK);
+            if(mAIRole.ConductTimingTask == int.MaxValue)
+            {
+                return;
+            }
+            mAtkTimingTask = mAIRole.TimesEntitas.GetTimingTasker(KLConsts.T_AI_THINKING, mAIRole.ConductTimingTask);// KLConsts.T_AI_THINKING_TIME_TASK_ATK);
             if (!mAtkTimingTask.ShouldRun())
             {
                 return;

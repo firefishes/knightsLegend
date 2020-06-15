@@ -123,6 +123,11 @@ namespace KLGame
         {
             ShipDockApp.Close();
         }
+
+        private void Update()
+        {
+            //Debug.Log(ShipDockApp.Instance.TicksUpdater.LastRunTime);
+        }
     }
 
 }

@@ -8,7 +8,7 @@ namespace KLGame
     {
         public NormalEnemyRoleFSM(int name) : base(name)
         {
-            IsApplyFastChange = true;
+            //IsApplyFastChange = true;
         }
 
         public bool HitCommit(int hitCollidID)
@@ -23,11 +23,9 @@ namespace KLGame
         public override IState[] StateInfos { get; } = new IState[]
         {
             new FState(DEFAULT_STATE),
-            new UnderAttackState(NormalRoleStateName.UNDER_ATK),
-            new GroundedState(NormalRoleStateName.GROUNDED),
-            new NormalEnemyATKState(NormalRoleStateName.NORMAL_ATK),
-            new NormalAttackAIState(NormalRoleStateName.NORMAL_ATTACK_AI),
-            new NormalDefenceState(NormalRoleStateName.NORMAL_DEF),
+            new AIIdleState(NormalRoleStateName.FS_AI_IDLE),
+            new AIMovingState(NormalRoleStateName.FS_AI_MOVING),
+            new NormalEnemyAIExecutingState(NormalRoleStateName.FS_AI_EXECUTING)
         };
     }
 }

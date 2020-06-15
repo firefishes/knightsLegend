@@ -13,11 +13,10 @@ namespace KLGame
             IsStart = true;
         }
 
-        public void ReinitForStop(int timingName, int mapperIndex, bool onlyChangeState = false)
+        public void ReinitForStop(int timingName, int mapperIndex)
         {
             TimingName = timingName;
             MapperIndex = mapperIndex;
-            OnlyChangeState = onlyChangeState;
             IsStop = true;
         }
 
@@ -33,7 +32,6 @@ namespace KLGame
             base.Revert();
 
             Time = 0f;
-            OnlyChangeState = false;
             IsStart = false;
             IsStop = false;
             IsReset = false;
@@ -47,7 +45,6 @@ namespace KLGame
         public int TimingName { get; private set; }
         public int MapperIndex { get; private set; }
         public float Time { get; private set; }
-        public bool OnlyChangeState { get; private set; } = false;
         public bool IsStart { get; private set; }
         public bool IsReset { get; private set; }
         public bool IsStop { get; private set; }

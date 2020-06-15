@@ -18,11 +18,15 @@ namespace KLGame
 
             Utils.Reclaim(BattleDataUnit);
 
+            RemoveFromWorld();
+
             TimesEntitas?.ToPool();
             TimesEntitas = default;
             Processing = default;
+            WorldStates = default;
             CollidingChanger = default;
             BattleDataUnit = default;
+            HasAddToWorld = false;
         }
 
         public override void InitComponents()
@@ -33,11 +37,14 @@ namespace KLGame
 
             ShipDockComponentManager components = ShipDockApp.Instance.Components;
             Processing = components.RefComponentByName(KLConsts.C_PROCESS) as KLProcessComponent;
+            WorldStates = components.RefComponentByName(KLConsts.C_WORLD_STATES) as KLWorldStatesComponent;
 
             TimesEntitas = TimingTaskEntitas.Create();
             TimesEntitas.CreateMapper();
             //TimesEntitas.AddTiming(KLConsts.T_AI_ATK_TIME, 0);
-            TimesEntitas.AddTiming(KLConsts.T_AI_ATK_HIT_TIME, 0);
+            //TimesEntitas.AddTiming(KLConsts.T_AI_ATK_HIT_TIME, 0);
+
+            AddToWorld();
         }
 
         protected virtual void OnRoleNotificationHandler(INoticeBase<int> param)
@@ -50,10 +57,44 @@ namespace KLGame
             //}
             switch (param.Name)
             {
+                case KLConsts.N_ROLE_ADD_TO_WORLD:
+                    AddToWorld();
+                    break;
                 case KLConsts.N_ROLE_TIMING:
                     TimingControll(param as TimingTaskNotice);
                     break;
             }
+        }
+
+        private void AddToWorld()
+        {
+            if (HasAddToWorld)
+            {
+                return;
+            }
+            HasAddToWorld = true;
+
+            OnAddToWorld();
+        }
+
+        protected virtual void OnAddToWorld()
+        {
+            WorldStates?.AddWorldGoals(this);
+            WorldStates?.AddWorldStates(this);
+        }
+
+        private void RemoveFromWorld()
+        {
+            if (HasAddToWorld)
+            {
+                OnRemoveFormWorld();
+            }
+        }
+
+        protected virtual void OnRemoveFormWorld()
+        {
+            WorldStates?.RemoveWorldGoals(this);
+            WorldStates?.RemoveWorldStates(this);
         }
 
         private void TimingControll(TimingTaskNotice notice)
@@ -73,7 +114,7 @@ namespace KLGame
                 }
                 else
                 {
-                    timingTasker.Stop(notice.OnlyChangeState);
+                    timingTasker.SetStateToFinish();
                 }
             }
         }
@@ -117,7 +158,12 @@ namespace KLGame
             BattleDataUnit = battleUnit;
         }
 
-        protected override int[] ComponentIDs { get; } = new int[]
+        public void SetStopDistance(float distance)
+        {
+            StopDistance = distance;
+        }
+        
+        protected override int[] ComponentNames { get; } = new int[]
         {
             KLConsts.C_PROCESS,
             KLConsts.C_ROLE_INPUT,
@@ -127,18 +173,25 @@ namespace KLGame
             KLConsts.C_ROLE_MUST,
             KLConsts.C_ROLE_CAMP,
             KLConsts.C_ROLE_BATTLE_DATA,
+            KLConsts.C_WORLD_STATES,
         };
+        
+        protected float StopDistance { get; set; } = 1.5f;
 
         public abstract int RoleFSMName { get; set; }
         public KLProcessComponent Processing { get; private set; }
+        public KLWorldStatesComponent WorldStates { get; private set; }
         public TimingTaskEntitas TimesEntitas { get; private set; }
         public bool HitSomeOne { get; set; }
         public Vector3 WeapontPos { get; set; }
         public CommonRoleFSM RoleFSM { get; protected set; }
         public RoleFSMObj FSMStates { get; set; }
         public BattleUnit BattleDataUnit { get; private set; }
+        public Quaternion CurQuaternaion { get; set; } = Quaternion.identity;
         public bool IsDead { get; set; } = false;
         public int DefenceType { get; set; } = 0;
-        public Quaternion CurQuaternaion { get; set; } = Quaternion.identity;
+        public bool HasAddToWorld { get; private set; }
+        public virtual IGoal[] ProvideGoals { get; protected set; } = default;
+        public virtual IWorldState[] ProvideWorldStates { get; protected set; } = default;
     }
 }

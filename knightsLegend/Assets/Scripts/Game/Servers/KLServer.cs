@@ -21,7 +21,11 @@ namespace KLGame
 
             Register<IParamNotice<NormalATKStateParam>>(NormalATKStateParamResolver, Pooling<NormalATKStateParam>.Instance);
             Register<IParamNotice<IKLRole>>(KLRoleResolver, Pooling<ParamNotice<IKLRole>>.Instance);
+            Register<IParamNotice<IGoalExecuter>>(GoalExecuterResolver, Pooling<GoalExecuterNotice>.Instance);
         }
+
+        [Resolvable("GoalExecuterParam")]
+        private void GoalExecuterResolver(ref IParamNotice<IGoalExecuter> target) { }
 
         [Resolvable("KLRole")]
         private void KLRoleResolver(ref IParamNotice<IKLRole> target) { }
@@ -33,5 +37,24 @@ namespace KLGame
         {
             base.ServerReady();
         }
+    }
+
+    public class GoalExecuterNotice : ParamNotice<IGoalExecuter>
+    {
+        public override void Revert()
+        {
+            base.Revert();
+
+            IsAdd = default;
+            FollowGoal = default;
+        }
+
+        public override void ToPool()
+        {
+            Pooling<GoalExecuterNotice>.To(this);
+        }
+
+        public IGoal FollowGoal { get; set; }
+        public bool IsAdd { get; set; }
     }
 }

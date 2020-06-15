@@ -1,4 +1,5 @@
-﻿using ShipDock.Pooling;
+﻿using System;
+using ShipDock.Pooling;
 
 namespace KLGame
 {
@@ -7,6 +8,17 @@ namespace KLGame
     {
         public NormalEnemyATKState(int name) : base(name)
         {
+        }
+
+        protected override bool ShouldEnter(ref NormalATKStateParam param)
+        {
+            bool result = param.KLRole.FindingPath;
+            if(result)
+            {
+                param.ToPool();
+                GetFSM().ChangeState(NormalRoleStateName.GROUNDED);
+            }
+            return !result && base.ShouldEnter(ref param);
         }
 
         public override bool HitCommit(int hitCollidID)
@@ -40,14 +52,19 @@ namespace KLGame
         protected override bool CheckBeforeFinish()
         {
             //TODO add config notice 1003
-            mRole.RoleInput.SetInputPhase(KLConsts.ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK);
+            mRole.RoleInput.SetInputPhase(KLConsts.ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK);//TODO 此处不需要了
+            StopAtkTiming();
+            mRole.AfterGetStopDistChecked = false;
 
+            return true;
+        }
+
+        private void StopAtkTiming()
+        {
             TimingTaskNotice notice = Pooling<TimingTaskNotice>.From();
             notice.ReinitForReset(KLConsts.T_AI_THINKING, KLConsts.T_AI_THINKING_TIME_TASK_ATK);
             mRole.Dispatch(KLConsts.N_ROLE_TIMING, notice);
             notice.ToPool();
-
-            return true;
         }
     }
 

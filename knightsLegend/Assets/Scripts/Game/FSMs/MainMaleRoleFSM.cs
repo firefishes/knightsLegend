@@ -7,7 +7,7 @@ namespace KLGame
     {
         public MainMaleRoleFSM(int name) : base(name)
         {
-            IsApplyFastChange = true;
+            //IsApplyFastChange = true;
         }
 
         public bool HitCommit(int hitCollidID) 

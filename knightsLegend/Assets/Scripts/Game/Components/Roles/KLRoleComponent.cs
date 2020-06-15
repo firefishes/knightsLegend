@@ -210,6 +210,7 @@ namespace KLGame
         public virtual void FillRoleFSMAIStateParam(IKLRoleFSMAIParam param)
         {
             param.KLRole = KLRole;
+            param.SkillMapper = m_Skills.skillMotions;
         }
 
         public void RoleFSMStateEntered(int stateName)
@@ -225,6 +226,11 @@ namespace KLGame
         public void RoleFSMStateCombo(int stateName)
         {
             m_FSMStates.RoleFSMStateCombo(this, stateName);
+        }
+
+        public void SetCurrentSkillID(int skillID)
+        {
+            CurrentSkillID = skillID;
         }
 
         private Vector3 CameraNodePosOffset { get; set; }

@@ -12,8 +12,7 @@ namespace KLGame
 
             int[] inputs = Inputs;
             Utils.Reclaim(ref inputs);
-
-            RoleFSMParam?.ToPool();
+            
             RoleFSMParam = default;
             Inputs = default;
         }

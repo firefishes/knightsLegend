@@ -5,22 +5,24 @@ using ShipDock.FSM;
 using ShipDock.Notices;
 using ShipDock.Pooling;
 using ShipDock.Testers;
-using UnityEngine;
+using System;
+using System.Collections.Generic;
 
 namespace KLGame
 {
-    public class NormalAttackAIState : FState
+    public class NormalAIState : FState, IAIState
     {
         private TimingTasker mThinkingTime;
         private MethodUpdater mStateUpdater;
         private IKLRoleFSMAIParam mStateParam;
 
-        public NormalAttackAIState(int name) : base(name)
+        public NormalAIState(int name) : base(name)
         {
             mStateUpdater = new MethodUpdater
             {
                 Update = OnStateUpdate
             };
+            PositionComponent = (KLPositionComponent)ShipDockApp.Instance.Components.RefComponentByName(KLConsts.C_POSITION);
         }
 
         public override void InitState(IStateParam param = null)
@@ -34,14 +36,11 @@ namespace KLGame
             if (mThinkingTime == default)
             {
                 TimingTaskEntitas timingTaskEntitas = AIRole.TimesEntitas;
-                mThinkingTime = timingTaskEntitas.GetTimingTasker(KLConsts.T_AI_THINKING, KLConsts.T_AI_THINKING_TIME_TASK_ATK);
+                mThinkingTime = timingTaskEntitas.GetTimingTasker(KLConsts.T_AI_THINKING, KLConsts.T_AI_THINKING_TIME_TASK_AI_WAITED);
                 //mNormalATKTime = timingTaskEntitas.GetTimingTasker(KLConsts.T_AI_ATK_TIME, KLConsts.T_AI_THINKING_TIME_TASK_ATK);
-
-                mThinkingTime.TotalCount = 1;
-                mThinkingTime.completion += ExecuteNormalAtk;
+                //mThinkingTime.completion += ExecuteNormalAtk;
             }
-
-            mThinkingTime.Start(0.2f);
+            mThinkingTime.ResetRunCounts();
 
             UpdaterNotice.AddUpdater(mStateUpdater);
         }
@@ -50,12 +49,13 @@ namespace KLGame
         {
             base.DeinitState();
 
+            Notice notice = Pooling<Notice>.From();
+            RoleSceneComp.Dispatch(KLConsts.N_AI_RESET, notice);
+            notice.ToPool();
+
             UpdaterNotice.RemoveUpdater(mStateUpdater);
 
             mThinkingTime.Stop();
-
-            //AIRole.SetShouldAtkAIWork(false);
-
             mStateParam?.ToPool();
             mStateParam = default;
             AIRole = default;
@@ -87,7 +87,7 @@ namespace KLGame
 
         private void OnStateUpdate(int time)
         {
-            if(AIRole != default)
+            if (AIRole != default)
             {
                 if (AIRole.FindingPath)
                 {
@@ -95,11 +95,35 @@ namespace KLGame
                     RoleSceneComp.Dispatch(KLConsts.N_AI_RESET, notice);
                     notice.ToPool();
 
-                    ChangeToPreviousState();
+                    //ChangeToPreviousState();
+
+                    //TODO 这里要处理重置AI思考后不要再次进入这个状态，否则会出现 1->4，4->1 的情况
                 }
             }
         }
 
+        public void AIConduct()
+        {
+            ICommonRole role = AIRole as ICommonRole;
+            bool isStoped = PositionComponent.IsEntitasStoped(ref role);
+            if (isStoped)
+            {
+                float distance = role.GetStopDistance();
+                List<SkillConduct> conducts = mStateParam.SkillMapper.GetDistanceNearestSkill(distance, MotionSceneInfo.CATEHORY_ATK);
+
+                Random random = new Random();
+                int index = random.Next(0, conducts.Count);
+                SkillConduct conduct = conducts[index];
+                index = random.Next(0, conduct.timingTasks.Length);
+                AIRole.ConductTimingTask = conduct.timingTasks[index];
+            }
+            else
+            {
+                mThinkingTime.ResetRunCounts();
+            }
+        }
+
+        public KLPositionComponent PositionComponent { get; private set; }
         public IAIRole AIRole { get; set; }
         public IKLRoleSceneComponent RoleSceneComp { get; private set; }
     }

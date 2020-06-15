@@ -13,13 +13,12 @@ namespace KLGame
         int CurrentSkillID { get; set; }
         Vector3 StartPos { get; set; }
         Quaternion StartRotation { get; set; }
-        SkillMotionsMapper SkillMapper { get; set; }
     }
 
     public interface IKLRoleFSMAIParam : IStateParam, IPoolable
     {
-        void ToPool();
         void FillValues();
+        SkillMotionsMapper SkillMapper { get; set; }
         IKLRoleSceneComponent RoleSceneComp { get; set; }
         IKLRole KLRole { get; set; }
     }
@@ -51,5 +50,6 @@ namespace KLGame
 
         public IKLRoleSceneComponent RoleSceneComp { get; set; }
         public IKLRole KLRole { get; set; }
+        public SkillMotionsMapper SkillMapper { get; set; }
     }
 }

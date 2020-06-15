@@ -1,4 +1,6 @@
-﻿namespace KLGame
+﻿using ShipDock.FSM;
+
+namespace KLGame
 {
 
     public class GroundedState : KLAnimatorState<KLRoleFSMStateParam>

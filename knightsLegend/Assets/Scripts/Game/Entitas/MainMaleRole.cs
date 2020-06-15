@@ -19,6 +19,17 @@ namespace KLGame
             Camp = 0;
 
             FSMStates = fsmStates;
+
+            ProvideGoals = new IGoal[]
+            {
+                new WillKillGoal(),
+                new MoveToTargetGoal(),
+            };
+
+            ProvideWorldStates = new IWorldState[]
+            {
+                new RoleAliveState(this)
+            };
         }
         
         protected override IRoleInput CreateRoleInputInfo()
@@ -31,7 +42,7 @@ namespace KLGame
             RoleFSM = fsm;
             return new KLRoleInputInfo(this, fsm);
         }
-
+        
         public override int RoleFSMName { get; set; }
     }
 }
