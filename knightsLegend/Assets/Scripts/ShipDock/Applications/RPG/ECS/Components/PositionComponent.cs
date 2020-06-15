@@ -4,8 +4,9 @@ namespace ShipDock.Applications
 {
     public class PositionComponent : ShipDockComponent
     {
+        protected ICommonRole mRole;
+
         private float mDistance;
-        private ICommonRole mRole;
 
         public override void Dispose()
         {
@@ -18,7 +19,18 @@ namespace ShipDock.Applications
         {
             if (mRole.EnemyTracking != default)
             {
-                CheckPosistionInLockDown();
+                mDistance = mRole.GetDistFromMainLockDown();
+                if (ShouldMove())
+                {
+                    if (!mRole.FindingPath)
+                    {
+                        StartMoving();
+                    }
+                }
+                else
+                {
+                    PositionStoped();
+                }
             }
             else
             {
@@ -26,28 +38,23 @@ namespace ShipDock.Applications
             }
         }
 
-        private void CheckPosistionInLockDown()
+        protected virtual void StartMoving()
         {
-            mDistance = mRole.GetDistFromMainLockDown();
-            if(ShouldMove())
-            {
-                mRole.FindingPath = true;
-                mRole.SpeedCurrent = mRole.Speed;
-            }
-            else
-            {
-                PositionStoped();
-            }
+            mRole.FindingPath = true;
+            mRole.SpeedCurrent = mRole.Speed;
+            mRole.AfterGetStopDistChecked = false;
         }
 
-        private void PositionStoped()
+        private bool PositionStoped()
         {
-            if(mRole.FindingPath || !mRole.AfterGetStopDistChecked)
+            bool result = mRole.FindingPath || !mRole.AfterGetStopDistChecked;
+            if (result)
             {
                 mRole.FindingPath = false;
                 mRole.SpeedCurrent = 0;
                 mRole.AfterGetStopDistChecked = mRole.AfterGetStopDistance(mDistance, mRole.Position);
             }
+            return result;
         }
 
         public override void Execute(int time, ref IShipDockEntitas target)
@@ -67,25 +74,17 @@ namespace ShipDock.Applications
             return role.GetStopDistance();
         }
 
-        private float GetTraceDistance()
-        {
-            return mRole.GetStopDistance();
-        }
-
         private bool ShouldMove()
         {
-            return mDistance > GetTraceDistance();
-        }
-
-        private bool ShouldStop(ref ICommonRole role)
-        {
-            return mDistance <= GetStopDistance(ref role);
+            return mDistance > mRole.GetStopDistance();
         }
 
         public bool IsEntitasStoped(ref ICommonRole target)
         {
-            float distance = target.GetDistFromMainLockDown();
-            return distance <= GetStopDistance(ref target);
+            float stopDistance = target.GetStopDistance();
+            float lockDownDistance = target.GetDistFromMainLockDown();
+
+            return lockDownDistance <= stopDistance;
         }
     }
 

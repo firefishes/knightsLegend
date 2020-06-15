@@ -1,29 +1,23 @@
 ﻿using ShipDock.Infos;
+using ShipDock.Interfaces;
 using ShipDock.Tools;
 using System;
 
 namespace ShipDock.Applications
 {
     [Serializable]
-    public class RoleFSMStateInfo : SceneInfosMapper<int, RoleFSMStateExecuableInfo>
+    public class RoleFSMStateInfo : IDispose
     {
         public int stateName;
         public NotificationInfo[] enterStateNotice;
         public NotificationInfo[] stateComboNotice;
         public NotificationInfo[] willFinishStateNotice;
-
-        public override int GetInfoKey(ref RoleFSMStateExecuableInfo item)
+        
+        public void Dispose()
         {
-            return item.phaseName;
-        }
-
-        public override void Dispose()
-        {
-            m_DisposeInfos = true;
-
-            base.Dispose();
-
             Utils.Reclaim(ref enterStateNotice);
+            Utils.Reclaim(ref stateComboNotice);
+            Utils.Reclaim(ref willFinishStateNotice);
         }
     }
 

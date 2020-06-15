@@ -118,8 +118,10 @@ namespace ShipDock.Applications
 
         private void OnServersInit()
         {
-            Components = new ShipDockComponentManager();
-            Components.FrameTimeInScene = (int)(UnityEngine.Time.deltaTime * 1000);
+            Components = new ShipDockComponentManager
+            {
+                FrameTimeInScene = (int)(UnityEngine.Time.deltaTime * 1000)
+            };
 
             MethodUpdater updater = ShipDockComponentManagerSetting.isMergeUpdateMode ?
                 new MethodUpdater

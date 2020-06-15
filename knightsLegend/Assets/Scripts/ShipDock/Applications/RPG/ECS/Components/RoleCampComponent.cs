@@ -104,7 +104,7 @@ namespace ShipDock.Applications
 
         private bool WillCheckAIRoleEnemyTarget()
         {
-            return !IsIgnoreCheckEnemyByCamp() && 
+            return !IsIgnoreCampCheck() && 
                     IsAIControllingTarget() &&
                     CheckTrackView() &&
                     HasEnemySet() && 
@@ -119,7 +119,7 @@ namespace ShipDock.Applications
         /// <summary>
         /// 是否忽略敌对阵营目标的检测检测
         /// </summary>
-        protected virtual bool IsIgnoreCheckEnemyByCamp()
+        protected virtual bool IsIgnoreCampCheck()
         {
             return false;
         }

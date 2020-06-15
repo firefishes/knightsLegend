@@ -20,6 +20,14 @@ namespace ShipDock.ECS
         private List<IShipDockComponent> mUpdateByTicks;
         private List<IShipDockComponent> mUpdateByScene;
 
+        private int mFinalUpdateTime;
+        private IShipDockEntitas mFinalUpdateEntitas;
+        private Action<int, IShipDockEntitas> mFinalUpdateMethod;
+
+        private DoubleBuffers<int> mQueueUpdateTime;
+        private DoubleBuffers<IShipDockEntitas> mQueueUpdateEntitas;
+        private DoubleBuffers<Action<int, IShipDockEntitas>> mQueueUpdateExecute;
+
         public ShipDockComponentManager()
         {
             mComponent = default;
@@ -29,6 +37,12 @@ namespace ShipDock.ECS
             mDeletdComponents = new List<int>();
             mUpdateByTicks = new List<IShipDockComponent>();
             mUpdateByScene = new List<IShipDockComponent>();
+
+            mQueueUpdateTime = new DoubleBuffers<int>();
+            mQueueUpdateEntitas = new DoubleBuffers<IShipDockEntitas>();
+            mQueueUpdateExecute = new DoubleBuffers<Action<int, IShipDockEntitas>>();
+            
+            mQueueUpdateExecute.OnDequeue += OnQueueUpdateExecute;
         }
 
         public void Dispose()
@@ -48,6 +62,9 @@ namespace ShipDock.ECS
                 RelateComponents = willRelateComponents
             };
             target.SetSceneUpdate(isUpdateByScene);
+            target.OnFinalUpdateForTime = OnFinalUpdateForTime;
+            target.OnFinalUpdateForEntitas = OnFinalUpdateForEntitas;
+            target.OnFinalUpdateForExecute = OnFinalUpdateForExecute;
 
             int aid = mMapper.Add(target, out int statu);
             if (isUpdateByScene)
@@ -73,6 +90,21 @@ namespace ShipDock.ECS
                 aid = -1;
             }
             return aid;
+        }
+
+        private void OnFinalUpdateForExecute(Action<int, IShipDockEntitas> method)
+        {
+            mQueueUpdateExecute.Enqueue(method, false);
+        }
+
+        private void OnFinalUpdateForEntitas(IShipDockEntitas entitas)
+        {
+            mQueueUpdateEntitas.Enqueue(entitas, false);
+        }
+
+        private void OnFinalUpdateForTime(int time)
+        {
+            mQueueUpdateTime.Enqueue(time, false);
         }
 
         public T GetEntitasWithComponents<T>(params int[] aidArgs) where T : IShipDockEntitas, new()
@@ -163,6 +195,9 @@ namespace ShipDock.ECS
                     }
                 }
             }
+
+            FinalUpdate(time);
+
             RemoveSingedComponents();
         }
 
@@ -189,8 +224,39 @@ namespace ShipDock.ECS
                         }
                     }
                 }
+
+                FinalUpdate(time);
+
                 CountTime -= FrameTimeInScene;
             }
+        }
+
+        private void OnQueueUpdateExecute(int time, Action<int, IShipDockEntitas> current)
+        {
+            mFinalUpdateTime = mQueueUpdateTime.Current;
+            mFinalUpdateEntitas = mQueueUpdateEntitas.Current;
+            mFinalUpdateMethod = current;
+            
+            if (mFinalUpdateEntitas == default)
+            {
+                mFinalUpdateMethod.Invoke(mFinalUpdateTime, default);
+            }
+            else
+            {
+                if (!mFinalUpdateEntitas.WillDestroy && (mFinalUpdateEntitas.ID != int.MaxValue))
+                {
+                    mFinalUpdateMethod.Invoke(mFinalUpdateTime, mFinalUpdateEntitas);
+                }
+            }
+        }
+
+        private void FinalUpdate(int time)
+        {
+            mQueueUpdateTime.Step(time);
+            mQueueUpdateEntitas.Step(time);
+            mQueueUpdateExecute.Step(time);
+            mFinalUpdateEntitas = default;
+            mFinalUpdateMethod = default;
         }
 
         public void FreeComponentUnit(int time, Action<Action<int>> method = default)

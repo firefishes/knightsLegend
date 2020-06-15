@@ -75,7 +75,6 @@ namespace ShipDock.Applications
             ShipDockConsts.NOTICE_REMOVE_UPDATE.Add(RemoveUpdate);
             ShipDockConsts.NOTICE_ADD_UPDATE.Add(AddUpdate);
             ShipDockConsts.NOTICE_FRAME_UPDATER_COMP_READY.Broadcast();
-            //GameUpdater.Instance.RegisteredOnFrameUpdaterReady();
         }
 
         private void Disabled()
@@ -161,12 +160,15 @@ namespace ShipDock.Applications
             {
                 return;
             }
+            RunTime += time * 0.001f;
 
             CheckRemoveUpdate();
             WalkUpdateItems(time, TICKS_FIXED_UPDATE);
             WalkUpdateItems(time, TICKS_UPDATE);
             WalkUpdateItems(time, TICKS_LATE_UPDATE);
             mTicksLater.Update(time);
+
+            LastRunTime = RunTime;
         }
 
         private void WalkUpdateItems(int time, int methodType)
@@ -259,6 +261,16 @@ namespace ShipDock.Applications
             }
         }
 
+        public float DeltaTime
+        {
+            get
+            {
+                return LastRunTime - RunTime;
+            }
+        }
+
         public float FixedUpdateTime { get; private set; }
+        public float RunTime { get; private set; }
+        public float LastRunTime { get; private set; }
     }
 }

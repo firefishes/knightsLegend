@@ -14,7 +14,7 @@ namespace ShipDock.Applications
         {
             base.Dispose();
 
-            int[] list = ComponentIDs;
+            int[] list = ComponentNames;
             Utils.Reclaim(ref list);
         }
 
@@ -24,12 +24,12 @@ namespace ShipDock.Applications
 
             IShipDockComponent component;
             var manager = ShipDockApp.Instance.Components;
-            int aid;
-            int max = ComponentIDs != default ? ComponentIDs.Length : 0;
+            int name;
+            int max = ComponentNames != default ? ComponentNames.Length : 0;
             for (int i = 0; i < max; i++)
             {
-                aid = ComponentIDs[i];
-                component = manager.RefComponentByName(aid);
+                name = ComponentNames[i];
+                component = manager.RefComponentByName(name);
                 AddComponent(component);
             }
         }
@@ -45,6 +45,6 @@ namespace ShipDock.Applications
             return result;
         }
 
-        protected abstract int[] ComponentIDs { get; }
+        protected abstract int[] ComponentNames { get; }
     }
 }

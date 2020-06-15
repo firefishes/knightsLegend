@@ -152,12 +152,13 @@ namespace ShipDock.Applications
 
             if(mRole != default)
             {
-                mRole.Name = name;
-                mRole.RoleMustSubgroup = m_RoleMustSubgroup;
-                mRole.InitComponents();
-                mRole.SpeedCurrent = mRole.Speed;
                 mRoleData = mRole.RoleDataSource;
+
+                mRole.Name = name;
                 mRole.SetEntitasID(GetInstanceID());
+                mRole.RoleMustSubgroup = m_RoleMustSubgroup;
+                mRole.SpeedCurrent = mRole.Speed;
+                mRole.InitComponents();
 
                 InitNotices();
             }

@@ -89,6 +89,37 @@ namespace ShipDock.Applications
             return result;
         }
 
+        public List<SkillConduct> GetDistanceNearestSkill(float distance, int category, bool shouldMults = true)
+        {
+            int max = Size;
+            MotionSceneInfo item;
+            List<SkillConduct> result = new List<SkillConduct>();
+            for (int i = 0; i < max; i++)
+            {
+                item = GetValue(Keys[i]);
+                if ((category == item.category) && (distance <= item.validDistance))
+                {
+                    SkillConduct conduct = new SkillConduct
+                    {
+                        id = item.ID,
+                        timingTasks = item.timingTasks
+                    };
+                    result.Add(conduct);
+                    if (!shouldMults)
+                    {
+                        break;
+                    }
+                }
+            }
+            return result;
+        }
+
         public SkillsMapper SkillsMapper { get; set; }
+    }
+
+    public struct SkillConduct
+    {
+        public int id;
+        public int[] timingTasks;
     }
 }

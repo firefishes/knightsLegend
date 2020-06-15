@@ -199,5 +199,13 @@ namespace ShipDock.Tools
                 from.Clear();
             }
         }
+
+        /// <summary>
+        /// 检测目标值是否包含权限
+        /// </summary>
+        public static bool IsContains(int target, int containsPart)
+        {
+            return (target & containsPart) == containsPart;
+        }
     }
 }

@@ -16,6 +16,8 @@ namespace ShipDock.Applications
         public int fsmType;
         [SerializeField]
         public RoleFSMStateInfo[] fsmStateInfo;
+        [SerializeField]
+        public RoleFSMStateExecuableInfo[] roleExecuableInfos;
 
         public void Init()
         {
@@ -26,7 +28,6 @@ namespace ShipDock.Applications
             for (int i = 0; i < max; i++)
             {
                 item = fsmStateInfo[i];
-                item.InitMapper();
                 StatesMapper.Put(item.stateName, item);
             }
         }
@@ -48,24 +49,18 @@ namespace ShipDock.Applications
 
         public void FillToSceneComponent(RoleComponent roleComponent)
         {
-            int max = fsmStateInfo.Length;
+            int max = roleExecuableInfos.Length;
             for (int i = 0; i < max; i++)
             {
-                var stateInfo = fsmStateInfo[i];
-                var list = stateInfo.Values;
-                int n = list.Count;
-                for (int j = 0; j < n; j++)
+                var item = roleExecuableInfos[i];
+                if (item.isExecuteInScene)
                 {
-                    var item = list[j];
-                    if (item.isExecuteInScene)
-                    {
-                        roleComponent.ActiveRoleInputPhase(item.phaseName, true);
-                    }
-                    else
-                    {
-                        IRoleInput roleInput = roleComponent.RoleEntitas.RoleInput;
-                        roleInput.ActiveEntitasPhase(item.phaseName, true);
-                    }
+                    roleComponent.ActiveRoleInputPhase(item.phaseName, true);
+                }
+                else
+                {
+                    IRoleInput roleInput = roleComponent.RoleEntitas.RoleInput;
+                    roleInput.ActiveEntitasPhase(item.phaseName, true);
                 }
             }
         }

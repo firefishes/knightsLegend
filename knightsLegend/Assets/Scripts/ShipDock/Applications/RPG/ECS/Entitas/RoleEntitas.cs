@@ -44,7 +44,7 @@ namespace ShipDock.Applications
 
         public virtual bool AfterGetStopDistance(float dist, Vector3 entitasPos)
         {
-            return false;
+            return true;
         }
 
         public virtual float GetStopDistance()
@@ -113,7 +113,7 @@ namespace ShipDock.Applications
         public CommonRoleAnimatorInfo RoleAnimatorInfo { get; private set; }
         public bool AfterGetStopDistChecked { get; set; }
         public virtual float TrackViewField { get; set; }
-        protected override int[] ComponentIDs { get; } = default;
+        protected override int[] ComponentNames { get; } = default;
     }
 
     public class RoleColldingPos

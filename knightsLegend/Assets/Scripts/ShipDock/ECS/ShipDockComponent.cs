@@ -23,10 +23,15 @@ namespace ShipDock.ECS
             CleanAllEntitas(ref mEntitasIDs);
             CleanAllEntitas(ref mEntitasIDsRelease);
 
+            OnFinalUpdateForTime = default;
+            OnFinalUpdateForEntitas = default;
+            OnFinalUpdateForExecute = default;
+
             mEntitasItem = default;
             Utils.Reclaim(ref mEntitasIDs);
             Utils.Reclaim(ref mEntitasIDsRelease);
             Utils.Reclaim(mEntitas);
+            ID = int.MaxValue;
         }
 
         private void CleanAllEntitas(ref List<int> list)
@@ -65,6 +70,11 @@ namespace ShipDock.ECS
             return result;
         }
 
+        public void GetEntitasRef(int id, out IShipDockEntitas entitas)
+        {
+            entitas = mEntitas.Get(id, out _);
+        }
+
         public virtual int DropEntitas(IShipDockEntitas target, int entitasID)
         {
             if (mEntitasIDsRemoved.Contains(entitasID))
@@ -88,6 +98,17 @@ namespace ShipDock.ECS
 
         public virtual void Execute(int time, ref IShipDockEntitas target)
         {
+        }
+
+        protected void ExecuteInFinal(int time, IShipDockEntitas entitas, Action<int, IShipDockEntitas> method)
+        {
+            if (ID == int.MaxValue)
+            {
+                return;
+            }
+            OnFinalUpdateForTime.Invoke(time);
+            OnFinalUpdateForEntitas.Invoke(entitas);
+            OnFinalUpdateForExecute(method);
         }
 
         public void UpdateComponent(int time)
@@ -211,5 +232,8 @@ namespace ShipDock.ECS
         public int[] RelateComponents { get; set; }
         public bool IsSceneUpdate { get; private set; }
         public bool IsVariableFrame { get; set; }
+        public Action<int> OnFinalUpdateForTime { private get; set; }
+        public Action<IShipDockEntitas> OnFinalUpdateForEntitas { set; private get; }
+        public Action<Action<int, IShipDockEntitas>> OnFinalUpdateForExecute { set; private get; }
     }
 }

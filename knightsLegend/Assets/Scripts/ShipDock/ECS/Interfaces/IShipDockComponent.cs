@@ -1,4 +1,5 @@
 ﻿using ShipDock.Interfaces;
+using System;
 
 namespace ShipDock.ECS
 {
@@ -7,6 +8,7 @@ namespace ShipDock.ECS
         void Init();
         void FillRelateComponents(IShipDockComponentManager manager);
         IShipDockEntitas GetEntitas(int id);
+        void GetEntitasRef(int id, out IShipDockEntitas entitas);
         int SetEntitas(IShipDockEntitas target);
         int DropEntitas(IShipDockEntitas target, int entitasID);
         void Execute(int time, ref IShipDockEntitas target);
@@ -18,5 +20,8 @@ namespace ShipDock.ECS
         int ID { get; }
         bool IsSceneUpdate { get; }
         int[] RelateComponents { get; set; }
+        Action<int> OnFinalUpdateForTime { set; }
+        Action<IShipDockEntitas> OnFinalUpdateForEntitas { set; }
+        Action<Action<int, IShipDockEntitas>> OnFinalUpdateForExecute { set; }
     }
 }

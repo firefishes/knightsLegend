@@ -26,7 +26,7 @@ namespace ShipDock.ECS
             }
         }
 
-        public void SetEntitasID(int id)
+        public virtual void SetEntitasID(int id)
         {
             if (ID == int.MaxValue)
             {

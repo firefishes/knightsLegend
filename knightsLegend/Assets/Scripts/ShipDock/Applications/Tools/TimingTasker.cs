@@ -27,13 +27,15 @@ namespace ShipDock.Applications
             timeGapper.totalTime = 0f;
         }
 
-        public void Stop(bool onlyChangeState = false)
+        public void Stop()
         {
             mState = 2;
-            if (!onlyChangeState)
-            {
-                timeGapper.Stop();
-            }
+            timeGapper.Stop();
+        }
+
+        public void SetStateToFinish()
+        {
+            mState = 2;
         }
 
         public void Start(float totalTime)
