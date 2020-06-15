@@ -14,37 +14,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fsmType: 1
   fsmStateInfo:
-  - m_DisposeInfos: 0
-    infos: []
-    stateName: 1
+  - stateName: 1
     enterStateNotice: []
     stateComboNotice: []
     willFinishStateNotice: []
-  - m_DisposeInfos: 0
-    infos:
-    - phaseName: 100
-      allowCalledInEntitas: 0
-      callbackID: 0
-      isExecuteInScene: 1
-    stateName: 3
+  - stateName: 3
     enterStateNotice:
     - noticeName: 1006
     stateComboNotice: []
     willFinishStateNotice: []
-  - m_DisposeInfos: 0
-    infos: []
-    stateName: 2
+  - stateName: 2
     enterStateNotice:
     - noticeName: 1006
     stateComboNotice:
     - noticeName: 1008
     willFinishStateNotice:
     - noticeName: 1007
-  - m_DisposeInfos: 0
-    infos: []
-    stateName: 5
+  - stateName: 5
     enterStateNotice:
     - noticeName: 1006
     stateComboNotice: []
     willFinishStateNotice:
     - noticeName: 1007
+  roleExecuableInfos:
+  - phaseName: 6
+    allowCalledInEntitas: 0
+    callbackID: 0
+    isExecuteInScene: 1

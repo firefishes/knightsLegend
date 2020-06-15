@@ -106,13 +106,19 @@ MonoBehaviour:
     - skillName: "\u88AB\u653B\u51FB"
       isCombo: 0
       ID: 0
+      category: 4
+      validDistance: 0
       checkComboTime: 0
+      timingTasks: 
       indexsForID: 00000000
       attackFrameInfo: []
-    - skillName: "\u666E\u901A\u653B\u51FB1--\u89E6\u53D1"
+    - skillName: "\u666E\u901A\u653B\u51FB1"
       isCombo: 1
       ID: 1
+      category: 1
+      validDistance: 2.5
       checkComboTime: 1.5
+      timingTasks: 00000000
       indexsForID: 0100000002000000
       attackFrameInfo:
       - frameMin: 8
@@ -124,6 +130,9 @@ MonoBehaviour:
     - skillName: "\u666E\u901A\u9632\u5FA1"
       isCombo: 0
       ID: 3
+      category: 2
+      validDistance: 0
       checkComboTime: 0
+      timingTasks: 
       indexsForID: 03000000
       attackFrameInfo: []
