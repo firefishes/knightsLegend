@@ -5,6 +5,7 @@ namespace KLGame
 {
     public class GoalPlanner : IGoalPlanner
     {
+        private int mInfeasibleIndex;
         private IWorldState mStateItem;
         private IAIExecutable mExecutable;
         private WorldStatesMapper mWorldStates;
@@ -65,6 +66,39 @@ namespace KLGame
             }
         }
 
+        private void CheckFeasible(ref List<IWorldState> states, ref bool feasible)
+        {
+            if (feasible)
+            {
+                mInfeasibleIndex = -1;
+                int max = states.Count;
+                for (int i = 0; i < max; i++)
+                {
+                    mStateItem = states[i];
+                    mExecutable.CheckFeasible(mStateItem, out int feasibleStatu);
+                    feasible = feasibleStatu != 2;
+                    if (feasible)
+                    {
+                        mExecutable.CommitEffect(ref mStateItem);
+                    }
+                    else
+                    {
+                        mInfeasibleIndex = i;
+                        break;
+                    }
+                }
+
+                if (!feasible)
+                {
+                    for (int i = 0; i < mInfeasibleIndex; i++)
+                    {
+                        mStateItem = states[i];
+                        mStateItem.RevertEffect();
+                    }
+                }
+            }
+        }
+
         private void CheckFeasibleByOriented(int checkOriented, ref bool isAllFeasible)
         {
             int oriented = mExecutable.OrientedType;
@@ -74,11 +108,11 @@ namespace KLGame
                 mWorldStates.RefOrientedStates(checkOriented, ref mStatesChecking);
                 CheckFeasible(ref mStatesChecking, ref isAllFeasible);
             }
+            //TODO 状态回退
         }
 
         public void Planning(int index, ref IGoal goal, ref WorldStatesMapper worldStates, ref IAIExecutable[] executables, ref PlanGraphic planGraphic)
         {
-
             bool isAllFeasible = true;
 
             mStatesChecking = default;
@@ -89,15 +123,7 @@ namespace KLGame
             CheckFeasibleByOriented(KLConsts.WORLD_STATE_ORIENTED_OBJECTIVE, ref isAllFeasible);
             CheckFeasibleByOriented(KLConsts.WORLD_STATE_ORIENTED_ONESELF, ref isAllFeasible);
 
-            if (isAllFeasible)
-            {
-                planGraphic.AddNode(mExecutable, index > 0);
-                //PlanReceiver.RoleFSM.ChangeState(NormalRoleStateName.FS_AI_EXECUTING);
-            }
-            else
-            {
-
-            }
+            planGraphic.AddNode(mExecutable, index > 0 && !isAllFeasible);
 
             index++;
             if (index < executables.Length)
@@ -105,23 +131,6 @@ namespace KLGame
                 Planning(index, ref goal, ref worldStates, ref executables, ref planGraphic);
             }
             UnityEngine.Debug.Log(ShipDock.Applications.ShipDockApp.Instance.TicksUpdater.LastRunTime + "-" + PlanReceiver.ToString());
-        }
-
-        private void CheckFeasible(ref List<IWorldState> states, ref bool allFeasible)
-        {
-            if (allFeasible)
-            {
-                int max = states.Count;
-                for (int i = 0; i < max; i++)
-                {
-                    mStateItem = states[i];
-                    allFeasible = mExecutable.CheckFeasible(mStateItem);
-                    if (!allFeasible)
-                    {
-                        break;
-                    }
-                }
-            }
         }
         
         private void PlanFinish()

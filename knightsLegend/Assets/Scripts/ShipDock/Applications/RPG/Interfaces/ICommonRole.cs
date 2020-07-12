@@ -12,7 +12,7 @@ namespace ShipDock.Applications
         List<RoleColldingPos> ColldingList(int cid);
         IRoleInput RoleInput { get; set; }
         IRoleData RoleDataSource { get; }
-        ICommonRole EnemyTracking { get; set; }
+        ICommonRole TargetTracking { get; set; }
         CommonRoleMustSubgroup RoleMustSubgroup { get; set; }
         CommonRoleAnimatorInfo RoleAnimatorInfo { get; }
         Vector3 GroundNormal { get; set; }
@@ -22,6 +22,7 @@ namespace ShipDock.Applications
         bool IsUserControlling { get; set; }
         bool IsGrounded { get; set; }
         bool IsGroundedAndCrouch { get; set; }
+        bool IsStartTrancking { get; set; }
         int Camp { get; }
     }
 }

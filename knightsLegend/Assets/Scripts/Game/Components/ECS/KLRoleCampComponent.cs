@@ -7,32 +7,37 @@ namespace KLGame
 
     public class KLRoleCampComponent : RoleCampComponent
     {
-        private IKLRole mMainRoleTarget;
+        private IMainRole mMainRoleTarget;
         private ICommonRole mEnemyTracking;
-        private ScopeChecker mInMainRoleFrontChecker = new ScopeChecker();
-        
+        private ScopeChecker mMainRoleFrontChecker = new ScopeChecker();
+
+        protected override bool ShouldCampCheck()
+        {
+            return mRoleTarget.IsStartTrancking;
+        }
+
         protected override void BeforeAITargetEnemyCheck()
         {
             if ((mRoleTarget.Camp == 0) && PreCheckMainRoleFrontEnemy())
             {
-                mMainRoleTarget = mRoleTarget as IKLRole;
-                mInMainRoleFrontChecker.validAngle = 120f;
-                mInMainRoleFrontChecker.minDistance = 2.5f;
-                mInMainRoleFrontChecker.startPos = mMainRoleTarget.Position;
-                mInMainRoleFrontChecker.startRotation = mMainRoleTarget.CurQuaternaion;
+                mMainRoleTarget = mRoleTarget as IMainRole;
+                mMainRoleFrontChecker.validAngle = 120f;
+                mMainRoleFrontChecker.minDistance = 2.5f;
+                mMainRoleFrontChecker.startPos = mMainRoleTarget.Position;
+                mMainRoleFrontChecker.startRotation = mMainRoleTarget.CurQuaternaion;
                 
-                if (mInMainRoleFrontChecker.CheckScope(mRoleExecuting.Position))
+                if (mMainRoleFrontChecker.CheckScope(mRoleCheckinging.Position))
                 {
-                    mMainRoleTarget.EnemyTracking = mRoleExecuting;//更新主角追踪的目标
+                    mMainRoleTarget.TargetTracking = mRoleCheckinging;//更新主角追踪的目标
                 }
                 else
                 {
-                    mEnemyTracking = mMainRoleTarget.EnemyTracking;
+                    mEnemyTracking = mMainRoleTarget.TargetTracking;
                     if (mEnemyTracking != default)
                     {
-                        if (!mInMainRoleFrontChecker.CheckScope(mEnemyTracking.Position))
+                        if (!mMainRoleFrontChecker.CheckScope(mEnemyTracking.Position))
                         {
-                            mMainRoleTarget.EnemyTracking = default;//主角失去追踪的目标
+                            mMainRoleTarget.TargetTracking = default;//主角失去追踪的目标
                         }
                     }
                 }

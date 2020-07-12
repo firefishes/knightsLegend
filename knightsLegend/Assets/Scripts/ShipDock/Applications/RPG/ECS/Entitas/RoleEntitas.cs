@@ -39,7 +39,7 @@ namespace ShipDock.Applications
 
         public float GetDistFromMainLockDown()
         {
-            return EnemyTracking != default ? Vector3.Distance(Position, EnemyTracking.Position) : float.MaxValue;
+            return TargetTracking != default ? Vector3.Distance(Position, TargetTracking.Position) : float.MaxValue;
         }
 
         public virtual bool AfterGetStopDistance(float dist, Vector3 entitasPos)
@@ -79,6 +79,8 @@ namespace ShipDock.Applications
 
         public abstract void CollidingChanged(int colliderID, bool isTrigger, bool isCollided);
 
+        protected override int[] ComponentNames { get; } = default;
+
         public bool Gravity { get; set; }
         public bool IsGrounded { get; set; }
         public bool IsGroundedAndCrouch { get; set; }
@@ -98,7 +100,7 @@ namespace ShipDock.Applications
         public Vector3 CameraForward { get; set; }
         public List<int> CollidingRoles { get; } = new List<int>();
         public KeyValueList<int, List<RoleColldingPos>> CollidingPos { get; } = new KeyValueList<int, List<RoleColldingPos>>();
-        public ICommonRole EnemyTracking { get; set; }
+        public ICommonRole TargetTracking { get; set; }
         public IRoleData RoleDataSource { get; private set; }
         public IRoleInput RoleInput { get; set; }
         /// <summary>
@@ -113,7 +115,7 @@ namespace ShipDock.Applications
         public CommonRoleAnimatorInfo RoleAnimatorInfo { get; private set; }
         public bool AfterGetStopDistChecked { get; set; }
         public virtual float TrackViewField { get; set; }
-        protected override int[] ComponentNames { get; } = default;
+        public bool IsStartTrancking { get; set; }
     }
 
     public class RoleColldingPos

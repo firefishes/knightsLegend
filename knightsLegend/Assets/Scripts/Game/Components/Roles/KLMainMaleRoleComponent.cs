@@ -104,7 +104,7 @@ namespace KLGame
             switch(param.Name)
             {
                 case KLConsts.N_ENEMY_AI_ANTICIPATION:
-                    if (KLRole.EnemyTracking is IAIRole role)
+                    if (KLRole.TargetTracking is IAIRole role)
                     {
                         if(role != default && role.Anticipathioner.AIStateWillChange == default)
                         {

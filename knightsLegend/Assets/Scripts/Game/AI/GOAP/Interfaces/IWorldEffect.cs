@@ -2,6 +2,7 @@
 {
     public interface IWorldEffect
     {
-        int EffectID { get; }
+        void CommitEffect(ref IWorldState worldState);
+        bool Available { get; set; }
     }
 }

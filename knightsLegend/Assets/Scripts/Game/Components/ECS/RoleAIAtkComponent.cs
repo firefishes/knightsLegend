@@ -83,7 +83,7 @@ namespace KLGame
                 return;
             }
 
-            bool hasTrackedEnemy = mAIRole.EnemyTracking != default;
+            bool hasTrackedEnemy = mAIRole.TargetTracking != default;
             bool isRoleStoped = mPositionComp.IsEntitasStoped(ref mRole);
             if (hasTrackedEnemy && isRoleStoped && mAIRole.ShouldAIThinking())
             {

@@ -4,9 +4,10 @@ namespace KLGame
 {
     public interface IAIExecutable
     {
-        void Calculation();
+        void Clean();
         void ApplyPlan(ref IGoal goal, ref List<IWorldState> worldStates);
-        bool CheckFeasible(IWorldState worldState);
+        void CheckFeasible(IWorldState worldState, out int feasibleStatu);
+        void CommitEffect(ref IWorldState worldState);
         IWorldEffect[] Effects { get; }
         int Cost { get; }
         int OrientedType { get; }

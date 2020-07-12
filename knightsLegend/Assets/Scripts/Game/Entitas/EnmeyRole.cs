@@ -276,7 +276,7 @@ namespace KLGame
                 GoalExecuterID = ID;
             }
         }
-
+        
         public void SetGoal(IGoal goal)
         {
             if (CurrentGoal != default)

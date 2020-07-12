@@ -71,13 +71,10 @@ namespace ShipDock.Applications
             Utils.Reclaim(ref mRoleInputCallSwitches);
         }
 
-        protected abstract void InitRoleData();
-
         protected virtual void Init()
         {
 
             InitRoleInputCallbacks();
-            InitRoleData();
             
             m_RoleMustSubgroup = new CommonRoleMustSubgroup
             {
@@ -90,6 +87,14 @@ namespace ShipDock.Applications
 
             FreezeAllRotation(true);
             m_RoleMustSubgroup.Init(ref m_RoleCollider);
+        }
+
+        protected virtual void SetRoleData()
+        {
+            if (mRole != default)
+            {
+                mRoleData = mRole.RoleDataSource;
+            }
         }
 
         protected virtual void InitRoleInputCallbacks()
@@ -152,7 +157,7 @@ namespace ShipDock.Applications
 
             if(mRole != default)
             {
-                mRoleData = mRole.RoleDataSource;
+                SetRoleData();
 
                 mRole.Name = name;
                 mRole.SetEntitasID(GetInstanceID());
@@ -169,9 +174,9 @@ namespace ShipDock.Applications
             this.Add(OnRoleNotices);
         }
 
-        protected abstract void SetRoleEntitas();
-        protected abstract void OnRoleNotices(INoticeBase<int> obj);
-        protected abstract bool CheckUnableToMove();
+        protected abstract void SetRoleEntitas();//Set mRole with a sub class of RoleEntitas.
+        protected abstract void OnRoleNotices(INoticeBase<int> obj);//Fill the logic of Notice handler function.
+        protected abstract bool CheckUnableToMove();//Make default to false
         
         protected void UpdateByPositionComponent()
         {
@@ -192,9 +197,9 @@ namespace ShipDock.Applications
             SetNavMeshAgentStopped(!mRole.FindingPath);
             if (mRole.FindingPath)
             {
-                if ((mRole.EnemyTracking != default) && !CheckUnableToMove())
+                if ((mRole.TargetTracking != default) && !CheckUnableToMove())
                 {
-                    m_NavMeshAgent.destination = mRole.EnemyTracking.Position;
+                    m_NavMeshAgent.destination = mRole.TargetTracking.Position;
                     mRoleInput.SetMoveValue(m_NavMeshAgent.velocity);
                 }
             }

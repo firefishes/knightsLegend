@@ -17,7 +17,7 @@ namespace ShipDock.Applications
 
         private void CheckEnemyLockDown()
         {
-            if (mRole.EnemyTracking != default)
+            if (mRole.TargetTracking != default)
             {
                 mDistance = mRole.GetDistFromMainLockDown();
                 if (ShouldMove())

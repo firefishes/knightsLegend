@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace KLGame
 {
@@ -7,17 +8,27 @@ namespace KLGame
         protected IGoal mGoal;
         protected List<IWorldState> mWorldStates;
 
-        public void Calculation()
+        public void Clean()
         {
-
         }
 
-        public abstract bool CheckFeasible(IWorldState worldStates);
+        public abstract void CheckFeasible(IWorldState worldStates, out int feasibleStatu);
 
         public void ApplyPlan(ref IGoal goal, ref List<IWorldState> worldStates)
         {
             mGoal = goal;
             mWorldStates = worldStates;
+        }
+
+        public void CommitEffect(ref IWorldState worldState)
+        {
+            IWorldEffect effect;
+            int max = Effects.Length;
+            for (int i = 0; i < max; i++)
+            {
+                effect = Effects[i];
+                effect.CommitEffect(ref worldState);
+            }
         }
 
         public abstract IWorldEffect[] Effects { get; }

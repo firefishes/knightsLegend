@@ -10,6 +10,11 @@ namespace KLGame
     public abstract class KLRole : RoleEntitas, IKLRole
     {
 
+        public KLRole() : base()
+        {
+            IsStartTrancking = false;
+        }
+
         public override void Dispose()
         {
             base.Dispose();

@@ -38,7 +38,7 @@ namespace KLGame
 
         protected override void DuringState(int time)
         {
-            bool flag = mAniUpdater.Update(this);
+            mAniUpdater?.Update(this);
             Finish();
         }
 

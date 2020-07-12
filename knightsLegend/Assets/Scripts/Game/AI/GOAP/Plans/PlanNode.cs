@@ -2,13 +2,8 @@
 {
     public struct PlanNode
     {
+        public int dataIndex;
         public int parent;
-        public int next;
-        public int index;
-
-        public void SetNext(int nextIndex)
-        {
-            next = nextIndex;
-        }
+        public int nodeIndex;
     }
 }

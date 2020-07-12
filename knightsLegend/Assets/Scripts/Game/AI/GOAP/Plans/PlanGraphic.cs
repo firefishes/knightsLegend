@@ -5,39 +5,41 @@ namespace KLGame
 
     public class PlanGraphic
     {
-        private Queue<int> mParents;
+        private int mParentIndex;
+        private List<int> mParents;
         private List<PlanNode> mNodes;
         private List<IAIExecutable> mExecutables;
 
         public PlanGraphic()
         {
-            mParents = new Queue<int>();
+            mParentIndex = -1;
+            mParents = new List<int>();
             mNodes = new List<PlanNode>();
             mExecutables = new List<IAIExecutable>();
         }
 
-        public int AddNode(IAIExecutable item, bool isChild = false, int parentIndex = int.MaxValue)
+        public void AddNode(IAIExecutable item, bool isChild = false)
         {
             PlanNode node = new PlanNode
             {
-                index = mNodes.Count
+                dataIndex = mExecutables.Count,
+                nodeIndex = mNodes.Count
             };
-            if (isChild)
-            {
-                int parent = isChild ? mNodes.Count - 1 : int.MaxValue;
-                node.parent = parentIndex == int.MaxValue ? parent : parentIndex;
-                node.next = int.MaxValue;
-                mNodes[parent].SetNext(node.index);
-            }
-            else
-            {
-                node.parent = int.MaxValue;
-                mParents.Enqueue(node.index);
-            }
+
             mNodes.Add(node);
             mExecutables.Add(item);
 
-            return node.index;
+            if (isChild)
+            {
+                node.parent = mParentIndex - 1;
+                mParentIndex = node.nodeIndex;
+            }
+            else
+            {
+                node.parent = mParentIndex;
+                mParentIndex = node.nodeIndex;
+                mParents.Add(mParentIndex);
+            }
         }
 
         private IAIExecutable GetNode(int nodeIndex)
@@ -45,35 +47,71 @@ namespace KLGame
             return mExecutables[nodeIndex];
         }
 
-        public Queue<IAIExecutable> GetSolution(int nodeIndex, out int statu)
+        public Queue<IAIExecutable> GetSolution(out int statu)
         {
             statu = 0;
-            if (!mParents.Contains(nodeIndex))
-            {
-                statu = 1;
-                return default;
-            }
-
-            PlanNode node = mNodes[nodeIndex];
-
+            
+            PlanNode node;
+            IAIExecutable executable;
             Queue<IAIExecutable> result = new Queue<IAIExecutable>();
 
-            int index = node.index;
-            IAIExecutable item = GetNode(index);
-            result.Enqueue(item);
-
-            while (node.parent != int.MaxValue)
+            int parent;
+            int max = mNodes.Count;
+            for (int i = 0; i < max; i++)
             {
-                index = node.parent;
-                node = mNodes[index];
+                node = mNodes[i];
+                parent = node.parent;
+                executable = mExecutables[node.dataIndex];
 
-                index = node.index;
-                item = GetNode(index);
+                if(node.parent == -1)
+                {
+                    result.Enqueue(executable);
+                }
+                else
+                {
+                    if (node.parent != parent)
+                    {
 
-                result.Enqueue(item);
+                    }
+                    else
+                    {
+                        result.Enqueue(executable);
+                    }
+                }
             }
 
             return result;
         }
+    }
+
+    public class PlanSolution
+    {
+        public PlanSolution()
+        {
+            Solution = new Queue<IAIExecutable>();
+        }
+
+        public void Enqueue(IAIExecutable item)
+        {
+            Solution.Enqueue(item);
+        }
+
+        public PlanSolution PlanNext(IAIExecutable item)
+        {
+            Branch = new PlanSolution();
+            Branch.Enqueue(item);
+            Branch.SetParent(this);
+            return Branch;
+        }
+
+
+        public void SetParent(PlanSolution parent)
+        {
+            Parent = parent;
+        }
+
+        public Queue<IAIExecutable> Solution { get; private set; }
+        public PlanSolution Branch { get; private set; }
+        public PlanSolution Parent { get; private set; }
     }
 }

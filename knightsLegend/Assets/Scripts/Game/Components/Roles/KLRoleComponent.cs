@@ -99,10 +99,6 @@ namespace KLGame
             AfterCurrentSkillReleased();
         }
 
-        protected override void InitRoleData()
-        {
-        }
-
         protected override void SetRoleEntitas()
         {
         }

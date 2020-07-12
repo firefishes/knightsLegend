@@ -10,7 +10,7 @@ namespace ShipDock.Applications
     public abstract class RoleCampComponent : ShipDockComponent
     {
         protected IDataServer mDataServer;
-        protected ICommonRole mRoleExecuting;
+        protected ICommonRole mRoleCheckinging;
         protected ICommonRole mRoleTarget;
         private List<int> mAllRoles;
         private KeyValueList<int, List<int>> mCampRoles;
@@ -76,7 +76,7 @@ namespace ShipDock.Applications
         {
             base.Execute(time, ref target);
 
-            mRoleExecuting = target as ICommonRole;
+            mRoleCheckinging = target as ICommonRole;
             int id;
             int max = mAllRoles.Count;
             for (int i = 0; i < max; i++)
@@ -89,8 +89,8 @@ namespace ShipDock.Applications
                     BeforeAITargetEnemyCheck();
                     if (WillCheckAIRoleEnemyTarget())
                     {
-                        mRoleExecuting.FindingPath = true;
-                        mRoleExecuting.EnemyTracking = mRoleTarget;
+                        mRoleCheckinging.FindingPath = true;
+                        mRoleCheckinging.TargetTracking = mRoleTarget;
                         AfterAITargetEnemyCheck();
                         break;
                     }
@@ -104,24 +104,24 @@ namespace ShipDock.Applications
 
         private bool WillCheckAIRoleEnemyTarget()
         {
-            return !IsIgnoreCampCheck() && 
+            return ShouldCampCheck() && 
                     IsAIControllingTarget() &&
                     CheckTrackView() &&
-                    HasEnemySet() && 
+                    HasTrackingSet() && 
                     CheckCamp();
         }
 
         private bool WillWalkForRoleEnemyTarget()
         {
-            return (mRoleTarget != default) && (mRoleExecuting != default) && (mRoleTarget.ID != mRoleExecuting.ID);
+            return (mRoleTarget != default) && (mRoleCheckinging != default) && (mRoleTarget.ID != mRoleCheckinging.ID);
         }
 
         /// <summary>
         /// 是否忽略敌对阵营目标的检测检测
         /// </summary>
-        protected virtual bool IsIgnoreCampCheck()
+        protected virtual bool ShouldCampCheck()
         {
-            return false;
+            return true;
         }
 
         /// <summary>
@@ -129,15 +129,15 @@ namespace ShipDock.Applications
         /// </summary>
         protected virtual bool IsAIControllingTarget()
         {
-            return !mRoleExecuting.IsUserControlling;
+            return !mRoleCheckinging.IsUserControlling;
         }
 
         /// <summary>
-        /// 是否设置过敌对目标
+        /// 是否设置过跟踪目标
         /// </summary>
-        protected virtual bool HasEnemySet()
+        protected virtual bool HasTrackingSet()
         {
-            return (mRoleExecuting.EnemyTracking == default) && (mRoleExecuting != mRoleTarget);
+            return (mRoleCheckinging.TargetTracking == default) && (mRoleCheckinging != mRoleTarget);
         }
 
         /// <summary>
@@ -145,7 +145,7 @@ namespace ShipDock.Applications
         /// </summary>
         protected virtual bool CheckCamp()
         {
-            return mRoleTarget.Camp != mRoleExecuting.Camp;
+            return mRoleTarget.Camp != mRoleCheckinging.Camp;
         }
 
         /// <summary>
@@ -153,8 +153,8 @@ namespace ShipDock.Applications
         /// </summary>
         protected virtual bool CheckTrackView()
         {
-            float distance = Vector3.Distance(mRoleTarget.Position, mRoleExecuting.Position);
-            return distance <= mRoleExecuting.TrackViewField;
+            float distance = Vector3.Distance(mRoleTarget.Position, mRoleCheckinging.Position);
+            return distance <= mRoleCheckinging.TrackViewField;
         }
 
         public ICommonRole RoleCreated { get; private set; }
