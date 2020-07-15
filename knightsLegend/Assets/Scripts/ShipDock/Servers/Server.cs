@@ -15,7 +15,7 @@ namespace ShipDock.Server
 
         public Server(string serverName = "")
         {
-            if(!string.IsNullOrEmpty(ServerName))
+            if(string.IsNullOrEmpty(ServerName))
             {
                 ServerName = serverName;
             }

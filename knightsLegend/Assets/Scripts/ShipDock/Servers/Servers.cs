@@ -45,7 +45,7 @@ namespace ShipDock.Server
             mBinderMapper = new Dictionary<int, ResolvableBinder>();
             mResolvablesMapper = new Dictionary<int, IResolvable>();
             mResolvableConfigs = new KeyValueList<int, IResolvableConfig>();
-
+            
             int max = onInites.Length;
             for (int i = 0; i < max; i++)
             {
@@ -264,6 +264,10 @@ namespace ShipDock.Server
             {
                 OnFinished += method;
             }
+            //if (mNewServers.Count == 0)
+            //{
+            //    AfterServersInited();
+            //}
         }
 
         private int ComparerPriority(IServer n, IServer m)
