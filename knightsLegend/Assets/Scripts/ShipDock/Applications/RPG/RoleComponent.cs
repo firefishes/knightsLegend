@@ -40,6 +40,8 @@ namespace ShipDock.Applications
         protected IRoleInput mRoleInput;
         protected RoleEntitas mRole;
 
+        private string mName;
+        private int mInstanceID;
         private bool mIsRoleNameSynced;
         private float mGroundCheckDistance = 0.3f;
         private Vector3 mInitPosition;
@@ -73,6 +75,8 @@ namespace ShipDock.Applications
 
         protected virtual void Init()
         {
+            mName = name;
+            mInstanceID = GetInstanceID();
 
             InitRoleInputCallbacks();
             
@@ -116,6 +120,10 @@ namespace ShipDock.Applications
 
         protected void FreezeAllRotation(bool flag)
         {
+            if (m_RoleRigidbody == default)
+            {
+                return;
+            }
             if (flag)
             {
                 m_RoleRigidbody.constraints = RigidbodyConstraints.FreezeRotationX |
@@ -159,8 +167,8 @@ namespace ShipDock.Applications
             {
                 SetRoleData();
 
-                mRole.Name = name;
-                mRole.SetEntitasID(GetInstanceID());
+                mRole.Name = mName;
+                mRole.SetEntitasID(mInstanceID);
                 mRole.RoleMustSubgroup = m_RoleMustSubgroup;
                 mRole.SpeedCurrent = mRole.Speed;
                 mRole.InitComponents();
@@ -289,6 +297,10 @@ namespace ShipDock.Applications
 
         protected void SetNavMeshAgentStopped(bool flag)
         {
+            if (m_NavMeshAgent == default)
+            {
+                return;
+            }
             m_NavMeshAgent.isStopped = flag;
         }
 

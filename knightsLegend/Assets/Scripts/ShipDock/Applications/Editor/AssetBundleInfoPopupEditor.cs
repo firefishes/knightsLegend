@@ -212,7 +212,7 @@ namespace ShipDock.Editors
             {
                 item = ResList[i];
                 SetValueItem("res_" + i.ToString(), AssetDatabase.GetAssetPath(item));
-                if (GUILayout.Button(ResList[i].name))
+                if (i <= 20 && GUILayout.Button(ResList[i].name))
                 {
                     fieldValue = GetValueItem("res_" + i).Value;
                     GetValueItem("ab_item_name")?.Change(fieldValue);
