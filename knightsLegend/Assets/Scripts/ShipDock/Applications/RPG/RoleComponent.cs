@@ -116,6 +116,10 @@ namespace ShipDock.Applications
 
         protected void FreezeAllRotation(bool flag)
         {
+            if (m_RoleRigidbody == default)
+            {
+                return;
+            }
             if (flag)
             {
                 m_RoleRigidbody.constraints = RigidbodyConstraints.FreezeRotationX |

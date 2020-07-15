@@ -16,6 +16,10 @@ namespace ShipDock.Applications
 
         public void Init(ref CapsuleCollider target)
         {
+            if (target == default)
+            {
+                return;
+            }
             capsuleHeight = target.height;
             capsuleCenter = target.center;
         }
