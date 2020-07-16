@@ -178,7 +178,7 @@ namespace KLGame
             
             if (result)
             {
-                RoleInput.SetInputPhase(KLConsts.ENEMY_INPUT_PHASE_ATTACK_AI);
+                (RoleInput as IRPGRoleInput).SetInputPhase(KLConsts.ENEMY_INPUT_PHASE_ATTACK_AI);
             }
             //if (!true)
             //{

@@ -3,7 +3,7 @@ using ShipDock.FSM;
 
 namespace KLGame
 {
-    public class KLRoleInputInfo : RoleInputInfo
+    public class KLRoleInputInfo : RPGRoleInputInfo
     {
         public KLRoleInputInfo(ICommonRole roleEntitas, CommonRoleFSM fsm) : base(roleEntitas)
         {

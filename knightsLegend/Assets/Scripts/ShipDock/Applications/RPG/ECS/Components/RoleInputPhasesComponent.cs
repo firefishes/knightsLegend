@@ -51,12 +51,12 @@ namespace ShipDock.Applications
                 return;
             }
 
-            int phaseName = mRoleInput.RoleInputPhase;
+            int phaseName = (mRoleInput as IRPGRoleInput).RoleInputPhase;
             switch (phaseName)
             {
                 default:
                     int allowCalled = mAllowCalleds.ContainsKey(phaseName) ? mAllowCalleds[phaseName] : 0;
-                    mRoleInput.AdvancedInputPhase(phaseName, allowCalled);
+                    (mRoleInput as IRPGRoleInput).AdvancedInputPhase(phaseName, allowCalled);
                     break;
             }
         }

@@ -15,7 +15,7 @@ namespace ShipDock.Applications
     {
         public const int LOG = -1;
 
-        private static RoleComponent sceneSelectedRole;
+        private static RPGRoleComponent sceneSelectedRole;
 
         private string mPhaseContentGUI;
         private GUIStyle mEnemyLabelStyle;
@@ -31,7 +31,7 @@ namespace ShipDock.Applications
 
 #if UNITY_EDITOR
         [Conditional("G_LOG")]
-        public void ShowRoleInfoInGUI(RoleComponent selectedRole)
+        public void ShowRoleInfoInGUI(RPGRoleComponent selectedRole)
         {
             if (sceneSelectedRole != default && sceneSelectedRole != selectedRole)
             {
@@ -72,9 +72,9 @@ namespace ShipDock.Applications
         {
             if (!mTimerForPhaseGUI.TimeAdvanced(Time.deltaTime) && mPhasesQueueForGUI.Count < 10)
             {
-                if (!mPhasesQueueForGUI.Contains(roleEntitas.RoleInput.RoleInputPhase))
+                if (!mPhasesQueueForGUI.Contains((roleEntitas.RoleInput as IRPGRoleInput).RoleInputPhase))
                 {
-                    mPhasesQueueForGUI.Enqueue(roleEntitas.RoleInput.RoleInputPhase);
+                    mPhasesQueueForGUI.Enqueue((roleEntitas.RoleInput as IRPGRoleInput).RoleInputPhase);
                 }
             }
             else

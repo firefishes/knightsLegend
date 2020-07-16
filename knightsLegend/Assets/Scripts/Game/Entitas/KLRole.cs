@@ -150,7 +150,7 @@ namespace KLGame
 
         public void UnderAttack()
         {
-            RoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_UNDERATTACKED);
+            (RoleInput as IRPGRoleInput).SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_UNDERATTACKED);
         }
 
         public override void CollidingChanged(int colliderID, bool isTrigger, bool isCollided)

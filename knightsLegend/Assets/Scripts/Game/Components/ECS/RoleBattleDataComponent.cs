@@ -98,7 +98,7 @@ namespace KLGame
         {
             if (mBattleUnit.GetFloatData(KLConsts.FIELD_FlAWS) <= 0f)
             {
-                mRole.RoleInput.SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_UNDERATTACKED);
+                (mRole.RoleInput as IRPGRoleInput).SetInputPhase(UserInputPhases.ROLE_INPUT_PHASE_UNDERATTACKED);
             }
         }
     }

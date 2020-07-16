@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace KLGame
 {
-    public class KLRoleComponent : RoleComponent, IKLRoleSceneComponent
+    public class KLRoleComponent : RPGRoleComponent, IKLRoleSceneComponent
     {
         [SerializeField]
         protected RoleFSMObj m_FSMStates;

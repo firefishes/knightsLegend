@@ -55,7 +55,7 @@ namespace KLGame
         protected void InitRolePhases(IRoleInput roleInput)
         {
             //roleInput.AddEntitasCallback(KLConsts.ENEMY_INPUT_PHASE_UPDATE_NROMAL_ATK_TRIGGER_TIME, CheckAttackAI);
-            roleInput.AddEntitasCallback(KLConsts.ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK, AfterNormalATK);
+            (roleInput as IRPGRoleInput).AddEntitasCallback(KLConsts.ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK, AfterNormalATK);
         }
 
         private void AfterNormalATK()

@@ -1,4 +1,5 @@
 ﻿using System;
+using ShipDock.Applications;
 using ShipDock.Pooling;
 
 namespace KLGame
@@ -52,7 +53,7 @@ namespace KLGame
         protected override bool CheckBeforeFinish()
         {
             //TODO add config notice 1003
-            mRole.RoleInput.SetInputPhase(KLConsts.ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK);//TODO 此处不需要了
+            (mRole.RoleInput as IRPGRoleInput).SetInputPhase(KLConsts.ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK);//TODO 此处不需要了
             StopAtkTiming();
             mRole.AfterGetStopDistChecked = false;
 

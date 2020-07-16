@@ -47,7 +47,7 @@ namespace ShipDock.Applications
             
         }
 
-        public void FillToSceneComponent(RoleComponent roleComponent)
+        public void FillToSceneComponent(RPGRoleComponent roleComponent)
         {
             int max = roleExecuableInfos.Length;
             for (int i = 0; i < max; i++)
@@ -60,7 +60,7 @@ namespace ShipDock.Applications
                 else
                 {
                     IRoleInput roleInput = roleComponent.RoleEntitas.RoleInput;
-                    roleInput.ActiveEntitasPhase(item.phaseName, true);
+                    (roleInput as IRPGRoleInput).ActiveEntitasPhase(item.phaseName, true);
                 }
             }
         }

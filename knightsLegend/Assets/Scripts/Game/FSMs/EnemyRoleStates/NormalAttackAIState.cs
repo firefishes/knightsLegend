@@ -80,8 +80,8 @@ namespace KLGame
 
             if(AIRole != default)// && AIRole.ShouldAtkAIWork)
             {
-                AIRole.RoleInput.SetInputPhase(KLConsts.ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK);
-                Tester.Instance.Log(TesterRPG.Instance, TesterRPG.LOG, "log: Enemy phase ".Append(AIRole.RoleInput.RoleInputPhase.ToString()));
+                (AIRole.RoleInput as IRPGRoleInput).SetInputPhase(KLConsts.ENEMY_INPUT_PHASE_AFTER_NROMAL_ATK);
+                Tester.Instance.Log(TesterRPG.Instance, TesterRPG.LOG, "log: Enemy phase ".Append((AIRole.RoleInput as IRPGRoleInput).RoleInputPhase.ToString()));
             }
         }
 
