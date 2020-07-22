@@ -14,6 +14,11 @@ namespace ShipDock.Tools
 
         public AssetSubgroup(string ab, string asset)
         {
+            SetSubgroup(ab, asset);
+        }
+
+        public void SetSubgroup(string ab, string asset)
+        {
             m_ABName = ab;
             m_AssetName = asset;
         }

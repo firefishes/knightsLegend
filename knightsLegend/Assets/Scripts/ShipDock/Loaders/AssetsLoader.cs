@@ -174,6 +174,8 @@ namespace ShipDock.Loader
 
         private void LoadFailed(ref Loader target)
         {
+            Debug.Log(target.LoadError);
+            Debug.LogError(mLoader.Url);
             CompleteEvent?.Invoke(false, mLoader);
         }
 

@@ -1,6 +1,7 @@
 ﻿using ShipDock.Interfaces;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace ShipDock.Tools
 {
@@ -206,6 +207,45 @@ namespace ShipDock.Tools
         public static bool IsContains(int target, int containsPart)
         {
             return (target & containsPart) == containsPart;
+        }
+
+        public static float RangeRandom(float min, float max)
+        {
+            System.Random random = new System.Random();
+            var d = random.NextDouble() * (max - min) + min;
+            return (float)d;
+        }
+
+        public static float UnityRangeRandom(float min, float max)
+        {
+            return UnityEngine.Random.Range(min, max);
+        }
+
+        public static Vector3 GetRandomPosInCircle(float radius, bool isPlaneZ = true, bool isUnityRandom = false)
+        {
+            float random = isUnityRandom ? UnityRangeRandom(-radius, radius) : RangeRandom(-radius, radius);
+            Vector3 result = Vector3.one * random;
+
+            float x = radius * Mathf.Cos(result.x);
+            x = isUnityRandom ? UnityRangeRandom(0, x) : RangeRandom(0, x);
+
+            float y = radius * Mathf.Sin(result.y);
+            y = isUnityRandom ? UnityRangeRandom(0, y) : RangeRandom(0, y);
+
+            result.Set(x, y, 0);
+
+            if (isPlaneZ)
+            {
+                result.Set(result.x, 0, result.y);
+            }
+            return result;
+        }
+
+        public static bool Raycast(Vector3 start, Vector3 direction, out Ray ray, out RaycastHit hitInfo, float distance, int layerMask)
+        {
+            ray = new Ray(start, direction);
+            bool result = Physics.Raycast(ray, out hitInfo, distance, layerMask);
+            return result;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using ShipDock.Tools;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -114,5 +115,51 @@ static public class ShipDockExtension
                 result[i] = list[i - oldLen];
             }
         }
+    }
+
+    public static Material GetMaterial(this Renderer target, bool isGetShareMat = true, bool isCheckMultMat = false, int index = -1)
+    {
+        if (isCheckMultMat && index >= 0)
+        {
+            Material[] list;
+            if (isGetShareMat)
+            {
+                list = target.sharedMaterials;
+                return list[index];
+            }
+            else
+            {
+                list = target.materials;
+                return list[index];
+            }
+        }
+        else
+        {
+            return isGetShareMat? target.sharedMaterial: target.material;
+        }
+    }
+    
+    private static Ray rayForMainCamera;
+    private static Transform cameraTF;
+
+    public static void ResetMain(this Camera target)
+    {
+        cameraTF = default;
+    }
+
+    public static bool CameraRaycast(this Camera target, Vector3 direction, out RaycastHit hitInfo, float distance, int layerMask)
+    {
+        if (cameraTF == null)
+        {
+            cameraTF = Camera.main.transform;
+        }
+        rayForMainCamera = new Ray(cameraTF.position, direction);
+        bool result = Physics.Raycast(rayForMainCamera, out hitInfo, distance, layerMask);
+        return result;
+    }
+
+    public static Color SetAlpha(this Color target, float a = 1f)
+    {
+        return (target.a == a) ? target : new Color(target.r, target.g, target.b, a);
     }
 }

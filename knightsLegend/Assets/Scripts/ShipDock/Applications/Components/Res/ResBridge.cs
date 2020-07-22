@@ -7,6 +7,8 @@ namespace ShipDock.Applications
     public class ResBridge : MonoBehaviour, IResBridge
     {
         [SerializeField]
+        protected bool m_IsCreateInAwake = true;
+        [SerializeField]
         protected AssetSubgroup m_Asset;
 
         protected virtual void Awake()

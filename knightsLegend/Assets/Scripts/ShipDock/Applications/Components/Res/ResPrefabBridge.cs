@@ -8,18 +8,31 @@ namespace ShipDock.Applications
         {
             base.Awake();
 
-            if(m_Asset != default)
+            if(m_IsCreateInAwake)
             {
-                GameObject source = Assets.Get(m_Asset.GetABName(), m_Asset.GetAssetName());
-                Prefab = Instantiate(source);
+                CreateAsset();
             }
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
-
+            
             Prefab = default;
+        }
+
+        public void CreateAsset()
+        {
+            if ((m_Asset != default) && (Prefab == default))
+            {
+                GameObject source = Assets.Get(m_Asset.GetABName(), m_Asset.GetAssetName());
+                Prefab = source;
+            }
+        }
+
+        public void SetSubgroup(string ab, string asset)
+        {
+            m_Asset.SetSubgroup(ab, asset);
         }
 
         public GameObject Prefab { get; private set; }

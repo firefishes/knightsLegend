@@ -27,9 +27,9 @@ namespace ShipDock.UI
             UIRoot = root;
         }
 
-        public T Open<T>(string name) where T : IUIStack, new()
+        public T Open<T>(string stackName) where T : IUIStack, new()
         {
-            T result = mUICacher.CreateOrGetUICache<T>(name);
+            T result = mUICacher.CreateOrGetUICache<T>(stackName);
 
             if(!result.IsExited)
             {

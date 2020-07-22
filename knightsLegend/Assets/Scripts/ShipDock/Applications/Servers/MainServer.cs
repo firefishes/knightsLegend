@@ -2,6 +2,7 @@
 using ShipDock.Notices;
 using ShipDock.Pooling;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace ShipDock.Applications
 {
@@ -12,8 +13,7 @@ namespace ShipDock.Applications
             new ResolvableConfigItem<INotice, Notice>("Notice"),
             new ResolvableConfigItem<IParamNotice<int>, ParamNotice<int>>("Int"),
             new ResolvableConfigItem<IParamNotice<bool>, ParamNotice<bool>>("Bool"),
-            new ResolvableConfigItem<IParamNotice<IInputer>, ParamNotice<IInputer>>("InputerParamer"),
-            new ResolvableConfigItem<IParamNotice<IInputer>, ParamNotice<IInputer>>("SetInputerParamer"),
+            new ResolvableConfigItem<IParamNotice<Vector3>, ParamNotice<bool>>("V3"),
         };
 
         public MainServer(string serverName)
@@ -28,18 +28,19 @@ namespace ShipDock.Applications
             Register<INotice>(NoticeResolver, Pooling<Notice>.Instance);
             Register<IParamNotice<int>>(IntParamerResolver, Pooling<ParamNotice<int>>.Instance);
             Register<IParamNotice<bool>>(BoolParamerResolver, Pooling<ParamNotice<bool>>.Instance);
-            Register<IParamNotice<IInputer>>(SetInputerParamer, Pooling<ParamNotice<IInputer>>.Instance);
-            Register<IParamNotice<IInputer>>(GetInputerParamer, Pooling<ParamNotice<IInputer>>.Instance);
+            Register<IParamNotice<Vector3>>(V3ParamerResolver, Pooling<ParamNotice<Vector3>>.Instance);
         }
 
         public override void ServerReady()
         {
             base.ServerReady();
             
-            Add<IParamNotice<IInputer>>(SetInputer);
             Add<IParamNotice<bool>>(SetBoolTrue);
             Add<IParamNotice<bool>>(SetBoolFalse);
         }
+
+        [Resolvable("V3")]
+        private void V3ParamerResolver(ref IParamNotice<Vector3> target) { }
 
         [Resolvable("Bool")]
         private void BoolParamerResolver(ref IParamNotice<bool> target) { }
@@ -49,15 +50,6 @@ namespace ShipDock.Applications
 
         [Resolvable("Notice")]
         private void NoticeResolver(ref INotice target) { }
-
-        [Resolvable("SetInputerParamer")]
-        private void SetInputerParamer(ref IParamNotice<IInputer> target) { }
-
-        [Resolvable("InputerParamer")]
-        private void GetInputerParamer(ref IParamNotice<IInputer> target)
-        {
-            target.ParamValue = MainInputer;
-        }
 
         [Callable("True", "Bool")]
         private void SetBoolTrue(ref IParamNotice<bool> target)
@@ -70,15 +62,5 @@ namespace ShipDock.Applications
         {
             target.ParamValue = false;
         }
-
-        [Callable("SetInputer", "SetInputerParamer")]
-        private void SetInputer<I>(ref I target)
-        {
-            IParamNotice<IInputer> notice = target as IParamNotice<IInputer>;
-            MainInputer = notice.ParamValue;
-            MainInputer.CommitAfterSetToServer();
-        }
-
-        public IInputer MainInputer { get; protected set; }
     }
 }

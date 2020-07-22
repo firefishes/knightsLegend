@@ -44,11 +44,16 @@ namespace ShipDock.Applications
         public void Dispose()
         {
             IsDisposed = true;
-            Utils.Reclaim(ref mCacher);
-            Utils.Reclaim(ref mDeleted);
 
             mAddItemNoticeName.Remove(OnAddItem);
             mRemoveItemNoticeName.Remove(OnRemoveItem);
+
+            Utils.Reclaim(ref mCacher);
+            Utils.Reclaim(ref mDeleted);
+            Utils.Reclaim(mTicksLater);
+
+            mTicksLater = default;
+            mItem = default;
         }
 
         private void OnRemoveItem(INoticeBase<int> param)
@@ -114,6 +119,7 @@ namespace ShipDock.Applications
                 }
             }
             mItem = default;
+            mTicksLater.Update(time);
         }
 
         public void FixedUpdate(int time)

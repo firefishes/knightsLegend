@@ -12,8 +12,13 @@ namespace ShipDock.Applications
         [SerializeField]
         public V[] infos;
 
-        public virtual void InitMapper()
+        public virtual void InitMapper(V[] source = default)
         {
+            if (source != default)
+            {
+                infos = source;
+            }
+
             V info;
             int max = infos.Length;
             for (int i = 0; i < max; i++)

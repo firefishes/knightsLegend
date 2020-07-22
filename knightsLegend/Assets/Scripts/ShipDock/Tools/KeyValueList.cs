@@ -121,7 +121,7 @@ namespace ShipDock.Tools
             Keys = null;
         }
 
-        public void Clear(bool isTrimExcess = false)
+        public virtual void Clear(bool isTrimExcess = false)
         {
             Values.Clear();
             Keys.Clear();

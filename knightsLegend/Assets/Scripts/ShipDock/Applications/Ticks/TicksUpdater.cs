@@ -166,7 +166,7 @@ namespace ShipDock.Applications
             WalkUpdateItems(time, TICKS_FIXED_UPDATE);
             WalkUpdateItems(time, TICKS_UPDATE);
             WalkUpdateItems(time, TICKS_LATE_UPDATE);
-            mTicksLater.Update(time);
+            mTicksLater?.Update(time);
 
             LastRunTime = RunTime;
         }

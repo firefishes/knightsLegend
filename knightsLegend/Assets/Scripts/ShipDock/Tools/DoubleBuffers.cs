@@ -8,16 +8,17 @@ namespace ShipDock.Tools
     {
         private bool mIsDisposed;
         private bool mIsFront;
-        private Queue<T> mCachesTemp;
         private Queue<T> mCacheFront;
         private Queue<T> mCacheBack;
         private Queue<T> mCache;
+        private Queue<T> mEnqueueCache;
 
         public DoubleBuffers()
         {
             mCacheFront = new Queue<T>();
             mCacheBack = new Queue<T>();
             mCache = mCacheFront;
+            mEnqueueCache = mCacheBack;
             mIsFront = true;
         }
 
@@ -26,7 +27,6 @@ namespace ShipDock.Tools
             mIsDisposed = true;
             Current = default;
             OnDequeue = default;
-            Utils.Reclaim(ref mCachesTemp);
             Utils.Reclaim(ref mCacheFront);
             Utils.Reclaim(ref mCacheBack);
             Utils.Reclaim(ref mCache);
@@ -51,18 +51,18 @@ namespace ShipDock.Tools
 
         public void Update(int dTime)
         {
-            mCachesTemp = mCache;//设置处理中的的队列
-            if (!mIsDisposed && mCachesTemp != default)
+            if (!mIsDisposed)
             {
-                mCache = mIsFront ? mCacheBack : mCacheFront;//切换队列
-                if (mCachesTemp != default)//执行处理中的队列
+                mCache = mIsFront ? mCacheBack : mCacheFront;//切换到需要处理的队列
+                mEnqueueCache = mIsFront ? mCacheFront : mCacheBack;
+                if (mCache != default)//执行处理中的队列
                 {
-                    int max = mCachesTemp.Count;
+                    int max = mCache.Count;
                     if (max > 0)
                     {
-                        while ((mCachesTemp != default) && (mCachesTemp.Count > 0))
+                        while (mCache.Count > 0)
                         {
-                            Current = mCachesTemp.Dequeue();
+                            Current = mCache.Dequeue();
                             OnDequeue?.Invoke(dTime, Current);
                         }
                     }
@@ -70,7 +70,6 @@ namespace ShipDock.Tools
                 mIsFront = !mIsFront;
             }
             Current = default;
-            mCachesTemp = default;
         }
 
         /// <summary>
@@ -78,18 +77,21 @@ namespace ShipDock.Tools
         /// </summary>
         public void Enqueue(T target, bool isCheckContains = true)
         {
-            if (!mIsDisposed && (mCache != default))
+            if (!mIsDisposed)
             {
-                if (isCheckContains)
+                if (mEnqueueCache != default)
                 {
-                    if (!mCache.Contains(target))
+                    if (isCheckContains)
                     {
-                        mCache.Enqueue(target);
+                        if (!mEnqueueCache.Contains(target))
+                        {
+                            mEnqueueCache.Enqueue(target);
+                        }
                     }
-                }
-                else
-                {
-                    mCache.Enqueue(target);
+                    else
+                    {
+                        mEnqueueCache.Enqueue(target);
+                    }
                 }
             }
         }

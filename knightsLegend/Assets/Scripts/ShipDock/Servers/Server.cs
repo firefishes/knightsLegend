@@ -131,6 +131,13 @@ namespace ShipDock.Server
             //TODO 注销容器方法
         }
 
+        /// <summary>
+        /// 通过接口及别名解析出一个对象的实例
+        /// </summary>
+        /// <typeparam name="InterfaceT">接口</typeparam>
+        /// <param name="alias">别名</param>
+        /// <param name="resolverName">解析器名，用于找到对应的实例加工函数，不传此参表示仅获取实例</param>
+        /// <returns>需要获得的对象实例</returns>
         public InterfaceT Resolve<InterfaceT>(string alias, string resolverName = "")
         {
             int resultError;

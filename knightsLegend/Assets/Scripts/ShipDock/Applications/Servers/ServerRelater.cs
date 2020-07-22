@@ -1,15 +1,23 @@
 ﻿using ShipDock.Datas;
 using ShipDock.ECS;
+using ShipDock.Interfaces;
 using ShipDock.Server;
 using ShipDock.Tools;
 
 namespace ShipDock.Applications
 {
-    public class ServerRelater
+    public class ServerRelater : IDispose
     {
         private KeyValueList<int, IData> mDataCached;
         private KeyValueList<int, IShipDockComponent> mCompCached;
         private KeyValueList<string, IServer> mServerCached;
+        
+        public void Dispose()
+        {
+            Utils.Reclaim(ref mDataCached);
+            Utils.Reclaim(ref mCompCached);
+            Utils.Reclaim(ref mServerCached);
+        }
 
         public void CommitRelate()
         {

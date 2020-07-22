@@ -68,7 +68,6 @@ namespace ShipDock.Applications
         public bool Update(IAnimatorState state)
         {
             Frame++;
-            Testers.Tester.Instance.Log(TesterRPG.Instance, TesterRPG.LOG, string.IsNullOrEmpty(state.AnimationName), "error: ".Append(state.ToString(), " animation name is null."));
             HasCompleted = (StateInfo.normalizedTime > 1f) && StateInfo.IsName(state.AnimationName);
             return HasCompleted;
         }
@@ -101,7 +100,6 @@ namespace ShipDock.Applications
                 else
                 {
                     AnimatorTarget.SetFloat(conf.KeyField, conf.Float);
-                    Testers.Tester.Instance.Log(TesterRPG.Instance, TesterRPG.LOG, "log: ".Append(mConfItem.KeyField, " = ", mConfItem.Value));
                 }
             }
             else if (conf.IsInt)
