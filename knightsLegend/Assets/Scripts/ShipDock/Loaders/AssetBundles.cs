@@ -82,6 +82,10 @@ namespace ShipDock.Loader
             {
                 info = new AssetBundleInfo(bundle);
                 mCaches[name] = info;
+                if (name.Contains("_scene"))
+                {
+                    return;
+                }
                 mABManifests[name] = bundle.LoadAsset<AssetBundleManifest>(ASSET_BUNDLE_MANIFEST);
             }
         }

@@ -10,7 +10,8 @@ namespace ShipDock.Applications
 
             if(m_IsCreateInAwake)
             {
-                CreateAsset();
+                CreateRaw();
+                Instantiate(Prefab);
             }
         }
 
@@ -21,13 +22,18 @@ namespace ShipDock.Applications
             Prefab = default;
         }
 
-        public void CreateAsset()
+        public void CreateRaw()
         {
             if ((m_Asset != default) && (Prefab == default))
             {
                 GameObject source = Assets.Get(m_Asset.GetABName(), m_Asset.GetAssetName());
                 Prefab = source;
             }
+        }
+
+        public void CreateAsset()
+        {
+            Instantiate(Prefab);
         }
 
         public void SetSubgroup(string ab, string asset)

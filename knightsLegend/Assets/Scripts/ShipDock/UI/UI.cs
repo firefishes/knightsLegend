@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace ShipDock.UI
 {
-    public class UI : MonoBehaviour
+    public class UI : MonoBehaviour, INotificationSender
     {
         private AssetsPooling mUIPooling;
 

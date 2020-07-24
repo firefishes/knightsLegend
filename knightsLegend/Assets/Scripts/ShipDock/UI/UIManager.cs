@@ -27,43 +27,57 @@ namespace ShipDock.UI
             UIRoot = root;
         }
 
+        public T GetUI<T>(string stackName) where T : IUIStack
+        {
+            return mUICacher.GetUICache<T>(stackName);
+        }
+
         public T Open<T>(string stackName) where T : IUIStack, new()
         {
             T result = mUICacher.CreateOrGetUICache<T>(stackName);
 
             if(!result.IsExited)
             {
-                if(mPrevious != default)
+                if(result.IsStackable)
                 {
-                    mPrevious.Interrupt();
-                }
-                mPrevious = mCurrent;
-                mCurrent = mUICacher.StackCurrent;
-                if (mCurrent.IsStackAdvanced)
-                {
-                    mCurrent.Renew();
+                    if (mPrevious != default)
+                    {
+                        mPrevious.Interrupt();
+                    }
+                    mPrevious = mCurrent;
+                    mCurrent = mUICacher.StackCurrent;
+                    if (mCurrent.IsStackAdvanced)
+                    {
+                        mCurrent.Renew();//界面栈被提前后重新唤醒
+                    }
+                    else
+                    {
+                        mCurrent.Enter();//界面栈没被提前，说明此界面刚刚打开，已位于栈顶
+                    }
                 }
                 else
                 {
-                    mCurrent.Enter();
+                    result.Enter();//非栈管理方式的界面，直接开启
+                    //TODO 非栈管理方式的界面需要做层级管理
                 }
             }
             return result;
         }
 
-        public void Close<T>(string name) where T : IUIStack, new()
+        public void Close<T>(string name, bool isDestroy = false) where T : IUIStack, new()
         {
             bool isCurrentStack;
             T result = mUICacher.RemoveAndCheckUICached<T>(name, out isCurrentStack);
-            if(isCurrentStack)
+            if (isCurrentStack)
             {
                 mPrevious = mCurrent;
                 mCurrent = mUICacher.StackCurrent;
                 mCurrent.Renew();
             }
+            else { }//非栈方式管理的界面的额外处理
             if(result != default)
             {
-                result.Exit();
+                result.Exit(isDestroy);//退出界面
             }
         }
 

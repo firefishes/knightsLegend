@@ -1,4 +1,5 @@
-﻿using ShipDock.Datas;
+﻿using System;
+using ShipDock.Datas;
 using ShipDock.Loader;
 using ShipDock.Notices;
 using ShipDock.Pooling;
@@ -7,7 +8,7 @@ using UnityEngine;
 
 namespace ShipDock.Applications
 {
-    public class UIModular<T> : UIStack, IUIModular where T : MonoBehaviour
+    public class UIModular<T> : UIStack, IUIModular where T : MonoBehaviour, INotificationSender
     {
         protected T mUI;
 
@@ -20,7 +21,7 @@ namespace ShipDock.Applications
             UIs = ShipDockApp.Instance.UIs;
 
             GameObject prefab = ABs.Get(ABName, UIName);
-            GameObject ui = Object.Instantiate(prefab, UIs.UIRoot.MainCanvas.transform);
+            GameObject ui = UnityEngine.Object.Instantiate(prefab, UIs.UIRoot.MainCanvas.transform);
 
             ParamNotice<MonoBehaviour> notice = Pooling<ParamNotice<MonoBehaviour>>.From();
             int id = ui.GetInstanceID();
@@ -36,17 +37,32 @@ namespace ShipDock.Applications
 
             if (mUI != default)
             {
-                mUI.gameObject.SetActive(true);
+                mUI.transform.localScale = Vector3.one;
+                mUI.Add(UIChangeHandler);
             }
         }
 
-        public override void Exit()
+        protected virtual void UIChangeHandler(INoticeBase<int> param)
         {
-            base.Exit();
+
+        }
+
+        public override void Exit(bool isDestroy)
+        {
+            base.Exit(isDestroy);
 
             if (mUI != default)
             {
-                mUI.gameObject.SetActive(true);
+                mUI.Remove(UIChangeHandler);
+
+                if (isDestroy)
+                {
+                    UnityEngine.Object.Destroy(mUI);
+                }
+                else
+                {
+                    mUI.transform.localScale = Vector3.zero;
+                }
             }
 
         }

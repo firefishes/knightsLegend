@@ -14,7 +14,7 @@
         {
         }
 
-        public virtual void Exit()
+        public virtual void Exit(bool isDestroy)
         {
             IsExited = true;
         }
@@ -41,5 +41,6 @@
         public bool IsStackAdvanced { get; private set; }
         public virtual string UIName { get; protected set; }
         public virtual string Name { get; protected set; }
+        public virtual bool IsStackable { get; } = true;
     }
 }

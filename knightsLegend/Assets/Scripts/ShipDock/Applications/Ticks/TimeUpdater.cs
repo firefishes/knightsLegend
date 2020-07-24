@@ -23,6 +23,14 @@ namespace ShipDock.Applications
             mCancelCondition = cancelCondition;
         }
 
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            Completion = default;
+            mCancelCondition = default;
+        }
+
         public void Start()
         {
             HasStart = true;
@@ -60,6 +68,10 @@ namespace ShipDock.Applications
             if (mRepeats <= 0)
             {
                 Stop();
+                if (IsAutoDispose)
+                {
+                    Dispose();
+                }
             }
         }
 
@@ -70,6 +82,10 @@ namespace ShipDock.Applications
                 if (mCancelCondition.Invoke())
                 {
                     Stop();
+                    if (IsAutoDispose)
+                    {
+                        Dispose();
+                    }
                 }
             }
         }
@@ -88,6 +104,14 @@ namespace ShipDock.Applications
                 else
                 {
                     CheckOnlyOnce();
+
+                    if(mCancelCondition == default)
+                    {
+                        if (IsAutoDispose)
+                        {
+                            Dispose();
+                        }
+                    }
                 }
                 Completion?.Invoke();
                 mTime -= TotalTime;
@@ -108,5 +132,6 @@ namespace ShipDock.Applications
         public bool Repeatable { get; private set; }
         public bool HasStart { get; private set; }
         public bool IsTimeCounting { get; private set; }
+        public bool IsAutoDispose { get; set; }
     }
 }

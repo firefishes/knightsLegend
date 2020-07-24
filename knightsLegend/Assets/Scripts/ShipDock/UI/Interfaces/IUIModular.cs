@@ -1,11 +1,9 @@
 ﻿using ShipDock.Interfaces;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using ShipDock.Notices;
 
 namespace ShipDock.UI
 {
-    public interface IUIModular : IUIStack, IDispose
+    public interface IUIModular : INotificationSender, IUIStack, IDispose
     {
     }
 }

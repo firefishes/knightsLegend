@@ -19,16 +19,21 @@ namespace ShipDock.UI
             Utils.Reclaim(ref mUIStacks, false);
             Utils.Reclaim(ref mUICached, false);
         }
+        
+        public T GetUICache<T>(string stackName) where T : IUIStack
+        {
+            return mUICached.ContainsKey(stackName) ? (T)mUICached[stackName] : default;
+        }
 
-        public T CreateOrGetUICache<T>(string name) where T : IUIStack, new()
+        public T CreateOrGetUICache<T>(string stackName) where T : IUIStack, new()
         {
             T result = default;
-            if(mUICached.ContainsKey(name))
+            if(mUICached.ContainsKey(stackName))
             {
-                result = (T)mUICached[name];
-                if(!result.IsExited)
+                result = (T)mUICached[stackName];
+                if(!result.IsExited && result.IsStackable)
                 {
-                    result.StackAdvance();
+                    result.StackAdvance();//标记为栈置顶
                     if(result.IsStackAdvanced)
                     {
                         AddStack(result);
@@ -40,19 +45,26 @@ namespace ShipDock.UI
                 result = new T();
                 result.Init();
                 mUICached[result.Name] = result;
-                AddStack(result);
+
+                if (result.IsStackable)
+                {
+                    AddStack(result);
+                }
             }
             return result;
         }
 
-        public T RemoveAndCheckUICached<T>(string name, out bool isCurrentStack) where T : IUIStack
+        public T RemoveAndCheckUICached<T>(string name, out bool isCurrentStack, bool isDestroy = false) where T : IUIStack
         {
             T result = default;
             isCurrentStack = false;
             if (mUICached.ContainsKey(name))
             {
                 result = (T)mUICached[name];
-                mUICached.Remove(name);
+                if (isDestroy)
+                {
+                    mUICached.Remove(name);
+                }
                 isCurrentStack = RemoveStack(result);
             }
             return result;
@@ -99,7 +111,7 @@ namespace ShipDock.UI
                     {
                         item.ResetAdvance();
                     }
-                    mUIStacks.Pop();
+                    mUIStacks.Pop();//跳过所有被标记为栈提前的界面
                     item = default;
                 }
                 else
@@ -111,6 +123,4 @@ namespace ShipDock.UI
 
         public IUIStack StackCurrent { get; private set; }
     }
-    
-
 }
