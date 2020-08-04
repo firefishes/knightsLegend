@@ -10,6 +10,8 @@ namespace ShipDock.Applications
         protected bool m_IsCreateInAwake = true;
         [SerializeField]
         protected AssetSubgroup m_Asset;
+        [SerializeField]
+        protected int m_PoolID;
 
         protected virtual void Awake()
         {
@@ -19,9 +21,26 @@ namespace ShipDock.Applications
         protected virtual void OnDestroy()
         {
             Assets = default;
+            m_PoolID = int.MaxValue;
+        }
+
+        public void SetPoolID(int id)
+        {
+            if (m_PoolID == int.MaxValue)
+            {
+                m_PoolID = id;
+            }
         }
 
         protected IAssetBundles Assets { get; set; }
+
+        public int PoolID
+        {
+            get
+            {
+                return m_PoolID;
+            }
+        }
     }
 
 }

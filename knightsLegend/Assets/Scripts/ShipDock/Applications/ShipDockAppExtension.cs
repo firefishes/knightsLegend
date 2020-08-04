@@ -47,11 +47,20 @@ public static class ShipDockAppExtension
         ShipDockApp.Instance.Notificater.Dispatch(notice);
     }
 
-    public static void Dispatch(this INotificationSender target, int noticeName, INoticeBase<int> notice)
+    public static void Dispatch(this INotificationSender target, int noticeName, INoticeBase<int> notice = default)
     {
+        bool defaultNotice = notice == default;
+        if (defaultNotice)
+        {
+            notice = new Notice();
+        }
         notice.SetNoticeName(noticeName);
         notice.NotifcationSender = target;
         ShipDockApp.Instance.Notificater.Dispatch(notice);
+        if (defaultNotice)
+        {
+            notice.Dispose();
+        }
     }
     
     public static T GetServer<T>(this string serverName) where T : IServer

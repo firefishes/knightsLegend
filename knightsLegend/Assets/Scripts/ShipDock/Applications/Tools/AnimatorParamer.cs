@@ -1,5 +1,6 @@
 ﻿using ShipDock.Interfaces;
 using ShipDock.Tools;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -21,7 +22,7 @@ namespace ShipDock.Applications
 
             Animator = default;
 
-            Utils.Reclaim(ref mParamValues, true, true);
+            Utils.Reclaim(ref mParamValues, false, true);
         }
 
         public void SetAnimator(ref Animator animator)
@@ -46,8 +47,29 @@ namespace ShipDock.Applications
                 item.KeyField = paramName;
                 this[paramName] = item;
             }
+            else
+            {
+                item.Float = value;
+            }
             mParamValues.Enqueue(item);
 
+        }
+
+        internal void SetBool(string paramName, bool value)
+        {
+            bool isExist = IsContainsKey(paramName);
+
+            ValueItem item = isExist ? this[paramName] : ValueItem.New(paramName, value);
+            if (!isExist)
+            {
+                item.KeyField = paramName;
+                this[paramName] = item;
+            }
+            else
+            {
+                item.Bool = value;
+            }
+            mParamValues.Enqueue(item);
         }
 
         public void SetFloat(string paramName, float value, float dampTime = 0f)
@@ -68,10 +90,17 @@ namespace ShipDock.Applications
             while (mParamValues.Count > 0)
             {
                 item = mParamValues.Dequeue();
+                if(item == default)
+                {
+                    continue;
+                }
                 switch (item.Type)
                 {
                     case ValueItem.FLOAT:
                         Animator.SetFloat(item.KeyField, item.Float, item.DampTime > 0f ? item.DampTime : 0f, Time.deltaTime);
+                        break;
+                    case ValueItem.BOOL:
+                        Animator.SetBool(item.KeyField, item.Bool);
                         break;
                 }
             }
@@ -85,7 +114,7 @@ namespace ShipDock.Applications
 
         public bool IsMotionCompleted(string animationName)
         {
-            return (StateInfo.normalizedTime > 1f) && StateInfo.IsName(animationName);
+            return (StateInfo.normalizedTime > 1f) && IsMotion(animationName);
         }
 
         public bool IsMotion(string animationName)
@@ -103,5 +132,7 @@ namespace ShipDock.Applications
 
         public bool IsValid { get; private set; }
         public Animator Animator { get; private set; }
+        public string MotionName { get; set; }
+        public int LastState { get; set; }
     }
 }

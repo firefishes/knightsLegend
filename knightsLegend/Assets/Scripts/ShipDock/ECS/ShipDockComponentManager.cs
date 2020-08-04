@@ -13,35 +13,35 @@ namespace ShipDock.ECS
 
     public class ShipDockComponentManager : IShipDockComponentManager, IDispose
     {
-        private IShipDockComponent mComponent;
-        private List<int> mDeletdComponents;
-        private KeyValueList<int, int> mIDMapper;
-        private IntegerMapper<IShipDockComponent> mMapper;
-        private List<IShipDockComponent> mUpdateByTicks;
-        private List<IShipDockComponent> mUpdateByScene;
-
         private int mFinalUpdateTime;
         private IShipDockEntitas mFinalUpdateEntitas;
+        private IShipDockComponent mSystem;
+        private List<IShipDockComponent> mComponents;
+        private List<int> mUpdateByTicks;
+        private List<int> mUpdateByScene;
+        private List<int> mDeletdComponents;
+        private KeyValueList<int, int> mNameAutoIDMapper;
+        private IntegerMapper<IShipDockComponent> mMapper;
         private Action<int, IShipDockEntitas> mFinalUpdateMethod;
-
         private DoubleBuffers<int> mQueueUpdateTime;
         private DoubleBuffers<IShipDockEntitas> mQueueUpdateEntitas;
         private DoubleBuffers<Action<int, IShipDockEntitas>> mQueueUpdateExecute;
 
         public ShipDockComponentManager()
         {
-            mComponent = default;
-            mIDMapper = new KeyValueList<int, int>();
+            mSystem = default;
+            mNameAutoIDMapper = new KeyValueList<int, int>();
             mMapper = new IntegerMapper<IShipDockComponent>();
 
             mDeletdComponents = new List<int>();
-            mUpdateByTicks = new List<IShipDockComponent>();
-            mUpdateByScene = new List<IShipDockComponent>();
+            mUpdateByTicks = new List<int>();
+            mUpdateByScene = new List<int>();
+            mComponents = new List<IShipDockComponent>();
 
             mQueueUpdateTime = new DoubleBuffers<int>();
             mQueueUpdateEntitas = new DoubleBuffers<IShipDockEntitas>();
             mQueueUpdateExecute = new DoubleBuffers<Action<int, IShipDockEntitas>>();
-            
+
             mQueueUpdateExecute.OnDequeue += OnQueueUpdateExecute;
         }
 
@@ -50,46 +50,59 @@ namespace ShipDock.ECS
             Utils.Reclaim(ref mUpdateByTicks);
             Utils.Reclaim(ref mUpdateByScene);
             Utils.Reclaim(ref mDeletdComponents);
+            Utils.Reclaim(ref mComponents);
+            Utils.Reclaim(mQueueUpdateTime);
+            Utils.Reclaim(mQueueUpdateEntitas);
+            Utils.Reclaim(mQueueUpdateExecute);
             Utils.Reclaim(mMapper);
-            Utils.Reclaim(mIDMapper);
-            mComponent = default;
+            Utils.Reclaim(mNameAutoIDMapper);
+            RelateComponentsReFiller = default;
+            PreUpdate = default;
+            mSystem = default;
         }
 
         public int Create<T>(int name, bool isUpdateByScene = false, params int[] willRelateComponents) where T : IShipDockComponent, new()
         {
-            T target = new T
+            T target = new T();
+            bool isSystem = target.IsSystem;
+            if (isSystem)
             {
-                RelateComponents = willRelateComponents
-            };
+                ISystemComponent system = target as ISystemComponent;
+                system.RelateComponents = willRelateComponents;
+            }
             target.SetSceneUpdate(isUpdateByScene);
             target.OnFinalUpdateForTime = OnFinalUpdateForTime;
             target.OnFinalUpdateForEntitas = OnFinalUpdateForEntitas;
             target.OnFinalUpdateForExecute = OnFinalUpdateForExecute;
 
-            int aid = mMapper.Add(target, out int statu);
-            if (isUpdateByScene)
+            mComponents.Add(target);
+            int index = mComponents.Count - 1;
+            if (isSystem)
             {
-                mUpdateByScene.Add(target);
-            }
-            else
-            {
-                mUpdateByTicks.Add(target);
+                if (target.IsSceneUpdate)
+                {
+                    mUpdateByScene.Add(index);
+                }
+                else
+                {
+                    mUpdateByTicks.Add(index);
+                }
             }
 
+            int autoID = mMapper.Add(target, out int statu);
             if (statu == 0)
             {
-                mIDMapper[name] = aid;
+                mNameAutoIDMapper[name] = autoID;
 
-                target.SetComponentID(aid);
-                target.FillRelateComponents(this);
-                target.Init();
+                target.SetComponentID(autoID);
+                target.Init(this);
                 RelateComponentsReFiller?.Invoke(name, target, this);
             }
             else
             {
-                aid = -1;
+                autoID = -1;
             }
-            return aid;
+            return autoID;
         }
 
         private void OnFinalUpdateForExecute(Action<int, IShipDockEntitas> method)
@@ -107,16 +120,16 @@ namespace ShipDock.ECS
             mQueueUpdateTime.Enqueue(time, false);
         }
 
-        public T GetEntitasWithComponents<T>(params int[] aidArgs) where T : IShipDockEntitas, new()
+        public T GetEntitasWithComponents<T>(params int[] nameArgs) where T : IShipDockEntitas, new()
         {
             T result = new T();
-            int max = aidArgs.Length;
-            int aid;
+            int max = nameArgs.Length;
+            int name;
             IShipDockComponent component;
             for (int i = 0; i < max; i++)
             {
-                aid = aidArgs[i];
-                component = RefComponentByName(aid);
+                name = nameArgs[i];
+                component = RefComponentByName(name);
                 if (component != default)
                 {
                     result.AddComponent(component);
@@ -128,14 +141,17 @@ namespace ShipDock.ECS
         public IShipDockComponent RefComponentByName(int name)
         {
             IShipDockComponent component = default;
-            if (mIDMapper.IsContainsKey(name))
+            if (mNameAutoIDMapper.IsContainsKey(name))
             {
-                int id = mIDMapper[name];
+                int id = mNameAutoIDMapper[name];
                 component = mMapper.Get(id);
             }
             return component;
         }
 
+        /// <summary>
+        /// 标记需要移除的组件
+        /// </summary>
         public void RemoveComponent(IShipDockComponent target)
         {
             if (!mDeletdComponents.Contains(target.ID))
@@ -144,6 +160,9 @@ namespace ShipDock.ECS
             }
         }
 
+        /// <summary>
+        /// 移除已标记的组件
+        /// </summary>
         public void RemoveSingedComponents()
         {
             int max = mDeletdComponents.Count;
@@ -151,47 +170,64 @@ namespace ShipDock.ECS
             {
                 int id = mDeletdComponents[i];
                 IShipDockComponent target = mMapper.Get(id);
-                
-                int index = mIDMapper.Values.IndexOf(id);
 
-                id = mIDMapper.Keys[index];
-                mIDMapper.Remove(id);
+                int index = mNameAutoIDMapper.Values.IndexOf(id);
+
+                id = mNameAutoIDMapper.Keys[index];
+                mNameAutoIDMapper.Remove(id);
 
                 if (index >= 0)
                 {
-                    mIDMapper.Remove(id);
+                    mNameAutoIDMapper.Remove(id);
                 }
-                List<IShipDockComponent> updateList = target.IsSceneUpdate ? mUpdateByScene : mUpdateByTicks;
-                updateList.Remove(target);
+                int compIndex = mComponents.IndexOf(target);
+                List<int> updateList = target.IsSceneUpdate ? mUpdateByScene : mUpdateByTicks;
+                updateList.Remove(compIndex);
                 mMapper.Remove(target, out int statu);
 
                 target.Dispose();
-
             }
-            if(max > 0)
+            if (max > 0)
             {
                 mDeletdComponents.Clear();
             }
         }
 
+        private void RefComponentByIndex(int value, ref int compIndex, ref List<int> updateList, ref IShipDockComponent comp)
+        {
+            compIndex = updateList[value];
+            comp = compIndex < mComponents.Count ? mComponents[compIndex] : default;
+        }
+
+        public void RefComponentByIndex(int value, bool isSceneUpdate, ref IShipDockComponent comp)
+        {
+            int index = 0;
+            List<int> list = isSceneUpdate ? mUpdateByScene : mUpdateByTicks;
+            RefComponentByIndex(value, ref index, ref list, ref comp);
+        }
+
+        /// <summary>
+        /// 更新组件的同时检测需要释放的组件
+        /// </summary>
         public void UpdateAndFreeComponents(int time, Action<Action<int>> method = default)
         {
+            int compIndex = 0;
             int max = mUpdateByTicks.Count;
             for (int i = 0; i < max; i++)
             {
-                mComponent = mUpdateByTicks[i];
+                RefComponentByIndex(i, ref compIndex, ref mUpdateByTicks, ref mSystem);
 
-                if (!mDeletdComponents.Contains(mComponent.ID))
+                if ((mSystem != default) && !mDeletdComponents.Contains(mSystem.ID))
                 {
                     if (method == default)
                     {
-                        mComponent.UpdateComponent(time);
-                        mComponent.FreeComponent(time);
+                        mSystem.UpdateComponent(time);
+                        mSystem.FreeComponent(time);
                     }
                     else
                     {
-                        method.Invoke(mComponent.UpdateComponent);
-                        method.Invoke(mComponent.FreeComponent);
+                        method.Invoke(mSystem.UpdateComponent);
+                        method.Invoke(mSystem.FreeComponent);
                     }
                 }
             }
@@ -201,32 +237,39 @@ namespace ShipDock.ECS
             RemoveSingedComponents();
         }
 
+        /// <summary>
+        /// 更新组件
+        /// </summary>
         public void UpdateComponentUnit(int time, Action<Action<int>> method = default)
         {
-            CountTime += time;
+            CountTime += time;//与主线程的帧率时间保持一致，避更新新过快
 
             while (CountTime > FrameTimeInScene)
             {
+                PreUpdate?.Invoke(mUpdateByTicks, false);
+
+                int compIndex = 0;
                 int max = mUpdateByTicks.Count;
                 for (int i = 0; i < max; i++)
                 {
-                    mComponent = mUpdateByTicks[i];
-
-                    if (!mDeletdComponents.Contains(mComponent.ID))
+                    RefComponentByIndex(i, ref compIndex, ref mUpdateByTicks, ref mSystem);
+                    if ((mSystem != default) && mSystem.IsSystemChanged && !mSystem.IsSceneUpdate)
                     {
-                        if (method == default)
+                        if (!mDeletdComponents.Contains(mSystem.ID))
                         {
-                            mComponent.UpdateComponent(time);
+                            if (method == default)
+                            {
+                                mSystem.UpdateComponent(time);
+                            }
+                            else
+                            {
+                                method.Invoke(mSystem.UpdateComponent);
+                            }
                         }
-                        else
-                        {
-                            method.Invoke(mComponent.UpdateComponent);
-                        }
+                        mSystem.SystemChecked();
                     }
                 }
-
                 FinalUpdate(time);
-
                 CountTime -= FrameTimeInScene;
             }
         }
@@ -236,7 +279,7 @@ namespace ShipDock.ECS
             mFinalUpdateTime = mQueueUpdateTime.Current;
             mFinalUpdateEntitas = mQueueUpdateEntitas.Current;
             mFinalUpdateMethod = current;
-            
+
             if (mFinalUpdateEntitas == default)
             {
                 mFinalUpdateMethod.Invoke(mFinalUpdateTime, default);
@@ -259,22 +302,26 @@ namespace ShipDock.ECS
             mFinalUpdateMethod = default;
         }
 
+        /// <summary>
+        /// 检测是否有需要释放的组件
+        /// </summary>
         public void FreeComponentUnit(int time, Action<Action<int>> method = default)
         {
+            int compIndex = 0;
             int max = mUpdateByTicks.Count;
             for (int i = 0; i < max; i++)
             {
-                mComponent = mUpdateByTicks[i];
-                
-                if (!mDeletdComponents.Contains(mComponent.ID))
+                RefComponentByIndex(i, ref compIndex, ref mUpdateByTicks, ref mSystem);
+
+                if ((mSystem != default) && !mDeletdComponents.Contains(mSystem.ID))
                 {
                     if (method == default)
                     {
-                        mComponent.FreeComponent(time);
+                        mSystem.FreeComponent(time);
                     }
                     else
                     {
-                        method.Invoke(mComponent.FreeComponent);
+                        method.Invoke(mSystem.FreeComponent);
                     }
                 }
             }
@@ -282,22 +329,23 @@ namespace ShipDock.ECS
 
         public void UpdateAndFreeComponentsInScene(int time, Action<Action<int>> method = default)
         {
+            int compIndex = 0;
             int max = mUpdateByScene.Count;
             for (int i = 0; i < max; i++)
             {
-                mComponent = mUpdateByScene[i];
+                RefComponentByIndex(i, ref compIndex, ref mUpdateByScene, ref mSystem);
 
-                if (!mDeletdComponents.Contains(mComponent.ID))
+                if ((mSystem != default) && !mDeletdComponents.Contains(mSystem.ID))
                 {
                     if (method == default)
                     {
-                        mComponent.UpdateComponent(time);
-                        mComponent.FreeComponent(time);
+                        mSystem.UpdateComponent(time);
+                        mSystem.FreeComponent(time);
                     }
                     else
                     {
-                        method.Invoke(mComponent.UpdateComponent);
-                        method.Invoke(mComponent.FreeComponent);
+                        method.Invoke(mSystem.UpdateComponent);
+                        method.Invoke(mSystem.FreeComponent);
                     }
                 }
             }
@@ -306,20 +354,21 @@ namespace ShipDock.ECS
 
         public void UpdateComponentUnitInScene(int time, Action<Action<int>> method = default)
         {
+            int compIndex = 0;
             int max = mUpdateByScene.Count;
             for (int i = 0; i < max; i++)
             {
-                mComponent = mUpdateByScene[i];
+                RefComponentByIndex(i, ref compIndex, ref mUpdateByScene, ref mSystem);
 
-                if (!mDeletdComponents.Contains(mComponent.ID))
+                if ((mSystem != default) && !mDeletdComponents.Contains(mSystem.ID))
                 {
                     if (method == default)
                     {
-                        mComponent.UpdateComponent(time);
+                        mSystem.UpdateComponent(time);
                     }
                     else
                     {
-                        method.Invoke(mComponent.UpdateComponent);
+                        method.Invoke(mSystem.UpdateComponent);
                     }
                 }
             }
@@ -327,28 +376,28 @@ namespace ShipDock.ECS
 
         public void FreeComponentUnitInScene(int time, Action<Action<int>> method = default)
         {
+            int compIndex = 0;
             int max = mUpdateByScene.Count;
             for (int i = 0; i < max; i++)
             {
-                mComponent = mUpdateByScene[i];
+                RefComponentByIndex(i, ref compIndex, ref mUpdateByScene, ref mSystem);
 
-                if (!mDeletdComponents.Contains(mComponent.ID))
+                if ((mSystem != default) && !mDeletdComponents.Contains(mSystem.ID))
                 {
                     if (method == default)
                     {
-                        mComponent.FreeComponent(time);
+                        mSystem.FreeComponent(time);
                     }
                     else
                     {
-                        method.Invoke(mComponent.FreeComponent);
+                        method.Invoke(mSystem.FreeComponent);
                     }
                 }
             }
         }
 
-        public bool Asynced { get; private set; }
-        public Action<IShipDockComponent> CustomUpdate { get; set; }
         public Action<int, IShipDockComponent, IShipDockComponentManager> RelateComponentsReFiller { get; set; }
+        public Action<List<int>, bool> PreUpdate { get; set; }
         public int CountTime { get; private set; }
         public int FrameTimeInScene { get; set; }
     }

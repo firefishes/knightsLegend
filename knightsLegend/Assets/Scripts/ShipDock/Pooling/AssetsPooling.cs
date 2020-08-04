@@ -74,7 +74,7 @@ namespace ShipDock.Pooling
             {
                 int key = pool.Keys[i];
                 list = pool[key];
-                Utils.Reclaim(ref list, true, true);
+                Utils.Reclaim(ref list, true);
             }
             pool.Clear();
         }
@@ -87,13 +87,31 @@ namespace ShipDock.Pooling
         {
             if (mPool.IsContainsKey(poolName))
             {
+                GameObject item;
                 Stack<GameObject> list = mPool.GetValue(poolName, true);
-                Utils.Reclaim(ref list, true, true);
+                while (list.Count > 0)
+                {
+                    item = list.Pop();
+                    if (item != default)
+                    {
+                        Object.Destroy(item);
+                    }
+                }
+                Utils.Reclaim(ref list, true);
             }
             if (mCompPool.IsContainsKey(poolName))
             {
+                Component item;
                 Stack<Component> list = mCompPool.GetValue(poolName, true);
-                Utils.Reclaim(ref list, true, true);
+                while (list.Count > 0)
+                {
+                    item = list.Pop();
+                    if (item != default)
+                    {
+                        Object.Destroy(item.gameObject);
+                    }
+                }
+                Utils.Reclaim(ref list, true);
             }
         }
 

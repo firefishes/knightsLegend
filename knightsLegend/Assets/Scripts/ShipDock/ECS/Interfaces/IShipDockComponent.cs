@@ -5,8 +5,7 @@ namespace ShipDock.ECS
 {
     public interface IShipDockComponent : IDispose
     {
-        void Init();
-        void FillRelateComponents(IShipDockComponentManager manager);
+        void Init(IShipDockComponentManager manager);
         IShipDockEntitas GetEntitas(int id);
         void GetEntitasRef(int id, out IShipDockEntitas entitas);
         int SetEntitas(IShipDockEntitas target);
@@ -16,12 +15,18 @@ namespace ShipDock.ECS
         void FreeComponent(int time);
         void SetComponentID(int id);
         void SetSceneUpdate(bool value);
-        bool IsVariableFrame { get; set; }
-        int ID { get; }
-        bool IsSceneUpdate { get; }
-        int[] RelateComponents { get; set; }
+
+        #region TODO 系统特性，需要迁移
+        void SystemChecked();
+        bool IsSystemChanged { get; set; }
+        bool IsSystem { get; }
+        #endregion
+
         Action<int> OnFinalUpdateForTime { set; }
         Action<IShipDockEntitas> OnFinalUpdateForEntitas { set; }
         Action<Action<int, IShipDockEntitas>> OnFinalUpdateForExecute { set; }
+        Action<IShipDockEntitas, bool> OnEntitasStretch { get; set; }
+        bool IsSceneUpdate { get; }
+        int ID { get; }
     }
 }

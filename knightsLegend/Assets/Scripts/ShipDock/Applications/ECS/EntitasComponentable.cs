@@ -34,6 +34,11 @@ namespace ShipDock.Applications
             }
         }
 
+        public T GetComponentByName<T>(int name) where T : IShipDockComponent
+        {
+            return (T)ShipDockApp.Instance.Components.RefComponentByName(name);
+        }
+
         public T GetComponentFromEntitas<T>(int aid) where T : IShipDockComponent
         {
             T result = default;

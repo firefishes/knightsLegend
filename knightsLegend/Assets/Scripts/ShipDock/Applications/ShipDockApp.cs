@@ -12,6 +12,9 @@ using System;
 
 namespace ShipDock.Applications
 {
+    /// <summary>
+    /// 门面模式创建的框架单例
+    /// </summary>
     public class ShipDockApp : Singletons<ShipDockApp>
     {
         public static void StartUp(int ticks, Action onStartUp = default)
@@ -23,6 +26,9 @@ namespace ShipDock.Applications
             Instance.Start(ticks);
         }
 
+        /// <summary>
+        /// 副线程中延迟一帧后调用
+        /// </summary>
         public static void CallLater(Action<int> method)
         {
             Instance.TicksUpdater?.CallLater(method);
@@ -48,25 +54,26 @@ namespace ShipDock.Applications
                 return;
             }
 
-            Notificater = new Notifications<int>();
-            ABs = new AssetBundles();
-            Servers = new Servers(OnServersInit);
-            Datas = new DataWarehouse();
-            AssetsPooling = new AssetsPooling();
-            StateMachines = new StateMachines
+            Notificater = new Notifications<int>();//新建消息中心
+            ABs = new AssetBundles();//新建资源包管理器
+            Servers = new Servers(OnServersInit);//新建服务容器管理器
+            Datas = new DataWarehouse();//新建数据管理器
+            AssetsPooling = new AssetsPooling();//新建场景资源对象池
+            StateMachines = new StateMachines//新建有限状态机管理器
             {
                 FSMFrameUpdater = OnFSMFrameUpdater,
                 StateFrameUpdater = OnStateFrameUpdater
             };
             mFSMUpdaters = new KeyValueList<IStateMachine, IUpdate>();
             mStateUpdaters = new KeyValueList<IState, IUpdate>();
+            Effects = new EffectManager();
 
             if (ticks > 0)
             {
-                TicksUpdater = new TicksUpdater(ticks);
+                TicksUpdater = new TicksUpdater(ticks);//新建客户端心跳帧更新器
             }
 
-            ShipDockConsts.NOTICE_APPLICATION_STARTUP.Broadcast();
+            ShipDockConsts.NOTICE_APPLICATION_STARTUP.Broadcast();//框架启动完成
 
             IsStarted = true;
             mAppStarted?.Invoke();
@@ -116,6 +123,9 @@ namespace ShipDock.Applications
             }
         }
 
+        /// <summary>
+        /// 所有服务容器初始化完成
+        /// </summary>
         private void OnServersInit()
         {
             Components = new ShipDockComponentManager
@@ -126,11 +136,11 @@ namespace ShipDock.Applications
             MethodUpdater updater = ShipDockComponentManagerSetting.isMergeUpdateMode ?
                 new MethodUpdater
                 {
-                    Update = MergeComponentUpdateMode
+                    Update = MergeUpdateMode
                 } : 
                 new MethodUpdater
                 {
-                    Update = SingleFrameComponentUpdateMode
+                    Update = AlternateFrameUpdateMode//框架默认为此模式
                 };
             UpdaterNotice notice = Pooling<UpdaterNotice>.From();
             notice.ParamValue = updater;
@@ -140,7 +150,10 @@ namespace ShipDock.Applications
             ShipDockConsts.NOTICE_SCENE_UPDATE_READY.Add(OnSceneUpdateReady);
         }
 
-        private void SingleFrameComponentUpdateMode(int time)
+        /// <summary>
+        /// 交替更新帧模式
+        /// </summary>
+        private void AlternateFrameUpdateMode(int time)
         {
             if (ShipDockComponentManagerSetting.isUpdateByCallLate)
             {
@@ -164,7 +177,10 @@ namespace ShipDock.Applications
             mFrameSign = mFrameSign > 1 ? 0 : mFrameSign;
         }
 
-        private void MergeComponentUpdateMode(int time)
+        /// <summary>
+        /// 合并更新帧模式
+        /// </summary>
+        private void MergeUpdateMode(int time)
         {
             if (ShipDockComponentManagerSetting.isUpdateByCallLate)
             {
@@ -180,11 +196,17 @@ namespace ShipDock.Applications
             }
         }
 
+        /// <summary>
+        /// 更新单个组件
+        /// </summary>
         private void ComponentUnitUpdate(Action<int> method)
         {
             TicksUpdater.CallLater(method);
         }
 
+        /// <summary>
+        /// 主线程的场景更新已就绪，用于需要在主线程中更新的组件
+        /// </summary>
         private void OnSceneUpdateReady(INoticeBase<int> obj)
         {
             ShipDockConsts.NOTICE_SCENE_UPDATE_READY.Remove(OnSceneUpdateReady);
@@ -192,11 +214,11 @@ namespace ShipDock.Applications
             MethodUpdater updater = ShipDockComponentManagerSetting.isMergeUpdateMode ?
                 new MethodUpdater
                 {
-                    Update = MergeComponentUpdateModeInScene
+                    Update = MergeUpdateModeInScene
                 } :
                 new MethodUpdater
                 {
-                    Update = SingleFrameComponentUpdateModeInScene
+                    Update = AlternateFramUpdateModeInScene
                 };
 
             UpdaterNotice notice = Pooling<UpdaterNotice>.From();
@@ -205,7 +227,10 @@ namespace ShipDock.Applications
             Pooling<UpdaterNotice>.To(notice);
         }
 
-        private void SingleFrameComponentUpdateModeInScene(int time)
+        /// <summary>
+        /// 交替更新帧模式（用于主线程的场景更新）
+        /// </summary>
+        private void AlternateFramUpdateModeInScene(int time)
         {
             if (ShipDockComponentManagerSetting.isUpdateByCallLate)
             {
@@ -229,7 +254,10 @@ namespace ShipDock.Applications
             mFrameSignInScene = mFrameSignInScene > 1 ? 0 : mFrameSignInScene;
         }
 
-        private void MergeComponentUpdateModeInScene(int time)
+        /// <summary>
+        /// 合并更新帧模式（用于主线程的场景更新）
+        /// </summary>
+        private void MergeUpdateModeInScene(int time)
         {
             if (ShipDockComponentManagerSetting.isUpdateByCallLate)
             {
@@ -256,8 +284,10 @@ namespace ShipDock.Applications
             Utils.Reclaim(ref mStateUpdaters);
             ShipDockConsts.NOTICE_APPLICATION_CLOSE.Broadcast();
 
+            Utils.Reclaim(Effects);
             Utils.Reclaim(Notificater);
             Utils.Reclaim(TicksUpdater);
+            Utils.Reclaim(Components);
             Utils.Reclaim(Servers);
             Utils.Reclaim(StateMachines);
             Utils.Reclaim(Datas);
@@ -268,6 +298,7 @@ namespace ShipDock.Applications
 
             Notificater = default;
             TicksUpdater = default;
+            Components = default;
             Servers = default;
             StateMachines = default;
             Datas = default;
@@ -312,5 +343,6 @@ namespace ShipDock.Applications
         public AssetBundles ABs { get; private set; }
         public AssetsPooling AssetsPooling { get; private set; }
         public StateMachines StateMachines { get; private set; }
+        public EffectManager Effects { get; private set; }
     }
 }

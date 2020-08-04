@@ -155,6 +155,9 @@ static public class ShipDockExtension
         }
         rayForMainCamera = new Ray(cameraTF.position, direction);
         bool result = Physics.Raycast(rayForMainCamera, out hitInfo, distance, layerMask);
+#if UNITY_EDITOR
+        Debug.DrawRay(cameraTF.position, direction, Color.yellow);
+#endif
         return result;
     }
 

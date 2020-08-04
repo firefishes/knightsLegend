@@ -104,6 +104,7 @@ namespace ShipDock.Loader
                 string source = mCurrentOption.relativeName;
                 if (mCurrentOption.isGetDependencies)
                 {
+                    Utils.Reclaim(ref mDependences);
                     InitDependencesList(source);
                     mIndex = 0;
                     source = GetValidSourceByIndex(ref source);
@@ -130,15 +131,26 @@ namespace ShipDock.Loader
 
         private void InitDependencesList(string source)
         {
-            string[] list = AessetManifest.GetDirectDependencies(source);
-            if (mDependences != default)
+            mDependences = new List<string>();
+
+            string dep = source;
+            WalkDependences(dep);
+            mDependences.Add(source);
+        }
+
+        private void WalkDependences(string dep)
+        {
+            string[] list = AessetManifest.GetDirectDependencies(dep);
+            int max = list.Length;
+            for (int i = 0; i < max; i++)
             {
-                Utils.Reclaim(ref mDependences);
+                dep = list[i];
+                if (dep.Length > 0)
+                {
+                    WalkDependences(dep);
+                    mDependences.Add(dep);
+                }
             }
-            mDependences = new List<string>(list)
-            {
-                source
-            };
         }
 
         private string GetValidSourceByIndex(ref string source)
@@ -210,7 +222,6 @@ namespace ShipDock.Loader
 
         private void GetNextDependenced(ref Loader target)
         {
-            Debug.Log("Loader complete and get dependency: " + target.Assets);
             ABs.Add(target.Assets);
             if(mIndex < mDependences.Count)
             {
@@ -222,7 +233,8 @@ namespace ShipDock.Loader
                 }
                 else
                 {
-                    mLoader.Load(AppPaths.StreamingResDataRoot.Append(source));//TODO 根据版本号决定是缓存目录还是项目目录获取
+                    Debug.Log("Loader complete and get dependency: " + target.Assets);
+                    mLoader.Load(AppPaths.StreamingResDataRoot.Append(source));//TODO 根据版本号决定是缓存目录还是项目目录获取，拼接不同的地址
                 }
             }
             else

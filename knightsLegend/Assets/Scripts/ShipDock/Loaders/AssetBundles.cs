@@ -82,7 +82,7 @@ namespace ShipDock.Loader
             {
                 info = new AssetBundleInfo(bundle);
                 mCaches[name] = info;
-                if (name.Contains("_scene"))
+                if (name.Contains("_unityscene"))
                 {
                     return;
                 }

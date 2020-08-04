@@ -4,6 +4,7 @@ namespace ShipDock.Applications
 {
     public interface IResBridge
     {
+        void SetPoolID(int id);
     }
 
     public interface IResPrefabBridge : IResBridge

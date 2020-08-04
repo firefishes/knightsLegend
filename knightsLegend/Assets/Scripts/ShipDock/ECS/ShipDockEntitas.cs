@@ -16,13 +16,22 @@ namespace ShipDock.ECS
             WillDestroy = true;
         }
 
+        /// <summary>
+        /// 添加组件
+        /// </summary>
         public void AddComponent(IShipDockComponent component)
         {
             if ((component != default) && !HasComponent(component.ID))
             {
-                int id = component.SetEntitas(this);
-                ComponentList.Add(component.ID);
-                mBindedToComponentIDs.Add(id);
+                int autoID = component.SetEntitas(this);
+                //if (!ComponentList.Contains(component.ID))
+                //{
+                    ComponentList.Add(component.ID);
+                //}
+                //if (!mBindedToComponentIDs.Contains(autoID))
+                //{
+                    mBindedToComponentIDs.Add(autoID);
+                //}
             }
         }
 
@@ -34,6 +43,9 @@ namespace ShipDock.ECS
             }
         }
 
+        /// <summary>
+        /// 移除组件
+        /// </summary>
         public void RemoveComponent(IShipDockComponent component)
         {
             if ((component != default) && HasComponent(component.ID))
@@ -66,6 +78,9 @@ namespace ShipDock.ECS
             return (ComponentList != default) && ComponentList.Contains(componentID);
         }
 
+        /// <summary>
+        /// 查找本实体在组件中的索引
+        /// </summary>
         public int FindEntitasInComponent(IShipDockComponent component)
         {
             int id = component.ID;
@@ -83,6 +98,6 @@ namespace ShipDock.ECS
 
         public List<int> ComponentList { get; } = new List<int>();
         public int ID { get; private set; } = int.MaxValue;
-        public bool WillDestroy { get; private set; } = false;
+        public bool WillDestroy { get; protected set; } = false;
     }
 }

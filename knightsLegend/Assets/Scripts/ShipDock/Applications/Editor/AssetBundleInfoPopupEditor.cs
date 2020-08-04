@@ -94,18 +94,13 @@ namespace ShipDock.Editors
             string abName = string.Empty;
             if (GUILayout.Button("Build"))
             {
-                AssetBuilding(ref abName, false);
+                AssetBuilding(ref abName);
             }
-            if (GUILayout.Button("Build Scene"))
-            {
-                AssetBuilding(ref abName, true);
-            }
-
             EditorGUILayout.Space();
             EditorGUILayout.EndVertical();
         }
 
-        private void AssetBuilding(ref string abName, bool isBuildScene)
+        private void AssetBuilding(ref string abName)
         {
             ShipDockEditorData editorData = ShipDockEditorData.Instance;
 
@@ -113,7 +108,7 @@ namespace ShipDock.Editors
             Utils.Reclaim(ref editorData.ABCreaterMapper, false);
 
             editorData.ABCreaterMapper = new KeyValueList<string, List<ABAssetCreater>>();
-            CreateAssetImporters(ref abName, ref editorData.ABCreaterMapper, isBuildScene);
+            CreateAssetImporters(ref abName, ref editorData.ABCreaterMapper);
 
             string output = editorData.outputRoot;//.Append(abPath);
             if (!Directory.Exists(output))
@@ -122,7 +117,6 @@ namespace ShipDock.Editors
             }
 
             BuildAssetByCreater();
-            //BuildPipeline.BuildAssetBundles(output, BuildAssetBundleOptions.None, editorData.buildPlatform);
 
             if (EditorUtility.DisplayDialog("提示", string.Format("资源打包完成!!!"), "OK"))
             {
@@ -130,7 +124,7 @@ namespace ShipDock.Editors
             }
         }
 
-        private void CreateAssetImporters(ref string abName, ref KeyValueList<string, List<ABAssetCreater>> mapper, bool isBuildScene)
+        private void CreateAssetImporters(ref string abName, ref KeyValueList<string, List<ABAssetCreater>> mapper)
         {
             string path;
             string assetItemName;
@@ -153,20 +147,13 @@ namespace ShipDock.Editors
                 {
                     continue;
                 }
-                if (isBuildScene)
-                {
-                    if (ext != ".unity")
-                    {
-                        continue;
-                    }
-                }
-
                 int index = path.IndexOf(starter, StringComparison.Ordinal);
                 ABAssetCreater creater = new ABAssetCreater(path.Substring(index + starterLen));
                 abName = creater.GetABName();
-                if (isBuildScene)
+                bool isScene = ext == ".unity";
+                if (isScene)
                 {
-                    abName = abName.Append("_scene");
+                    abName = abName.Append("_unityscene");
                 }
 
                 if (mapper.ContainsKey(abName))

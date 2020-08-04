@@ -4,6 +4,8 @@ namespace ShipDock.Applications
 {
     public class ResPrefabBridge : ResBridge, IResPrefabBridge
     {
+        private GameObject mPrefab;
+
         protected override void Awake()
         {
             base.Awake();
@@ -18,8 +20,8 @@ namespace ShipDock.Applications
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            
-            Prefab = default;
+
+            mPrefab = default;
         }
 
         public void CreateRaw()
@@ -27,13 +29,32 @@ namespace ShipDock.Applications
             if ((m_Asset != default) && (Prefab == default))
             {
                 GameObject source = Assets.Get(m_Asset.GetABName(), m_Asset.GetAssetName());
-                Prefab = source;
+                mPrefab = source;
             }
         }
 
-        public void CreateAsset()
+        public GameObject CreateAsset(bool isCreateFromPool = false)
         {
-            Instantiate(Prefab);
+            if (isCreateFromPool)
+            {
+                return ShipDockApp.Instance.AssetsPooling.FromPool(m_PoolID, ref mPrefab);
+            }
+            else
+            {
+                return Instantiate(Prefab);
+            }
+        }
+
+        public void CollectAsset(GameObject target)
+        {
+            if (m_PoolID == int.MaxValue)
+            {
+                Destroy(target);
+            }
+            else
+            {
+                ShipDockApp.Instance.AssetsPooling.ToPool(m_PoolID, target);
+            }
         }
 
         public void SetSubgroup(string ab, string asset)
@@ -41,7 +62,13 @@ namespace ShipDock.Applications
             m_Asset.SetSubgroup(ab, asset);
         }
 
-        public GameObject Prefab { get; private set; }
+        public GameObject Prefab
+        {
+            get
+            {
+                return mPrefab;
+            }
+        }
     }
 
 }

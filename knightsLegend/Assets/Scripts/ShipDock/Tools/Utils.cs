@@ -245,6 +245,9 @@ namespace ShipDock.Tools
         {
             ray = new Ray(start, direction);
             bool result = Physics.Raycast(ray, out hitInfo, distance, layerMask);
+#if UNITY_EDITOR
+            Debug.DrawRay(start, direction, Color.red);
+#endif
             return result;
         }
     }
