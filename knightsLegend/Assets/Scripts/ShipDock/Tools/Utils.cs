@@ -216,9 +216,31 @@ namespace ShipDock.Tools
             return (float)d;
         }
 
+        public static int RangeRandom(float min, float max, float t)
+        {
+            return (int)(t * RangeRandom(min, max));
+        }
+
         public static float UnityRangeRandom(float min, float max)
         {
             return UnityEngine.Random.Range(min, max);
+        }
+
+        public static int UnityRangeRandom(int min, int max)
+        {
+            return UnityEngine.Random.Range(min, max);
+        }
+
+        public static Vector3 GetGroundRandomPosInCircle(Vector3 circleOrigin, ref RayAndHitInfo raycastInfo, float radius, bool isPlaneZ = true, bool isUnityRandom = false)
+        {
+            Vector3 result = GetRandomPosInCircle(radius, true, isUnityRandom);
+            result += circleOrigin;
+            bool isHit = Raycast(result, Vector3.down, out raycastInfo.ray, out raycastInfo.hitInfo, raycastInfo.distance, raycastInfo.layerMask);
+            if (isHit)
+            {
+                result = raycastInfo.hitInfo.point;
+            }
+            return result;
         }
 
         public static Vector3 GetRandomPosInCircle(float radius, bool isPlaneZ = true, bool isUnityRandom = false)
@@ -250,5 +272,13 @@ namespace ShipDock.Tools
 #endif
             return result;
         }
+    }
+
+    public struct RayAndHitInfo
+    {
+        public Ray ray;
+        public RaycastHit hitInfo;
+        public float distance;
+        public int layerMask;
     }
 }

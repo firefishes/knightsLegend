@@ -8,11 +8,11 @@ namespace ShipDock.Datas
 {
     public class DataWarehouse : IDispose
     {
-        private KeyValueList<int, IData> mDataMapper;
+        private KeyValueList<int, IDataProxy> mDataMapper;
 
         public DataWarehouse()
         {
-            mDataMapper = new KeyValueList<int, IData>();
+            mDataMapper = new KeyValueList<int, IDataProxy>();
         }
 
         public void Dispose()
@@ -20,7 +20,7 @@ namespace ShipDock.Datas
             Utils.Reclaim(ref mDataMapper, true, true);
         }
 
-        public void AddData(IData target)
+        public void AddData(IDataProxy target)
         {
             int name = target.DataName;
             if(mDataMapper.ContainsKey(name))
@@ -31,7 +31,7 @@ namespace ShipDock.Datas
             mDataMapper[name] = target;
         }
 
-        public void RemoveData(IData target)
+        public void RemoveData(IDataProxy target)
         {
             int name = target.DataName;
             if (!mDataMapper.ContainsKey(name))
@@ -42,7 +42,7 @@ namespace ShipDock.Datas
             mDataMapper.Remove(name);
         }
 
-        public T GetData<T>(int dataName) where T : IData
+        public T GetData<T>(int dataName) where T : IDataProxy
         {
             return ((mDataMapper != default) && mDataMapper.IsContainsKey(dataName)) ? (T)mDataMapper[dataName] : default;
         }

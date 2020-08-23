@@ -12,10 +12,10 @@ namespace ShipDock.Server
         int Register<InterfaceT>(ResolveDelegate<InterfaceT> target, params IPoolBase[] factory);
         ResolveDelegate<InterfaceT> Reregister<InterfaceT>(ResolveDelegate<InterfaceT> target, string alias);
         void Unregister<InterfaceT>(string alias);
-        InterfaceT Resolve<InterfaceT>(string alias,  string resolverName = "");
+        InterfaceT Resolve<InterfaceT>(string alias, string resolverName = "", ResolveDelegate<InterfaceT> customResolver = default);
         int MakeResolver<InterfaceT>(string alias, string resolverName, ResolveDelegate<InterfaceT> target);
         void Add<InterfaceT>(ResolveDelegate<InterfaceT> target, bool onlyOnce = false);
-        InterfaceT Delive<InterfaceT>(string resolverName, string alias);
+        InterfaceT Delive<InterfaceT>(string resolverName, string alias, ResolveDelegate<InterfaceT> customResolver = default, bool isMakeResolver = false);
         void Revert(IPoolable target, string alias);
         IServersHolder ServersHolder { get; }
         int Prioriity { get; set; }

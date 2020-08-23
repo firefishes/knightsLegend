@@ -14,7 +14,10 @@ namespace ShipDock.Applications
     public class AssetsPoolingComponent : MonoBehaviour
     {
 
-        public static Vector3 GameObjectReadyPos = new Vector3(100000, 100000, 100000);
+        public static Vector3 GameObjectReadyPos = new Vector3(10000, 10000, 10000);
+
+        [SerializeField]
+        private bool m_IsPoolItemParent;
 
         private bool mIsDestroyed;
         private ComponentBridge mCompBridge;
@@ -70,7 +73,7 @@ namespace ShipDock.Applications
         {
             target.transform.position = GameObjectReadyPos;
 #if UNITY_EDITOR
-            if (target.transform.parent != transform)
+            if (m_IsPoolItemParent && target.transform.parent != transform)
             {
                 target.transform.SetParent(transform);
             }

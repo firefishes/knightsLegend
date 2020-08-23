@@ -73,12 +73,12 @@ public static class ShipDockAppExtension
         serverName.GetServer<IServer>().MakeResolver(alias, resolverName, handler);
     }
 
-    public static void AddToWarehouse(this IData target)
+    public static void AddToWarehouse(this IDataProxy target)
     {
         ShipDockApp.Instance.Datas.AddData(target);
     }
 
-    public static T GetData<T>(this int target) where T : IData
+    public static T GetData<T>(this int target) where T : IDataProxy
     {
         return ShipDockApp.Instance.Datas.GetData<T>(target);
     }

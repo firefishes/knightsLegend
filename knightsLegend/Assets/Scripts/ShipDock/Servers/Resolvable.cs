@@ -7,8 +7,10 @@ namespace ShipDock.Server
 {
     public class Resolvable : IResolvable
     {
-        public const string RESOLVER_DEF = "def";
-        public const string RESOLVER_CRT = "crt";
+        /// <summary>用于构造对象的解析器类型标识，如对应的类没有构造函数则不会存在此解析器</summary>
+        public const string RESOLVER_CRT = "resolverCrt";
+        /// <summary>初始化对象的解析器类型标识</summary>
+        public const string RESOLVER_INIT = "resolverInit";
 
         private static readonly Type[] defaultGenericType = new Type[0];
         private static readonly object[] defaultGenericParam = new object[0];
@@ -39,7 +41,7 @@ namespace ShipDock.Server
             {
                 mResolverIDMapper = new IntegerMapper<string>();
             }
-            SetResolver<InterfaceT>(RESOLVER_DEF, OnResolverDefault, out _);
+            SetResolver<InterfaceT>(RESOLVER_CRT, OnResolverDefault, out _);
         }
 
         private void OnResolverDefault<T>(ref T param)

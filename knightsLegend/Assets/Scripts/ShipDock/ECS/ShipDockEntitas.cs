@@ -24,14 +24,8 @@ namespace ShipDock.ECS
             if ((component != default) && !HasComponent(component.ID))
             {
                 int autoID = component.SetEntitas(this);
-                //if (!ComponentList.Contains(component.ID))
-                //{
-                    ComponentList.Add(component.ID);
-                //}
-                //if (!mBindedToComponentIDs.Contains(autoID))
-                //{
-                    mBindedToComponentIDs.Add(autoID);
-                //}
+                ComponentList.Add(component.ID);
+                mBindedToComponentIDs.Add(autoID);
             }
         }
 

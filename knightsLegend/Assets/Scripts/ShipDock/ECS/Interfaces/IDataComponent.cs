@@ -2,9 +2,9 @@
 {
     public interface IDataComponent<T> : IShipDockComponent, IDataValidable
     {
-        void FillEntitasData(ref IShipDockEntitas target, T data);
+        void FillEntitasData<E>(ref E target, T data) where E : IShipDockEntitas;
         T GetEntitasData<E>(ref E target) where E : IShipDockEntitas;
-        bool IsDataValid(ref IShipDockEntitas target);
+        bool IsDataValid<E>(ref E target) where E : IShipDockEntitas;
     }
 
     public interface IDataValidable

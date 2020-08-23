@@ -19,7 +19,7 @@ namespace ShipDock.Loader
         {
             mOpertions = new Queue<LoaderOpertion>();
             mLoader = Loader.GetAssetBundleLoader();
-            mLoader.CompletedEvent.AddListener(OnCompleted);
+            mLoader.CompleteEvent.AddListener(OnCompleted);
 
             if (ShipDockApp.Instance.IsStarted)
             {
@@ -104,7 +104,6 @@ namespace ShipDock.Loader
                 string source = mCurrentOption.relativeName;
                 if (mCurrentOption.isGetDependencies)
                 {
-                    Utils.Reclaim(ref mDependences);
                     InitDependencesList(source);
                     mIndex = 0;
                     source = GetValidSourceByIndex(ref source);
@@ -114,8 +113,10 @@ namespace ShipDock.Loader
                 {
                     source = mCurrentOption.url;
                 }
+
                 if(!string.IsNullOrEmpty(source))
                 {
+                    Debug.Log("load res : " + source);
                     mLoader.Load(source);
                 }
                 else
@@ -131,7 +132,11 @@ namespace ShipDock.Loader
 
         private void InitDependencesList(string source)
         {
-            mDependences = new List<string>();
+            Utils.Reclaim(ref mDependences);
+            if (mDependences == default)
+            {
+                mDependences = new List<string>();
+            }
 
             string dep = source;
             WalkDependences(dep);
@@ -157,6 +162,7 @@ namespace ShipDock.Loader
         {
             if(mIndex >= mDependences.Count)
             {
+                Debug.Log("dependences is empty");
                 return string.Empty;
             }
             source = mDependences[mIndex];
@@ -188,11 +194,12 @@ namespace ShipDock.Loader
         {
             Debug.Log(target.LoadError);
             Debug.LogError(mLoader.Url);
-            CompleteEvent?.Invoke(false, mLoader);
+            CompleteEvent?.Invoke(false, this);
         }
 
         private void LoadSuccessd(ref Loader target)
         {
+            Debug.Log("Loader successed: " + target.Url);
             if (mCurrentOption.isManifest)
             {
                 GetAssetManifest(ref target);
@@ -209,7 +216,7 @@ namespace ShipDock.Loader
             Load(out int statu);
             if(statu == 2)
             {
-                CompleteEvent?.Invoke(true, mLoader);
+                CompleteEvent?.Invoke(true, this);
             }
         }
 
@@ -233,7 +240,7 @@ namespace ShipDock.Loader
                 }
                 else
                 {
-                    Debug.Log("Loader complete and get dependency: " + target.Assets);
+                    Debug.Log("Loader complete and get dependency: " + source);
                     mLoader.Load(AppPaths.StreamingResDataRoot.Append(source));//TODO 根据版本号决定是缓存目录还是项目目录获取，拼接不同的地址
                 }
             }

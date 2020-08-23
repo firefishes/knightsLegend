@@ -61,9 +61,43 @@ namespace ShipDock.ECS
             mSystem = default;
         }
 
+        public int Create<T>(T target, int name, bool isUpdateByScene = false, params int[] willRelateComponents) where T : IShipDockComponent, new()
+        {
+            SetComponentUpdateMode(target, isUpdateByScene, willRelateComponents);
+            AddComponentToMapper(name, ref target, out int autoID);
+
+            return autoID;
+        }
+
         public int Create<T>(int name, bool isUpdateByScene = false, params int[] willRelateComponents) where T : IShipDockComponent, new()
         {
             T target = new T();
+
+            SetComponentUpdateMode(target, isUpdateByScene, willRelateComponents);
+            AddComponentToMapper(name, ref target, out int autoID);
+            
+            return autoID;
+        }
+
+        private void AddComponentToMapper<T>(int name, ref T target, out int autoID) where T : IShipDockComponent, new()
+        {
+            autoID = mMapper.Add(target, out int statu);
+            if (statu == 0)
+            {
+                mNameAutoIDMapper[name] = autoID;
+
+                target.SetComponentID(autoID);
+                target.Init(this);
+                RelateComponentsReFiller?.Invoke(name, target, this);
+            }
+            else
+            {
+                autoID = -1;
+            }
+        }
+
+        private void SetComponentUpdateMode<T>(T target, bool isUpdateByScene = false, params int[] willRelateComponents) where T : IShipDockComponent, new()
+        {
             bool isSystem = target.IsSystem;
             if (isSystem)
             {
@@ -88,21 +122,6 @@ namespace ShipDock.ECS
                     mUpdateByTicks.Add(index);
                 }
             }
-
-            int autoID = mMapper.Add(target, out int statu);
-            if (statu == 0)
-            {
-                mNameAutoIDMapper[name] = autoID;
-
-                target.SetComponentID(autoID);
-                target.Init(this);
-                RelateComponentsReFiller?.Invoke(name, target, this);
-            }
-            else
-            {
-                autoID = -1;
-            }
-            return autoID;
         }
 
         private void OnFinalUpdateForExecute(Action<int, IShipDockEntitas> method)

@@ -1,4 +1,5 @@
-﻿using ShipDock.Loader;
+﻿using System;
+using ShipDock.Loader;
 using ShipDock.Tools;
 using UnityEngine;
 
@@ -11,15 +12,25 @@ namespace ShipDock.Applications
         [SerializeField]
         protected AssetSubgroup m_Asset;
         [SerializeField]
-        protected int m_PoolID;
+        protected int m_PoolID = int.MaxValue;
+
+        private ComponentBridge mComponentBridge;
 
         protected virtual void Awake()
+        {
+            mComponentBridge = new ComponentBridge(Init);
+            mComponentBridge.Start();
+        }
+        
+        private void Init()
         {
             Assets = ShipDockApp.Instance.ABs;
         }
 
         protected virtual void OnDestroy()
         {
+            Utils.Reclaim(mComponentBridge);
+
             Assets = default;
             m_PoolID = int.MaxValue;
         }

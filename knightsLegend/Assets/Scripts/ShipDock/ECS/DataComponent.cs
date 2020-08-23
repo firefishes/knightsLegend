@@ -29,7 +29,7 @@ namespace ShipDock.ECS
 
         protected abstract T CreateData();
 
-        public void FillEntitasData(ref IShipDockEntitas target, T data)
+        public virtual void FillEntitasData<E>(ref E target, T data) where E : IShipDockEntitas
         {
             mDatas[target] = data;
         }
@@ -50,8 +50,7 @@ namespace ShipDock.ECS
 
         public override int DropEntitas(IShipDockEntitas target, int entitasID)
         {
-            int statu = base.DropEntitas(target, entitasID);
-            if (statu == 0)
+            if (mDatas.ContainsKey(target))
             {
                 mDataKeys.Remove(target);
                 int index = mDataKeys.IndexOf(target);
@@ -59,31 +58,40 @@ namespace ShipDock.ECS
                 {
                     mInvalidDatasIndex.Remove(index);
                 }
+                T data = mDatas.Remove(target);
+                DrapData(ref data);
             }
-            return statu;
+            return base.DropEntitas(target, entitasID);
+        }
+
+        protected virtual void DrapData(ref T target)
+        {
         }
 
         public void SetDataValidable<E>(bool value, ref E target) where E : IShipDockEntitas
         {
             mDataKeys = mDatas.Keys;
             int index = mDataKeys.IndexOf(target);
-            if (value)
+            if (index >= 0)
             {
-                if (index >= 0 && mInvalidDatasIndex.Contains(index))
+                if (value)
                 {
-                    mInvalidDatasIndex.Remove(index);
+                    if (mInvalidDatasIndex.Contains(index))
+                    {
+                        mInvalidDatasIndex.Remove(index);
+                    }
                 }
-            }
-            else
-            {
-                if (index >= 0 && !mInvalidDatasIndex.Contains(index))
+                else
                 {
-                    mInvalidDatasIndex.Add(index);
+                    if (!mInvalidDatasIndex.Contains(index))
+                    {
+                        mInvalidDatasIndex.Add(index);
+                    }
                 }
             }
         }
 
-        public bool IsDataValid(ref IShipDockEntitas target)
+        public bool IsDataValid<E>(ref E target) where E : IShipDockEntitas
         {
             mDataKeys = mDatas.Keys;
             int index = mDataKeys.IndexOf(target);

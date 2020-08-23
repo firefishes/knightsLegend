@@ -4,40 +4,61 @@ using ShipDock.Server;
 
 public static class ServerExtension
 {
-    public static I Delive<S, I>(this string serverName, string resolverName, string alias) where S : IServer
+    public static I Delive<S, I>(this string serverName, string resolverName, string alias, ResolveDelegate<I> customResolver = default, bool isMakeResolver = false, bool isReregister = false) where S : IServer
     {
+        I result;
         S server = serverName.GetServer<S>();
-        return server.Delive<I>(resolverName, alias);
-    }
-
-    public static P DeliveParam<S, P>(this string serverName, string resolverName, string alias, ResolveDelegate<IParamNotice<P>> newResolver = default, bool isReregister = false) where S : IServer
-    {
-        S server = serverName.GetServer<S>();
-        IParamNotice<P> notice;
-        if (newResolver != default)
+        if (customResolver != default)
         {
-            if(isReregister)
+            if (isReregister)
             {
-                ResolveDelegate<IParamNotice<P>> raw = server.Reregister(newResolver, alias);
-                notice = server.Delive<IParamNotice<P>>(resolverName, alias);
+                ResolveDelegate<I> raw = server.Reregister(customResolver, alias);
+                result = server.Delive<I>(resolverName, alias);
                 server.Reregister(raw, alias);
             }
             else
             {
-                notice = server.Delive<IParamNotice<P>>(resolverName, alias);
-                newResolver.Invoke(ref notice);
+                result = server.Delive(resolverName, alias, customResolver, isMakeResolver);
             }
         }
         else
         {
-            notice = server.Delive<IParamNotice<P>>(resolverName, alias);
+            result = server.Delive<I>(resolverName, alias);
         }
-        return notice.ParamValue;
+        return result;
     }
 
-    public static P DeliveParam<S, P>(this string serverName, string alias, ResolveDelegate<IParamNotice<P>> newResolver = default) where S : IServer
+    public static P DeliveParam<S, P>(this string serverName, string resolverName, string alias, ResolveDelegate<IParamNotice<P>> customResolver = default, bool isMakeResolver = false, bool isReregister = false) where S : IServer
     {
-        return serverName.DeliveParam<S, P>(string.Empty, alias, newResolver);
+        IParamNotice<P> notice = Delive<S, IParamNotice<P>>(serverName, resolverName, alias, customResolver, isMakeResolver, isReregister);
+
+        P result = notice.ParamValue;
+
+        serverName.Revert<S>(alias, notice);
+        return result;
+
+        //S server = serverName.GetServer<S>();
+        //IParamNotice<P> notice;
+        //if (newResolver != default)
+        //{
+        //    if(isReregister)
+        //    {
+        //        ResolveDelegate<IParamNotice<P>> raw = server.Reregister(newResolver, alias);
+        //        notice = server.Delive<IParamNotice<P>>(resolverName, alias);
+        //        server.Reregister(raw, alias);
+        //    }
+        //    else
+        //    {
+        //        notice = server.Delive(resolverName, alias, newResolver, isMakeResolver);
+        //    }
+        //}
+        //else
+        //{
+        //    notice = server.Delive<IParamNotice<P>>(resolverName, alias);
+        //}
+        //P result = notice.ParamValue;
+        //serverName.Revert<S>(alias, notice);
+        //return result;
     }
 
     public static void Revert<S>(this string serverName, string alias, IPoolable target) where S : IServer

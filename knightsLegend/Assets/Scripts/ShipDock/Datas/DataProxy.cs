@@ -5,12 +5,12 @@ using System.Collections.Generic;
 
 namespace ShipDock.Datas
 {
-    public class Data : IData, IDispose
+    public class DataProxy : IDataProxy, IDispose
     {
         private List<IDataExtracter> mDataHandlers;
-        private Action<IData, int> mOnDataChanged;
+        private Action<IDataProxy, int> mOnDataProxyNotify;
 
-        public Data(int dataName)
+        public DataProxy(int dataName)
         {
             DataName = dataName;
             mDataHandlers = new List<IDataExtracter>();
@@ -19,17 +19,17 @@ namespace ShipDock.Datas
         public virtual void Dispose()
         {
             Utils.Reclaim(ref mDataHandlers);
-            mOnDataChanged = default;
+            mOnDataProxyNotify = default;
         }
 
-        public void DataChanged(params int[] keys)
+        public void DataNotify(params int[] keys)
         {
             int keyName;
             int max = keys.Length;
             for (int i = 0; i < max; i++)
             {
                 keyName = keys[i];
-                mOnDataChanged?.Invoke(this, keyName);
+                mOnDataProxyNotify?.Invoke(this, keyName);
             }
         }
 
@@ -40,7 +40,7 @@ namespace ShipDock.Datas
                 return;
             }
             mDataHandlers.Add(dataHandler);
-            mOnDataChanged += dataHandler.OnDataChanged;
+            mOnDataProxyNotify += dataHandler.OnDataProxyNotify;
         }
 
         public void Unregister(IDataExtracter dataHandler)
@@ -50,7 +50,7 @@ namespace ShipDock.Datas
                 return;
             }
             mDataHandlers.Remove(dataHandler);
-            mOnDataChanged -= dataHandler.OnDataChanged;
+            mOnDataProxyNotify -= dataHandler.OnDataProxyNotify;
         }
 
         public int DataName { get; private set; }

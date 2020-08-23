@@ -32,7 +32,7 @@ namespace ShipDock.Loader
 
         public void Dispose()
         {
-            CompletedEvent.RemoveAllListeners();
+            CompleteEvent.RemoveAllListeners();
 
             SetUrl(string.Empty);
 
@@ -157,7 +157,7 @@ namespace ShipDock.Loader
         {
             mAsyncOperation.completed -= CheckResult;
             CreateResult();
-            CompletedEvent.Invoke(true, this);
+            CompleteEvent.Invoke(true, this);
         }
 
         private void CreateResult()
@@ -202,7 +202,7 @@ namespace ShipDock.Loader
             else
             {
                 mAsyncOperation.completed -= CheckResult;
-                CompletedEvent.Invoke(false, this);
+                CompleteEvent.Invoke(false, this);
             }
         }
 
@@ -226,7 +226,7 @@ namespace ShipDock.Loader
         }
 
         protected int RetryCount { get; set; }
-        public OnLoaderCompleted CompletedEvent { get; private set; } = new OnLoaderCompleted();
+        public OnLoaderCompleted CompleteEvent { get; private set; } = new OnLoaderCompleted();
         public int LoadType { get; private set; }
         public bool IsLoading { get; private set; }
         public bool IsRetryAlways { get; set; }

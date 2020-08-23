@@ -10,12 +10,12 @@
 
         public readonly static string TRUE_VALUE = true.ToString();
         public readonly static string FALSE_VALUE = false.ToString();
-
+        
         public static ValueItem New(string value = "")
         {
             return new ValueItem(value);
         }
-
+        
         public static ValueItem New(string keyField, string value = "")
         {
             ValueItem result = new ValueItem(value)

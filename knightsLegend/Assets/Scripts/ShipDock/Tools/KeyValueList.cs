@@ -22,6 +22,11 @@ namespace ShipDock.Tools
             Init();
         }
 
+        public KeyValueList(int capacity)
+        {
+            Init(capacity);
+        }
+
         ~KeyValueList()
         {
             Clear();

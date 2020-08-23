@@ -13,6 +13,7 @@ namespace ShipDock.Loader
         public Sprite sprite;
         public AudioClip audioClip;
         public TextAsset textData;
+        public AssetBundle assetBundle;
 
         public T GetAsset<T>() where T : UnityEngine.Object
         {
@@ -37,9 +38,13 @@ namespace ShipDock.Loader
             {
                 result = textData as T;
             }
+            else if(typeof(T) == typeof(AssetBundle))
+            {
+                result = assetBundle as T;
+            }
             else
             {
-                //Tester.Instance.Log(TesterAssets.Instance, TesterAssets.LOG17, subAssetName);
+                //result = assetBundle as T;
             }
             return result;
         }

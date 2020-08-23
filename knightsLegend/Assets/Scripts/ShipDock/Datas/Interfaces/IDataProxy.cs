@@ -1,6 +1,6 @@
 ﻿namespace ShipDock.Datas
 {
-    public interface IData
+    public interface IDataProxy
     {
         void Register(IDataExtracter dataHandler);
         int DataName { get; }
@@ -8,6 +8,6 @@
 
     public interface IDataExtracter
     {
-        void OnDataChanged(IData data, int keyName);
+        void OnDataProxyNotify(IDataProxy data, int keyName);
     }
 }

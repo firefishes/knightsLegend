@@ -28,6 +28,10 @@ namespace ShipDock.Applications
         {
             if ((m_Asset != default) && (Prefab == default))
             {
+                if (Assets == default)
+                {
+                    Assets = ShipDockApp.Instance.ABs;
+                }
                 GameObject source = Assets.Get(m_Asset.GetABName(), m_Asset.GetAssetName());
                 mPrefab = source;
             }

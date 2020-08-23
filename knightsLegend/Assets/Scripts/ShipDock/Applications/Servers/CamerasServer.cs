@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace ShipDock.Applications
 {
-    public class CamerasServer<C, D> : Server.Server, IDataExtracter where C : ICamerLens where D : IData
+    public class CamerasServer<C, D> : Server.Server, IDataExtracter where C : ICamerLens where D : IDataProxy
     {
         private C mLens;
         private ServerRelater mRelater;
@@ -40,7 +40,7 @@ namespace ShipDock.Applications
             base.ServerReady();
 
             mRelater.CommitRelate();
-            IData playerData = mRelater.DataRef<IData>(DataName);
+            IDataProxy playerData = mRelater.DataRef<IDataProxy>(DataName);
             playerData.Register(this);
 
             Add<IParamNotice<ICamerLens>>(SetLens);
@@ -60,7 +60,7 @@ namespace ShipDock.Applications
             mLens = (C)(target as IParamNotice<ICamerLens>).ParamValue;
         }
 
-        public virtual void OnDataChanged(IData data, int keyName)
+        public virtual void OnDataProxyNotify(IDataProxy data, int keyName)
         {
         }
 

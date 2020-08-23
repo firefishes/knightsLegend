@@ -1,5 +1,4 @@
-﻿using ShipDock.Interfaces;
-using ShipDock.Tools;
+﻿using ShipDock.Tools;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,11 +8,11 @@ namespace ShipDock.Applications
 
     public class AnimatorParamer : KeyValueList<string, ValueItem>
     {
-        private Queue<ValueItem> mParamValues;
+        //private Queue<ValueItem> mParamValues;
 
         public AnimatorParamer()
         {
-            mParamValues = new Queue<ValueItem>();
+            //mParamValues = new Queue<ValueItem>();
         }
 
         public override void Dispose()
@@ -22,7 +21,7 @@ namespace ShipDock.Applications
 
             Animator = default;
 
-            Utils.Reclaim(ref mParamValues, false, true);
+            //Utils.Reclaim(ref mParamValues, false, true);
         }
 
         public void SetAnimator(ref Animator animator)
@@ -34,7 +33,7 @@ namespace ShipDock.Applications
         {
             base.Clear(isTrimExcess);
             
-            Utils.Reclaim(ref mParamValues, false, true);
+            //Utils.Reclaim(ref mParamValues, false, true);
         }
 
         public void SetFloat(string paramName, float value)
@@ -51,8 +50,7 @@ namespace ShipDock.Applications
             {
                 item.Float = value;
             }
-            mParamValues.Enqueue(item);
-
+            //mParamValues.Enqueue(item);
         }
 
         internal void SetBool(string paramName, bool value)
@@ -60,7 +58,7 @@ namespace ShipDock.Applications
             bool isExist = IsContainsKey(paramName);
 
             ValueItem item = isExist ? this[paramName] : ValueItem.New(paramName, value);
-            if (!isExist)
+            if (isExist)
             {
                 item.KeyField = paramName;
                 this[paramName] = item;
@@ -69,7 +67,7 @@ namespace ShipDock.Applications
             {
                 item.Bool = value;
             }
-            mParamValues.Enqueue(item);
+            //mParamValues.Enqueue(item);
         }
 
         public void SetFloat(string paramName, float value, float dampTime = 0f)
@@ -83,13 +81,15 @@ namespace ShipDock.Applications
         {
             return IsContainsKey(paramName) ? this[paramName].Float : 0f;
         }
-
+        
         public void CommitParamToAnimator()
         {
             ValueItem item;
-            while (mParamValues.Count > 0)
+            //while (Keys.Count > 0)
+            int max = Size;
+            for (int i = 0; i < max; i++)
             {
-                item = mParamValues.Dequeue();
+                item = Values[i];//mParamValues.Dequeue();
                 if(item == default)
                 {
                     continue;
@@ -114,12 +114,17 @@ namespace ShipDock.Applications
 
         public bool IsMotionCompleted(string animationName)
         {
-            return (StateInfo.normalizedTime > 1f) && IsMotion(animationName);
+            return IsMotion(animationName) && (StateInfo.normalizedTime > 1f);
         }
 
         public bool IsMotion(string animationName)
         {
             return StateInfo.IsName(animationName);
+        }
+
+        public void ConfirmPlayingMotion(string motionName, bool isPlayOnce = false)
+        {
+            MotionName = motionName;
         }
         
         public AnimatorStateInfo StateInfo
@@ -132,7 +137,6 @@ namespace ShipDock.Applications
 
         public bool IsValid { get; private set; }
         public Animator Animator { get; private set; }
-        public string MotionName { get; set; }
-        public int LastState { get; set; }
+        public string MotionName { get; private set; }
     }
 }

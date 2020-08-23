@@ -2,7 +2,7 @@
 
 namespace ShipDock.Datas
 {
-    public class DataStorager : Data
+    public class DataStorager : DataProxy
     {
         private KeyValueList<int, IDataUnit> mStorager;
 

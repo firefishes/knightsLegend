@@ -11,7 +11,7 @@ namespace ShipDock.Applications
             UpdaterNotice notice = Pooling<UpdaterNotice>.From();
             notice.ParamValue = target;
             ShipDockConsts.NOTICE_ADD_UPDATE.Broadcast(notice);
-            Pooling<UpdaterNotice>.To(notice);
+            notice.ToPool();
         }
 
         public static void RemoveUpdater(IUpdate target)
@@ -19,7 +19,7 @@ namespace ShipDock.Applications
             UpdaterNotice notice = Pooling<UpdaterNotice>.From();
             notice.ParamValue = target;
             ShipDockConsts.NOTICE_REMOVE_UPDATE.Broadcast(notice);
-            Pooling<UpdaterNotice>.To(notice);
+            notice.ToPool();
         }
 
         public static void AddSceneUpdater(IUpdate target)
@@ -27,7 +27,7 @@ namespace ShipDock.Applications
             UpdaterNotice notice = Pooling<UpdaterNotice>.From();
             notice.ParamValue = target;
             ShipDockConsts.NOTICE_ADD_SCENE_UPDATE.Broadcast(notice);
-            Pooling<UpdaterNotice>.To(notice);
+            notice.ToPool();
         }
 
         public static void RemoveSceneUpdater(IUpdate target)
@@ -35,7 +35,7 @@ namespace ShipDock.Applications
             UpdaterNotice notice = Pooling<UpdaterNotice>.From();
             notice.ParamValue = target;
             ShipDockConsts.NOTICE_REMOVE_SCENE_UPDATE.Broadcast(notice);
-            Pooling<UpdaterNotice>.To(notice);
+            notice.ToPool();
         }
 
         public static void SceneCallLater(Action<int> target)
@@ -43,7 +43,7 @@ namespace ShipDock.Applications
             ParamNotice<Action<int>> notice = Pooling<ParamNotice<Action<int>>>.From();
             notice.ParamValue = target;
             ShipDockConsts.NOTICE_SCENE_CALL_LATE.Broadcast(notice);
-            Pooling<ParamNotice<Action<int>>>.To(notice);
+            notice.ToPool();
         }
     }
 }

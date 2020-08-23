@@ -96,7 +96,7 @@ namespace ShipDock.ECS
             }
         }
 
-        protected T GetRelatedComponent<T>(int aid) where T : IShipDockComponent
+        public T GetRelatedComponent<T>(int aid) where T : IShipDockComponent
         {
             return (T)mRelatedComponents[aid];
         }

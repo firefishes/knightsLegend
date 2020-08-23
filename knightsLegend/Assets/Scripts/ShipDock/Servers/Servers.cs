@@ -423,7 +423,7 @@ namespace ShipDock.Server
                 resolvable = new Resolvable();
                 resolvable.Binding(ref resolvableRef);
                 resolvable.InitResolver<InterfaceT>(this, default);
-                resolvable.SetResolver(Resolvable.RESOLVER_CRT, defaultResolver, out statu);
+                resolvable.SetResolver(Resolvable.RESOLVER_INIT, defaultResolver, out statu);
 
                 mResolvablesMapper[binderID] = resolvable;
             }

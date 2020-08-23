@@ -39,9 +39,17 @@ namespace ShipDock.Server
         {
         }
 
-        public InterfaceT Delive<InterfaceT>(string resolverName, string alias)
+        public InterfaceT Delive<InterfaceT>(string resolverName, string alias, ResolveDelegate<InterfaceT> customResolver = default, bool isMakeResolver = false)
         {
-            return Resolve<InterfaceT>(alias, resolverName);
+            if (isMakeResolver)
+            {
+                MakeResolver(alias, resolverName, customResolver);
+                return Resolve<InterfaceT>(alias, resolverName);
+            }
+            else
+            {
+                return Resolve(alias, resolverName, customResolver);
+            }
         }
         
         public void Add<InterfaceT>(ResolveDelegate<InterfaceT> target, bool onlyOnce = false)
@@ -100,7 +108,7 @@ namespace ShipDock.Server
             IResolvable resolvable = ServersHolder.GetResolvable(ref alias, out int resultError);
             if (resultError == 0)
             {
-                IResolverCacher<InterfaceT> resolverHandler = resolvable.GetResolver<InterfaceT>(Resolvable.RESOLVER_CRT, out _) as IResolverCacher<InterfaceT>;
+                IResolverCacher<InterfaceT> resolverHandler = resolvable.GetResolver<InterfaceT>(Resolvable.RESOLVER_INIT, out _) as IResolverCacher<InterfaceT>;
                 raw = resolverHandler.DelegateTarget;
                 resolverHandler.SetDelegate(target);
             }
@@ -132,37 +140,53 @@ namespace ShipDock.Server
         }
 
         /// <summary>
-        /// 通过接口及别名解析出一个对象的实例
+        /// 通过接口及别名解析出一个对象的实例并根据解析器名调用解析器函数
         /// </summary>
         /// <typeparam name="InterfaceT">接口</typeparam>
         /// <param name="alias">别名</param>
-        /// <param name="resolverName">解析器名，用于找到对应的实例加工函数，不传此参表示仅获取实例</param>
-        /// <returns>需要获得的对象实例</returns>
-        public InterfaceT Resolve<InterfaceT>(string alias, string resolverName = "")
+        /// <param name="resolverName">解析器名，用于将解析得到的对象传入对应的加工函数，不传此参表示仅获取实例</param>
+        /// <param name="customResolver">定制的解析器函数，在传入加工函数前预处理解析得到的对象</param>
+        /// <returns>需要获得的实例对象</returns>
+        public InterfaceT Resolve<InterfaceT>(string alias, string resolverName = "", ResolveDelegate<InterfaceT> customResolver = default)
         {
             int resultError;
             InterfaceT result = default;
             IResolvable resolvable = ServersHolder.GetResolvable(ref alias, out resultError);
             if (resultError == 0)
             {
-                IResolverHandler resolverHandler = resolvable.GetResolver<InterfaceT>(Resolvable.RESOLVER_DEF, out _);
-                resolverHandler.InvokeResolver();
-                result = (InterfaceT)resolverHandler.ResolverParam;
+                IResolverHandler resolverHandler;
 
                 resolverHandler = resolvable.GetResolver<InterfaceT>(Resolvable.RESOLVER_CRT, out _);
-                resolverHandler.SetParam(ref result);
                 resolverHandler.InvokeResolver();
-
                 result = (InterfaceT)resolverHandler.ResolverParam;
 
-                if ((result != default) && !string.IsNullOrEmpty(resolverName))
+                resolverHandler = resolvable.GetResolver<InterfaceT>(Resolvable.RESOLVER_INIT, out _);
+                resolverHandler.SetParam(ref result);
+                resolverHandler.InvokeResolver();
+                result = (InterfaceT)resolverHandler.ResolverParam;
+
+                if (result != default)
                 {
-                    resolverHandler = resolvable.GetResolver<InterfaceT>(resolverName, out _);
-                    resolverHandler.SetParam(ref result);
-                    resolverHandler.InvokeResolver();
-                    if(resolverHandler.OnlyOnce)
+                    bool isDelive = !string.IsNullOrEmpty(resolverName);
+                    if (isDelive)
                     {
-                        resolvable.RemoveResolver<InterfaceT>(resolverName, out _);
+                        if (customResolver != default)
+                        {
+                            customResolver.Invoke(ref result);
+                        }
+
+                        resolverHandler = resolvable.GetResolver<InterfaceT>(resolverName, out _);
+                        if (resolverHandler == default)
+                        {
+                            return result;
+                        }
+                        resolverHandler.SetParam(ref result);
+                        resolverHandler.InvokeResolver();
+
+                        if (resolverHandler.OnlyOnce)
+                        {
+                            resolvable.RemoveResolver<InterfaceT>(resolverName, out _);
+                        }
                     }
                 }
             }
@@ -174,7 +198,14 @@ namespace ShipDock.Server
             IResolvable resolvable = ServersHolder.GetResolvable(ref alias, out int resultError);
             if (resultError == 0)
             {
-                resolvable.InstanceFactory.Reserve(ref target);
+                if (resolvable.InstanceFactory == default)
+                {
+                    target.Revert();
+                }
+                else
+                {
+                    resolvable.InstanceFactory.Reserve(ref target);
+                }
             }
         }
 

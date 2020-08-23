@@ -48,10 +48,9 @@ namespace ShipDock.Applications
 
             internal GameObject GetUniqueCache()
             {
-                CacheIndex = Math.Max(CacheIndex, 0);
-                CacheIndex = Math.Min(CacheIndex, UniqueCache.Count - 1);
                 int index = CacheIndex;
                 CacheIndex++;
+                CacheIndex = CacheIndex >= total - 1 ? 0 : CacheIndex;
                 return UniqueCache[index];
             }
 

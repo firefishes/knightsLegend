@@ -8,7 +8,7 @@ namespace ShipDock.Applications
 {
     public class ServerRelater : IDispose
     {
-        private KeyValueList<int, IData> mDataCached;
+        private KeyValueList<int, IDataProxy> mDataCached;
         private KeyValueList<int, IShipDockComponent> mCompCached;
         private KeyValueList<string, IServer> mServerCached;
         
@@ -42,13 +42,13 @@ namespace ShipDock.Applications
             {
                 if (mDataCached == default)
                 {
-                    mDataCached = new KeyValueList<int, IData>();
+                    mDataCached = new KeyValueList<int, IDataProxy>();
                 }
                 var datas = app.Datas;
                 for (int i = 0; i < max; i++)
                 {
                     name = DataNames[i];
-                    mDataCached[name] = datas.GetData<IData>(name);
+                    mDataCached[name] = datas.GetData<IDataProxy>(name);
                 }
             }
             max = (ServerNames != default) ? ServerNames.Length : 0;
@@ -73,7 +73,7 @@ namespace ShipDock.Applications
             return mCompCached != default ? (T)mCompCached[componentName] : default;
         }
 
-        public T DataRef<T>(int dataName) where T : IData
+        public T DataRef<T>(int dataName) where T : IDataProxy
         {
             return mDataCached != default ? (T)mDataCached[dataName] : default;
         }

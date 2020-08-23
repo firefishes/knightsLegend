@@ -16,6 +16,21 @@ namespace ShipDock.Applications
 
         public TimeUpdater(float totalTime, Action method, Func<bool> cancelCondition = default, int repeats = 0)
         {
+            Recreate(totalTime, method, cancelCondition, repeats);
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            Stop();
+
+            Completion = default;
+            mCancelCondition = default;
+        }
+
+        public void Recreate(float totalTime, Action method, Func<bool> cancelCondition = default, int repeats = 0)
+        {
             TotalTime = totalTime;
             Completion = method;
             mRepeats = repeats;
@@ -23,16 +38,9 @@ namespace ShipDock.Applications
             mCancelCondition = cancelCondition;
         }
 
-        public override void Dispose()
-        {
-            base.Dispose();
-
-            Completion = default;
-            mCancelCondition = default;
-        }
-
         public void Start()
         {
+            IsStarted = true;
             HasStart = true;
             IsTimeCounting = true;
             UpdaterNotice.AddSceneUpdater(this);
@@ -62,10 +70,11 @@ namespace ShipDock.Applications
             }
         }
 
-        private void CheckRepeat()
+        private bool Repeat()
         {
             mRepeats--;
-            if (mRepeats <= 0)
+            bool result = mRepeats > 0;
+            if (!result)
             {
                 Stop();
                 if (IsAutoDispose)
@@ -73,14 +82,17 @@ namespace ShipDock.Applications
                     Dispose();
                 }
             }
+            return result;
         }
 
-        private void CheckOnlyOnce()
+        private bool CheckCancelCondition()
         {
+            bool result = false;
             if (mCancelCondition != default)
             {
                 if (mCancelCondition.Invoke())
                 {
+                    result = true;
                     Stop();
                     if (IsAutoDispose)
                     {
@@ -88,6 +100,7 @@ namespace ShipDock.Applications
                     }
                 }
             }
+            return result;
         }
 
         private void TimeCountting(int dTime)
@@ -97,26 +110,29 @@ namespace ShipDock.Applications
             if (mTime >= TotalTime)
             {
                 IsTimeCounting = false;
-                if (Repeatable)
+                if (Repeatable && !Repeat())
                 {
-                    CheckRepeat();
+                    Completion?.Invoke();
                 }
                 else
                 {
-                    CheckOnlyOnce();
-
-                    if(mCancelCondition == default)
+                    if(CheckCancelCondition())
                     {
-                        if (IsAutoDispose)
-                        {
-                            Dispose();
-                        }
+                        return;
+                    }
+                    else
+                    {
+                        IsTimeCounting = true;
+                        Completion?.Invoke();
+                        mTime -= TotalTime;
                     }
                 }
-                Completion?.Invoke();
-                mTime -= TotalTime;
-                IsTimeCounting = true;
             }
+        }
+
+        public void SetComplete(Action method)
+        {
+            Completion += method;
         }
 
         public bool IsCompleteCycle
@@ -133,5 +149,6 @@ namespace ShipDock.Applications
         public bool HasStart { get; private set; }
         public bool IsTimeCounting { get; private set; }
         public bool IsAutoDispose { get; set; }
+        public bool IsStarted { get; private set; }
     }
 }
