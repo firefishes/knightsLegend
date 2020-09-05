@@ -40,10 +40,10 @@ public class MeshLightmapSetting : MonoBehaviour
     void Start()
     {
         LoadSettings();
-        if (Application.isPlaying)
-        {
-            Destroy(this);
-        }
+        //if (Application.isPlaying)
+        //{
+        //    Destroy(this);
+        //}
     }
 
 #if UNITY_EDITOR

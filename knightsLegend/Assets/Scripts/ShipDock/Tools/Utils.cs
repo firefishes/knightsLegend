@@ -1,6 +1,7 @@
 ﻿using ShipDock.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 namespace ShipDock.Tools
@@ -271,6 +272,26 @@ namespace ShipDock.Tools
             Debug.DrawRay(start, direction, Color.red);
 #endif
             return result;
+        }
+
+        public static void InvokeGenericMethod(ref object binder, ref MethodInfo methodInfo, ref Type[] generaicTypes, params object[] paramsValue)
+        {
+            if (methodInfo != null)
+            {
+                if (methodInfo.ContainsGenericParameters)
+                {
+                    MethodInfo method = methodInfo.MakeGenericMethod(generaicTypes);
+
+                    if (method != null)
+                    {
+                        method.Invoke(binder, paramsValue);
+                    }
+                }
+                else
+                {
+                    methodInfo.Invoke(binder, paramsValue);
+                }
+            }
         }
     }
 

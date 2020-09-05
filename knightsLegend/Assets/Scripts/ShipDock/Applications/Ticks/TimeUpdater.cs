@@ -2,7 +2,6 @@
 
 namespace ShipDock.Applications
 {
-
     public class TimeUpdater : MethodUpdater
     {
         public static TimeUpdater GetTimUpdater(float totalTime, Action method, Func<bool> cancelCondition = default, int repeats = 0)
@@ -70,34 +69,33 @@ namespace ShipDock.Applications
             }
         }
 
-        private bool Repeat()
+        /// <summary>
+        /// 是否还能重复计时
+        /// </summary>
+        private bool ShouldRepeat()
         {
             mRepeats--;
             bool result = mRepeats > 0;
             if (!result)
             {
                 Stop();
-                if (IsAutoDispose)
-                {
-                    Dispose();
-                }
             }
             return result;
         }
 
+        /// <summary>
+        /// 检测定时器退出条件
+        /// </summary>
         private bool CheckCancelCondition()
         {
             bool result = false;
-            if (mCancelCondition != default)
+            if (mCancelCondition.Invoke())
             {
-                if (mCancelCondition.Invoke())
+                result = true;
+                Stop();
+                if (IsAutoDispose)
                 {
-                    result = true;
-                    Stop();
-                    if (IsAutoDispose)
-                    {
-                        Dispose();
-                    }
+                    Dispose();
                 }
             }
             return result;
@@ -110,18 +108,23 @@ namespace ShipDock.Applications
             if (mTime >= TotalTime)
             {
                 IsTimeCounting = false;
-                if (Repeatable && !Repeat())
+                if (Repeatable && !ShouldRepeat())
                 {
                     Completion?.Invoke();
+                    if (IsAutoDispose)
+                    {
+                        Dispose();
+                    }
                 }
                 else
                 {
-                    if(CheckCancelCondition())
+                    if (mCancelCondition != default)
                     {
-                        return;
+                        CheckCancelCondition();//附带退出条件的定时器
                     }
                     else
                     {
+                        //未完成指定的重复次数、永久重复的计时器开始新一轮定时器周期
                         IsTimeCounting = true;
                         Completion?.Invoke();
                         mTime -= TotalTime;

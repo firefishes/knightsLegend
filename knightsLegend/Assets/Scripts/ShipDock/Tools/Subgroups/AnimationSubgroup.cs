@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace SGGame
@@ -14,7 +12,7 @@ namespace SGGame
         private string[] m_ParamName;
         [SerializeField]
         private string m_MotionName;
-
+        
         public int StateName
         {
             get

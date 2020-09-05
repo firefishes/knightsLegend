@@ -42,6 +42,19 @@ namespace ShipDock.Applications
             }
         }
 
+        public override void Renew()
+        {
+            base.Renew();
+
+            if (mUI != default)
+            {
+                mUI.Add(UIChangeHandler);
+
+                mUI.transform.localScale = Vector3.one;
+            }
+
+        }
+
         protected virtual void UIChangeHandler(INoticeBase<int> param)
         {
 

@@ -54,9 +54,10 @@ namespace ShipDock.UI
             return result;
         }
 
-        public T RemoveAndCheckUICached<T>(string name, out bool isCurrentStack, bool isDestroy = false) where T : IUIStack
+        public T RemoveAndCheckUICached<T>(string name, out bool isCurrentStack, out T removedStack, bool isDestroy = false) where T : IUIStack
         {
             T result = default;
+            removedStack = default;
             isCurrentStack = false;
             if (mUICached.ContainsKey(name))
             {
@@ -65,7 +66,7 @@ namespace ShipDock.UI
                 {
                     mUICached.Remove(name);
                 }
-                isCurrentStack = RemoveStack(result);
+                isCurrentStack = RemoveStack(result, out removedStack);
             }
             return result;
         }
@@ -76,47 +77,41 @@ namespace ShipDock.UI
             mUIStacks.Push(target);
         }
 
-        private bool RemoveStack(IUIStack target)
+        private bool RemoveStack<T>(T target, out T removed) where T : IUIStack
         {
-            bool result = IsStackCurrent(target, true);
+            removed = default;
+            bool result = IsCurrentStack(target);
             if (result)
             {
-                StackCurrent = mUIStacks.Pop();
+                removed = (T)mUIStacks.Pop();
+                UnityEngine.Debug.Log("UIStacks.Count " + mUIStacks.Count);
+                StackCurrent = mUIStacks.Count > 0 ? mUIStacks.Peek() : StackCurrent;
             }
             return result;
         }
 
-        public bool IsStackCurrent(IUIStack target, bool isCheckValid = false)
+        public bool IsCurrentStack(IUIStack target)
         {
             IUIStack item = default;
-            if(isCheckValid)
-            {
-                CheckStackCurrentValid(ref item);
-            }
-            else
-            {
-                item = (isCheckValid && (mUIStacks.Count > 0)) ? mUIStacks.Peek() : default;
-            }
+
+            CheckStackCurrentValid(ref item);
+            
             return (item != default) && (target != default) && item.Name.Equals(target.Name);
         }
 
         private void CheckStackCurrentValid(ref IUIStack item)
         {
-            while (mUIStacks.Count > 0)
+            if (mUIStacks.Count > 0)
             {
                 item = mUIStacks.Peek();
                 if (item.IsExited || item.IsStackAdvanced)
                 {
+                    //略过所有被标记为栈提前的界面
                     if (item.IsStackAdvanced)
                     {
                         item.ResetAdvance();
                     }
-                    mUIStacks.Pop();//跳过所有被标记为栈提前的界面
                     item = default;
-                }
-                else
-                {
-                    break;
                 }
             }
         }

@@ -16,7 +16,10 @@
 
         public virtual void Exit(bool isDestroy)
         {
-            IsExited = true;
+            if (isDestroy)
+            {
+                IsExited = true;
+            }
         }
 
         public virtual void Interrupt()

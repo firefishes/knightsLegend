@@ -25,7 +25,7 @@ namespace ShipDock.UI
             
         }
 
-        protected void Update()
+        protected virtual void Update()
         {
             if(UIChanged)
             {

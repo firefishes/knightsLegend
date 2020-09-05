@@ -1,6 +1,4 @@
 ﻿using ShipDock.Tools;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace ShipDock.Applications
@@ -8,11 +6,8 @@ namespace ShipDock.Applications
 
     public class AnimatorParamer : KeyValueList<string, ValueItem>
     {
-        //private Queue<ValueItem> mParamValues;
-
         public AnimatorParamer()
         {
-            //mParamValues = new Queue<ValueItem>();
         }
 
         public override void Dispose()
@@ -20,8 +15,6 @@ namespace ShipDock.Applications
             base.Dispose();
 
             Animator = default;
-
-            //Utils.Reclaim(ref mParamValues, false, true);
         }
 
         public void SetAnimator(ref Animator animator)
@@ -32,8 +25,6 @@ namespace ShipDock.Applications
         public override void Clear(bool isTrimExcess = false)
         {
             base.Clear(isTrimExcess);
-            
-            //Utils.Reclaim(ref mParamValues, false, true);
         }
 
         public void SetFloat(string paramName, float value)
@@ -50,7 +41,6 @@ namespace ShipDock.Applications
             {
                 item.Float = value;
             }
-            //mParamValues.Enqueue(item);
         }
 
         internal void SetBool(string paramName, bool value)
@@ -67,7 +57,6 @@ namespace ShipDock.Applications
             {
                 item.Bool = value;
             }
-            //mParamValues.Enqueue(item);
         }
 
         public void SetFloat(string paramName, float value, float dampTime = 0f)
@@ -85,11 +74,10 @@ namespace ShipDock.Applications
         public void CommitParamToAnimator()
         {
             ValueItem item;
-            //while (Keys.Count > 0)
             int max = Size;
             for (int i = 0; i < max; i++)
             {
-                item = Values[i];//mParamValues.Dequeue();
+                item = Values[i];
                 if(item == default)
                 {
                     continue;
@@ -122,9 +110,15 @@ namespace ShipDock.Applications
             return StateInfo.IsName(animationName);
         }
 
-        public void ConfirmPlayingMotion(string motionName, bool isPlayOnce = false)
+        public void ConfirmPlayingMotion(string motionName, int aniMaskLayer = 0)
         {
+            AniMaskLayer = aniMaskLayer;
             MotionName = motionName;
+        }
+
+        public void SetCurrentMotion(string motionName)
+        {
+            CurrentMotion = motionName;
         }
         
         public AnimatorStateInfo StateInfo
@@ -138,5 +132,7 @@ namespace ShipDock.Applications
         public bool IsValid { get; private set; }
         public Animator Animator { get; private set; }
         public string MotionName { get; private set; }
+        public int AniMaskLayer { get; private set; }
+        public string CurrentMotion { get; private set; }
     }
 }

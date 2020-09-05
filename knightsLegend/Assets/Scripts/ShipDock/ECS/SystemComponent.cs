@@ -96,6 +96,12 @@ namespace ShipDock.ECS
             }
         }
 
+        /// <summary>
+        /// 获取已关联到系统的组件
+        /// </summary>
+        /// <typeparam name="T">组件泛型</typeparam>
+        /// <param name="aid">组件名</param>
+        /// <returns></returns>
         public T GetRelatedComponent<T>(int aid) where T : IShipDockComponent
         {
             return (T)mRelatedComponents[aid];

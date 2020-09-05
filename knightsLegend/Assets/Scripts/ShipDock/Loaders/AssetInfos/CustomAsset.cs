@@ -14,6 +14,7 @@ namespace ShipDock.Loader
         public AudioClip audioClip;
         public TextAsset textData;
         public AssetBundle assetBundle;
+        public bool refresh;
 
         public T GetAsset<T>() where T : UnityEngine.Object
         {

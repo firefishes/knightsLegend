@@ -59,12 +59,12 @@ namespace ShipDock.ECS
                     mInvalidDatasIndex.Remove(index);
                 }
                 T data = mDatas.Remove(target);
-                DrapData(ref data);
+                DropData(ref data);
             }
             return base.DropEntitas(target, entitasID);
         }
 
-        protected virtual void DrapData(ref T target)
+        protected virtual void DropData(ref T target)
         {
         }
 

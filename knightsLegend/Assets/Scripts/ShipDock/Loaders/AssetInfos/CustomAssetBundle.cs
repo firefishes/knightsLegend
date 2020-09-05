@@ -7,12 +7,12 @@ namespace ShipDock.Loader
 {
     public class CustomAssetBundle : IDispose
     {
-        public KeyValueList<string, int> mBundleMapper;
+        public KeyValueList<string, List<int>> mBundleMapper;
         public List<KeyValueList<string, CustomAsset>> mAssetsCacher;
 
         public CustomAssetBundle()
         {
-            mBundleMapper = new KeyValueList<string, int>();
+            mBundleMapper = new KeyValueList<string, List<int>>();
             mAssetsCacher = new List<KeyValueList<string, CustomAsset>>();
         }
 
@@ -38,7 +38,13 @@ namespace ShipDock.Loader
                     bundleName = comp.GetBundleName();
                     cahcer = new KeyValueList<string, CustomAsset>();
                     mAssetsCacher.Add(cahcer);
-                    mBundleMapper[bundleName] = mAssetsCacher.Count - 1;
+
+                    if (!mBundleMapper.ContainsKey(bundleName))
+                    {
+                        mBundleMapper[bundleName] = new List<int>();
+                    }
+                    int index = mAssetsCacher.Count - 1;
+                    mBundleMapper[bundleName].Add(index);
 
                     int n = comp.Assets.Count;
                     for (int j = 0; j < n; j++)
@@ -55,10 +61,20 @@ namespace ShipDock.Loader
             T result = default;
             if(mBundleMapper.ContainsKey(name))
             {
-                int index = mBundleMapper[name];
-                KeyValueList<string, CustomAsset> cahceItem = mAssetsCacher[index];
-                CustomAsset asset = ((cahceItem != default) && cahceItem.ContainsKey(path)) ? cahceItem[path] : default;
-                result = (asset != default) ? asset.GetAsset<T>() : default;
+                List<int> list = mBundleMapper[name];
+                int index;
+                int max = list.Count;
+                for (int i = 0; i < max; i++)
+                {
+                    index = list[i];
+                    KeyValueList<string, CustomAsset> cahceItem = mAssetsCacher[index];
+                    CustomAsset asset = ((cahceItem != default) && cahceItem.ContainsKey(path)) ? cahceItem[path] : default;
+                    result = (asset != default) ? asset.GetAsset<T>() : default;
+                    if (result != default)
+                    {
+                        break;
+                    }
+                }
             }
             return result;
         }

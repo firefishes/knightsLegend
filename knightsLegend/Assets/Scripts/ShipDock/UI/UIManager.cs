@@ -40,7 +40,7 @@ namespace ShipDock.UI
             {
                 if(result.IsStackable)
                 {
-                    if (mPrevious != default)
+                    if ((mPrevious != default) && (mPrevious.Name != result.Name))
                     {
                         mPrevious.Interrupt();
                     }
@@ -67,7 +67,7 @@ namespace ShipDock.UI
         public void Close<T>(string name, bool isDestroy = false) where T : IUIStack, new()
         {
             bool isCurrentStack;
-            T result = mUICacher.RemoveAndCheckUICached<T>(name, out isCurrentStack);
+            T result = mUICacher.RemoveAndCheckUICached(name, out isCurrentStack, out T removed);
             if (isCurrentStack)
             {
                 mPrevious = mCurrent;
@@ -75,6 +75,7 @@ namespace ShipDock.UI
                 mCurrent.Renew();
             }
             else { }//非栈方式管理的界面的额外处理
+
             if(result != default)
             {
                 result.Exit(isDestroy);//退出界面

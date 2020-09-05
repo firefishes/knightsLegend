@@ -36,29 +36,6 @@ public static class ServerExtension
 
         serverName.Revert<S>(alias, notice);
         return result;
-
-        //S server = serverName.GetServer<S>();
-        //IParamNotice<P> notice;
-        //if (newResolver != default)
-        //{
-        //    if(isReregister)
-        //    {
-        //        ResolveDelegate<IParamNotice<P>> raw = server.Reregister(newResolver, alias);
-        //        notice = server.Delive<IParamNotice<P>>(resolverName, alias);
-        //        server.Reregister(raw, alias);
-        //    }
-        //    else
-        //    {
-        //        notice = server.Delive(resolverName, alias, newResolver, isMakeResolver);
-        //    }
-        //}
-        //else
-        //{
-        //    notice = server.Delive<IParamNotice<P>>(resolverName, alias);
-        //}
-        //P result = notice.ParamValue;
-        //serverName.Revert<S>(alias, notice);
-        //return result;
     }
 
     public static void Revert<S>(this string serverName, string alias, IPoolable target) where S : IServer

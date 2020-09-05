@@ -140,7 +140,7 @@ namespace ShipDock.Editors
                 assetItemName = GetValueItem("res_" + i).Value;//"res_1"
                 relativeName = assetItemName.Replace("Assets/".Append(AppPaths.resDataRoot), string.Empty);
                 path = AppPaths.DataPathResDataRoot.Append(relativeName);
-                
+
                 fileInfo = new FileInfo(path);
                 string ext = fileInfo.Extension;
                 if (ext == ".cs")
@@ -170,7 +170,7 @@ namespace ShipDock.Editors
             }
         }
 
-        private void BuildAssetByCreater()
+        private void BuildAssetByCreater(bool isClearAssetName = false)
         {
             ShipDockEditorData editorData = ShipDockEditorData.Instance;
 
@@ -183,13 +183,20 @@ namespace ShipDock.Editors
             List<List<ABAssetCreater>> creaters = editorData.ABCreaterMapper.Values;
             for (int i = 0; i < max; i++)
             {
-                abName = abNames[i];
+                if (isClearAssetName)
+                {
+                    abName = string.Empty;
+                }
+                else
+                {
+                    abName = abNames[i];
+                }
                 list = creaters[i];
                 int m = list.Count;
                 for (int n = 0; n < m; n++)
                 {
                     list[n].Importer.assetBundleName = abName;
-                    Debug.Log(abName);
+                    // Debug.Log(abName);
                 }
                 //output = editorData.outputRoot.Append(abName);
                 //Debug.Log(output);
@@ -203,7 +210,11 @@ namespace ShipDock.Editors
                 //    list[n].Importer.assetBundleName = default;
                 //}
             }
-            BuildPipeline.BuildAssetBundles(editorData.outputRoot, BuildAssetBundleOptions.None, editorData.buildPlatform);
+            if (!isClearAssetName)
+            {
+                BuildPipeline.BuildAssetBundles(editorData.outputRoot, BuildAssetBundleOptions.None, editorData.buildPlatform);
+                //BuildAssetByCreater(true);
+            }
 
         }
 
