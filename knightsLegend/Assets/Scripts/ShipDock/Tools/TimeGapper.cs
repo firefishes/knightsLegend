@@ -32,6 +32,11 @@
             }
             return result;
         }
+
+        public float TimeProgress()
+        {
+            return 1f - (time / totalTime);
+        }
     }
 
 }

@@ -1,12 +1,16 @@
 ﻿using ShipDock.Interfaces;
 using ShipDock.Tools;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace ShipDock.Applications
 {
-    public class EffectManager : IDispose
+    /// <summary>
+    /// 
+    /// 特效资源管理器
+    /// 
+    /// </summary>
+    public class Effects : IDispose
     {
         private class Effect
         {
@@ -68,7 +72,7 @@ namespace ShipDock.Applications
 
         private KeyValueList<int, Effect> mPrefabRaw;
 
-        public EffectManager() : base()
+        public Effects() : base()
         {
             mPrefabRaw = new KeyValueList<int, Effect>();
         }
@@ -151,7 +155,7 @@ namespace ShipDock.Applications
             }
             else
             {
-                UnityEngine.Object.Destroy(target);
+                Object.Destroy(target);
             }
         }
 

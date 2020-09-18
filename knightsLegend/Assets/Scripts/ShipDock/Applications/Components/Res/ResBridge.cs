@@ -43,6 +43,11 @@ namespace ShipDock.Applications
             }
         }
 
+        public void IsCreateInAwake(bool value)
+        {
+            m_IsCreateInAwake = value;
+        }
+
         protected IAssetBundles Assets { get; set; }
 
         public int PoolID

@@ -7,6 +7,7 @@ namespace ShipDock.Loader
     [Serializable]
     public class CustomAsset
     {
+        public bool refresh;
         public string assetName;
         public GameObject asset;
         public Texture2D tex2D;
@@ -14,7 +15,14 @@ namespace ShipDock.Loader
         public AudioClip audioClip;
         public TextAsset textData;
         public AssetBundle assetBundle;
-        public bool refresh;
+
+        public void UpdateCustomAssetName()
+        {
+            if (asset != default)
+            {
+                assetName = asset.name;
+            }
+        }
 
         public T GetAsset<T>() where T : UnityEngine.Object
         {
@@ -48,6 +56,30 @@ namespace ShipDock.Loader
                 //result = assetBundle as T;
             }
             return result;
+        }
+
+        public void SyncFromInfo(ref CustomAssetInfo assetInfo)
+        {
+            asset = assetInfo.asset;
+            tex2D = assetInfo.tex2D;
+            audioClip = assetInfo.audioClip;
+            sprite = assetInfo.sprite;
+            textData = assetInfo.textData;
+            assetBundle = assetInfo.assetBundle;
+            assetName = assetInfo.assetName;
+
+            UpdateCustomAssetName();
+        }
+
+        public void WriteToInfo(ref CustomAssetInfo assetInfo)
+        {
+            assetInfo.assetName = assetName;
+            assetInfo.asset = asset;
+            assetInfo.tex2D = tex2D;
+            assetInfo.audioClip = audioClip;
+            assetInfo.sprite = sprite;
+            assetInfo.textData = textData;
+            assetInfo.assetBundle = assetBundle;
         }
     }
 

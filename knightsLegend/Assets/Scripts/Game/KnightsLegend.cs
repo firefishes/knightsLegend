@@ -35,10 +35,6 @@ namespace KLGame
 
         private void OnShipDockStart()
         {
-            Tester.Instance.Init(KLTester.Instance);
-            Tester.Instance.Log(KLTester.LOG0, "ShipDock start up..");
-            Tester.Instance.Log(KLTester.LOG0, "KL game start");
-
             ShipDockConsts.NOTICE_SCENE_UPDATE_READY.Add(OnSceneUpdateReady);
 
             ShipDockApp app = ShipDockApp.Instance;
@@ -46,11 +42,11 @@ namespace KLGame
 
             Servers servers = app.Servers;
             servers.OnInit += OnServersInit;
-            servers.Add(new KLServer());
-            servers.Add(new KLDataServer());
-            servers.Add(new KLComponentServer());
-            servers.Add(new KLCameraServer());
-            servers.Add(new KLBattleServer());
+            servers.Add(new KLServer()); 
+            //servers.Add(new KLDataServer());
+            //servers.Add(new KLComponentServer());
+            //servers.Add(new KLCameraServer());
+            //servers.Add(new KLBattleServer());
             servers.AddOnServerFinished(OnFinished);
         }
 

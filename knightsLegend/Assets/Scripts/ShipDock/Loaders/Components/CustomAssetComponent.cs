@@ -1,4 +1,5 @@
 ﻿
+using ShipDock.Tools;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,19 +17,35 @@ namespace ShipDock.Loader
 
         private void Awake()
         {
-            //if(!m_Valid)
-            //{
-            //    DestroyImmediate(this);
-            //    return;
-            //}
 #if UNITY_EDITOR
             Update();
 #endif
         }
 
+        private void OnDestroy()
+        {
+            Utils.Reclaim(ref m_Assets);
+        }
+
         public string GetBundleName()
         {
             return m_BundleName;
+        }
+
+        public void SyncFromInfo(ref CustomAssetComponentInfo info, out List<CustomAsset> assets)
+        {
+            m_BundleName = info.bundleName;
+            m_Valid = info.valid;
+
+            assets = m_Assets;
+        }
+
+        public void WriteToInfo(ref CustomAssetComponentInfo target, out List<CustomAsset> assets)
+        {
+            target.valid = m_Valid;
+            target.bundleName = m_BundleName;
+
+            assets = m_Assets;
         }
 
 #if UNITY_EDITOR
@@ -42,6 +59,7 @@ namespace ShipDock.Loader
                     if (m_Assets[i] != default && m_Assets[i].refresh != default)
                     {
                         m_Assets[i].refresh = false;
+                        m_Assets[i].UpdateCustomAssetName();
                         name = m_Assets[i].assetName;
                         break;
                     }
@@ -54,7 +72,7 @@ namespace ShipDock.Loader
         {
             get
             {
-                return m_Assets;
+                return m_Valid ? m_Assets : default;
             }
         }
     }

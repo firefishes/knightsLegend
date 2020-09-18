@@ -43,7 +43,7 @@ namespace ShipDock.ECS
             }
         }
 
-        public virtual void Init(IShipDockComponentManager manager)
+        public virtual void Init(IShipDockComponentContext context)
         {
             mEntitasIDs = new List<int>();
             mEntitasIDsRemoved = new List<int>();
@@ -126,7 +126,7 @@ namespace ShipDock.ECS
                 }
                 id = mEntitasIDs[i];
                 mEntitasItem = GetEntitas(id);
-                if (mEntitasItem != default)
+                if (mEntitasItem != default && mEntitasIDsRemoved != default)
                 {
                     if (mEntitasItem.WillDestroy || mEntitasIDsRemoved.Contains(id))
                     {

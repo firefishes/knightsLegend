@@ -14,7 +14,7 @@ namespace ShipDock.ECS
         {
         }
 
-        public ComponentGroup(IShipDockComponentManager context, ref K[] keys, ref int[] componentNames)
+        public ComponentGroup(IShipDockComponentContext context, ref K[] keys, ref int[] componentNames)
         {
             int max = componentNames.Length;
             Group = new KeyValueList<K, C>(max);
@@ -51,7 +51,7 @@ namespace ShipDock.ECS
         {
         }
 
-        public DataComponentGroup(IShipDockComponentManager context, ref K[] keys, ref int[] componentNames)
+        public DataComponentGroup(IShipDockComponentContext context, ref K[] keys, ref int[] componentNames)
         {
             int max = componentNames.Length;
             Group = new KeyValueList<K, C>(max);

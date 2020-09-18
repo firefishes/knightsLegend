@@ -24,7 +24,7 @@ namespace KLGame
         public const string S_BATTLE = "ServerBattle";
 
         public const int C_ROLE_MUST = 0;
-        public const int C_ROLE_INPUT = 1;
+        //public const int C_ROLE_INPUT = 1;
         public const int C_POSITION = 2;
         public const int C_ROLE_COLLIDER = 3;
         public const int C_ROLE_CAMP = 4;
@@ -104,14 +104,14 @@ namespace KLGame
         private static readonly IResolvableConfig[] KLServerConfigs =
         {
             //new ResolvableConfigItem<INotice, GameNotice>("GameNotice"),
-            new ResolvableConfigItem<IParamNotice<ICommonRole>, CampRoleNotice>("CampRoleCreated"),
-            new ResolvableConfigItem<IParamNotice<ICommonRole>, ParamNotice<ICommonRole>>("SetUserRole"),
-            new ResolvableConfigItem<IParamNotice<ICommonRole>, ParamNotice<ICommonRole>>("SetBattleRoleParam"),
-            new ResolvableConfigItem<IParamNotice<KLRoleComponent>, ParamNotice<KLRoleComponent>>("PlayerRole_0"),
-            new ResolvableConfigItem<IParamNotice<KLCamerasComponent>, ParamNotice<KLCamerasComponent>>("SetLensParamer"),
-            new ResolvableConfigItem<IParamNotice<NormalATKStateParam>, ParamNotice<NormalATKStateParam>>("NormalATKStateParam"),
-            new ResolvableConfigItem<IParamNotice<IKLRole>, ParamNotice<IKLRole>>("KLRole"),
-            new ResolvableConfigItem<IParamNotice<IGoalExecuter>, GoalExecuterNotice>("GoalExecuterParam"),
+            //new ResolvableConfigItem<IParamNotice<ICommonRole>, CampRoleNotice>("CampRoleCreated"),
+            //new ResolvableConfigItem<IParamNotice<ICommonRole>, ParamNotice<ICommonRole>>("SetUserRole"),
+            //new ResolvableConfigItem<IParamNotice<ICommonRole>, ParamNotice<ICommonRole>>("SetBattleRoleParam"),
+            //new ResolvableConfigItem<IParamNotice<KLRoleComponent>, ParamNotice<KLRoleComponent>>("PlayerRole_0"),
+            //new ResolvableConfigItem<IParamNotice<KLCamerasComponent>, ParamNotice<KLCamerasComponent>>("SetLensParamer"),
+            //new ResolvableConfigItem<IParamNotice<NormalATKStateParam>, ParamNotice<NormalATKStateParam>>("NormalATKStateParam"),
+            //new ResolvableConfigItem<IParamNotice<IKLRole>, ParamNotice<IKLRole>>("KLRole"),
+            //new ResolvableConfigItem<IParamNotice<IGoalExecuter>, GoalExecuterNotice>("GoalExecuterParam"),
         };
 
         public static readonly IResolvableConfig[] ServerConfigs = MainServer.ServerConfigs.ContactToArr(KLServerConfigs);

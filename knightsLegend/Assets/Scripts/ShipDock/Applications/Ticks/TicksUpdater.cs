@@ -6,6 +6,11 @@ using System.Collections.Generic;
 
 namespace ShipDock.Applications
 {
+    /// <summary>
+    /// 
+    /// 心跳帧更新器
+    /// 
+    /// </summary>
     public class TicksUpdater : IDispose, INotificationSender
     {
         public const int TICKS_FIXED_UPDATE = 0;

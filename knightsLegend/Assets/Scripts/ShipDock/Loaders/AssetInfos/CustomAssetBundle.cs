@@ -46,11 +46,14 @@ namespace ShipDock.Loader
                     int index = mAssetsCacher.Count - 1;
                     mBundleMapper[bundleName].Add(index);
 
-                    int n = comp.Assets.Count;
-                    for (int j = 0; j < n; j++)
+                    if (comp.Assets != default)
                     {
-                        item = comp.Assets[j];
-                        cahcer[item.assetName] = item;
+                        int n = comp.Assets.Count;
+                        for (int j = 0; j < n; j++)
+                        {
+                            item = comp.Assets[j];
+                            cahcer[item.assetName] = item;
+                        }
                     }
                 }
             }

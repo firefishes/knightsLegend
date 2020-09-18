@@ -3,6 +3,9 @@ using System;
 
 namespace ShipDock.Server
 {
+    /// <summary>
+    /// 服务容器的解析器特性
+    /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
     public class ResolvableAttribute : Attribute
     {
@@ -15,6 +18,9 @@ namespace ShipDock.Server
         public string Alias { get; private set; }
     }
 
+    /// <summary>
+    /// 服务容器的外派函数特性
+    /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
     public class CallableAttribute : ResolvableAttribute
     {

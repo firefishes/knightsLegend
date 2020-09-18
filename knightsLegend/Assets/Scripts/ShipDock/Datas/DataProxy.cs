@@ -24,12 +24,19 @@ namespace ShipDock.Datas
 
         public void DataNotify(params int[] keys)
         {
-            int keyName;
             int max = keys.Length;
-            for (int i = 0; i < max; i++)
+            if (max > 0)
             {
-                keyName = keys[i];
-                mOnDataProxyNotify?.Invoke(this, keyName);
+                int keyName;
+                for (int i = 0; i < max; i++)
+                {
+                    keyName = keys[i];
+                    mOnDataProxyNotify?.Invoke(this, keyName);
+                }
+            }
+            else
+            {
+                mOnDataProxyNotify?.Invoke(this, int.MaxValue);
             }
         }
 
@@ -45,7 +52,7 @@ namespace ShipDock.Datas
 
         public void Unregister(IDataExtracter dataHandler)
         {
-            if((dataHandler == default) || !mDataHandlers.Contains(dataHandler))
+            if((dataHandler == default) || mDataHandlers == default || !mDataHandlers.Contains(dataHandler))
             {
                 return;
             }

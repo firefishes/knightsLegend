@@ -13,7 +13,9 @@ using System;
 namespace ShipDock.Applications
 {
     /// <summary>
-    /// 门面模式创建的框架单例
+    /// 
+    /// ShipDock 框架单例，门面
+    /// 
     /// </summary>
     public class ShipDockApp : Singletons<ShipDockApp>
     {
@@ -64,20 +66,22 @@ namespace ShipDock.Applications
                 FSMFrameUpdater = OnFSMFrameUpdater,
                 StateFrameUpdater = OnStateFrameUpdater
             };
+            Effects = new Effects();//新建特效管理器
+            Locals = new Locals();//新建本地化管理器
+
             mFSMUpdaters = new KeyValueList<IStateMachine, IUpdate>();
             mStateUpdaters = new KeyValueList<IState, IUpdate>();
-            Effects = new EffectManager();
 
             if (ticks > 0)
             {
                 TicksUpdater = new TicksUpdater(ticks);//新建客户端心跳帧更新器
             }
 
-            ShipDockConsts.NOTICE_APPLICATION_STARTUP.Broadcast();//框架启动完成
-
             IsStarted = true;
             mAppStarted?.Invoke();
             mAppStarted = null;
+
+            ShipDockConsts.NOTICE_APPLICATION_STARTUP.Broadcast();//框架启动完成
         }
 
         private void OnStateFrameUpdater(IState state, bool isAdd)
@@ -128,12 +132,12 @@ namespace ShipDock.Applications
         /// </summary>
         private void OnServersInit()
         {
-            Components = new ShipDockComponentManager
+            Components = new ShipDockComponentContext
             {
                 FrameTimeInScene = (int)(UnityEngine.Time.deltaTime * 1000)
             };
 
-            MethodUpdater updater = ShipDockComponentManagerSetting.isMergeUpdateMode ?
+            MethodUpdater updater = ShipDockECSSetting.isMergeUpdateMode ?
                 new MethodUpdater
                 {
                     Update = MergeUpdateMode
@@ -155,7 +159,7 @@ namespace ShipDock.Applications
         /// </summary>
         private void AlternateFrameUpdateMode(int time)
         {
-            if (ShipDockComponentManagerSetting.isUpdateByCallLate)
+            if (ShipDockECSSetting.isUpdateByCallLate)
             {
                 Components.UpdateComponentUnit(time, ComponentUnitUpdate);
                 if (mFrameSign > 0)
@@ -182,7 +186,7 @@ namespace ShipDock.Applications
         /// </summary>
         private void MergeUpdateMode(int time)
         {
-            if (ShipDockComponentManagerSetting.isUpdateByCallLate)
+            if (ShipDockECSSetting.isUpdateByCallLate)
             {
                 Components.UpdateComponentUnit(time, ComponentUnitUpdate);
                 Components.FreeComponentUnit(time, ComponentUnitUpdate);
@@ -211,7 +215,7 @@ namespace ShipDock.Applications
         {
             ShipDockConsts.NOTICE_SCENE_UPDATE_READY.Remove(OnSceneUpdateReady);
 
-            MethodUpdater updater = ShipDockComponentManagerSetting.isMergeUpdateMode ?
+            MethodUpdater updater = ShipDockECSSetting.isMergeUpdateMode ?
                 new MethodUpdater
                 {
                     Update = MergeUpdateModeInScene
@@ -232,7 +236,7 @@ namespace ShipDock.Applications
         /// </summary>
         private void AlternateFramUpdateModeInScene(int time)
         {
-            if (ShipDockComponentManagerSetting.isUpdateByCallLate)
+            if (ShipDockECSSetting.isUpdateByCallLate)
             {
                 Components.UpdateComponentUnitInScene(time, ComponentUnitUpdateInScene);
                 if (mFrameSignInScene > 0)
@@ -259,7 +263,7 @@ namespace ShipDock.Applications
         /// </summary>
         private void MergeUpdateModeInScene(int time)
         {
-            if (ShipDockComponentManagerSetting.isUpdateByCallLate)
+            if (ShipDockECSSetting.isUpdateByCallLate)
             {
                 Components.UpdateComponentUnitInScene(time, ComponentUnitUpdateInScene);
                 Components.FreeComponentUnitInScene(time, ComponentUnitUpdateInScene);
@@ -284,6 +288,7 @@ namespace ShipDock.Applications
             Utils.Reclaim(ref mStateUpdaters);
             ShipDockConsts.NOTICE_APPLICATION_CLOSE.Broadcast();
 
+            Utils.Reclaim(Locals);
             Utils.Reclaim(Effects);
             Utils.Reclaim(Notificater);
             Utils.Reclaim(TicksUpdater);
@@ -304,7 +309,8 @@ namespace ShipDock.Applications
             Datas = default;
             AssetsPooling = default;
             ABs = default;
-            
+            Locals = default;
+            Effects = default;
         }
 
         public void AddStart(Action method)
@@ -333,16 +339,44 @@ namespace ShipDock.Applications
             }
         }
 
+        public KeyValueList<int, IDataProxy> DataProxyLink(IDataExtracter target, params int[] dataNames)
+        {
+            IDataProxy proxy;
+            int name;
+            int max = dataNames.Length;
+            KeyValueList<int, IDataProxy> result = new KeyValueList<int, IDataProxy>();
+            for (int i = 0; i < max; i++)
+            {
+                name = dataNames[i];
+                proxy = Datas.GetData<IDataProxy>(name);
+                proxy.Register(target);
+                result[name] = proxy;
+            }
+            return result;
+        }
+
+        public void DataProxyDelink(IDataExtracter target, params int[] dataNames)
+        {
+            IDataProxy proxy;
+            int max = dataNames.Length;
+            for (int i = 0; i < max; i++)
+            {
+                proxy = Datas.GetData<IDataProxy>(dataNames[i]);
+                proxy.Unregister(target);
+            }
+        }
+
         public bool IsStarted { get; private set; }
         public UIManager UIs { get; private set; }
         public TicksUpdater TicksUpdater { get; private set; }
         public Notifications<int> Notificater { get; private set; }
-        public ShipDockComponentManager Components { get; private set; }
+        public ShipDockComponentContext Components { get; private set; }
         public Servers Servers { get; private set; }
         public DataWarehouse Datas { get; private set; }
         public AssetBundles ABs { get; private set; }
         public AssetsPooling AssetsPooling { get; private set; }
         public StateMachines StateMachines { get; private set; }
-        public EffectManager Effects { get; private set; }
+        public Effects Effects { get; private set; }
+        public Locals Locals { get; private set; }
     }
 }

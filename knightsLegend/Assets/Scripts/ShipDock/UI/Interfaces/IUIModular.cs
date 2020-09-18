@@ -5,6 +5,7 @@ namespace ShipDock.UI
 {
     public interface IUIModular : INotificationSender, IUIStack, IDispose
     {
+        int[] DataProxyLinks { get; }
     }
 }
 

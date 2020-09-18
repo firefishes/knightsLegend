@@ -7,6 +7,11 @@ using System.Reflection;
 
 namespace ShipDock.Server
 {
+    /// <summary>
+    /// 
+    /// 服务容器管理器
+    /// 
+    /// </summary>
     public class Servers : IDispose, IServersHolder
     {
         private static readonly Type resolvableAttrType = typeof(ResolvableAttribute);

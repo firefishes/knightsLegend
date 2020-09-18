@@ -10,6 +10,7 @@ namespace ShipDock.Loader
     {
 
         private int mIndex;
+        private int mDepsWalkMax;
         private Loader mLoader;
         private LoaderOpertion mCurrentOption;
         private Queue<LoaderOpertion> mOpertions;
@@ -138,22 +139,34 @@ namespace ShipDock.Loader
                 mDependences = new List<string>();
             }
 
-            string dep = source;
-            WalkDependences(dep);
+            mDepsWalkMax = 0;
+            string deped = source;
+            WalkDependences(deped);
             mDependences.Add(source);
         }
 
-        private void WalkDependences(string dep)
+        private void WalkDependences(string deped)
         {
-            string[] list = AessetManifest.GetDirectDependencies(dep);
+            mDepsWalkMax++;
+            if (mDepsWalkMax > 100)
+            {
+                Debug.Log("Walk dependences will out of stacks");
+                return;
+            }
+            string[] list = AessetManifest.GetDirectDependencies(deped);
             int max = list.Length;
+            string dep = string.Empty;
             for (int i = 0; i < max; i++)
             {
                 dep = list[i];
                 if (dep.Length > 0)
                 {
+                    Debug.Log("Dependence: " + dep + " => " + deped);
                     WalkDependences(dep);
-                    mDependences.Add(dep);
+                    if (!mDependences.Contains(dep))
+                    {
+                        mDependences.Add(dep);
+                    }
                 }
             }
         }

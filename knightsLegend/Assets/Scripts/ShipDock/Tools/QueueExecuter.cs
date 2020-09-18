@@ -51,8 +51,8 @@ namespace ShipDock.Tools
             IsDisposed = true;
             ClearQueue(true);
 
-            Utils.Reclaim(ref mQueue, true);
-            Utils.Reclaim(ref mQueueExecuted, true);
+            Utils.Reclaim(ref mQueue, true, IsDisposQueueItem);
+            Utils.Reclaim(ref mQueueExecuted, true, IsDisposQueueItem);
 
             mQueue = default;
             mQueueExecuted = default;
@@ -259,6 +259,7 @@ namespace ShipDock.Tools
 
         public bool isRunning { get; private set; }
         public bool IsDisposed { get; private set; }
+        public bool IsDisposQueueItem { get; set; }
         public Action ActionUnit { get; set; }
 
     }

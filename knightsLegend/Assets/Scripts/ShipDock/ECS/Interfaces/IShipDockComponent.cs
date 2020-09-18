@@ -5,7 +5,7 @@ namespace ShipDock.ECS
 {
     public interface IShipDockComponent : IDispose
     {
-        void Init(IShipDockComponentManager manager);
+        void Init(IShipDockComponentContext context);
         IShipDockEntitas GetEntitas(int id);
         void GetEntitasRef(int id, out IShipDockEntitas entitas);
         int SetEntitas(IShipDockEntitas target);

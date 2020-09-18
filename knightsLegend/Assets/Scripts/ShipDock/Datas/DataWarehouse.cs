@@ -1,11 +1,13 @@
 ﻿using ShipDock.Interfaces;
 using ShipDock.Tools;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace ShipDock.Datas
 {
+    /// <summary>
+    /// 
+    /// 数据代理管理器
+    /// 
+    /// </summary>
     public class DataWarehouse : IDispose
     {
         private KeyValueList<int, IDataProxy> mDataMapper;

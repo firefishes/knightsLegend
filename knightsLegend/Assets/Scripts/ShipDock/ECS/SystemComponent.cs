@@ -23,7 +23,7 @@ namespace ShipDock.ECS
             Utils.Reclaim(ref mRelatedComponents);
         }
 
-        public override void Init(IShipDockComponentManager manager)
+        public override void Init(IShipDockComponentContext manager)
         {
             base.Init(manager);
 
@@ -45,7 +45,7 @@ namespace ShipDock.ECS
         /// <summary>
         /// 填充需要关联的组件
         /// </summary>
-        public void FillRelateComponents(IShipDockComponentManager manager)
+        public void FillRelateComponents(IShipDockComponentContext manager)
         {
             int name;
             IShipDockComponent item;
@@ -72,10 +72,11 @@ namespace ShipDock.ECS
         /// <summary>
         /// 重新填充关联的组件
         /// </summary>
-        protected virtual void ReFillRelateComponents(int name, IShipDockComponent target, IShipDockComponentManager manager)
+        protected virtual void ReFillRelateComponents(int name, IShipDockComponent target, IShipDockComponentContext manager)
         {
             int item;
             int max = RelateComponents != default ? RelateComponents.Length : 0;
+            int remain = max;
             for (int i = 0; i < max; i++)
             {
                 item = RelateComponents[i];
@@ -83,13 +84,13 @@ namespace ShipDock.ECS
                 {
                     if (!mRelatedComponents.ContainsKey(name))
                     {
+                        remain--;
                         mRelatedComponents[name] = target;
                     }
-                    break;
                 }
             }
 
-            bool needCheckReFill = (max > 0) && (mRelatedComponents.Size != max);
+            bool needCheckReFill = remain > 0;
             if (!needCheckReFill)
             {
                 manager.RelateComponentsReFiller -= ReFillRelateComponents;
@@ -123,7 +124,7 @@ namespace ShipDock.ECS
         }
 
         public int[] RelateComponents { get; set; }
-        protected IShipDockComponentManager Context { get; private set; }
+        protected IShipDockComponentContext Context { get; private set; }
 
     }
 }

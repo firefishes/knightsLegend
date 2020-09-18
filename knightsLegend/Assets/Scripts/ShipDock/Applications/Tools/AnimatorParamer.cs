@@ -32,30 +32,30 @@ namespace ShipDock.Applications
             bool isExist = IsContainsKey(paramName);
 
             ValueItem item = isExist ? this[paramName] : ValueItem.New(paramName, value);
-            if (!isExist)
-            {
-                item.KeyField = paramName;
-                this[paramName] = item;
-            }
-            else
+            if (isExist)
             {
                 item.Float = value;
             }
+            else
+            {
+                this[paramName] = item;
+                item.KeyField = paramName;
+            }
         }
 
-        internal void SetBool(string paramName, bool value)
+        public void SetBool(string paramName, bool value)
         {
             bool isExist = IsContainsKey(paramName);
 
             ValueItem item = isExist ? this[paramName] : ValueItem.New(paramName, value);
             if (isExist)
             {
-                item.KeyField = paramName;
-                this[paramName] = item;
+                item.Bool = value;
             }
             else
             {
-                item.Bool = value;
+                this[paramName] = item;
+                item.KeyField = paramName;
             }
         }
 
@@ -70,7 +70,7 @@ namespace ShipDock.Applications
         {
             return IsContainsKey(paramName) ? this[paramName].Float : 0f;
         }
-        
+
         public void CommitParamToAnimator()
         {
             ValueItem item;
@@ -78,7 +78,7 @@ namespace ShipDock.Applications
             for (int i = 0; i < max; i++)
             {
                 item = Values[i];
-                if(item == default)
+                if (item == default)
                 {
                     continue;
                 }
@@ -102,7 +102,7 @@ namespace ShipDock.Applications
 
         public bool IsMotionCompleted(string animationName)
         {
-            return IsMotion(animationName) && (StateInfo.normalizedTime > 1f);
+            return IsMotion(animationName) && (StateInfo.normalizedTime >= 1f);
         }
 
         public bool IsMotion(string animationName)
@@ -110,17 +110,56 @@ namespace ShipDock.Applications
             return StateInfo.IsName(animationName);
         }
 
-        public void ConfirmPlayingMotion(string motionName, int aniMaskLayer = 0)
+        public void SetMotionWillPlay(string motionName, int state, int aniMaskLayer = 0)
         {
+            if (string.IsNullOrEmpty(motionName) || (state == int.MaxValue))
+            {
+                return;
+            }
             AniMaskLayer = aniMaskLayer;
             MotionName = motionName;
+            MotionState = state;
         }
 
-        public void SetCurrentMotion(string motionName)
+        public void SetMotionTrigger(ref string keyField)
         {
-            CurrentMotion = motionName;
+            if (!string.IsNullOrEmpty(CurrentMotionTrigger) && (CurrentMotionTrigger != keyField))
+            {
+                SetBool(CurrentMotionTrigger, false);
+            }
+            if (string.IsNullOrEmpty(keyField))
+            {
+                CurrentMotionTrigger = string.Empty;
+            }
+            else
+            {
+                CurrentMotionTrigger = keyField;
+                SetBool(CurrentMotionTrigger, true);
+            }
+            Valid();
         }
-        
+
+        public void ResetMotionWillPlay()
+        {
+            MotionCount = 1;
+            MotionName = string.Empty;
+        }
+
+        public void ResetMotionState()
+        {
+            MotionState = int.MaxValue;
+        }
+
+        public void SetPlayingMotion(string motionName)
+        {
+            PlayingMotion = motionName;
+        }
+
+        public void SetMotionCount(int motionCount)
+        {
+            MotionCount = motionCount;
+        }
+
         public AnimatorStateInfo StateInfo
         {
             get
@@ -129,10 +168,13 @@ namespace ShipDock.Applications
             }
         }
 
-        public bool IsValid { get; private set; }
-        public Animator Animator { get; private set; }
-        public string MotionName { get; private set; }
         public int AniMaskLayer { get; private set; }
-        public string CurrentMotion { get; private set; }
+        public int MotionState { get; private set; }
+        public int MotionCount { get; private set; } = 1;
+        public bool IsValid { get; private set; }
+        public string MotionName { get; private set; }
+        public string PlayingMotion { get; private set; }
+        public string CurrentMotionTrigger { get; private set; }
+        public Animator Animator { get; private set; }
     }
 }

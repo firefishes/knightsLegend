@@ -2,10 +2,6 @@
 {
     public class UIStack : IUIStack
     {
-        public UIStack()
-        {
-        }
-
         public virtual void Init()
         {
         }
@@ -42,8 +38,11 @@
 
         public bool IsExited { get; private set; }
         public bool IsStackAdvanced { get; private set; }
-        public virtual string UIName { get; protected set; }
-        public virtual string Name { get; protected set; }
+        /// <summary>是否栈式UI模块</summary>
         public virtual bool IsStackable { get; } = true;
+        /// <summary>UI资源名（预制体名）</summary>
+        public virtual string UIAssetName { get; protected set; }
+        /// <summary>UI名，用于UI管理器识别此UI</summary>
+        public virtual string Name { get; protected set; }
     }
 }

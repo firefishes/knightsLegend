@@ -39,6 +39,11 @@ namespace ShipDock.ECS
             return mDatas[target];
         }
 
+        public bool HasEntitasData<E>(ref E target) where E : IShipDockEntitas
+        {
+            return mDatas.ContainsKey(target);
+        }
+
         public override int SetEntitas(IShipDockEntitas target)
         {
             int id = base.SetEntitas(target);

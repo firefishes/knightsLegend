@@ -4,6 +4,9 @@ using ShipDock.Pooling;
 
 namespace ShipDock.Server
 {
+    /// <summary>
+    /// 服务容器接口
+    /// </summary>
     public interface IServer : IDispose
     {
         void InitServer();

@@ -4,6 +4,12 @@ using ShipDock.Server;
 
 public static class ServerExtension
 {
+    public static void DeliveAndRevert<S, I>(this string serverName, string resolverName, string alias, ResolveDelegate<I> customResolver = default, bool isMakeResolver = false, bool isReregister = false) where S : IServer where I : IPoolable
+    {
+        I notice = serverName.Delive<S, I>(resolverName, alias);
+        serverName.Revert<S>(alias, notice);
+    }
+
     public static I Delive<S, I>(this string serverName, string resolverName, string alias, ResolveDelegate<I> customResolver = default, bool isMakeResolver = false, bool isReregister = false) where S : IServer
     {
         I result;

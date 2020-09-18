@@ -154,10 +154,10 @@ namespace ShipDock.Pooling
             UsedCount++;
 
 #if UNITY_EDITOR
-            if (!AllPools.used.Contains(result))
-            {
-                AllPools.used.Add(result);
-            }
+            //if (!AllPools.used.Contains(result))
+            //{
+            //    AllPools.used.Add(result);
+            //}
 #endif
             return result;
         }
@@ -178,10 +178,10 @@ namespace ShipDock.Pooling
                 UsedCount--;
             }
 #if UNITY_EDITOR
-            if (AllPools.used.Contains(target))
-            {
-                AllPools.used.Remove(target);
-            }
+            //if (AllPools.used.Contains(target))
+            //{
+            //    AllPools.used.Remove(target);
+            //}
 #endif
         }
 

@@ -6,7 +6,8 @@ using UnityEngine;
 
 namespace ShipDock.UI
 {
-    public class UI : MonoBehaviour, INotificationSender
+    /// <summary>UI虚类</summary>
+    public abstract class UI : MonoBehaviour, INotificationSender
     {
         private AssetsPooling mUIPooling;
 
@@ -20,17 +21,14 @@ namespace ShipDock.UI
             id.Add(OnUIReady);
         }
 
-        protected virtual void Start()
-        {
-            
-        }
+        protected virtual void Start() { }
 
         protected virtual void Update()
         {
             if(UIChanged)
             {
-                UpdateUI();
                 UIChanged = false;
+                UpdateUI();
             }
         }
 
@@ -113,10 +111,7 @@ namespace ShipDock.UI
             }
         }
 
-        public virtual void UpdateUI()
-        {
-            
-        }
+        public abstract void UpdateUI();
 
         public bool UIChanged { get; set; }
         public bool Destroyed { get; private set; }
