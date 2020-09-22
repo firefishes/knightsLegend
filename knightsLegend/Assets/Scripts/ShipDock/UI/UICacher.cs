@@ -1,4 +1,6 @@
-﻿using ShipDock.Tools;
+﻿#define G_LOG
+
+using ShipDock.Tools;
 using System.Collections.Generic;
 
 namespace ShipDock.UI
@@ -84,7 +86,7 @@ namespace ShipDock.UI
             if (result)
             {
                 removed = (T)mUIStacks.Pop();
-                UnityEngine.Debug.Log("UIStacks.Count " + mUIStacks.Count);
+                "debug".Log("UIStacks.Count " + mUIStacks.Count);
                 StackCurrent = mUIStacks.Count > 0 ? mUIStacks.Peek() : StackCurrent;
             }
             return result;

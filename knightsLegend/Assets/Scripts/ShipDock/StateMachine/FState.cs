@@ -317,7 +317,7 @@ namespace ShipDock.FSM
                 mChangingStateParam = null;
                 mIsStateChanged = false;
 
-                Tester.Instance.Log(TesterBaseApp.Instance, TesterBaseApp.LOG0, mSubState != null, GetType().Name, " => ", mSubState.StateName.ToString());
+                "fsm changed".Log(mSubState != null, StateName.ToString(), "sub state", mSubState.StateName.ToString());
             }
         }
 

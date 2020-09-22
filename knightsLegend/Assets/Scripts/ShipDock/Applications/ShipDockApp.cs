@@ -1,4 +1,6 @@
-﻿using ShipDock.Datas;
+﻿#define G_LOG
+
+using ShipDock.Datas;
 using ShipDock.ECS;
 using ShipDock.FSM;
 using ShipDock.Loader;
@@ -49,12 +51,14 @@ namespace ShipDock.Applications
 
         public void Start(int ticks)
         {
-            Tester.Instance.Log(TesterBaseApp.LOG, IsStarted, "warning: ShipDockApplication has started");
-
             if (IsStarted)
             {
+                "error".Log("ShipDockApplication has started");
                 return;
             }
+            Tester = Tester.Instance;
+            Tester.Init(new TesterBaseApp());
+            "log".LogAndAssert("framework start", "Welcom..");
 
             Notificater = new Notifications<int>();//新建消息中心
             ABs = new AssetBundles();//新建资源包管理器
@@ -72,9 +76,12 @@ namespace ShipDock.Applications
             mFSMUpdaters = new KeyValueList<IStateMachine, IUpdate>();
             mStateUpdaters = new KeyValueList<IState, IUpdate>();
 
+            "log".LogAndAssert("framework start", "Managers Ready");
+
             if (ticks > 0)
             {
                 TicksUpdater = new TicksUpdater(ticks);//新建客户端心跳帧更新器
+                "log".LogAndAssert("framework start", "Ticks Ready");
             }
 
             IsStarted = true;
@@ -82,6 +89,7 @@ namespace ShipDock.Applications
             mAppStarted = null;
 
             ShipDockConsts.NOTICE_APPLICATION_STARTUP.Broadcast();//框架启动完成
+            "log".LogAndAssert("framework start", "Framework Started");
         }
 
         private void OnStateFrameUpdater(IState state, bool isAdd)
@@ -149,7 +157,7 @@ namespace ShipDock.Applications
             UpdaterNotice notice = Pooling<UpdaterNotice>.From();
             notice.ParamValue = updater;
             ShipDockConsts.NOTICE_ADD_UPDATE.Broadcast(notice);
-            Pooling<UpdaterNotice>.To(notice);
+            notice.ToPool();
 
             ShipDockConsts.NOTICE_SCENE_UPDATE_READY.Add(OnSceneUpdateReady);
         }
@@ -228,7 +236,7 @@ namespace ShipDock.Applications
             UpdaterNotice notice = Pooling<UpdaterNotice>.From();
             notice.ParamValue = updater;
             ShipDockConsts.NOTICE_ADD_SCENE_UPDATE.Broadcast(notice);
-            Pooling<UpdaterNotice>.To(notice);
+            notice.ToPool();
         }
 
         /// <summary>
@@ -284,9 +292,10 @@ namespace ShipDock.Applications
 
         public void Clean()
         {
+            ShipDockConsts.NOTICE_APPLICATION_CLOSE.Broadcast();
+
             Utils.Reclaim(ref mFSMUpdaters);
             Utils.Reclaim(ref mStateUpdaters);
-            ShipDockConsts.NOTICE_APPLICATION_CLOSE.Broadcast();
 
             Utils.Reclaim(Locals);
             Utils.Reclaim(Effects);
@@ -298,6 +307,8 @@ namespace ShipDock.Applications
             Utils.Reclaim(Datas);
             Utils.Reclaim(AssetsPooling);
             Utils.Reclaim(ABs);
+
+            Tester?.Dispose();
 
             AllPools.ResetAllPooling();
 
@@ -311,6 +322,9 @@ namespace ShipDock.Applications
             ABs = default;
             Locals = default;
             Effects = default;
+            Tester = default;
+
+            GC.Collect();
         }
 
         public void AddStart(Action method)
@@ -336,6 +350,7 @@ namespace ShipDock.Applications
             {
                 UIs = new UIManager();
                 UIs.SetRoot(root);
+                "debug".Log("UI root ready");
             }
         }
 
@@ -378,5 +393,6 @@ namespace ShipDock.Applications
         public StateMachines StateMachines { get; private set; }
         public Effects Effects { get; private set; }
         public Locals Locals { get; private set; }
+        public Tester Tester { get; private set; }
     }
 }

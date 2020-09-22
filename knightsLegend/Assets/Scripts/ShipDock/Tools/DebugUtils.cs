@@ -1,4 +1,5 @@
-﻿
+﻿#define _COLOR_LOG
+
 using UnityEngine;
 using System;
 using System.Text;
@@ -63,10 +64,10 @@ namespace ShipDock.Tools
             content = content.Append("Un Used Reserved: ", (Profiler.GetTotalUnusedReservedMemoryLong() / MUnit).ToString(), "M\n");
         }
 
-        private const string LOG_COLOR_TODO = "#EE5F00FF";
-        private const string LOG_COLOR_WARNING = "#FFFF00";
+        private const string LOG_COLOR_TODO = "#5731F0";
+        private const string LOG_COLOR_WARNING = "#E78D08";
         private const string LOG_COLOR_DEBUG = "#00BEEEFF";
-        private const string LOG_COLOR_ERROR = "#FF3300";
+        private const string LOG_COLOR_ERROR = "#EE0000";
         private const string LOG_COLOR_DEFAULT = "#FFFFFFFF";
         private const string COLOR_FORMAT = "<color=\"{0}\">{1}</color>";
         private const string COLOR_SYBMBOL = "#";
@@ -74,61 +75,86 @@ namespace ShipDock.Tools
         private const string COLOR_LOG_MATCHER_WARNING = "warning:";
         private const string COLOR_LOG_MATCHER_ERROR = "error:";
         private const string COLOR_LOG_MATCHER_LOG = "log:";
+        private const string COLOR_LOG_MATCHER_TESTER = "Tester:";
 
         private static string colorInLog = string.Empty;
         private static string colorValueInLog = string.Empty;
-        private static string contentsElm0 = string.Empty;
-        private static UnityEngine.Object logInColorTarget;
+        private static string firstElment = string.Empty;
+        private static UnityEngine.Object logObjTarget;
 
         public static void LogInColorAndSignIt(UnityEngine.Object logTarget, params string[] contents)
         {
-            logInColorTarget = logTarget;
+            logObjTarget = logTarget;
             LogInColor(contents);
         }
 
         public static void LogInColor(params string[] contents)
         {
             colorInLog = string.Empty;
-            contentsElm0 = contents[0].ToString();
+            firstElment = contents[0].ToString();
 
-            bool isSetColor = (contents[0] != null) && (contentsElm0.IndexOf(COLOR_SYBMBOL) != -1);
-            int start = (isSetColor) ? 1 : 0;
+            bool isSetColor = (contents[0] != null) && (firstElment.IndexOf(COLOR_SYBMBOL) != -1);
+            int start = isSetColor ? 1 : 0;
+#if !COLOR_LOG
+            start = 0;
+#endif
             int max = contents.Length;
             for (int i = start; i < max; i++)
             {
                 colorInLog += contents[i];
             }
 
-            colorValueInLog = (isSetColor) ? contentsElm0 : string.Empty;
-
+            colorValueInLog = isSetColor ? firstElment : string.Empty;
+#if !COLOR_LOG
+            colorValueInLog = string.Empty;
+#endif
+            bool isTODO = colorInLog.IndexOf(COLOR_LOG_MATCHER_TODO, StringComparison.OrdinalIgnoreCase) != -1;
+            bool isWarning = colorInLog.IndexOf(COLOR_LOG_MATCHER_WARNING, StringComparison.OrdinalIgnoreCase) != -1;
+            bool isLog = colorInLog.IndexOf(COLOR_LOG_MATCHER_LOG, StringComparison.OrdinalIgnoreCase) != -1;
+            bool isError = colorInLog.IndexOf(COLOR_LOG_MATCHER_ERROR, StringComparison.OrdinalIgnoreCase) != -1;
+            bool isTester = colorInLog.IndexOf(COLOR_LOG_MATCHER_TESTER, StringComparison.OrdinalIgnoreCase) != -1;
             if (string.IsNullOrEmpty(colorValueInLog))
             {
-                if (colorInLog.IndexOf(COLOR_LOG_MATCHER_TODO, StringComparison.OrdinalIgnoreCase) != -1)
+                if (isTODO)
                 {
                     colorValueInLog = LOG_COLOR_TODO;
                 }
-                else if (colorInLog.IndexOf(COLOR_LOG_MATCHER_WARNING, StringComparison.OrdinalIgnoreCase) != -1)
+                else if (isWarning)
                 {
                     colorValueInLog = LOG_COLOR_WARNING;
                 }
-                else if (colorInLog.IndexOf(COLOR_LOG_MATCHER_LOG, StringComparison.OrdinalIgnoreCase) != -1)
-                {
-                    colorValueInLog = LOG_COLOR_DEBUG;
-                }
-                else if (colorInLog.IndexOf(COLOR_LOG_MATCHER_ERROR, StringComparison.OrdinalIgnoreCase) != -1)
+                else if (isError)
                 {
                     colorValueInLog = LOG_COLOR_ERROR;
+                }
+#if COLOR_LOG
+                else if (isLog)
+                {
+                    colorValueInLog = LOG_COLOR_DEBUG;
                 }
                 else
                 {
                     colorValueInLog = LOG_COLOR_DEFAULT;
                 }
+#endif
             }
+
+#if COLOR_LOG
             colorInLog = string.Format(COLOR_FORMAT, colorValueInLog, colorInLog);
-            if(logInColorTarget != null)
+#else
+            if (isTODO || isError || isWarning)
             {
-                Debug.Log(colorInLog, logInColorTarget);
-                logInColorTarget = null;
+                colorInLog = string.Format(COLOR_FORMAT, colorValueInLog, colorInLog);
+            }
+            if (isSetColor)
+            {
+                colorInLog = colorInLog.Remove(0, 7);//去掉自定义的颜色
+            }
+#endif
+            if(logObjTarget != null)
+            {
+                Debug.Log(colorInLog, logObjTarget);
+                logObjTarget = null;
             }
             else
             {

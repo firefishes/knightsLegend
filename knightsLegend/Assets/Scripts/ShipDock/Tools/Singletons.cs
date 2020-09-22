@@ -44,6 +44,7 @@ namespace ShipDock.Tools
 
         public virtual void Dispose()
         {
+            instance = default;
         }
 	}
 }

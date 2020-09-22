@@ -4,16 +4,16 @@ using ShipDock.Server;
 
 public static class ServerExtension
 {
-    public static void DeliveAndRevert<S, I>(this string serverName, string resolverName, string alias, ResolveDelegate<I> customResolver = default, bool isMakeResolver = false, bool isReregister = false) where S : IServer where I : IPoolable
+    public static void DeliveAndRevert<I>(this string serverName, string resolverName, string alias, ResolveDelegate<I> customResolver = default, bool isMakeResolver = false, bool isReregister = false) where I : IPoolable
     {
-        I notice = serverName.Delive<S, I>(resolverName, alias);
-        serverName.Revert<S>(alias, notice);
+        I notice = serverName.Delive<I>(resolverName, alias);
+        serverName.Revert(alias, notice);
     }
 
-    public static I Delive<S, I>(this string serverName, string resolverName, string alias, ResolveDelegate<I> customResolver = default, bool isMakeResolver = false, bool isReregister = false) where S : IServer
+    public static I Delive<I>(this string serverName, string resolverName, string alias, ResolveDelegate<I> customResolver = default, bool isMakeResolver = false, bool isReregister = false)
     {
         I result;
-        S server = serverName.GetServer<S>();
+        IServer server = serverName.GetServer();
         if (customResolver != default)
         {
             if (isReregister)
@@ -34,19 +34,26 @@ public static class ServerExtension
         return result;
     }
 
-    public static P DeliveParam<S, P>(this string serverName, string resolverName, string alias, ResolveDelegate<IParamNotice<P>> customResolver = default, bool isMakeResolver = false, bool isReregister = false) where S : IServer
+    public static P DeliveParam<P>(this string serverName, string resolverName, string alias, ResolveDelegate<IParamNotice<P>> customResolver = default, bool isMakeResolver = false, bool isReregister = false)
     {
-        IParamNotice<P> notice = Delive<S, IParamNotice<P>>(serverName, resolverName, alias, customResolver, isMakeResolver, isReregister);
+        IParamNotice<P> notice = Delive(serverName, resolverName, alias, customResolver, isMakeResolver, isReregister);
 
         P result = notice.ParamValue;
 
-        serverName.Revert<S>(alias, notice);
+        serverName.Revert(alias, notice);
         return result;
     }
 
-    public static void Revert<S>(this string serverName, string alias, IPoolable target) where S : IServer
+    public static P Resolve<P>(this string serverName, string alias, ResolveDelegate<P> customResolver = default, string resolverName = "")
     {
-        S server = serverName.GetServer<S>();
+        IServer server = serverName.GetServer();
+        P result = server.Resolve(alias, resolverName, customResolver);
+        return result;
+    }
+
+    public static void Revert(this string serverName, string alias, IPoolable target)
+    {
+        IServer server = serverName.GetServer();
         server?.Revert(target, alias);
     }
 }

@@ -15,9 +15,9 @@ namespace ShipDock.Server
     public class Servers : IDispose, IServersHolder
     {
         private static readonly Type resolvableAttrType = typeof(ResolvableAttribute);
+        private static readonly Type serverPriorityAttrType = typeof(ServerPriority);
 
         private bool mCanCheckServers;
-        private Type mInitPriorType;
         private IServer mGlobalServer;
         private object[] mServerPriorAttrs;
         private List<IServer> mNewServers;
@@ -40,7 +40,6 @@ namespace ShipDock.Server
             mNewServers = new List<IServer>();
             mServersWillSort = new List<IServer>();
             mServersWillCheck = new List<IServer>();
-            mInitPriorType = typeof(ServerPriority);
 
             mAliasID = new IntegerID<string>();
             mTypeMapper = new IntegerMapper<Type>();
@@ -76,13 +75,15 @@ namespace ShipDock.Server
             Utils.Reclaim(ref mResolvablesMapper, true, true);
             Utils.Reclaim(ref mResolvableConfigs, true, true);
 
-            OnFinished = null;
+            OnFinished = default;
         }
 
-        public void InitGlobalServer(Action onInit, Action onReady = null, string serverName = "/")
+        public void InitGlobalServer(Action onInit, Action onReady = default, string serverName = "/")
         {
-            mGlobalServer = new Server(serverName);
-            mGlobalServer.Prioriity = -int.MaxValue;
+            mGlobalServer = new Server(serverName)
+            {
+                Prioriity = -int.MaxValue
+            };
 
             int statu = 0;
             string nameTemp = default;
@@ -95,7 +96,7 @@ namespace ShipDock.Server
 
         public void Add(IServer server)
         {
-            if (mServerMapper == null)
+            if (mServerMapper == default)
             {
                 return;
             }
@@ -105,7 +106,7 @@ namespace ShipDock.Server
                 OnInit?.Invoke();
                 OnInit = default;
             }
-            string serverName = (server != null) ? server.ServerName : string.Empty;
+            string serverName = (server != default) ? server.ServerName : string.Empty;
             if (!string.IsNullOrEmpty(serverName) && !mServerMapper.IsContainsKey(serverName))
             {
                 SetAndInitServer(ref server);
@@ -117,13 +118,13 @@ namespace ShipDock.Server
                     mCanCheckServers = true;
                     ShipDockApp.CallLater(CheckServerList);
                 }
-                mServerPriorAttrs = null;
+                mServerPriorAttrs = default;
             }
         }
 
         private void SetAndInitServer(ref IServer server)
         {
-            if (server == null)
+            if (server == default)
             {
                 server = new Server();
             }
@@ -134,11 +135,11 @@ namespace ShipDock.Server
         private void SetServerPriority(IServer server)
         {
             Type type = server.GetType();
-            mServerPriorAttrs = type.GetCustomAttributes(mInitPriorType, false);
+            mServerPriorAttrs = type.GetCustomAttributes(serverPriorityAttrType, false);
             if (mServerPriorAttrs.Length > 0)
             {
                 mPriorAttributesItem = mServerPriorAttrs[0] as ServerPriority;
-                if (mPriorAttributesItem != null)
+                if (mPriorAttributesItem != default)
                 {
                     int prioriity = mPriorAttributesItem.Priority;
                     server.Prioriity = prioriity;
@@ -148,7 +149,7 @@ namespace ShipDock.Server
 
         public void Remove(IServer server)
         {
-            if ((server != null) && (mServerMapper != null) && mServerMapper.IsContainsKey(server.ServerName))
+            if ((server != default) && (mServerMapper != default) && mServerMapper.IsContainsKey(server.ServerName))
             {
                 mServerMapper.Remove(server.ServerName);
                 Utils.Reclaim(server);
@@ -165,11 +166,11 @@ namespace ShipDock.Server
             int max = mServersWillCheck.Count;
             if (max > 0)
             {
-                IServer server = null;
+                IServer server = default;
                 for (int i = 0; i < max; i++)
                 {
                     server = mServersWillCheck[i];
-                    if (server != null)
+                    if (server != default)
                     {
                         mServersWillSort.Add(server);
                     }
@@ -207,7 +208,7 @@ namespace ShipDock.Server
             for (int i = 0; i < max; i++)
             {
                 target = mServersWillSort[i];
-                if (target != null)
+                if (target != default)
                 {
                     CacheServer(ref serverName, ref target, ref statu);
                 }
@@ -224,7 +225,7 @@ namespace ShipDock.Server
             for (int i = 0; i < max; i++)
             {
                 target = mServersWillSort[i];
-                if (target != null)
+                if (target != default)
                 {
                     target.ServerReady();
                 }
@@ -252,10 +253,10 @@ namespace ShipDock.Server
         private void AfterServersInited()
         {
             IsServersReady = true;
-            if (OnFinished != null)
+            if (OnFinished != default)
             {
                 OnFinished.Invoke();
-                OnFinished = null;
+                OnFinished = default;
             }
         }
 
@@ -269,10 +270,6 @@ namespace ShipDock.Server
             {
                 OnFinished += method;
             }
-            //if (mNewServers.Count == 0)
-            //{
-            //    AfterServersInited();
-            //}
         }
 
         private int ComparerPriority(IServer n, IServer m)
@@ -293,7 +290,7 @@ namespace ShipDock.Server
 
         public int GetAliasID(ref string alias)
         {
-            return mAliasID != null ? mAliasID.GetID(ref alias) : -1;
+            return mAliasID != default ? mAliasID.GetID(ref alias) : -1;
         }
 
         public void CheckAndCacheType(ref Type target, out int id)
@@ -358,16 +355,16 @@ namespace ShipDock.Server
             {
                 return result;
             }
-            result = new IResolvable[max];
             int id;
             string alias;
             IResolvableConfig item;
-            ResolvableAttribute resolvabler;
+            ResolvableAttribute attribute;
             ResolvableBinder resolvableRef = default;
+            result = new IResolvable[max];
             for (int i = 0; i < max; i++)
             {
-                resolvabler = attributes[i] as ResolvableAttribute;
-                alias = resolvabler.Alias;
+                attribute = attributes[i] as ResolvableAttribute;
+                alias = attribute.Alias;
                 id = mResolvableNameMapper.ToID(ref alias);
 
                 if (mResolvableConfigs.IsContainsKey(id))

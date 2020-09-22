@@ -38,31 +38,48 @@ namespace ShipDock.Applications
         {
             base.Enter();
 
-            ShowUI();
+            CheckDisplay();
         }
 
         public override void Renew()
         {
             base.Renew();
 
-            ShowUI();
+            CheckDisplay();
         }
 
-        private void ShowUI()
+        private void CheckDisplay()
         {
             ShipDockApp.Instance.DataProxyLink(this, DataProxyLinks);
 
             if (mUI != default)
             {
-                mUI.Add(UIModularHandler);
-                mUI.transform.localScale = Vector3.one;
+                ShowUI();
             }
+        }
+
+        /// <summary>
+        /// 覆盖此方法，重载界面显示的逻辑
+        /// </summary>
+        protected virtual void ShowUI()
+        {
+            mUI.Add(UIModularHandler);
+            mUI.transform.localScale = Vector3.one;
+        }
+
+        /// <summary>
+        /// 覆盖此方法，重载界面隐藏的逻辑
+        /// </summary>
+        protected virtual void HideUI()
+        {
+            mUI.transform.localScale = Vector3.zero;
         }
 
         /// <summary>
         /// UI模块注册在UI资源中的消息器处理函数，用于模块与UI资源体的通信
         /// </summary>
         protected abstract void UIModularHandler(INoticeBase<int> param);
+
         /// <summary>
         /// UI模块注册在数据代理中的消息处理器函数，用于模块与数据的通信
         /// </summary>
@@ -84,7 +101,7 @@ namespace ShipDock.Applications
                 }
                 else
                 {
-                    mUI.transform.localScale = Vector3.zero;
+                    HideUI();
                 }
             }
 

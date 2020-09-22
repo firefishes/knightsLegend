@@ -36,7 +36,7 @@ namespace ShipDock.Applications
                 mMapper[m_CameraGroups[i].Name] = m_CameraGroups[i];
             }
             
-            m_LensServerName.DeliveParam<S, ICamerLens>("SetLens", "SetLensParamer", OnSetLens, true);
+            m_LensServerName.DeliveParam<ICamerLens>("SetLens", "SetLensParamer", OnSetLens, true);
         }
 
         private void OnSetLens(ref IParamNotice<ICamerLens> target)

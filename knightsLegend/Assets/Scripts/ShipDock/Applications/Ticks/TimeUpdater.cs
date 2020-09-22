@@ -9,7 +9,6 @@ namespace ShipDock.Applications
             return new TimeUpdater(totalTime, method, cancelCondition, repeats);
         }
 
-        private float mTime;
         private int mRepeats;
         private Func<bool> mCancelCondition;
 
@@ -39,23 +38,36 @@ namespace ShipDock.Applications
 
         public void Start()
         {
-            IsStarted = true;
             HasStart = true;
             IsTimeCounting = true;
-            UpdaterNotice.AddSceneUpdater(this);
+            IsStarted = true;
+            if (IsPause)
+            {
+                IsPause = false;
+            }
+            else
+            {
+                UpdaterNotice.AddSceneUpdater(this);
+            }
         }
 
-        public void Puase()
+        public void Pause()
         {
-            HasStart = false;
-            IsTimeCounting = false;
+            if (IsStarted)
+            {
+                HasStart = false;
+                IsTimeCounting = false;
+                IsPause = true;
+            }
         }
 
         public void Stop()
         {
-            Puase();
+            Pause();
 
-            mTime = 0;
+            Time = 0;
+            IsStarted = false;
+            IsPause = false;
             UpdaterNotice.RemoveSceneUpdater(this);
         }
 
@@ -103,9 +115,14 @@ namespace ShipDock.Applications
 
         private void TimeCountting(int dTime)
         {
+            if (IsPause || !IsStarted)
+            {
+                return;
+            }
+
             float t = (float)dTime / UpdatesCacher.UPDATE_CACHER_TIME_SCALE;
-            mTime += t;
-            if (mTime >= TotalTime)
+            Time += t;
+            if (Time >= TotalTime)
             {
                 IsTimeCounting = false;
                 if (Repeatable && !ShouldRepeat())
@@ -127,7 +144,7 @@ namespace ShipDock.Applications
                         //未完成指定的重复次数、永久重复的计时器开始新一轮定时器周期
                         IsTimeCounting = true;
                         Completion?.Invoke();
-                        mTime -= TotalTime;
+                        Time -= TotalTime;
                     }
                 }
             }
@@ -138,6 +155,11 @@ namespace ShipDock.Applications
             Completion += method;
         }
 
+        public void SetTimeOffset(float time)
+        {
+            Time = time;
+        }
+
         public bool IsCompleteCycle
         {
             get
@@ -146,6 +168,7 @@ namespace ShipDock.Applications
             }
         }
 
+        public float Time { get; private set; }
         public float TotalTime { get; private set; }
         public Action Completion { get; private set; }
         public bool Repeatable { get; private set; }
@@ -153,5 +176,6 @@ namespace ShipDock.Applications
         public bool IsTimeCounting { get; private set; }
         public bool IsAutoDispose { get; set; }
         public bool IsStarted { get; private set; }
+        public bool IsPause { get; private set; }
     }
 }

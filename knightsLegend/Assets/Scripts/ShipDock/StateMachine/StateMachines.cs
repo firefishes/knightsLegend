@@ -45,10 +45,7 @@ namespace ShipDock.FSM
             }
             else
             {
-                Testers.Tester.Instance.Log(
-                    Testers.TesterBaseApp.Instance, 
-                    Testers.TesterBaseApp.LOG, 
-                    typeof(StateMachines).ToString(), "不能注册重复的状态机");
+                "log".Log(typeof(StateMachines).ToString(), "不能注册重复的状态机");
             }
         }
 

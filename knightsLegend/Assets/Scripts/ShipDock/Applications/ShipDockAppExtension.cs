@@ -1,7 +1,10 @@
-﻿using ShipDock.Applications;
+﻿#define G_LOG
+
+using ShipDock.Applications;
 using ShipDock.Datas;
 using ShipDock.Notices;
 using ShipDock.Server;
+using ShipDock.Testers;
 using System;
 
 public static class ShipDockAppExtension
@@ -63,14 +66,14 @@ public static class ShipDockAppExtension
         }
     }
     
-    public static T GetServer<T>(this string serverName) where T : IServer
+    public static IServer GetServer(this string serverName)
     {
-        return ShipDockApp.Instance.Servers.GetServer<T>(serverName);
+        return ShipDockApp.Instance.Servers.GetServer<IServer>(serverName);
     }
 
     public static void MakeResolver<I>(this string serverName, string alias, string resolverName, ResolveDelegate<I> handler)
     {
-        serverName.GetServer<IServer>().MakeResolver(alias, resolverName, handler);
+        serverName.GetServer().MakeResolver(alias, resolverName, handler);
     }
 
     public static void AddToWarehouse(this IDataProxy target)
@@ -81,5 +84,23 @@ public static class ShipDockAppExtension
     public static T GetData<T>(this int target) where T : IDataProxy
     {
         return ShipDockApp.Instance.Datas.GetData<T>(target);
+    }
+
+    [System.Diagnostics.Conditional("G_LOG")]
+    public static void Log(this string logID, params string[] args)
+    {
+        Tester.Instance.Log(logID, args);
+    }
+
+    [System.Diagnostics.Conditional("G_LOG")]
+    public static void Log(this string target, bool logFilters, params string[] args)
+    {
+        Tester.Instance.Log(target, logFilters, args);
+    }
+
+    [System.Diagnostics.Conditional("G_LOG")]
+    public static void LogAndAssert(this string target, string title, string assertTarget, params string[] args)
+    {
+        Tester.Instance.LogAndAssert(target, title, assertTarget, args.Length == 0 ? new string[] { assertTarget } : args);
     }
 }

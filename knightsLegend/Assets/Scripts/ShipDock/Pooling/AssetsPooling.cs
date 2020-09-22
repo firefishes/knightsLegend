@@ -143,7 +143,7 @@ namespace ShipDock.Pooling
         /// </summary>
         public T FromComponentPool<T>(int poolName, ref T template, OnComponentPoolItem<T> onInit = null, bool visible = true) where T : Component
         {
-            Tester.Instance.Log(TesterBaseApp.Instance, TesterBaseApp.LOG, template == null, "error: template is null, the type is ".Append(typeof(T).ToString()));
+            "log".Log(template == null, "error: template is null, the type is ".Append(typeof(T).ToString()));
 
             Component tempResult = null;
             bool flag = CheckPoolResult(poolName, ref mCompPool, ref tempResult);

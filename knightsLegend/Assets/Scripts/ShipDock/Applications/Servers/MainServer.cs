@@ -3,6 +3,7 @@ using ShipDock.Notices;
 using ShipDock.Pooling;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace ShipDock.Applications
 {
@@ -14,6 +15,7 @@ namespace ShipDock.Applications
             new ResolvableConfigItem<IParamNotice<int>, ParamNotice<int>>("Int"),
             new ResolvableConfigItem<IParamNotice<bool>, ParamNotice<bool>>("Bool"),
             new ResolvableConfigItem<IParamNotice<Vector3>, ParamNotice<bool>>("V3"),
+            new ResolvableConfigItem<IParamNotice<string>, ParamNotice<string>>("string"),
         };
 
         public MainServer(string serverName)
@@ -29,6 +31,7 @@ namespace ShipDock.Applications
             Register<IParamNotice<int>>(IntParamerResolver, Pooling<ParamNotice<int>>.Instance);
             Register<IParamNotice<bool>>(BoolParamerResolver, Pooling<ParamNotice<bool>>.Instance);
             Register<IParamNotice<Vector3>>(V3ParamerResolver, Pooling<ParamNotice<Vector3>>.Instance);
+            Register<IParamNotice<string>>(StringParamerResolver, Pooling<ParamNotice<string>>.Instance);
         }
 
         public override void ServerReady()
@@ -62,5 +65,8 @@ namespace ShipDock.Applications
         {
             target.ParamValue = false;
         }
+
+        [Resolvable("string")]
+        private void StringParamerResolver(ref IParamNotice<string> target) { }
     }
 }

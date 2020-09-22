@@ -142,7 +142,7 @@ namespace ShipDock.FSM
             }
             else
             {
-                Tester.Instance.Log(TesterBaseApp.Instance, TesterBaseApp.LOG5, mFSMName.ToString());
+                "fsm state repeate".Log(mFSMName.ToString());
                 return null;
             }
             if ((index == -1) || (mStateList.Count <= index))
@@ -351,11 +351,9 @@ namespace ShipDock.FSM
                 {
                     return;//防止多次跳转状态操作同时发生引起的参数错误
                 }
-                Tester.Instance.Log(TesterBaseApp.Instance,
-                                    TesterBaseApp.LOG4,
-                                    GetType().Name,
-                                    (mPrevious != null) ? mPrevious.StateName.ToString() : DefaultState.ToString(),
-                                    CurrentStateName.ToString());
+                "fsm changed".Log(GetType().Name,
+                                (mPrevious != null) ? mPrevious.StateName.ToString() : DefaultState.ToString(),
+                                CurrentStateName.ToString());
                 AfterStateChanged();
             }
         }

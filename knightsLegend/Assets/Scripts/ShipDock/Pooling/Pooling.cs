@@ -57,7 +57,7 @@ namespace ShipDock.Pooling
 
         public static void To(T target, Pooling<T> customPool = null)
         {
-            TesterBaseApp.Instance.LogWhenPoolingItemDoNotMatch(ref target);
+            "pool type error".Log((typeof(T).FullName != target.GetType().FullName), target.GetType().FullName);
             CheckPoolNull(customPool);
             instance.ToPool(target);
         }
@@ -101,7 +101,7 @@ namespace ShipDock.Pooling
                 mPool = new Stack<T>();
             }
 
-            mPoolTypeName = typeof(T).FullName;
+            mPoolTypeName = typeof(T).Name;
             mCreater = customCreater;
 
             if (mIsAddResetCallback)
@@ -220,7 +220,7 @@ namespace ShipDock.Pooling
                     }
                 }
                 mPool.Clear();
-                Tester.Instance.Log(TesterBaseApp.Instance, 1, mPoolTypeName);
+                "pool clear".Log(mPoolTypeName);
             }
             UsedCount = 0;
         }

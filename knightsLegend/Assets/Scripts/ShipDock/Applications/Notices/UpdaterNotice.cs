@@ -45,5 +45,10 @@ namespace ShipDock.Applications
             ShipDockConsts.NOTICE_SCENE_CALL_LATE.Broadcast(notice);
             notice.ToPool();
         }
+
+        public override void ToPool()
+        {
+            Pooling<UpdaterNotice>.To(this);
+        }
     }
 }

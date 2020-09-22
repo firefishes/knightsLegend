@@ -1,4 +1,6 @@
-﻿using ShipDock.Applications;
+﻿#define G_LOG
+
+using ShipDock.Applications;
 using ShipDock.Interfaces;
 using ShipDock.Tools;
 using System.Collections.Generic;
@@ -117,7 +119,7 @@ namespace ShipDock.Loader
 
                 if(!string.IsNullOrEmpty(source))
                 {
-                    Debug.Log("load res : " + source);
+                    "load res".Log(source);
                     mLoader.Load(source);
                 }
                 else
@@ -150,7 +152,7 @@ namespace ShipDock.Loader
             mDepsWalkMax++;
             if (mDepsWalkMax > 100)
             {
-                Debug.Log("Walk dependences will out of stacks");
+                "walk deps".Log();
                 return;
             }
             string[] list = AessetManifest.GetDirectDependencies(deped);
@@ -161,7 +163,7 @@ namespace ShipDock.Loader
                 dep = list[i];
                 if (dep.Length > 0)
                 {
-                    Debug.Log("Dependence: " + dep + " => " + deped);
+                    "deps".Log(dep, deped);
                     WalkDependences(dep);
                     if (!mDependences.Contains(dep))
                     {
@@ -175,7 +177,7 @@ namespace ShipDock.Loader
         {
             if(mIndex >= mDependences.Count)
             {
-                Debug.Log("dependences is empty");
+                "empty deps".Log();
                 return string.Empty;
             }
             source = mDependences[mIndex];
@@ -205,14 +207,14 @@ namespace ShipDock.Loader
 
         private void LoadFailed(ref Loader target)
         {
-            Debug.Log(target.LoadError);
-            Debug.LogError(mLoader.Url);
+            "error".Log(target.LoadError);
+            "loader failed".Log(mLoader.Url);
             CompleteEvent?.Invoke(false, this);
         }
 
         private void LoadSuccessd(ref Loader target)
         {
-            Debug.Log("Loader successed: " + target.Url);
+            "loader success".Log(target.Url);
             if (mCurrentOption.isManifest)
             {
                 GetAssetManifest(ref target);
@@ -253,7 +255,7 @@ namespace ShipDock.Loader
                 }
                 else
                 {
-                    Debug.Log("Loader complete and get dependency: " + source);
+                    "loader deps".Log(source);
                     mLoader.Load(AppPaths.StreamingResDataRoot.Append(source));//TODO 根据版本号决定是缓存目录还是项目目录获取，拼接不同的地址
                 }
             }
