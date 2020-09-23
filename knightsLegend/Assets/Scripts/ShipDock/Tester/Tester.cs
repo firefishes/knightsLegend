@@ -3,6 +3,7 @@
 #define _ASSERT
 
 using ShipDock.Tools;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 #if ASSERT
@@ -40,7 +41,7 @@ namespace ShipDock.Testers
 
         private int mLogCount;
         private ITester mDefaultTester;
-        private Object mLogSignTarget;
+        private UnityEngine.Object mLogSignTarget;
 
         private TesterIndxMapper mTesterIndexs;
         private AsserterMapper mAsserterMapper;
@@ -78,7 +79,7 @@ namespace ShipDock.Testers
 
                 AddLogger(mDefaultTester, "ast do not pass", "error: Asserter {0} do not pass in {1}");
                 AddLogger(mDefaultTester, "ast not correct", "error: Tester correct is \"{0}\", it do not \"{1}\".");
-                AddLogger(mDefaultTester, "tester hited", "Tester: [{0}] Target hit {1}/{2}. correct is {3}", "#7FE939");
+                AddLogger(mDefaultTester, "tester hited", "Tester: [{0}] Assert coincide {1}/{2}. correct is {3}", "#7FE939");
                 AddLogger(mDefaultTester, "all tester hited", "Tester: {0} All hit！", "#48DD22");
             }
         }
@@ -127,14 +128,14 @@ namespace ShipDock.Testers
         }
 
         [System.Diagnostics.Conditional("G_LOG")]
-        public void Log(Object logSignTarget, params string[] args)
+        public void Log(UnityEngine.Object logSignTarget, params string[] args)
         {
             mLogSignTarget = logSignTarget;
             Log(string.Empty, args);
         }
 
         [System.Diagnostics.Conditional("G_LOG")]
-        public void Log(string logID, Object logSignTarget, params string[] args)
+        public void Log(string logID, UnityEngine.Object logSignTarget, params string[] args)
         {
             mLogSignTarget = logSignTarget;
             Log(logID, args);
@@ -167,8 +168,11 @@ namespace ShipDock.Testers
         [System.Diagnostics.Conditional("G_LOG")]
         public void LogAndAssert(string logID, string title, string assertTarget, params string[] args)
         {
-            LogFromTester(logID, args);
-            Asserting(title, assertTarget);
+            if (mAsserterMapper.IsContainsKey(title))
+            {
+                LogFromTester(logID, args);
+                Asserting(title, assertTarget);
+            }
         }
 
         [System.Diagnostics.Conditional("G_LOG")]
@@ -262,13 +266,19 @@ namespace ShipDock.Testers
             if (mAsserterMapper.IsContainsKey(title))
             {
                 List<Asserter> list = mAsserterMapper[title];
-                if (list.Count != 0)
+                int max = list.Count;
+                if (max != 0)
                 {
                     int index = mTesterIndexs[title];
                     Asserter asserter = list[index];
                     string correct = asserter.content;
-#if ASSERT
-                    Assert.AreEqual(target, correct);
+#if ASSERT && UNITY_EDITOR
+                    try
+                    {
+                        Assert.AreEqual(target, correct);
+                        MoveNextAsserter(ref index, max, moveNext, ref title);
+                    }
+                    catch (System.Exception _) { }
 #else
                     bool result = target != correct;
                     if (result)
@@ -278,21 +288,28 @@ namespace ShipDock.Testers
                     }
                     else
                     {
-                        "tester hited".Log(asserter.title, (index + 1).ToString(), list.Count.ToString(), target);
-                        if (moveNext)
-                        {
-                            index++;
-                            mTesterIndexs.Put(title, index);
-                        }
-                        if (index >= list.Count)
-                        {
-                            "all tester hited".Log(title);
-                            mAsserterMapper.Remove(title);
-                            mTesterIndexs.Remove(title);
-                        }
+                        int next = index + 1;
+                        "tester hited".Log(asserter.title, next.ToString(), max.ToString(), target);
+                        ShouldMoveNextAsserter(ref index, max, moveNext, ref title);
                     }
 #endif
                 }
+            }
+        }
+
+        [System.Diagnostics.Conditional("G_LOG")]
+        private void ShouldMoveNextAsserter(ref int index, int max, bool moveNext, ref string title)
+        {
+            if (moveNext)
+            {
+                index++;
+                mTesterIndexs.Put(title, index);
+            }
+            if (index >= max)
+            {
+                "all tester hited".Log(title);
+                mAsserterMapper.Remove(title);
+                mTesterIndexs.Remove(title);
             }
         }
 

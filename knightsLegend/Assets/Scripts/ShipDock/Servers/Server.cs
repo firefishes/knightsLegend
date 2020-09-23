@@ -218,13 +218,13 @@ namespace ShipDock.Server
 
                 if (result != default)
                 {
+                    if (customResolver != default)
+                    {
+                        customResolver.Invoke(ref result);
+                    }
                     bool isDelive = !string.IsNullOrEmpty(resolverName);
                     if (isDelive)
                     {
-                        if (customResolver != default)
-                        {
-                            customResolver.Invoke(ref result);
-                        }
 
                         resolverHandler = resolvable.GetResolver<InterfaceT>(resolverName, out _);
                         if (resolverHandler == default)

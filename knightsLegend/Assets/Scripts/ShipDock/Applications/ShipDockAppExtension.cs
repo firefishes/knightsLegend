@@ -99,8 +99,17 @@ public static class ShipDockAppExtension
     }
 
     [System.Diagnostics.Conditional("G_LOG")]
-    public static void LogAndAssert(this string target, string title, string assertTarget, params string[] args)
+    public static void AssertLog(this string target, string title, string assertTarget, params string[] args)
     {
         Tester.Instance.LogAndAssert(target, title, assertTarget, args.Length == 0 ? new string[] { assertTarget } : args);
+    }
+
+    [System.Diagnostics.Conditional("G_LOG")]
+    public static void AssertLog(this string target, bool logFilters, string title, string assertTarget, params string[] args)
+    {
+        if (logFilters)
+        {
+            target.AssertLog(title, assertTarget, args);
+        }
     }
 }

@@ -58,7 +58,7 @@ namespace ShipDock.Applications
             }
             Tester = Tester.Instance;
             Tester.Init(new TesterBaseApp());
-            "log".LogAndAssert("framework start", "Welcom..");
+            "log".AssertLog("framework start", "Welcom..");
 
             Notificater = new Notifications<int>();//新建消息中心
             ABs = new AssetBundles();//新建资源包管理器
@@ -76,12 +76,12 @@ namespace ShipDock.Applications
             mFSMUpdaters = new KeyValueList<IStateMachine, IUpdate>();
             mStateUpdaters = new KeyValueList<IState, IUpdate>();
 
-            "log".LogAndAssert("framework start", "Managers Ready");
+            "log".AssertLog("framework start", "Managers Ready");
 
             if (ticks > 0)
             {
                 TicksUpdater = new TicksUpdater(ticks);//新建客户端心跳帧更新器
-                "log".LogAndAssert("framework start", "Ticks Ready");
+                "log".AssertLog("framework start", "Ticks Ready");
             }
 
             IsStarted = true;
@@ -89,7 +89,7 @@ namespace ShipDock.Applications
             mAppStarted = null;
 
             ShipDockConsts.NOTICE_APPLICATION_STARTUP.Broadcast();//框架启动完成
-            "log".LogAndAssert("framework start", "Framework Started");
+            "log".AssertLog("framework start", "Framework Started");
         }
 
         private void OnStateFrameUpdater(IState state, bool isAdd)

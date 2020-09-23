@@ -101,7 +101,7 @@ namespace ShipDock.Pooling
                 mPool = new Stack<T>();
             }
 
-            mPoolTypeName = typeof(T).Name;
+            mPoolTypeName = typeof(T).FullName;
             mCreater = customCreater;
 
             if (mIsAddResetCallback)

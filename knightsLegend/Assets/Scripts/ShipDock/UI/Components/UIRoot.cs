@@ -1,6 +1,4 @@
-﻿#define G_LOG
-
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace ShipDock.UI
 {
