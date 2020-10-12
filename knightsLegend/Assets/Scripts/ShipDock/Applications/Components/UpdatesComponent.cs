@@ -2,16 +2,17 @@ using UnityEngine;
 
 namespace ShipDock.Applications
 {
+    [DisallowMultipleComponent]
     public class UpdatesComponent : MonoBehaviour
     {
         [SerializeField]
-        private int m_ReadyNoticeName = int.MaxValue;
+        private int m_ReadyNoticeName = ShipDockConsts.NOTICE_SCENE_UPDATE_READY;
         [SerializeField]
-        private int m_AddItemNoticeName = int.MaxValue;
+        private int m_AddItemNoticeName = ShipDockConsts.NOTICE_ADD_SCENE_UPDATE;
         [SerializeField]
-        private int m_RemoveItemNoticeName = int.MaxValue;
+        private int m_RemoveItemNoticeName = ShipDockConsts.NOTICE_REMOVE_SCENE_UPDATE;
         [SerializeField]
-        private int m_CallLateItemNoticeName = int.MaxValue;
+        private int m_CallLateItemNoticeName = ShipDockConsts.NOTICE_SCENE_CALL_LATE;
 
         private ComponentBridge mCompBridge;
         private UpdatesCacher mUpdatesCacher;

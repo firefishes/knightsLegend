@@ -1,11 +1,10 @@
-﻿using ShipDock.Interfaces;
-using ShipDock.Tools;
+﻿using ShipDock.Tools;
 using System;
 using System.Collections.Generic;
 
 namespace ShipDock.Datas
 {
-    public class DataProxy : IDataProxy, IDispose
+    public class DataProxy : IDataProxy
     {
         private List<IDataExtracter> mDataHandlers;
         private Action<IDataProxy, int> mOnDataProxyNotify;

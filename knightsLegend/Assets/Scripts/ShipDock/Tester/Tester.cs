@@ -31,7 +31,7 @@ namespace ShipDock.Testers
     {
         public string format;
         public string logColor;
-        public System.Action onLoged;
+        public System.Action<string[]> onLoged;
     }
 
     public class Tester : Singletons<Tester>
@@ -67,6 +67,7 @@ namespace ShipDock.Testers
         public void Clean()
         {
             Application.logMessageReceived -= OnLogMessageReceived;
+            TestBrokers = default;
         }
 
         [System.Diagnostics.Conditional("G_LOG")]
@@ -117,7 +118,7 @@ namespace ShipDock.Testers
         }
 
         [System.Diagnostics.Conditional("G_LOG")]
-        public void AddLogger(ITester tester, string logID, string format, string logColor = "", System.Action onLogedMethod = null)
+        public void AddLogger(ITester tester, string logID, string format, string logColor = "", System.Action<string[]> onLogedMethod = null)
         {
             if (!mTesterMapper.ContainsKey(logID))
             {
@@ -186,50 +187,84 @@ namespace ShipDock.Testers
         {
             ITester tester = mTesterMapper[logID];
             ITester target = tester ?? mDefaultTester;
+            LogItem logger;
             if (target == null)
             {
-                string log = logID.Append(" - ");
-                int max = args.Length;
-                for (int i = 0; i < max; i++)
+                if (logID.Contains("{0}"))
                 {
-                    log = log.Append(args[i]);
-                }
-                Debug.Log(log);
-                return;
-            }
-
-            KeyValueList<string, LogItem> list = mLoggerMapper[target.Name];
-            if ((list != null) && list.IsContainsKey(logID))
-            {
-                string log;
-                LogItem logger = list[logID];
-                if(isShowLogCount)
-                {
-                    log = string.Format(logger.format, args).Append("(", mLogCount.ToString(), ")");
-                }
-                else
-                {
-                    log = string.Format(logger.format, args);
-                }
-                if (mLogSignTarget != null)
-                {
-                    DebugUtils.LogInColorAndSignIt(mLogSignTarget, log);
-                    mLogSignTarget = null;
-                }
-                else
-                {
-                    if (string.IsNullOrEmpty(logger.logColor))
+                    logger = new LogItem
                     {
-                        DebugUtils.LogInColor(log);
+                        format = logID,
+                    };
+                }
+                else
+                {
+                    string log = logID.Append(" - ");
+                    int max = args.Length;
+                    for (int i = 0; i < max; i++)
+                    {
+                        log = log.Append(args[i]);
+                    }
+                    Debug.Log(log);
+                    return;
+                }
+            }
+            else
+            {
+                KeyValueList<string, LogItem> list = mLoggerMapper[target.Name];
+                bool hasLogger = (list != null) && list.IsContainsKey(logID);
+                if (hasLogger)
+                {
+                    logger = list[logID];
+                }
+                else
+                {
+                    if (logID.Contains("{0}"))
+                    {
+                        logger = new LogItem
+                        {
+                            format = logID,
+                        };
                     }
                     else
                     {
-                        DebugUtils.LogInColor(logger.logColor, log);
+                        return;
                     }
                 }
-                logger.onLoged?.Invoke();
-                mLogCount++;
             }
+            CheckLogger(ref logID, ref logger, ref args);
+        }
+
+        private void CheckLogger(ref string logID, ref LogItem logger, ref string[] args)
+        {
+            string log;
+            logger.onLoged?.Invoke(args);
+            if (isShowLogCount)
+            {
+                log = string.Format(logger.format, args).Append("(", mLogCount.ToString(), ")");
+            }
+            else
+            {
+                log = string.Format(logger.format, args);
+            }
+            if (mLogSignTarget != null)
+            {
+                DebugUtils.LogInColorAndSignIt(mLogSignTarget, log);
+                mLogSignTarget = null;
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(logger.logColor))
+                {
+                    DebugUtils.LogInColor(log);
+                }
+                else
+                {
+                    DebugUtils.LogInColor(logger.logColor, log);
+                }
+            }
+            TestBrokers?.Invoke(logID, args);
+            mLogCount++;
         }
 
         [System.Diagnostics.Conditional("G_LOG")]
@@ -321,5 +356,13 @@ namespace ShipDock.Testers
                 raw = value;
             }
         }
+
+        [System.Diagnostics.Conditional("G_LOG")]
+        public void SetTestBrokerHandler(Action<string, string[]> handler)
+        {
+            TestBrokers += handler;
+        }
+
+        private Action<string, string[]> TestBrokers { get; set; }
     }
 }

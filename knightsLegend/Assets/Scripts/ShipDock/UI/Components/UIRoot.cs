@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using UnityEngine.Events;
 
 namespace ShipDock.UI
 {
@@ -17,7 +19,16 @@ namespace ShipDock.UI
         {
             UICamera = m_UICamera;
             MainCanvas = m_MainCanvas;
+        }
+
+        private void Start()
+        {
             m_OnAwaked?.Invoke(this);
+        }
+
+        public void AddAwakedHandler(UnityAction<IUIRoot> handler)
+        {
+            m_OnAwaked.AddListener(handler);
         }
 
         public Canvas MainCanvas { get; private set; }

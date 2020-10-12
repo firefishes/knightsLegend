@@ -39,9 +39,12 @@ namespace ShipDock.Datas
             }
         }
         
-        public void SetLocal(string localKey)
+        public void SetLocal(string localKey = "")
         {
-            Local = localKey;
+            if (!string.IsNullOrEmpty(localKey))
+            {
+                SetLocalName(localKey);
+            }
             string fileName = "local_".Append(Local, ".txt");
             if (languageAssetBundle != default)
             {
@@ -51,16 +54,26 @@ namespace ShipDock.Datas
             }
         }
 
-        public void SetLocal<K>(string localKey, Dictionary<K, string> data)
+        public void SetLocalName(string localKey)
         {
             Local = localKey;
+        }
 
+        public void SetLocal<K>(Dictionary<K, string> data, string localKey = "")
+        {
+            if (!string.IsNullOrEmpty(localKey))
+            {
+                SetLocalName(localKey);
+            }
             if (mLanguage == null)
             {
                 mLanguage = new Dictionary<string, string>();
             }
 
-            FillLanguagesData(ref data, AddLocalsLanguageData);
+            if (data != default)
+            {
+                FillLanguagesData(ref data, AddLocalsLanguageData);
+            }
         }
 
         public string Language(string id, params string[] formats)
@@ -73,6 +86,10 @@ namespace ShipDock.Datas
                 }
 
                 TextAsset asset = Resources.Load<TextAsset>("local_default");//如果本地化数据未初始化则先从默认的本地化文本获取数据
+                if (asset == default)
+                {
+                    return id;
+                }
                 string data = asset.text;
                 FillLanguagesData(ref data, AddDefaultLanguageData);
             }
@@ -89,7 +106,7 @@ namespace ShipDock.Datas
 
         private void FillLanguagesData(ref string data, Action onAddLanguageData)
         {
-            mTail = "_".Append(Local);
+            mTail = string.IsNullOrEmpty(Local) ? string.Empty : "_".Append(Local);
 
             string[] languagesData = data.Split('\n');
             int max = languagesData.Length;
@@ -110,8 +127,8 @@ namespace ShipDock.Datas
 
         private void FillLanguagesData<K>(ref Dictionary<K, string> data, Action onAddLanguageData)
         {
-            mTail = "_".Append(Local);
-            
+            mTail = string.IsNullOrEmpty(Local) ? string.Empty : "_".Append(Local);
+
             int max = data.Count;
             Dictionary<K, string>.Enumerator enumerator = data.GetEnumerator();
             for (int i = 0; i < max; i++)
@@ -147,6 +164,10 @@ namespace ShipDock.Datas
 
         private bool IsTailWithLocalSign(ref string key, ref string tail)
         {
+            if (string.IsNullOrEmpty(tail))
+            {
+                return true;
+            }
             return key.IndexOf(tail, StringComparison.Ordinal) != -1;
         }
 

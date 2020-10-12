@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ShipDock.Applications;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -12,6 +13,13 @@ namespace ShipDock.Editors
         public static void Open()
         {
             InitEditorWindow<ApplicationEditor>("游戏客户端设置");
+        }
+
+        [MenuItem("ShipDock/Create Application")]
+        public static void CreateApplication()
+        {
+            var target = Selection.activeTransform;
+            target.gameObject.AddComponent<ShipDockGame>();
         }
 
         private BuildTarget mABBuildTarget;
