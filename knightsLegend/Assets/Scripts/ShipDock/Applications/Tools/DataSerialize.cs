@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 
@@ -35,11 +36,18 @@ namespace ShipDock.Applications
             {
                 return null;
             }
-            FileStream fs = new FileStream(mReadWritePath, FileMode.Open, FileAccess.Read);
-            byte[] buffur = new byte[fs.Length];
-            fs.Read(buffur, 0, buffur.Length);
-            fs.Close();
-            return buffur;
+            try
+            {
+                FileStream fs = new FileStream(mReadWritePath, FileMode.Open, FileAccess.Read);
+                byte[] buffur = new byte[fs.Length];
+                fs.Read(buffur, 0, buffur.Length);
+                fs.Close();
+                return buffur;
+            }
+            catch(Exception error)
+            {
+                return default;
+            }
         }
 
         public static void Serialize<T>(string name, T data) where T : class

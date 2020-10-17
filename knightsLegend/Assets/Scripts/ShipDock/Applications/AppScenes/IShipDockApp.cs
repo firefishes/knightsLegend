@@ -17,6 +17,7 @@ namespace ShipDock.Applications
         void GetLocalsConfigItemHandler(Dictionary<int, string> raw, IConfigNotice param);
         void EnterGameHandler();
         void GetDataProxyHandler(IParamNotice<IDataProxy[]> param);
+        void ApplicationCloseHandler();
     }
 
     public class ShipDockAppComponent : MonoBehaviour, IShipDockApp
@@ -54,6 +55,10 @@ namespace ShipDock.Applications
         }
 
         public virtual void ServerFinishedHandler()
+        {
+        }
+
+        public virtual void ApplicationCloseHandler()
         {
         }
     }

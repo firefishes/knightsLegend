@@ -133,7 +133,7 @@ namespace ShipDock.Applications
             for (int i = 0; i < max; i++)
             {
                 mItem = mCacher[i];
-                if (mItem.IsFixedUpdate)
+                if (mItem != default && mItem.IsFixedUpdate)
                 {
                     mItem.OnFixedUpdate(time);
                 }
@@ -152,7 +152,7 @@ namespace ShipDock.Applications
             for (int i = 0; i < max; i++)
             {
                 mItem = mCacher[i];
-                if (mItem.IsLateUpdate)
+                if ((mItem != default) && mItem.IsLateUpdate)
                 {
                     mItem.OnLateUpdate();
                 }

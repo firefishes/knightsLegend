@@ -29,6 +29,29 @@ namespace ShipDock.Tools
                 result.Add((T)item);
             }
         }
+
+        public static Transform CreateGameObjectWithComponent<T>(string name, Transform parent = default) where T : Component
+        {
+            Transform result = default;
+            if (GameObject.Find(name) == default)
+            {
+                GameObject target = new GameObject
+                {
+                    name = name
+                };
+                target.AddComponent<T>();
+                result = target.transform;
+                if (parent != default)
+                {
+                    result.SetParent(parent);
+                }
+            }
+            else
+            {
+                "Editor ShipDock/Create Application: {0} has existed.".Log(name);
+            }
+            return result;
+        }
 #endif
     }
 }

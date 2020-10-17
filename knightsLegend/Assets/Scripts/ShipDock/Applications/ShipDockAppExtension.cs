@@ -112,4 +112,14 @@ public static class ShipDockAppExtension
             target.AssertLog(title, assertTarget, args);
         }
     }
+
+    [System.Diagnostics.Conditional("G_LOG")]
+    public static void Assert(this string target, string assertTarget, params string[] args)
+    {
+        Tester.Instance.Asserting(target, assertTarget);
+        if (args.Length > 0)
+        {
+            target.Log(args);
+        }
+    }
 }

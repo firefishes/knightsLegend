@@ -31,6 +31,9 @@ namespace ShipDock.Applications
 
     [Serializable]
     internal class InitProfileDataEvent : UnityEvent<IConfigNotice> { }
+
+    [Serializable]
+    internal class ShipDockCloseEvent : UnityEvent { }
     
     [RequireComponent(typeof(UpdatesComponent))]
     public class ShipDockGame : MonoBehaviour
@@ -58,10 +61,25 @@ namespace ShipDock.Applications
 
         private void OnDestroy()
         {
+            m_GameAppEvents.frameworkCloseEvent.Invoke();
+
+            m_GameAppEvents.frameworkCloseEvent.RemoveAllListeners();
+            m_GameAppEvents.createTestersEvent.RemoveAllListeners();
+            m_GameAppEvents.enterGameEvent.RemoveAllListeners();
+            m_GameAppEvents.getDataProxyEvent.RemoveAllListeners();
+            m_GameAppEvents.getGameServersEvent.RemoveAllListeners();
+            m_GameAppEvents.initProfileDataEvent.RemoveAllListeners();
+            m_GameAppEvents.getLocalsConfigItemEvent.RemoveAllListeners();
+            m_GameAppEvents.getServerConfigsEvent.RemoveAllListeners();
+            m_GameAppEvents.initProfileEvent.RemoveAllListeners();
+            m_GameAppEvents.serversFinishedEvent.RemoveAllListeners();
+
             ShipDockApp.Close();
+
+            "debug".Log("ShipDock close.");
         }
 
-        public void CreateGame()
+        private void CreateGame()
         {
             ShipDockAppComponent component = GetComponent<ShipDockAppComponent>();
             if (component != default)
@@ -75,6 +93,7 @@ namespace ShipDock.Applications
                 m_GameAppEvents.getServerConfigsEvent.AddListener(component.GetServerConfigsHandler);
                 m_GameAppEvents.initProfileEvent.AddListener(component.InitProfileHandler);
                 m_GameAppEvents.serversFinishedEvent.AddListener(component.ServerFinishedHandler);
+                m_GameAppEvents.frameworkCloseEvent.AddListener(component.ApplicationCloseHandler);
 
                 "debug".Log("Game Component created..");
             }
@@ -90,9 +109,9 @@ namespace ShipDock.Applications
             }
         }
 
-        void Start()
+        private void Start()
         {
-#if RELEASE && !G_LOG
+#if RELEASE
             Debug.unityLogger.logEnabled = false;
 #endif
             Application.targetFrameRate = m_FrameRate;
@@ -118,10 +137,17 @@ namespace ShipDock.Applications
             Servers servers = app.Servers;
             servers.OnInit += OnServersInit;
             IServer[] list = GetGameServers();
-            int max = list.Length;
-            for (int i = 0; i < max; i++)
+            int max = list != default ? list.Length : 0;
+            if (max > 0)
             {
-                servers.Add(list[i]);
+                for (int i = 0; i < max; i++)
+                {
+                    servers.Add(list[i]);
+                }
+            }
+            else
+            {
+                servers.Add(new MainServer("ServerShipDock"));
             }
             servers.AddOnServerFinished(OnFinished);
         }
@@ -149,7 +175,12 @@ namespace ShipDock.Applications
         private void OnServersInit()
         {
             ShipDockApp app = ShipDockApp.Instance;
-            app.Servers.AddResolvableConfig(GetServerConfigs());
+
+            IResolvableConfig[] resolvableConfs = GetServerConfigs();
+            resolvableConfs = resolvableConfs != default ? resolvableConfs : MainServer.ServerConfigs.ToArray();
+
+            app.Servers.AddResolvableConfig(resolvableConfs);
+
             "log".AssertLog("game", "ServerInit");
         }
 
@@ -167,44 +198,71 @@ namespace ShipDock.Applications
                 "log".AssertLog("game", "ServerFinished");
                 UpdaterNotice.RemoveSceneUpdater(mServerInitedChecker);
 
-                m_DevelopSubgroup.configInitedNoticeName.Add(OnConfigLoaded);
-
-                ServerContainerSubgroup server = m_DevelopSubgroup.loadConfig;
-                server.serverName.Delive<IConfigNotice>(server.deliverName, server.alias, OnGetConfigNotice);//IConfigNotice
-
+                int configInitedNoticeName = m_DevelopSubgroup.configInitedNoticeName;
+                if (configInitedNoticeName != int.MaxValue)
+                {
+                    configInitedNoticeName.Add(OnConfigLoaded);//订阅一个配置初始化完成的消息
+                    ServerContainerSubgroup server = m_DevelopSubgroup.loadConfig;
+                    server.Delive<IConfigNotice>(OnGetConfigNotice);//加载配置
+                	//调用配置服务容器方法 Sample: "ServerConfig".Delive<IConfigNotice>("LoadConfig", "ConfigNotice", OnGetConfigNotice);
+                }
+                else
+                {
+                    OnConfigLoaded(default);
+                }
             }
         }
 
+        /// <summary>
+        /// 获取配置的外派方法的装饰器方法
+        /// </summary>
+        /// <param name="target"></param>
         private void OnGetConfigNotice(ref IConfigNotice target)
         {
             target.SetNoticeName(m_DevelopSubgroup.configInitedNoticeName);
             target.ParamValue = m_DevelopSubgroup.configNames;
         }
 
-        private void OnConfigLoaded(INoticeBase<int> obj)
+        /// <summary>
+        /// 配置加载完成消息处理函数
+        /// </summary>
+        /// <param name="param"></param>
+        private void OnConfigLoaded(INoticeBase<int> param)
         {
             m_DevelopSubgroup.configInitedNoticeName.Remove(OnConfigLoaded);
 
-            IConfigNotice notice = obj as IConfigNotice;
+            IConfigNotice notice = param as IConfigNotice;
+
+            //从消息参数中获取配置数据的 Sample:
+            //Dictionary<int, ConfigClass> mapper = notice.GetConfigRaw<ConfigClass>("ConfigName");
+            //var a = mapper[1].a;
+            //var b = mapper[12].b;
 
             InitConfigs(ref notice);
             InitProfileData(ref notice);
 
-            notice.IsClearHolderList = true;
-            notice.ToPool();
+            if (notice != default)
+            {
+                notice.IsClearHolderList = true;
+                notice.ToPool();
+            }
 
             AssetsLoader assetsLoader = new AssetsLoader();
-            assetsLoader.CompleteEvent.AddListener(OnPreloadComplete);
-            assetsLoader.Add(AppPaths.StreamingResDataRoot.Append(AppPaths.resData), m_DevelopSubgroup.assetNameResData);
-            if (m_DevelopSubgroup.assetNamePreload != default)
+            int max = m_DevelopSubgroup.assetNamePreload.Length;
+            if (max > 0)
             {
-                int max = m_DevelopSubgroup.assetNamePreload.Length;
+                assetsLoader.CompleteEvent.AddListener(OnPreloadComplete);
+                assetsLoader.Add(AppPaths.StreamingResDataRoot.Append(AppPaths.resData), m_DevelopSubgroup.assetNameResData);
                 for (int i = 0; i < max; i++)
                 {
                     assetsLoader.Add(m_DevelopSubgroup.assetNamePreload[i]);
                 }
+                assetsLoader.Load(out _);
             }
-            assetsLoader.Load(out _);
+            else
+            {
+                OnPreloadComplete(true, assetsLoader);
+            }
         }
 
         protected virtual void InitConfigs(ref IConfigNotice notice)
@@ -212,9 +270,12 @@ namespace ShipDock.Applications
             Locals locals = ShipDockApp.Instance.Locals;
             locals.SetLocalName(m_Locals);
 
-            Dictionary<int, string> raw = new Dictionary<int, string>();
-            m_GameAppEvents.getLocalsConfigItemEvent.Invoke(raw, notice);
-            locals.SetLocal(raw);
+            if (notice != default)
+            {
+                Dictionary<int, string> raw = new Dictionary<int, string>();
+                m_GameAppEvents.getLocalsConfigItemEvent.Invoke(raw, notice);
+                locals.SetLocal(raw);
+            }
 
             "log".AssertLog("game", "LocalsInited");
         }
@@ -262,7 +323,7 @@ namespace ShipDock.Applications
         private IServer[] GetGameServers()
         {
             IServer[] servers = CommonEventInovker(m_GameAppEvents.getGameServersEvent);
-            "debug".Log(servers != default, servers.Length.ToString());
+            "log".Log(servers != default, servers != default ? "Servers count is ".Append(servers.Length.ToString()) : "Servers is empty..");
             return servers;
         }
 
@@ -298,7 +359,7 @@ namespace ShipDock.Applications
     [Serializable]
     public class DevelopSubgroup
     {
-        public int configInitedNoticeName;
+        public int configInitedNoticeName = int.MaxValue;
         public string assetNameResData = "res_data/res_data";
         public string localsNameKey = "Locals_";
         public string[] configNames;
@@ -327,14 +388,24 @@ namespace ShipDock.Applications
         internal UnityEvent enterGameEvent = new UnityEvent();
         [SerializeField]
         internal GetDataProxyEvent getDataProxyEvent = new GetDataProxyEvent();
+        [SerializeField]
+        internal ShipDockCloseEvent frameworkCloseEvent = new ShipDockCloseEvent();
     }
 
     [Serializable]
     public class ServerContainerSubgroup
     {
+        /// <summary>服务容器名</summary>
         public string serverName;
+        /// <summary>外派方法名</summary>
         public string deliverName;
+        /// <summary>参数对象别名</summary>
         public string alias;
+
+        public void Delive<T>(ResolveDelegate<T> customResolver = default)
+        {
+            serverName.Delive<T>(deliverName, alias, customResolver);//调用容器方法
+        }
     }
 
 }

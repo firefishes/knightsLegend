@@ -1,4 +1,8 @@
-﻿using ShipDock.Applications;
+﻿#define G_LOG
+
+using ShipDock.Applications;
+using ShipDock.Loader;
+using ShipDock.Tools;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -18,8 +22,21 @@ namespace ShipDock.Editors
         [MenuItem("ShipDock/Create Application")]
         public static void CreateApplication()
         {
-            var target = Selection.activeTransform;
-            target.gameObject.AddComponent<ShipDockGame>();
+            string name = "UIRoot";
+            if (GameObject.Find(name) == default)
+            {
+                List<GameObject> result = new List<GameObject>();
+                ShipDockEditorUtils.FindAssetInEditorProject(ref result, "UIRoot t:GameObject", @"Assets\Scripts\ShipDock\Applications\Prefabs");
+
+                GameObject UIRoot = Instantiate(result[0]);
+                UIRoot.name = name;
+            }
+
+            string gameSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            Transform p = ShipDockEditorUtils.CreateGameObjectWithComponent<ShipDockGame>(gameSceneName);
+            ShipDockEditorUtils.CreateGameObjectWithComponent<AssetsPoolingComponent>("AssetPool", p);
+            ShipDockEditorUtils.CreateGameObjectWithComponent<CustomAssetCoordinator>("CustomAsset", p);
+            ShipDockEditorUtils.CreateGameObjectWithComponent<TesterComponent>("TesterAsserter", p);
         }
 
         private BuildTarget mABBuildTarget;

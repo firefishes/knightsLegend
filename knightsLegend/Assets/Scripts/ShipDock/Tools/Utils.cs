@@ -463,6 +463,7 @@ namespace ShipDock.Tools
         public Ray ray;
         public RaycastHit hitInfo;
         public float distance;
+        public float radius;
         public int layerMask;
     }
 }

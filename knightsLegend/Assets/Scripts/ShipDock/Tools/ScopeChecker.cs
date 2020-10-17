@@ -71,9 +71,10 @@ namespace ShipDock.Tools
             return false;
         }
 
+        [System.Diagnostics.Conditional("UNITY_EDITOR")]
         public void Draws()
         {
-            Debug.DrawLine(startPos, startRotation * Vector3.forward, Color.red);//画出技能释放者面对的方向向量
+            Debug.DrawLine(startPos, startRotation * Vector3.forward * 5f, Color.red);//画出技能释放者面对的方向向量
             Debug.DrawLine(startPos, mTargetVec, Color.green);//画出技能释放者与目标点的连线
         }
     }

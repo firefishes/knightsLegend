@@ -15,25 +15,25 @@ namespace ShipDock.Tools
             Testers.Tester.Instance.SetTestBrokerHandler(OnTestBrokerHandler);
         }
 
-        private void OnTestBrokerHandler(string arg1, string[] args)
+        private void OnTestBrokerHandler(string logID, string[] args)
         {
             TesterBroker item;
             int max = m_TesterBrokers.Length;
             for (int i = 0; i < max; i++)
             {
                 item = m_TesterBrokers[i];
-                if (item.isValid && arg1 == item.logID)
+                if (item.isValid && (logID == item.logID))
                 {
                     if (item.applyArgBreak)
                     {
-                        if (args.Length > item.argIndex && args[item.argIndex] == item.testValue)
+                        if ((args.Length > item.argIndex) && (args[item.argIndex] == item.testValue))
                         {
                             "log".Log("Tester said: value = ".Append(args[item.argIndex]));
                         }
                     }
                     else
                     {
-                        "log".Log("Tester said empty");
+                        "log".Log("Tester broken: ".Append(item.testValue));
                     }
                 }
             }

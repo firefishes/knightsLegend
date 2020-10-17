@@ -118,19 +118,25 @@ namespace ShipDock.Pooling
 #endif
             ClearPool();
             mCreater = null;
-            mPool = null;
+            mPool = default;
         }
+
+        private int mInstanceCount = 0;
 
         /// <summary>获取一个对象</summary>
         public virtual T FromPool(Func<T> creater = null)
         {
             T result = default;
-            if (mPool.Count > 0)
+            if (mInstanceCount > 0)
             {
-                result = mPool.Count > 0 ? mPool.Pop() : default;
-                if (result == default)
+                try
                 {
-                    return FromPool(creater);
+                    mInstanceCount--;
+                    result = mPool.Pop();
+                }
+                catch (Exception error)
+                {
+                    "FromPoolError: instance count = {0}, pool stack count {1}, message: {2}".Log(mInstanceCount.ToString(), mPool.Count.ToString(), error.Message);
                 }
             }
             else
@@ -159,6 +165,11 @@ namespace ShipDock.Pooling
             //    AllPools.used.Add(result);
             //}
 #endif
+            if (result == default)
+            {
+                result = new T();
+            }
+
             return result;
         }
 
@@ -175,6 +186,7 @@ namespace ShipDock.Pooling
             if (!mPool.Contains(target))
             {
                 mPool.Push(target);
+                mInstanceCount++;
                 UsedCount--;
             }
 #if UNITY_EDITOR

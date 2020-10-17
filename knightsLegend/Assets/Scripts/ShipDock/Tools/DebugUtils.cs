@@ -25,6 +25,7 @@ namespace ShipDock.Tools
         /// <summary>打印某个对象的内存地址</summary>
         public static void LogMemory(System.Object debugObject, string log = "", UnityEngine.Object obj = null)
         {
+#if !RELEASE
             if (!isDebug)
             {
                 return;
@@ -35,6 +36,7 @@ namespace ShipDock.Tools
             //logContent.Append(log);
             //logContent.Append("0x");
             //logContent.Append(addr.ToString());
+#endif
         }
 
         /// <summary>调试射线</summary>
@@ -57,14 +59,16 @@ namespace ShipDock.Tools
 
         public static void LogMemInfo(ref string content)
         {
+#if !RELEASE
             int MUnit = 1000000;
             StringBuilder sbd = new StringBuilder();
             content = "Mono Used: ".Append((Profiler.GetMonoUsedSizeLong() / MUnit).ToString(), "M\n");
             content = content.Append("All Memory: ", (Profiler.GetTotalAllocatedMemoryLong() / MUnit).ToString(), "M\n");
             content = content.Append("Un Used Reserved: ", (Profiler.GetTotalUnusedReservedMemoryLong() / MUnit).ToString(), "M\n");
+#endif
         }
 
-        private const string LOG_COLOR_TODO = "#5731F0";
+        private const string LOG_COLOR_TODO = "#FF4DFF";
         private const string LOG_COLOR_WARNING = "#E78D08";
         private const string LOG_COLOR_DEBUG = "#00BEEEFF";
         private const string LOG_COLOR_ERROR = "#EE0000";
