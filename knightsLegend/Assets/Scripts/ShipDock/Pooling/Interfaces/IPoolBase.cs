@@ -3,7 +3,7 @@ namespace ShipDock.Pooling
 {
     public interface IPoolBase
     {
-        IPoolable GetInstance();
+        IPoolable Create();
         void Reserve(ref IPoolable item);
     }
 

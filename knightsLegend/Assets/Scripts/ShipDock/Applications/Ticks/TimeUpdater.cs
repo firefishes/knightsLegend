@@ -23,12 +23,14 @@ namespace ShipDock.Applications
 
             Stop();
 
+            TotalRepeats = 0;
             Completion = default;
             mCancelCondition = default;
         }
 
         public void Recreate(float totalTime, Action method, Func<bool> cancelCondition = default, int repeats = 0)
         {
+            TotalRepeats = repeats;
             TotalTime = totalTime;
             Completion = method;
             mRepeats = repeats;
@@ -51,6 +53,12 @@ namespace ShipDock.Applications
             }
         }
 
+        public void Restart()
+        {
+            Recreate(TotalTime, Completion, mCancelCondition, TotalRepeats);
+            Start();
+        }
+
         public void Pause()
         {
             if (IsStarted)
@@ -68,6 +76,7 @@ namespace ShipDock.Applications
             Time = 0;
             IsStarted = false;
             IsPause = false;
+
             UpdaterNotice.RemoveSceneUpdater(this);
         }
 
@@ -168,6 +177,7 @@ namespace ShipDock.Applications
             }
         }
 
+        public int TotalRepeats { get; private set; }
         public float Time { get; private set; }
         public float TotalTime { get; private set; }
         public Action Completion { get; private set; }

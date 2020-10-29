@@ -1,5 +1,21 @@
 ﻿namespace ShipDock.UI
 {
+    public static class UILayerType
+    {
+        public const int NONE = 0;
+        public const int WINDOW = 1;
+        public const int POPUPS = 2;
+        public const int WIDGET = 3;
+    }
+
+    public enum UILayerTypeEnum
+    {
+        None,
+        Window,
+        Widget,
+        Popup,
+    }
+
     public class UIStack : IUIStack
     {
         public virtual void Init()

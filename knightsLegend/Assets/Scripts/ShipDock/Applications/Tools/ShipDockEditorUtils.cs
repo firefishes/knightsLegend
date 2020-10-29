@@ -9,10 +9,9 @@ namespace ShipDock.Tools
     {
 #if UNITY_EDITOR
         public static void FindAssetInEditorProject<T>(ref List<T> result, string filters, params string[] assetPaths) where  T : Object
-        {
-            //查找指定路径下指定类型的所有资源，返回的是资源GUID
+        {   
             //"t:GameObject", new string[] { "Assets/Resources/UI" }
-            string[] guids = AssetDatabase.FindAssets(filters, assetPaths);
+            string[] guids = AssetDatabase.FindAssets(filters, assetPaths);//查找指定路径下指定类型的所有资源，返回的是资源GUID
             //从GUID获得资源所在路径
             List<string> paths = new List<string>();
             int max = guids.Length;

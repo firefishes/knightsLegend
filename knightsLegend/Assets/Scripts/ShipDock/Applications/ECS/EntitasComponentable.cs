@@ -34,6 +34,9 @@ namespace ShipDock.Applications
             }
         }
 
+        /// <summary>
+        /// 获取一个已经添加到实体的组件
+        /// </summary>
         public T GetComponentByName<T>(int name) where T : IShipDockComponent
         {
             return (T)ShipDockApp.Instance.Components.RefComponentByName(name);

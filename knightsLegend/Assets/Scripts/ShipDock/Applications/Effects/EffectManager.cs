@@ -1,5 +1,7 @@
 ﻿using ShipDock.Interfaces;
+using ShipDock.Notices;
 using ShipDock.Tools;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,7 +17,8 @@ namespace ShipDock.Applications
         private class Effect
         {
             public int total;
-            public ResPrefabBridge source;
+            public int poolID;
+            public GameObject source;
 
             public void Init()
             {
@@ -40,7 +43,7 @@ namespace ShipDock.Applications
                 if (ShouldCreate())
                 {
                     Surplus--;
-                    result = source.CreateAsset(isFromPool);
+                    result = source.Create(isFromPool ? poolID : int.MaxValue);
                     UniqueCache.Add(result);
                 }
             }
@@ -66,7 +69,7 @@ namespace ShipDock.Applications
             internal void CollectEffect(GameObject target)
             {
                 UniqueCache.Remove(target);
-                source.CollectAsset(target);
+                target.Terminate(poolID);
             }
         }
 
@@ -108,7 +111,7 @@ namespace ShipDock.Applications
             {
                 effect = new Effect
                 {
-                    source = source,
+                    source = source.Prefab,
                     total = total
                 };
                 effect.Init();
@@ -125,7 +128,8 @@ namespace ShipDock.Applications
         {
             if (mPrefabRaw.ContainsKey(id))
             {
-                source = mPrefabRaw[id].source;
+                source.SetPoolID(id);
+                source.FillRaw(mPrefabRaw[id].source);
             }
         }
 
@@ -155,7 +159,7 @@ namespace ShipDock.Applications
             }
             else
             {
-                Object.Destroy(target);
+                UnityEngine.Object.Destroy(target);
             }
         }
 

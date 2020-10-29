@@ -34,6 +34,26 @@ namespace ShipDock.Editors
             DeleteABRes(resRoot + platformRoot);
         }
 
+        /// <summary>
+        /// 批量清楚AB名称
+        /// </summary>
+        [MenuItem("ShipDock/Clear Asset Bundles")]
+        public static void ClearAssetBundleName()
+        {
+            // UnityEngine.Object[] arr = Selection.GetFiltered(typeof(UnityEngine.Object), SelectionMode.TopLevel);
+            int length = AssetDatabase.GetAllAssetBundleNames().Length;
+            string[] oldAssetBundleNames = new string[length];
+            for (int i = 0; i < length; i++)
+            {
+                oldAssetBundleNames[i] = AssetDatabase.GetAllAssetBundleNames()[i];
+            }
+            for (int j = 0; j < oldAssetBundleNames.Length; j++)
+            {
+                AssetDatabase.RemoveAssetBundleName(oldAssetBundleNames[j], true);
+            }
+            length = AssetDatabase.GetAllAssetBundleNames().Length;
+        }
+
         #region 资源打包相关
 #if SHOW_MENU_IN_EDITOR
         [MenuItem("ShipDock/Build Asset Bundle/IOS")]

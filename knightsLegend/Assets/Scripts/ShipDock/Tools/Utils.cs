@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace ShipDock.Tools
 {
@@ -453,6 +454,39 @@ namespace ShipDock.Tools
                 }
                 willReplenish = replaced;
             }
+        }
+
+        /// <summary>
+        /// 字符串变Vector3
+        /// </summary>
+        public static Vector3 Vector3Parse(string vet)
+        {
+            vet = vet.Replace("(", "").Replace(")", "");
+            string[] res = vet.Split(',');
+            if (res.Length > 2)
+                return new Vector3(float.Parse(res[0]), float.Parse(res[1]), float.Parse(res[2]));
+            else
+                return Vector3.zero;
+        }
+
+        /// <summary>
+        /// 世界坐标转UI坐标
+        /// </summary>
+        public static bool WorldToUIPosition(string pos,GameObject parent,ref Camera UICamera,out Vector3 localPos)
+        {
+            var position = Utils.Vector3Parse(pos);
+            Vector3 viewPos = Camera.main.WorldToViewportPoint(position);
+            if (viewPos.z < 0)
+            {
+                localPos = Vector3.zero;
+                return false;
+            }
+            viewPos.x -= 0.5f;
+            viewPos.y -= 0.5f;
+
+            var screenPos = new Vector3(UICamera.pixelWidth * viewPos.x, UICamera.pixelHeight * viewPos.y, 0);
+            localPos = screenPos;
+            return true;
         }
     }
 

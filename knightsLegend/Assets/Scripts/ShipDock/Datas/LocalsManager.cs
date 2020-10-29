@@ -86,12 +86,11 @@ namespace ShipDock.Datas
                 }
 
                 TextAsset asset = Resources.Load<TextAsset>("local_default");//如果本地化数据未初始化则先从默认的本地化文本获取数据
-                if (asset == default)
+                if (asset != default)
                 {
-                    return id;
+                    string data = asset.text;
+                    FillLanguagesData(ref data, AddDefaultLanguageData);
                 }
-                string data = asset.text;
-                FillLanguagesData(ref data, AddDefaultLanguageData);
             }
 
             string result = IsContainsLanguageID(ref id) ? mLanguage[id] : id;

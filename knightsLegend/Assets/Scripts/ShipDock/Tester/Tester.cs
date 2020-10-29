@@ -1,5 +1,4 @@
 ﻿
-#define G_LOG
 #define _ASSERT
 
 using ShipDock.Tools;
@@ -36,7 +35,6 @@ namespace ShipDock.Testers
 
     public class Tester : Singletons<Tester>
     {
-
         public bool isShowLogCount;
 
         private int mLogCount;
@@ -50,12 +48,10 @@ namespace ShipDock.Testers
 
         public Tester()
         {
-#if G_LOG
             mTesterIndexs = new TesterIndxMapper();
             mAsserterMapper = new AsserterMapper();
             mLoggerMapper = new LogsMapper();
             mTesterMapper = new TesterMapper();
-#endif
         }
 
         public void Init<T>(T defaultTester) where T : ITester
@@ -235,6 +231,7 @@ namespace ShipDock.Testers
             CheckLogger(ref logID, ref logger, ref args);
         }
 
+        [System.Diagnostics.Conditional("G_LOG")]
         private void CheckLogger(ref string logID, ref LogItem logger, ref string[] args)
         {
             string log;

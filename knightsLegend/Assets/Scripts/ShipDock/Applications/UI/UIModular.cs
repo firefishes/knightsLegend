@@ -14,6 +14,33 @@ namespace ShipDock.Applications
     {
         protected T mUI;
 
+        protected T UI
+        {
+            get
+            {
+                return mUI;
+            }
+        }
+
+        public override bool IsStackable
+        {
+            get
+            {
+                return UILayer == UILayerType.WINDOW;
+            }
+        }
+
+        protected IAssetBundles ABs { get; private set; }
+        protected UIManager UIs { get; private set; }
+        protected DataWarehouse Datas { get; private set; }
+
+        /// <summary>UI模块的资源包名</summary>
+        public virtual string ABName { get; }
+        /// <summary>需要关联的数据代理</summary>
+        public abstract int[] DataProxyLinks { get; }
+        /// <summary>UI层级</summary>
+        public virtual int UILayer { get; protected set; }
+
         public override void Init()
         {
             base.Init();
@@ -27,11 +54,38 @@ namespace ShipDock.Applications
             GameObject ui = Object.Instantiate(prefab, UIs.UIRoot.MainCanvas.transform);
 
             ParamNotice<MonoBehaviour> notice = Pooling<ParamNotice<MonoBehaviour>>.From();
+
             int id = ui.GetInstanceID();
             id.Broadcast(notice);
 
             mUI = (T)notice.ParamValue;
-            Pooling<ParamNotice<MonoBehaviour>>.To(notice);
+            notice.ToPool();
+
+            UILayer layer = ui.GetComponent<UILayer>();
+            if (layer != default)
+            {
+                UILayer = layer.UILayerValue;
+            }
+            GetUIParent(out Transform parent);
+            mUI.transform.SetParent(parent);
+        }
+
+        private void GetUIParent(out Transform parent)
+        {
+            parent = default;
+            IUIRoot root = UIs.UIRoot;
+            switch (UILayer)
+            {
+                case UILayerType.WINDOW:
+                    parent = root.Windows;
+                    break;
+                case UILayerType.POPUPS:
+                    parent = root.Popups;
+                    break;
+                case UILayerType.WIDGET:
+                    parent = root.Widgets;
+                    break;
+            }
         }
 
         public override void Enter()
@@ -64,6 +118,10 @@ namespace ShipDock.Applications
         protected virtual void ShowUI()
         {
             mUI.Add(UIModularHandler);
+            if (UILayer == UILayerType.POPUPS)
+            {
+                mUI.transform.SetAsLastSibling();
+            }
             mUI.transform.localScale = Vector3.one;
         }
 
@@ -114,22 +172,5 @@ namespace ShipDock.Applications
             mUI = default;
             Datas = default;
         }
-
-        protected T UI
-        {
-            get
-            {
-                return mUI;
-            }
-        }
-
-        protected IAssetBundles ABs { get; private set; }
-        protected UIManager UIs { get; private set; }
-        protected DataWarehouse Datas { get; private set; }
-
-        /// <summary>UI模块的资源包名</summary>
-        public virtual string ABName { get; }
-        /// <summary>需要关联的数据代理</summary>
-        public abstract int[] DataProxyLinks { get; }
     }
 }

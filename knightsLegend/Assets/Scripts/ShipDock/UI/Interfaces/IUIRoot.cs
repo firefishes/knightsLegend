@@ -6,6 +6,9 @@ namespace ShipDock.UI
     {
         Canvas MainCanvas { get; }
         Camera UICamera { get; }
+        RectTransform Widgets { get; }
+        RectTransform Popups { get; }
+        RectTransform Windows { get; }
     }
 
 }

@@ -1,11 +1,11 @@
-﻿using UnityEngine;
+﻿#define G_LOG
+
+using UnityEngine;
 
 namespace ShipDock.Applications
 {
     public class ResPrefabBridge : ResBridge, IResPrefabBridge
     {
-        private GameObject mPrefab;
-
         protected override void Awake()
         {
             base.Awake();
@@ -21,7 +21,7 @@ namespace ShipDock.Applications
         {
             base.OnDestroy();
 
-            mPrefab = default;
+            Prefab = default;
         }
 
         public void CreateRaw()
@@ -33,32 +33,22 @@ namespace ShipDock.Applications
                     Assets = ShipDockApp.Instance.ABs;
                 }
                 GameObject source = Assets.Get(m_Asset.GetABName(), m_Asset.GetAssetName());
-                mPrefab = source;
+                Prefab = source;
             }
         }
 
         public GameObject CreateAsset(bool isCreateFromPool = false)
         {
-            if (isCreateFromPool)
-            {
-                return ShipDockApp.Instance.AssetsPooling.FromPool(m_PoolID, ref mPrefab);
-            }
-            else
-            {
-                return Instantiate(Prefab);
-            }
+            "error: Res prefab bridge raw is null, ABName = {0}, AssetName = {1}".Log(Prefab == default, m_Asset.GetABName(), m_Asset.GetAssetName());
+
+            GameObject result = Prefab.Create(isCreateFromPool ? m_PoolID : int.MaxValue);
+
+            return result;
         }
 
         public void CollectAsset(GameObject target)
         {
-            if (m_PoolID == int.MaxValue)
-            {
-                Destroy(target);
-            }
-            else
-            {
-                ShipDockApp.Instance.AssetsPooling.ToPool(m_PoolID, target);
-            }
+            target.Terminate(m_PoolID);
         }
 
         public void SetSubgroup(string ab, string asset)
@@ -66,13 +56,15 @@ namespace ShipDock.Applications
             m_Asset.SetSubgroup(ab, asset);
         }
 
-        public GameObject Prefab
+        public void FillRaw(GameObject raw)
         {
-            get
+            if (Prefab == default)
             {
-                return mPrefab;
+                Prefab = raw;
             }
         }
+
+        public GameObject Prefab { get; private set; }
     }
 
 }

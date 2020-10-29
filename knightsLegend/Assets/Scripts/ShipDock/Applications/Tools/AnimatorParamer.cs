@@ -6,6 +6,24 @@ namespace ShipDock.Applications
 
     public class AnimatorParamer : KeyValueList<string, ValueItem>
     {
+
+        public AnimatorStateInfo StateInfo
+        {
+            get
+            {
+                return Animator.GetCurrentAnimatorStateInfo(0);
+            }
+        }
+
+        public int AniMaskLayer { get; private set; }
+        public int MotionState { get; private set; }
+        public int MotionCount { get; private set; } = 1;
+        public bool IsValid { get; private set; }
+        public string MotionName { get; private set; }
+        public string PlayingMotion { get; private set; }
+        public string CurrentMotionTrigger { get; private set; }
+        public Animator Animator { get; private set; }
+
         public AnimatorParamer()
         {
         }
@@ -159,22 +177,5 @@ namespace ShipDock.Applications
         {
             MotionCount = motionCount;
         }
-
-        public AnimatorStateInfo StateInfo
-        {
-            get
-            {
-                return Animator.GetCurrentAnimatorStateInfo(0);
-            }
-        }
-
-        public int AniMaskLayer { get; private set; }
-        public int MotionState { get; private set; }
-        public int MotionCount { get; private set; } = 1;
-        public bool IsValid { get; private set; }
-        public string MotionName { get; private set; }
-        public string PlayingMotion { get; private set; }
-        public string CurrentMotionTrigger { get; private set; }
-        public Animator Animator { get; private set; }
     }
 }

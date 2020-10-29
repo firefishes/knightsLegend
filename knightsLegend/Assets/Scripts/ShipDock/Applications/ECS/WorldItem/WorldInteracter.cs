@@ -19,7 +19,10 @@ namespace ShipDock.Applications
         }
 
         public int worldItemID;
+        public int groupID;
+        public int aroundID;     
         public bool isDroped;
+
         public Action WorldItemDispose { get; set; }
     }
 }

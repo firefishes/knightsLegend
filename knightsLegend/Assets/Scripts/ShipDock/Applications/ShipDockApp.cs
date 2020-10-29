@@ -181,7 +181,7 @@ namespace ShipDock.Applications
                 Components.UpdateComponentUnit(time);
                 if (mFrameSign > 0)
                 {
-                    Components.FreeComponentUnit(time);//奇数帧检测是否有需要释放的实体
+                    Components.FreeComponentUnit(time);//奇数帧检测是否有需要释放的实体，框架默认为此模式
                     Components.RemoveSingedComponents();
                 }
             }
@@ -358,7 +358,7 @@ namespace ShipDock.Applications
         {
             IDataProxy proxy;
             int name;
-            int max = dataNames.Length;
+            int max = dataNames != default ? dataNames.Length : 0;
             KeyValueList<int, IDataProxy> result = new KeyValueList<int, IDataProxy>();
             for (int i = 0; i < max; i++)
             {

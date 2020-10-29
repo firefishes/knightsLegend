@@ -20,7 +20,7 @@ namespace ShipDock.Applications
         void ApplicationCloseHandler();
     }
 
-    public class ShipDockAppComponent : MonoBehaviour, IShipDockApp
+    public abstract class ShipDockAppComponent : MonoBehaviour, IShipDockApp
     {
         public virtual void CreateTestersHandler()
         {
@@ -41,6 +41,27 @@ namespace ShipDock.Applications
         public virtual void GetLocalsConfigItemHandler(Dictionary<int, string> raw, IConfigNotice param)
         {
         }
+
+        protected void SetDataFromLocalsConfig<T>(ref string locals, ref string localsConfigName, ref IConfigNotice param, ref Dictionary<int, string> raw) where T : IConfig, new()
+        {
+            Dictionary<int, T> configs = param.GetConfigRaw<T>(localsConfigName);
+
+            int id;
+            T item;
+            KeyValuePair<int, T> pair;
+            Dictionary<int, T>.Enumerator localsEnumer = configs.GetEnumerator();
+            int max = configs.Count;
+            for (int i = 0; i < max; i++)
+            {
+                localsEnumer.MoveNext();
+                pair = localsEnumer.Current;
+                item = pair.Value;
+                id = item.GetID();
+                raw[id] = GetLocalsDescription(ref locals, ref item);
+            }
+        }
+
+        protected abstract string GetLocalsDescription<T>(ref string locals, ref T item) where T : IConfig, new();
 
         public virtual void InitProfileDataHandler(IConfigNotice param)
         {

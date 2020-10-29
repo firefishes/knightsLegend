@@ -1,11 +1,11 @@
-﻿#define G_LOG
-
+﻿
 using ShipDock.Applications;
 using ShipDock.Datas;
 using ShipDock.Notices;
 using ShipDock.Server;
 using ShipDock.Testers;
 using System;
+using UnityEngine;
 
 public static class ShipDockAppExtension
 {
@@ -120,6 +120,35 @@ public static class ShipDockAppExtension
         if (args.Length > 0)
         {
             target.Log(args);
+        }
+    }
+
+    public static string Language(this string target, params string[] args)
+    {
+        return ShipDockApp.Instance.Locals.Language(target, args);
+    }
+
+    public static GameObject Create(this GameObject target, int poolID = int.MaxValue)
+    {
+        if (poolID != int.MaxValue)
+        {
+            return ShipDockApp.Instance.AssetsPooling.FromPool(poolID, ref target);
+        }
+        else
+        {
+            return UnityEngine.Object.Instantiate(target);
+        }
+    }
+
+    public static void Terminate(this GameObject target, int poolID = int.MaxValue)
+    {
+        if (poolID == int.MaxValue)
+        {
+            UnityEngine.Object.Destroy(target);
+        }
+        else
+        {
+            ShipDockApp.Instance.AssetsPooling.ToPool(poolID, target);
         }
     }
 }

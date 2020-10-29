@@ -13,6 +13,8 @@ namespace ShipDock.Loader
         private CustomAssetCoordinatorInfo m_Info;
         [SerializeField]
         private List<CustomAssetComponent> m_Assets;
+        [SerializeField]
+        private bool m_SyncCusntomList;
 
         private CustomAssetBundle mCustomAssetBundle;
 
@@ -32,6 +34,24 @@ namespace ShipDock.Loader
             Utils.Reclaim(mCustomAssetBundle);
             Utils.Reclaim(ref m_Assets);
         }
+
+#if UNITY_EDITOR
+        private void Update()
+        {
+            if (m_SyncCusntomList)
+            {
+                m_SyncCusntomList = false;
+
+                m_Assets.Clear();
+                CustomAssetComponent[] list = GetComponentsInChildren<CustomAssetComponent>();
+                int max = list.Length;
+                for (int i = 0; i < max; i++)
+                {
+                    m_Assets.Add(list[i]);
+                }
+            }
+        }
+#endif
 
         private void OnAppReady()
         {
@@ -68,6 +88,14 @@ namespace ShipDock.Loader
                     asset.SyncFromInfo(ref assetInfo);
                     customAssets.Add(asset);
                 }
+            }
+        }
+
+        public void AddCustomAsset(CustomAssetComponent item)
+        {
+            if (!m_Assets.Contains(item))
+            {
+                m_Assets.Add(item);
             }
         }
 

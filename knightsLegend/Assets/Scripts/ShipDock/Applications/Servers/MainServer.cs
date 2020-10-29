@@ -16,6 +16,7 @@ namespace ShipDock.Applications
             new ResolvableConfigItem<IParamNotice<bool>, ParamNotice<bool>>("Bool"),
             new ResolvableConfigItem<IParamNotice<Vector3>, ParamNotice<bool>>("V3"),
             new ResolvableConfigItem<IParamNotice<string>, ParamNotice<string>>("string"),
+            new ResolvableConfigItem<IConfigNotice, ConfigNotice>("ConfigNotice"),
         };
 
         public MainServer(string serverName)

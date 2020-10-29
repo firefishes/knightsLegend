@@ -27,19 +27,29 @@ namespace ShipDock.Applications
             Owner = default;
         }
 
+        public void StopChangeTasak(string taskName)
+        {
+            if (mStartedChangeTask.Contains(taskName))
+            {
+                int index = mStartedChangeTask.IndexOf(taskName);
+                if (index != -1)
+                {
+                    if (!mFinishTaskIndex.Contains(index))
+                    {
+                        mFinishTaskIndex.Add(index);
+                        TimeGapper timeGapper = mChangeTimes[index];
+                        timeGapper.Stop();
+
+                        mChangeTimes[index] = timeGapper;
+                    }
+                }
+            }
+        }
+
         public void AddChangeTask(string taskName, float duringTime, Action<TimeGapper> handler)
         {
             TimeGapper timeGapper;
-            if (!mStartedChangeTask.Contains(taskName))
-            {
-                timeGapper = new TimeGapper();
-                timeGapper.Start(duringTime);
-                mChangeTimes.Add(timeGapper);
-
-                mStartedChangeTask.Add(taskName);
-                mChangeHnadlers[taskName] = handler;
-            }
-            else
+            if (mStartedChangeTask.Contains(taskName))
             {
                 int index = mStartedChangeTask.IndexOf(taskName);
                 mFinishTaskIndex.Remove(index);
@@ -47,6 +57,15 @@ namespace ShipDock.Applications
                 timeGapper = mChangeTimes[index];
                 timeGapper.Start(duringTime);
                 mChangeTimes[index] = timeGapper;
+            }
+            else
+            {
+                timeGapper = new TimeGapper();
+                timeGapper.Start(duringTime);
+                mChangeTimes.Add(timeGapper);
+
+                mStartedChangeTask.Add(taskName);
+                mChangeHnadlers[taskName] = handler;
             }
             Owner.UIChanged = true;
         }

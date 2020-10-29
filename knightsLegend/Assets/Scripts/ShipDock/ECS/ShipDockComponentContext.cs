@@ -1,4 +1,6 @@
-﻿using ShipDock.Interfaces;
+﻿#define G_LOG
+
+using ShipDock.Interfaces;
 using ShipDock.Tools;
 using System;
 using System.Collections.Generic;
@@ -94,6 +96,8 @@ namespace ShipDock.ECS
                 target.SetComponentID(autoID);
                 target.Init(this);
                 RelateComponentsReFiller?.Invoke(name, target, this);
+
+                "log: Add ECS component {0}".Log(name.ToString());
             }
             else
             {
@@ -162,6 +166,9 @@ namespace ShipDock.ECS
             return result;
         }
 
+        /// <summary>
+        /// 通过组件名获取一个已创建的组件，但此组件有可能不在某个实体，或没被某系统绑定
+        /// </summary>
         public IShipDockComponent RefComponentByName(int name)
         {
             IShipDockComponent component = default;

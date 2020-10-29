@@ -149,6 +149,12 @@ namespace ShipDock.ECS
                 }
             }
             mEntitasItem = default;
+            AfterComponentExecuted();
+        }
+
+        protected virtual void AfterComponentExecuted()
+        {
+
         }
 
         /// <summary>

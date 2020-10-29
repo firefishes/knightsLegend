@@ -4,10 +4,11 @@ using ShipDock.Applications;
 using ShipDock.Loader;
 using ShipDock.Tools;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace ShipDock.Editors
 {
@@ -30,6 +31,31 @@ namespace ShipDock.Editors
 
                 GameObject UIRoot = Instantiate(result[0]);
                 UIRoot.name = name;
+                Canvas canvas = UIRoot.GetComponentInChildren<Canvas>();
+
+                CanvasScaler canvasScaler = UIRoot.GetComponentInChildren<CanvasScaler>();
+                GraphicRaycaster graphicRaycaster = UIRoot.GetComponentInChildren<GraphicRaycaster>();
+
+                GameObject target = GameObject.Find("UIRoot/EventSystem");
+                EventSystem eventSystem = target.GetComponent<EventSystem>();
+                StandaloneInputModule inputModule = target.GetComponent<StandaloneInputModule>();
+
+                if (canvasScaler == default)
+                {
+                    canvas.gameObject.AddComponent<CanvasScaler>();
+                }
+                if (graphicRaycaster == default)
+                {
+                    canvas.gameObject.AddComponent<GraphicRaycaster>();
+                }
+                if (eventSystem == default)
+                {
+                    target.AddComponent<EventSystem>();
+                }
+                if (inputModule == default)
+                {
+                    target.AddComponent<StandaloneInputModule>();
+                }
             }
 
             string gameSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;

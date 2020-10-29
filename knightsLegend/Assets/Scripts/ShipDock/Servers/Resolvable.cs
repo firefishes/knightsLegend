@@ -52,7 +52,7 @@ namespace ShipDock.Server
             }
             param = (InstanceFactory == default) ? 
                         (T)mDefaultConstructorInfo.Invoke(defaultGenericParam) : 
-                        (T)InstanceFactory.GetInstance();
+                        (T)InstanceFactory.Create();
         }
 
         public void Binding(ref ResolvableBinder target)

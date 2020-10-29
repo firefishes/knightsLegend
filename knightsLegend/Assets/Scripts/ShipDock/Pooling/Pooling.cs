@@ -1,6 +1,5 @@
 ﻿#define G_LOG
 
-using ShipDock.Testers;
 using System;
 using System.Collections.Generic;
 
@@ -9,7 +8,7 @@ namespace ShipDock.Pooling
 
     /// <summary>
     /// 
-    /// 泛型对象池类
+    /// 泛型对象池
     /// 
     /// add by Minghua.ji
     /// 
@@ -34,7 +33,7 @@ namespace ShipDock.Pooling
             return instance;
         }
 
-        private static void CheckPoolNull(Pooling<T> customPool, Func<T> func = null)
+        private static void CheckPoolNull(Pooling<T> customPool, Func<T> func = default)
         {
             if (instance == null)
             {
@@ -49,15 +48,15 @@ namespace ShipDock.Pooling
             }
         }
 
-        public static T From(Pooling<T> customPool = null)
+        public static T From(Pooling<T> customPool = default)
         {
             CheckPoolNull(customPool);
             return instance.FromPool();
         }
 
-        public static void To(T target, Pooling<T> customPool = null)
+        public static void To(T target, Pooling<T> customPool = default)
         {
-            "pool type error".Log((typeof(T).FullName != target.GetType().FullName), target.GetType().FullName);
+            "pool type error".Log((target != default) && (typeof(T).FullName != target.GetType().FullName), target.GetType().FullName);
             CheckPoolNull(customPool);
             instance.ToPool(target);
         }
@@ -74,25 +73,27 @@ namespace ShipDock.Pooling
 
         public static bool IsUsed(T target)
         {
-            CheckPoolNull(null);
+            CheckPoolNull(default);
             return instance.CheckUsed(target);
         }
         #endregion
 
         private string mPoolTypeName;
+
+        private object mLock;
         private bool mIsAddResetCallback = true;
         private Stack<T> mPool;
         private Func<T> mCreater;
 
         /// <summary>对象池构造函数</summary>
-        public Pooling(Func<T> customCreater = null, Stack<T> pool = null)
+        public Pooling(Func<T> customCreater = default, Stack<T> pool = default)
         {
-            if (instance == null)
+            if (instance == default)
             {
                 instance = this;
             }
 
-            if (pool != null)
+            if (pool != default)
             {
                 mPool = pool;
             }
@@ -108,6 +109,7 @@ namespace ShipDock.Pooling
             {
                 AllPools.AddReset(ClearPool);
             }
+            mLock = new object();
         }
 
         /// <summary>销毁对象池</summary>
@@ -117,60 +119,51 @@ namespace ShipDock.Pooling
             AllPools.used.Clear();
 #endif
             ClearPool();
-            mCreater = null;
+            mCreater = default;
             mPool = default;
+            mLock = default;
+            instance = default;
         }
 
         private int mInstanceCount = 0;
 
         /// <summary>获取一个对象</summary>
-        public virtual T FromPool(Func<T> creater = null)
+        public virtual T FromPool(Func<T> creater = default)
         {
-            T result = default;
-            if (mInstanceCount > 0)
+            lock (mLock)
             {
-                try
+                T result = default;
+                if (mInstanceCount > 0)
                 {
                     mInstanceCount--;
                     result = mPool.Pop();
                 }
-                catch (Exception error)
-                {
-                    "FromPoolError: instance count = {0}, pool stack count {1}, message: {2}".Log(mInstanceCount.ToString(), mPool.Count.ToString(), error.Message);
-                }
-            }
-            else
-            {
-                if (creater != null)
-                {
-                    result = creater();
-                }
                 else
                 {
-                    if (mCreater != null)
+                    if (creater != default)
                     {
-                        result = mCreater();
+                        result = creater();
                     }
                     else
                     {
-                        result = new T();
+                        result = (mCreater != default) ? mCreater() : new T();
                     }
                 }
-            }
-            UsedCount++;
+                UsedCount++;
 
 #if UNITY_EDITOR
-            //if (!AllPools.used.Contains(result))
-            //{
-            //    AllPools.used.Add(result);
-            //}
+                //if (!AllPools.used.Contains(result))
+                //{
+                //    AllPools.used.Add(result);
+                //}
 #endif
-            if (result == default)
-            {
-                result = new T();
-            }
+                if (result == default)
+                {
+                    result = new T();
+                }
 
-            return result;
+                return result;
+            }
         }
 
         /// <summary>重置并归还一个对象</summary>
@@ -200,13 +193,13 @@ namespace ShipDock.Pooling
         /// <summary>检测一个对象是否正在使用</summary>
         public bool CheckUsed(T target)
         {
-            if (target == null)
+            if (target == default)
             {
                 return false;
             }
 
             bool result = true;
-            if (mPool != null)
+            if (mPool != default)
             {
                 if (mPool.Contains(target))
                 {
@@ -219,7 +212,7 @@ namespace ShipDock.Pooling
         /// <summary>重置池中所有对象</summary>
         public void ClearPool()
         {
-            if (mPool != null)
+            if (mPool != default)
             {
                 int max = mPool.Count;
                 for (int i = 0; i < max; i++)
@@ -237,7 +230,7 @@ namespace ShipDock.Pooling
             UsedCount = 0;
         }
 
-        public IPoolable GetInstance()
+        public IPoolable Create()
         {
             return FromPool() as IPoolable;
         }
