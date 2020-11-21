@@ -69,10 +69,10 @@ namespace ShipDock.UI
             return result;
         }
 
-        public void Close<T>(string name, bool isDestroy = false) where T : IUIStack, new()
+        public void Close(string name, bool isDestroy = false)
         {
             bool isCurrentStack;
-            T result = mUICacher.RemoveAndCheckUICached(name, out isCurrentStack, out T removed);
+            IUIStack result = mUICacher.RemoveAndCheckUICached(name, out isCurrentStack, out IUIStack removed);
             if (isCurrentStack)
             {
                 mPrevious = mCurrent;

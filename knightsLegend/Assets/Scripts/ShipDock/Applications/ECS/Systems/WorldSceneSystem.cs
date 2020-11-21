@@ -1,4 +1,4 @@
-﻿#define G_LOG
+﻿#define _G_LOG
 
 using ShipDock.ECS;
 using ShipDock.Notices;
@@ -61,14 +61,11 @@ namespace ShipDock.Applications
         {
             mWorldItem = WorldComp.GetEntitasData(ref target);
 
-            if (mWorldItem != default)
+            if ((mWorldItem != default) && (mWorldItem.worldItemID != int.MaxValue))
             {
-                if (mWorldItem.worldItemID == int.MaxValue)
+                if (mWorldItemMapper.ContainsKey(mWorldItem.worldItemID))
                 {
-                    if (mWorldItemMapper.ContainsKey(mWorldItem.worldItemID))
-                    {
-                        DropWorldItem(ref target);
-                    }
+                    DropWorldItem(ref target);
                 }
             }
 

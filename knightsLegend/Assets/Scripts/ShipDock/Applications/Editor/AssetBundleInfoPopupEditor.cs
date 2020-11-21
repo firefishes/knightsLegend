@@ -175,7 +175,6 @@ namespace ShipDock.Editors
             ShipDockEditorData editorData = ShipDockEditorData.Instance;
 
             string abName;
-            string output;
             List<ABAssetCreater> list;
 
             int max = editorData.ABCreaterMapper.Size;

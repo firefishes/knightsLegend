@@ -50,6 +50,7 @@ namespace ShipDock.Applications
         public Vector3 LocalPosition { get; set; }
         public Vector3 Position { get; protected set; }
         public Vector3 InitPosition { get; set; }
+        public Vector3 Forward { get; set; }
         public Quaternion Rotation { get; protected set; }
 
         /// <summary>

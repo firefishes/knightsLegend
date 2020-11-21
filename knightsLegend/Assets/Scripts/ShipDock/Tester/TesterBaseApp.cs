@@ -6,10 +6,8 @@
 #define _LOADER_LOAD
 #define POOLING
 #define LOG_WHEN_ERROR_POOL_TYPE
-#define LOG_WHEN_POOLING_CLEAN
 #define _LOG_DIR_FROM_DEVICE_LOCAL_CHECKED
 #define LOG_FSM
-
 
 namespace ShipDock.Testers
 {
@@ -23,9 +21,6 @@ namespace ShipDock.Testers
 #if POOLING
 #if LOG_WHEN_ERROR_POOL_TYPE
             tester.AddLogger(this, "pool type error", "error: A wrong pooling revert, instance type is {0}");
-#endif
-#if LOG_WHEN_POOLING_CLEAN
-            tester.AddLogger(this, "pool clear", "log: Pooling {0} clear..");
 #endif
 #endif
 #if LOG_DIR_FROM_DEVICE_LOCAL_CHECKED

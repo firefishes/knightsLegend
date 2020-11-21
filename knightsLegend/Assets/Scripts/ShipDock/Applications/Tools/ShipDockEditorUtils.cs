@@ -8,8 +8,8 @@ namespace ShipDock.Tools
     public static class ShipDockEditorUtils
     {
 #if UNITY_EDITOR
-        public static void FindAssetInEditorProject<T>(ref List<T> result, string filters, params string[] assetPaths) where  T : Object
-        {   
+        public static void FindAssetInEditorProject<T>(ref List<T> result, string filters, params string[] assetPaths) where T : Object
+        {
             //"t:GameObject", new string[] { "Assets/Resources/UI" }
             string[] guids = AssetDatabase.FindAssets(filters, assetPaths);//查找指定路径下指定类型的所有资源，返回的是资源GUID
             //从GUID获得资源所在路径

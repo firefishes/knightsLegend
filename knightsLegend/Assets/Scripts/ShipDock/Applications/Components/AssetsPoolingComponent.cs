@@ -1,5 +1,4 @@
-﻿using System;
-using ShipDock.Notices;
+﻿using ShipDock.Notices;
 using UnityEngine;
 
 namespace ShipDock.Applications
@@ -17,7 +16,7 @@ namespace ShipDock.Applications
         public static Vector3 GameObjectReadyPos = new Vector3(10000, 10000, 10000);
 
         [SerializeField]
-        private bool m_IsPoolItemParent;
+        private bool m_ApplyPoolItemParent;
 
         private bool mIsDestroyed;
         private ComponentBridge mCompBridge;
@@ -73,7 +72,7 @@ namespace ShipDock.Applications
         {
             target.transform.position = GameObjectReadyPos;
 #if UNITY_EDITOR
-            if (m_IsPoolItemParent && target.transform.parent != transform)
+            if (m_ApplyPoolItemParent && target.transform.parent != transform)
             {
                 target.transform.SetParent(transform);
             }

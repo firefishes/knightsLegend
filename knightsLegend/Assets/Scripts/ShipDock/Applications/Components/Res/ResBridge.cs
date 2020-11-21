@@ -1,5 +1,4 @@
-﻿using System;
-using ShipDock.Loader;
+﻿using ShipDock.Loader;
 using ShipDock.Tools;
 using UnityEngine;
 
@@ -15,6 +14,16 @@ namespace ShipDock.Applications
         protected int m_PoolID = int.MaxValue;
 
         private ComponentBridge mComponentBridge;
+
+        protected IAssetBundles Assets { get; set; }
+
+        public int PoolID
+        {
+            get
+            {
+                return m_PoolID;
+            }
+        }
 
         protected virtual void Awake()
         {
@@ -46,16 +55,6 @@ namespace ShipDock.Applications
         public void IsCreateInAwake(bool value)
         {
             m_IsCreateInAwake = value;
-        }
-
-        protected IAssetBundles Assets { get; set; }
-
-        public int PoolID
-        {
-            get
-            {
-                return m_PoolID;
-            }
         }
     }
 

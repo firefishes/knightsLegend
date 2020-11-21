@@ -12,7 +12,8 @@ namespace ShipDock.Tools
         public void Start(float totalTimeValue = 0f)
         {
             isStart = true;
-            if(totalTimeValue > 0f)
+            IsFinised = false;
+            if (totalTimeValue > 0f)
             {
                 totalTime = totalTimeValue;
             }
@@ -22,6 +23,7 @@ namespace ShipDock.Tools
         public void Stop()
         {
             isStart = false;
+            IsFinised = true;
         }
 
         public void ContinueTimer()
@@ -56,6 +58,22 @@ namespace ShipDock.Tools
         {
             return 1f - (time / totalTime);
         }
+
+        public float LerpTime
+        {
+            get
+            {
+                return time / totalTime;
+            }
+        }
+
+        public void Reset()
+        {
+            IsFinised = false;
+            time = totalTime;
+        }
+
+        public bool IsFinised { get; private set; }
     }
 
 }

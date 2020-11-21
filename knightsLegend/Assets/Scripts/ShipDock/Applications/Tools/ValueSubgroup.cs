@@ -1,28 +1,21 @@
 ﻿using ShipDock.Tools;
 using System;
-using UnityEngine;
 
 namespace ShipDock.Applications
 {
+
     [Serializable]
     public class ValueSubgroup
     {
         public string keyField;
-        [HideInInspector]
-        public int valueType;
-        [HideInInspector]
+        public ValueItemType valueType;
         public string str;
-        [HideInInspector]
         public float floatValue;
-        [HideInInspector]
         public double doubleValue;
         public float dampTime;
-#if UNITY_EDITOR
-        public ValueItemType valueTypeInEditor;
-        public string valueInEditor;
-#endif
-
         public bool triggerValue;
+
+        private ValueItem mCached;
 
         public ValueItem GetFloat()
         {
@@ -49,31 +42,45 @@ namespace ShipDock.Applications
             return ValueItem.New(keyField, doubleValue).SetDampTime(dampTime);
         }
         
-        public ValueItem GetValue()
+        public ValueItem GetValue(bool isRefresh = false)
         {
-            ValueItem result;
-            switch (valueType)
+            if (isRefresh)
             {
-                case ValueItem.STRING:
-                    result = GetString();
-                    break;
-                case ValueItem.INT:
-                    result = GetInt();
-                    break;
-                case ValueItem.DOUBLE:
-                    result = GetDouble();
-                    break;
-                case ValueItem.BOOL:
-                    result = GetBool();
-                    break;
-                case ValueItem.FLOAT:
-                    result = GetFloat();
-                    break;
-                default:
-                    result = ValueItem.New(keyField, string.Empty);
-                    break;
+                Clean();
             }
-            return result;
+            if (mCached == default)
+            {
+                ValueItem result;
+                int type = (int)valueType;
+                switch (type)
+                {
+                    case ValueItem.STRING:
+                        result = GetString();
+                        break;
+                    case ValueItem.INT:
+                        result = GetInt();
+                        break;
+                    case ValueItem.DOUBLE:
+                        result = GetDouble();
+                        break;
+                    case ValueItem.BOOL:
+                        result = GetBool();
+                        break;
+                    case ValueItem.FLOAT:
+                        result = GetFloat();
+                        break;
+                    default:
+                        result = ValueItem.New(keyField, string.Empty);
+                        break;
+                }
+                mCached = result;
+            }
+            return mCached;
+        }
+
+        public void Clean()
+        {
+            mCached = default;
         }
     }
 }

@@ -18,7 +18,7 @@ namespace ShipDock.Tools
         /// <summary>是否为调试模式</summary>
         public static bool isDebug = false;
 
-        private static int logLine = 0;
+        private static readonly int logLine = 0;
         private static int logLineMax = 0;
         private static Text logText;
 

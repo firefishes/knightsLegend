@@ -91,6 +91,10 @@ namespace ShipDock.Applications
 
         public void CommitParamToAnimator()
         {
+            if (!IsValid)
+            {
+                return;
+            }
             ValueItem item;
             int max = Size;
             for (int i = 0; i < max; i++)

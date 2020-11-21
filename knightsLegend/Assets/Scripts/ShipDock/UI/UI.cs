@@ -9,6 +9,7 @@ namespace ShipDock.UI
     /// <summary>UI虚类</summary>
     public abstract class UI : MonoBehaviour, INotificationSender
     {
+        private int mInstanceID;
         private AssetsPooling mUIPooling;
 
         protected virtual void Awake()
@@ -17,8 +18,8 @@ namespace ShipDock.UI
             ABs = ShipDockApp.Instance.ABs;
             UIs = ShipDockApp.Instance.UIs;
 
-            int id = gameObject.GetInstanceID();
-            id.Add(OnUIReady);
+            mInstanceID = gameObject.GetInstanceID();
+            mInstanceID.Add(OnUIReady);
         }
 
         protected virtual void Start() { }
@@ -41,8 +42,7 @@ namespace ShipDock.UI
         {
             Destroyed = true;
 
-            int id = gameObject.GetInstanceID();
-            id.Remove(OnUIReady);
+            mInstanceID.Remove(OnUIReady);
 
             mUIPooling = default;
             ABs = default;
@@ -51,11 +51,13 @@ namespace ShipDock.UI
 
         private void OnUIReady(INoticeBase<int> param)
         {
-            int id = gameObject.GetInstanceID();
-            id.Remove(OnUIReady);
+            mInstanceID.Remove(OnUIReady);
 
             IParamNotice<MonoBehaviour> notice = param as IParamNotice<MonoBehaviour>;
-            notice.ParamValue = this;
+            if (notice != default)
+            {
+                notice.ParamValue = this;
+            }
         }
 
         protected AssetsPooling UIPooling

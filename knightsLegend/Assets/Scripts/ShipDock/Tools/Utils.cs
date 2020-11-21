@@ -456,35 +456,44 @@ namespace ShipDock.Tools
             }
         }
 
+        private const int V_3_PARSE_LEN = 2;
+        private const int V_3_PARSE_RES_0 = 0;
+        private const int V_3_PARSE_RES_1 = 1;
+        private const int V_3_PARSE_RES_2 = 2;
+        private const string V_3_PARSE_LEFT = "(";
+        private const string V_3_PARSE_RIGHT = ")";
+        private const char V_3_PARSE_SPLITER = ',';
+
         /// <summary>
         /// 字符串变Vector3
         /// </summary>
-        public static Vector3 Vector3Parse(string vet)
+        public static Vector3 Vector3Parse(ref string vet)
         {
-            vet = vet.Replace("(", "").Replace(")", "");
-            string[] res = vet.Split(',');
-            if (res.Length > 2)
-                return new Vector3(float.Parse(res[0]), float.Parse(res[1]), float.Parse(res[2]));
-            else
-                return Vector3.zero;
+            vet = vet.Replace(V_3_PARSE_LEFT, string.Empty).Replace(V_3_PARSE_RIGHT, string.Empty);
+            string[] res = vet.Split(V_3_PARSE_SPLITER);
+            return (res.Length > V_3_PARSE_LEN) ? 
+                new Vector3(float.Parse(res[V_3_PARSE_RES_0]), float.Parse(res[V_3_PARSE_RES_1]), float.Parse(res[V_3_PARSE_RES_2])) : 
+                Vector3.zero;
         }
+
+        private const float WORLD_TO_UI_POS_OFFSET = 0.5f;
 
         /// <summary>
         /// 世界坐标转UI坐标
         /// </summary>
-        public static bool WorldToUIPosition(string pos,GameObject parent,ref Camera UICamera,out Vector3 localPos)
+        public static bool WorldToUIPosition(ref string pos, GameObject parent, ref Camera UICamera, out Vector3 localPos)
         {
-            var position = Utils.Vector3Parse(pos);
+            Vector3 position = Vector3Parse(ref pos);
             Vector3 viewPos = Camera.main.WorldToViewportPoint(position);
             if (viewPos.z < 0)
             {
                 localPos = Vector3.zero;
                 return false;
             }
-            viewPos.x -= 0.5f;
-            viewPos.y -= 0.5f;
+            viewPos.x -= WORLD_TO_UI_POS_OFFSET;
+            viewPos.y -= WORLD_TO_UI_POS_OFFSET;
 
-            var screenPos = new Vector3(UICamera.pixelWidth * viewPos.x, UICamera.pixelHeight * viewPos.y, 0);
+            Vector3 screenPos = new Vector3(UICamera.pixelWidth * viewPos.x, UICamera.pixelHeight * viewPos.y, 0);
             localPos = screenPos;
             return true;
         }

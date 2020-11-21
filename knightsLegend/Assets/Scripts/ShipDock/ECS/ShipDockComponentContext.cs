@@ -1,4 +1,4 @@
-﻿#define G_LOG
+﻿#define _G_LOG
 
 using ShipDock.Interfaces;
 using ShipDock.Tools;
@@ -33,6 +33,11 @@ namespace ShipDock.ECS
         private DoubleBuffers<int> mQueueUpdateTime;
         private DoubleBuffers<IShipDockEntitas> mQueueUpdateEntitas;
         private DoubleBuffers<Action<int, IShipDockEntitas>> mQueueUpdateExecute;
+
+        public Action<int, IShipDockComponent, IShipDockComponentContext> RelateComponentsReFiller { get; set; }
+        public Action<List<int>, bool> PreUpdate { get; set; }
+        public int CountTime { get; private set; }
+        public int FrameTimeInScene { get; set; }
 
         public ShipDockComponentContext()
         {
@@ -122,7 +127,7 @@ namespace ShipDock.ECS
             int index = mComponents.Count - 1;
             if (isSystem)
             {
-                if (target.IsSceneUpdate)
+                if (isUpdateByScene)
                 {
                     mUpdateByScene.Add(index);
                 }
@@ -192,35 +197,49 @@ namespace ShipDock.ECS
         }
 
         /// <summary>
-        /// 移除已标记的组件
+        /// 移除已标记为可移除的组件
         /// </summary>
         public void RemoveSingedComponents()
         {
+            IShipDockComponent target;
             int max = mDeletdComponents.Count;
             for (int i = 0; i < max; i++)
             {
                 int id = mDeletdComponents[i];
-                IShipDockComponent target = mMapper.Get(id);
+                target = mMapper.Get(id);
 
-                int index = mNameAutoIDMapper.Values.IndexOf(id);
-
-                id = mNameAutoIDMapper.Keys[index];
-                mNameAutoIDMapper.Remove(id);
-
-                if (index >= 0)
-                {
-                    mNameAutoIDMapper.Remove(id);
-                }
-                int compIndex = mComponents.IndexOf(target);
-                List<int> updateList = target.IsSceneUpdate ? mUpdateByScene : mUpdateByTicks;
-                updateList.Remove(compIndex);
-                mMapper.Remove(target, out int statu);
+                RemoveComponentAndClear(ref target, id);
 
                 target.Dispose();
             }
             if (max > 0)
             {
                 mDeletdComponents.Clear();
+            }
+        }
+
+        private void RemoveComponentAndClear(ref IShipDockComponent target, int aid)
+        {
+            RemoveNameFromIDMapper(aid);
+
+            int compIndex = mComponents.IndexOf(target);
+            List<int> updateList = target.IsSceneUpdate ? mUpdateByScene : mUpdateByTicks;
+            updateList.Remove(compIndex);
+            mMapper.Remove(target, out int statu);
+
+            mComponents.Remove(target);
+        }
+
+        private void RemoveNameFromIDMapper(int id)
+        {
+            int index = mNameAutoIDMapper.Values.IndexOf(id);
+
+            id = mNameAutoIDMapper.Keys[index];
+            mNameAutoIDMapper.Remove(id);
+
+            if (index >= 0)
+            {
+                mNameAutoIDMapper.Remove(id);
             }
         }
 
@@ -275,6 +294,7 @@ namespace ShipDock.ECS
         {
             CountTime += time;//与主线程的帧率时间保持一致，避更新新过快
 
+            IShipDockComponent item;
             while (CountTime > FrameTimeInScene)
             {
                 PreUpdate?.Invoke(mUpdateByTicks, false);
@@ -283,21 +303,31 @@ namespace ShipDock.ECS
                 int max = mUpdateByTicks.Count;
                 for (int i = 0; i < max; i++)
                 {
-                    RefComponentByIndex(i, ref compIndex, ref mUpdateByTicks, ref mSystem);
-                    if ((mSystem != default) && mSystem.IsSystemChanged && !mSystem.IsSceneUpdate)
+                    item = default;
+
+                    RefComponentByIndex(i, ref compIndex, ref mUpdateByTicks, ref item);
+                    if (item != default)
                     {
-                        if (!mDeletdComponents.Contains(mSystem.ID))
+                        if(item.IsSceneUpdate)
                         {
-                            if (method == default)
-                            {
-                                mSystem.UpdateComponent(time);
-                            }
-                            else
-                            {
-                                method.Invoke(mSystem.UpdateComponent);
-                            }
+                            continue;
                         }
-                        mSystem.SystemChecked();
+
+                        if (item.IsSystemChanged)
+                        {
+                            if (!mDeletdComponents.Contains(item.ID))
+                            {
+                                if (method == default)
+                                {
+                                    item.UpdateComponent(time);
+                                }
+                                else
+                                {
+                                    method.Invoke(item.UpdateComponent);
+                                }
+                            }
+                            item.SystemChecked();
+                        }
                     }
                 }
                 FinalUpdate(time);
@@ -387,19 +417,20 @@ namespace ShipDock.ECS
         {
             int compIndex = 0;
             int max = mUpdateByScene.Count;
+            IShipDockComponent item = default;
             for (int i = 0; i < max; i++)
             {
-                RefComponentByIndex(i, ref compIndex, ref mUpdateByScene, ref mSystem);
+                RefComponentByIndex(i, ref compIndex, ref mUpdateByScene, ref item);
 
-                if ((mSystem != default) && !mDeletdComponents.Contains(mSystem.ID))
+                if ((item != default) && !mDeletdComponents.Contains(item.ID))
                 {
                     if (method == default)
                     {
-                        mSystem.UpdateComponent(time);
+                        item.UpdateComponent(time);
                     }
                     else
                     {
-                        method.Invoke(mSystem.UpdateComponent);
+                        method.Invoke(item.UpdateComponent);
                     }
                 }
             }
@@ -409,27 +440,23 @@ namespace ShipDock.ECS
         {
             int compIndex = 0;
             int max = mUpdateByScene.Count;
+            IShipDockComponent item = default;
             for (int i = 0; i < max; i++)
             {
-                RefComponentByIndex(i, ref compIndex, ref mUpdateByScene, ref mSystem);
+                RefComponentByIndex(i, ref compIndex, ref mUpdateByScene, ref item);
 
-                if ((mSystem != default) && !mDeletdComponents.Contains(mSystem.ID))
+                if ((item != default) && !mDeletdComponents.Contains(item.ID))
                 {
                     if (method == default)
                     {
-                        mSystem.FreeComponent(time);
+                        item.FreeComponent(time);
                     }
                     else
                     {
-                        method.Invoke(mSystem.FreeComponent);
+                        method.Invoke(item.FreeComponent);
                     }
                 }
             }
         }
-
-        public Action<int, IShipDockComponent, IShipDockComponentContext> RelateComponentsReFiller { get; set; }
-        public Action<List<int>, bool> PreUpdate { get; set; }
-        public int CountTime { get; private set; }
-        public int FrameTimeInScene { get; set; }
     }
 }

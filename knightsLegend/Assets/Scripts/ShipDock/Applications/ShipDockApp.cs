@@ -1,4 +1,4 @@
-﻿#define G_LOG
+﻿#define _G_LOG
 
 using ShipDock.Datas;
 using ShipDock.ECS;
@@ -149,7 +149,7 @@ namespace ShipDock.Applications
                 new MethodUpdater
                 {
                     Update = MergeUpdateMode
-                } : 
+                }: 
                 new MethodUpdater
                 {
                     Update = AlternateFrameUpdateMode//框架默认为此模式
@@ -178,7 +178,7 @@ namespace ShipDock.Applications
             }
             else
             {
-                Components.UpdateComponentUnit(time);
+                Components.UpdateComponentUnit(time);//框架默认为此模式
                 if (mFrameSign > 0)
                 {
                     Components.FreeComponentUnit(time);//奇数帧检测是否有需要释放的实体，框架默认为此模式

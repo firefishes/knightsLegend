@@ -44,7 +44,7 @@ namespace ShipDock.Applications
                 fs.Close();
                 return buffur;
             }
-            catch(Exception error)
+            catch (Exception)
             {
                 return default;
             }

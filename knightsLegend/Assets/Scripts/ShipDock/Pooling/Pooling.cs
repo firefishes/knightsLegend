@@ -1,4 +1,4 @@
-﻿#define G_LOG
+﻿#define _G_LOG
 
 using System;
 using System.Collections.Generic;
@@ -133,7 +133,7 @@ namespace ShipDock.Pooling
             lock (mLock)
             {
                 T result = default;
-                if (mInstanceCount > 0)
+                if (mInstanceCount > 2)
                 {
                     mInstanceCount--;
                     result = mPool.Pop();
@@ -215,6 +215,7 @@ namespace ShipDock.Pooling
             if (mPool != default)
             {
                 int max = mPool.Count;
+                "pool clear".Log(max > 0, mPoolTypeName.Append(", count is ", max.ToString()));
                 for (int i = 0; i < max; i++)
                 {
                     T item = mPool.Pop();
@@ -225,7 +226,6 @@ namespace ShipDock.Pooling
                     }
                 }
                 mPool.Clear();
-                "pool clear".Log(mPoolTypeName);
             }
             UsedCount = 0;
         }
