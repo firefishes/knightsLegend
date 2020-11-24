@@ -216,7 +216,7 @@ namespace ShipDock.Server
                 resolverHandler.InvokeResolver();
                 result = (InterfaceT)resolverHandler.ResolverParam;
 
-                if (result != default)
+                if (!result.Equals(default))
                 {
                     if (customResolver != default)
                     {

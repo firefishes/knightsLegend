@@ -49,6 +49,21 @@ namespace ShipDock.Applications
         private KeyValueList<IStateMachine, IUpdate> mFSMUpdaters;
         private KeyValueList<IState, IUpdate> mStateUpdaters;
 
+        public bool IsStarted { get; private set; }
+        public UIManager UIs { get; private set; }
+        public TicksUpdater TicksUpdater { get; private set; }
+        public Notifications<int> Notificater { get; private set; }
+        public ShipDockComponentContext Components { get; private set; }
+        public Servers Servers { get; private set; }
+        public DataWarehouse Datas { get; private set; }
+        public AssetBundles ABs { get; private set; }
+        public AssetsPooling AssetsPooling { get; private set; }
+        public StateMachines StateMachines { get; private set; }
+        public Effects Effects { get; private set; }
+        public Locals Locals { get; private set; }
+        public Tester Tester { get; private set; }
+        public ShipDock.Applications.PerspectiveInputer PerspectivesInputer { get; private set; }
+
         public void Start(int ticks)
         {
             if (IsStarted)
@@ -72,6 +87,7 @@ namespace ShipDock.Applications
             };
             Effects = new Effects();//新建特效管理器
             Locals = new Locals();//新建本地化管理器
+            PerspectivesInputer = new PerspectiveInputer();//新建透视物体交互器
 
             mFSMUpdaters = new KeyValueList<IStateMachine, IUpdate>();
             mStateUpdaters = new KeyValueList<IState, IUpdate>();
@@ -307,6 +323,7 @@ namespace ShipDock.Applications
             Utils.Reclaim(Datas);
             Utils.Reclaim(AssetsPooling);
             Utils.Reclaim(ABs);
+            Utils.Reclaim(PerspectivesInputer);
 
             Tester?.Dispose();
 
@@ -323,6 +340,7 @@ namespace ShipDock.Applications
             Locals = default;
             Effects = default;
             Tester = default;
+            PerspectivesInputer = default;
 
             GC.Collect();
         }
@@ -373,26 +391,12 @@ namespace ShipDock.Applications
         public void DataProxyDelink(IDataExtracter target, params int[] dataNames)
         {
             IDataProxy proxy;
-            int max = dataNames.Length;
+            int max = dataNames == default ? 0 : dataNames.Length;
             for (int i = 0; i < max; i++)
             {
                 proxy = Datas.GetData<IDataProxy>(dataNames[i]);
                 proxy.Unregister(target);
             }
         }
-
-        public bool IsStarted { get; private set; }
-        public UIManager UIs { get; private set; }
-        public TicksUpdater TicksUpdater { get; private set; }
-        public Notifications<int> Notificater { get; private set; }
-        public ShipDockComponentContext Components { get; private set; }
-        public Servers Servers { get; private set; }
-        public DataWarehouse Datas { get; private set; }
-        public AssetBundles ABs { get; private set; }
-        public AssetsPooling AssetsPooling { get; private set; }
-        public StateMachines StateMachines { get; private set; }
-        public Effects Effects { get; private set; }
-        public Locals Locals { get; private set; }
-        public Tester Tester { get; private set; }
     }
 }

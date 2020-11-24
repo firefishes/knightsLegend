@@ -49,7 +49,7 @@ namespace ShipDock.Tools
             if(mMapper.ContainsKey(id))
             {
                 result = mMapper.Remove(id);
-                statu = result == default ? 1 : 0;
+                statu = result.Equals(default) ? 1 : 0;
             }
             else
             {
@@ -62,7 +62,7 @@ namespace ShipDock.Tools
         {
             MapperValueT result = default;
             result = mMapper.IsContainsKey(id) ? mMapper[id] : default;
-            statu = result == default ? 1 : 0;
+            statu = result.Equals(default) ? 1 : 0;
             return result;
         }
 

@@ -299,16 +299,16 @@ namespace ShipDock.Applications
             m_GameAppEvents.createTestersEvent?.Invoke();
         }
 
-        private T CommonEventInovker<T>(UnityEvent<IParamNotice<T>> @event, bool applyPooling = false, T param = default)
+        private T CommonEventInovker<T>(UnityEvent<IParamNotice<T>> commonEvent, bool applyPooling = false, T param = default)
         {
-            T result = default;
             IParamNotice<T> notice = applyPooling ? Pooling<ParamNotice<T>>.From() : new ParamNotice<T>();
-            if (param != default)
+            if (!param.Equals(default))
             {
                 notice.ParamValue = param;
             }
-            @event?.Invoke(notice);
-            result = notice.ParamValue;
+            commonEvent?.Invoke(notice);
+
+            T result = notice.ParamValue;
             if (applyPooling)
             {
                 notice.ToPool();
