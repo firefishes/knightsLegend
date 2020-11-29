@@ -43,7 +43,6 @@ namespace ShipDock.Tools
 
         public MapperValueT Remove(MapperValueT key, out int statu)
         {
-            statu = 0;
             MapperValueT result = default;
             int id = mIndexer.GetID(ref key);
             if(mMapper.ContainsKey(id))
@@ -60,8 +59,7 @@ namespace ShipDock.Tools
 
         public MapperValueT Get(int id, out int statu)
         {
-            MapperValueT result = default;
-            result = mMapper.IsContainsKey(id) ? mMapper[id] : default;
+            MapperValueT result = mMapper.IsContainsKey(id) ? mMapper[id] : default;
             statu = result.Equals(default) ? 1 : 0;
             return result;
         }

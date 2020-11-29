@@ -14,7 +14,7 @@ namespace ShipDock.Applications
 
         private void Awake()
         {
-            int max = m_Notices.Count;
+            int max = m_Notices == default ? 0 : m_Notices.Count;
             for (int i = 0; i < max; i++)
             {
                 m_Notices[i].Init();
@@ -23,7 +23,7 @@ namespace ShipDock.Applications
 
         private void OnDestroy()
         {
-            int max = m_Notices.Count;
+            int max = m_Notices == default ? 0 : m_Notices.Count;
             for (int i = 0; i < max; i++)
             {
                 m_Notices[i].Deinit();

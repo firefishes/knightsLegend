@@ -19,7 +19,7 @@ namespace ShipDock.Applications
     /// ShipDock 框架单例，门面
     /// 
     /// </summary>
-    public class ShipDockApp : Singletons<ShipDockApp>
+    public class ShipDockApp : Singletons<ShipDockApp>, IAppILRuntime
     {
         public static void StartUp(int ticks, Action onStartUp = default)
         {
@@ -62,7 +62,8 @@ namespace ShipDock.Applications
         public Effects Effects { get; private set; }
         public Locals Locals { get; private set; }
         public Tester Tester { get; private set; }
-        public ShipDock.Applications.PerspectiveInputer PerspectivesInputer { get; private set; }
+        public PerspectiveInputer PerspectivesInputer { get; private set; }
+        public ILRuntimeHotFix ILRuntimeHotFix { get; private set; }
 
         public void Start(int ticks)
         {
@@ -88,6 +89,7 @@ namespace ShipDock.Applications
             Effects = new Effects();//新建特效管理器
             Locals = new Locals();//新建本地化管理器
             PerspectivesInputer = new PerspectiveInputer();//新建透视物体交互器
+            ILRuntimeHotFix = new ILRuntimeHotFix(this);//新建IL热更方案的管理器
 
             mFSMUpdaters = new KeyValueList<IStateMachine, IUpdate>();
             mStateUpdaters = new KeyValueList<IState, IUpdate>();
@@ -310,6 +312,8 @@ namespace ShipDock.Applications
         {
             ShipDockConsts.NOTICE_APPLICATION_CLOSE.Broadcast();
 
+            ILRuntimeHotFix?.Clear();
+
             Utils.Reclaim(ref mFSMUpdaters);
             Utils.Reclaim(ref mStateUpdaters);
 
@@ -341,6 +345,7 @@ namespace ShipDock.Applications
             Effects = default;
             Tester = default;
             PerspectivesInputer = default;
+            ILRuntimeHotFix = default;
 
             GC.Collect();
         }

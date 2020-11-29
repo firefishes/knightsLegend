@@ -302,7 +302,7 @@ namespace ShipDock.Applications
         private T CommonEventInovker<T>(UnityEvent<IParamNotice<T>> commonEvent, bool applyPooling = false, T param = default)
         {
             IParamNotice<T> notice = applyPooling ? Pooling<ParamNotice<T>>.From() : new ParamNotice<T>();
-            if (!param.Equals(default))
+            if (param != default)
             {
                 notice.ParamValue = param;
             }
