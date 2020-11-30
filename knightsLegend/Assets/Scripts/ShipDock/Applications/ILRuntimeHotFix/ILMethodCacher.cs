@@ -4,6 +4,12 @@ using System.Collections.Generic;
 
 namespace ShipDock.Applications
 {
+    /// <summary>
+    /// 方法缓存器
+    /// 
+    /// add by Minghua.ji
+    /// 
+    /// </summary>
     public class ILMethodCacher
     {
         private Dictionary<string, ILRuntimeInvokeCacher> mILMethodCachers;
@@ -29,6 +35,11 @@ namespace ShipDock.Applications
             mILMethodCachers = default;
         }
 
+        /// <summary>
+        /// 获取缓存器中的类
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public ILRuntimeInvokeCacher GetMethodCacher(string type)
         {
             ILRuntimeInvokeCacher cacher;
@@ -44,10 +55,15 @@ namespace ShipDock.Applications
             return cacher;
         }
 
+        /// <summary>
+        /// 获取缓存器中的方法
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public IType GetClassCache(string typeName, AppDomain appDomain)
         {
             ILRuntimeInvokeCacher cacher = GetMethodCacher(typeName);
-            IType type = cacher.GetClsCache(ref appDomain, ref typeName);
+            IType type = cacher.GetClassCache(ref appDomain, ref typeName);
             return type;
         }
     }

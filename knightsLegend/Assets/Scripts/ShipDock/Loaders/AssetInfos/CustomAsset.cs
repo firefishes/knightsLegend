@@ -22,6 +22,10 @@ namespace ShipDock.Loader
             {
                 assetName = asset.name;
             }
+            else if (textData != default)
+            {
+                assetName = textData.name;
+            }
         }
 
         public T GetAsset<T>() where T : UnityEngine.Object

@@ -6,13 +6,22 @@ using ResultAction = System.Action<ILRuntime.Runtime.Enviorment.InvocationContex
 
 namespace ShipDock.Applications
 {
+    /// <summary>
+    /// 热更组件抽象类
+    /// 
+    /// add by Minghua.ji
+    /// 
+    /// </summary>
     public abstract class HotFixer : MonoBehaviour
     {
         [SerializeField]
+        [Tooltip("是否脱离框架单独运行")]
         protected bool m_ApplyRunStandalone;
         [SerializeField]
+        [Tooltip("热更端的类名")]
         protected string m_ClassName;
         [SerializeField]
+        [Tooltip("主项目启动热更端的入口方法")]
         protected string m_IniterMethodName = "ShellInited";
 
         private object mShellBridge;
@@ -20,6 +29,10 @@ namespace ShipDock.Applications
 
         protected ILMethodCacher MethodCacher { get; set; }
 
+        /// <summary>
+        /// ILRuntime热更应用域引用
+        /// </summary>
+        /// <returns></returns>
         public abstract AppDomain Enviorment();
 
         protected virtual void Awake()
@@ -46,12 +59,21 @@ namespace ShipDock.Applications
         protected abstract void RunWithinFramework();
         protected abstract void Purge();
 
+        /// <summary>
+        /// 子类重写此方法，扩展初始化的逻辑
+        /// </summary>
         protected virtual void Init()
         {
             mILRuntimeIniter = new ILRuntimeIniter(Enviorment());
-            MethodCacher = ShipDockApp.Instance.ILRuntimeHotFix.MethodCacher;
+
+            MethodCacher = ILRuntimeExtension.GetILRuntimeHotFix().MethodCacher;
         }
 
+        /// <summary>
+        /// 子类重写此方法，扩展加载热更代码后的逻辑
+        /// </summary>
+        /// <param name="dll"></param>
+        /// <param name="pdb"></param>
         protected virtual void StartHotfix(byte[] dll, byte[] pdb)
         {
             mILRuntimeIniter.Build(dll, pdb);
@@ -75,10 +97,69 @@ namespace ShipDock.Applications
 #endif
         }
 
-        protected virtual void ILRuntimeLoaded()
+        [SerializeField]
+        [Tooltip("是否应用固定帧更新回调方法")]
+        private bool m_ApplyFixedUpdate;
+        [SerializeField]
+        [Tooltip("固定帧更新回调方法名")]
+        private string m_FixedUpdateMethodName = "FixedUpdate";
+        [SerializeField]
+        [Tooltip("是否应用帧更新回调方法")]
+        private bool m_ApplyUpdate;
+        [SerializeField]
+        [Tooltip("帧更新回调方法名")]
+        private string m_UpdateMethodName = "Update";
+        [SerializeField]
+        [Tooltip("是否应用延迟帧更新回调方法")]
+        private bool m_ApplyLateUpdate;
+        [SerializeField]
+        [Tooltip("延迟帧更新回调方法名")]
+        private string m_LateUpdateMethodName = "LateUpdate";
+
+        #region Unity周期函数回调
+        private System.Action mILRuntimeUpdate;
+        private System.Action mILRuntimeFixedUpdate;
+        private System.Action mILRuntimeLateUpdate;
+        #endregion
+
+        private void FixedUpdate()
         {
+            mILRuntimeUpdate?.Invoke();
+        }
+
+        private void Update()
+        {
+            mILRuntimeUpdate?.Invoke();
+        }
+
+        private void LateUpdate()
+        {
+            mILRuntimeLateUpdate?.Invoke();
+        }
+
+        protected virtual void ILRuntimeLoaded()
+        { 
             mShellBridge = InstantiateFromIL(m_ClassName);
-            InvokeMethodILR(mShellBridge, m_ClassName, m_IniterMethodName, 1, gameObject);
+            InvokeMethodILR(mShellBridge, m_ClassName, m_IniterMethodName, 1, this);
+
+            string method = "GetUpdateMethods";
+            if (m_ApplyFixedUpdate)
+            {
+                InvokeMethodILR(mShellBridge, m_ClassName, method, 1, OnGetFixedUpdateMethod, m_FixedUpdateMethodName);
+            }
+            if (m_ApplyUpdate)
+            {
+                InvokeMethodILR(mShellBridge, m_ClassName, method, 1, OnGetFixedUpdateMethod, m_UpdateMethodName);
+            }
+            if (m_ApplyLateUpdate)
+            {
+                InvokeMethodILR(mShellBridge, m_ClassName, method, 1, OnGetFixedUpdateMethod, m_LateUpdateMethodName);
+            }
+        }
+
+        private void OnGetFixedUpdateMethod(InvocationContext context)
+        {
+            mILRuntimeUpdate = context.ReadObject<System.Action>();
         }
 
         /// <summary>
@@ -115,13 +196,18 @@ namespace ShipDock.Applications
         /// <param name="methodName">方法名</param>
         /// <param name="paramCount">方法的参数个数</param>
         /// <param name="resultCallback">获取方法值的回调</param>
-        public void InvokeMethodILR(object instance, string typeName, string methodName, int paramCount, ResultAction resultCallback)
+        public void InvokeMethodILR(object instance, string typeName, string methodName, int paramCount, ResultAction resultCallback, params object[] args)
         {
             ILRuntimeInvokeCacher methodCacher = MethodCacher.GetMethodCacher(typeName);
-            IMethod method = methodCacher.GetMethodFromCache(Enviorment(), typeName, methodName, paramCount);//type.GetMethod(methodName, paramCount);
+            IMethod method = methodCacher.GetMethodFromCache(Enviorment(), typeName, methodName, paramCount);
             using (InvocationContext ctx = Enviorment().BeginInvoke(method))
             {
                 ctx.PushObject(instance);
+                int max = args.Length;
+                for (int i = 0; i < max; i++)
+                {
+                    ctx.PushObject(args[i]);
+                }
                 ctx.Invoke();
                 resultCallback?.Invoke(ctx);
             }

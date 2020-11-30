@@ -4,8 +4,15 @@ using System.IO;
 
 namespace ShipDock.Applications
 {
+    /// <summary>
+    /// ILRuntime热更（dll代码）启动器
+    /// 
+    /// add by Minghua.ji
+    /// 
+    /// </summary>
     public class ILRuntimeIniter
     {
+        /// <summary>是否应用单独一文件热更模式</summary>
         public static bool ApplySingleDomain { get; set; }
 
         private MemoryStream mDllMemeoryStream;
@@ -24,7 +31,12 @@ namespace ShipDock.Applications
             mDllMemeoryStream = default;
             mPdbMemeoryStream = default;
         }
-
+        
+        /// <summary>
+        /// 创建热更代码数据
+        /// </summary>
+        /// <param name="dll"></param>
+        /// <param name="pdb"></param>
         public void Build(byte[] dll, byte[] pdb)
         {
             if (ApplySingleDomain)

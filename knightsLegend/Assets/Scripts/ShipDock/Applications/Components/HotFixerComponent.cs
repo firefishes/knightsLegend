@@ -1,9 +1,18 @@
 ﻿using ILRuntime.Runtime.Enviorment;
+using ShipDock.Loader;
+using UnityEngine;
 
 namespace ShipDock.Applications
 {
     public class HotFixerComponent : HotFixer
     {
+        [SerializeField]
+        protected string m_HotFixABName;
+        [SerializeField]
+        protected string m_HotFixDLL;
+        [SerializeField]
+        protected string m_HotFixPDB;
+
         private AppDomain mILRuntimeAppDomain;
         private ComponentBridge mCompBridge;
 
@@ -42,6 +51,17 @@ namespace ShipDock.Applications
             base.InitILRuntime();
 
             Enviorment().DelegateManager.RegisterMethodDelegate<int>();
+        }
+
+        protected override void Init()
+        {
+            base.Init();
+
+            AssetBundles abs = ShipDockApp.Instance.ABs;
+            TextAsset dll = abs.Get<TextAsset>(m_HotFixABName, m_HotFixDLL);
+            TextAsset pdb = abs.Get<TextAsset>(m_HotFixABName, m_HotFixPDB);
+
+            StartHotfix(dll.bytes, pdb.bytes);
         }
     }
 

@@ -16,11 +16,16 @@ public static class ILRuntimeExtension
         frameworkApp = app;
     }
 
+    public static ILRuntimeHotFix GetILRuntimeHotFix()
+    {
+        return frameworkApp.ILRuntimeHotFix;
+    }
+
     private static AppDomain Enviorment()
     {
         if (appDomain == default)
         {
-            appDomain = frameworkApp.ILRuntimeHotFix.ILAppDomain;
+            appDomain = GetILRuntimeHotFix().ILAppDomain;
         }
         return appDomain;
     }
@@ -29,7 +34,7 @@ public static class ILRuntimeExtension
     {
         if (methodCacher == default)
         {
-            methodCacher = frameworkApp.ILRuntimeHotFix.MethodCacher;
+            methodCacher = GetILRuntimeHotFix().MethodCacher;
         }
         return methodCacher;
     }
