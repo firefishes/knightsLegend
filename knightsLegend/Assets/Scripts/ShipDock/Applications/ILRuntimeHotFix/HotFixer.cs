@@ -1,4 +1,7 @@
-﻿using ILRuntime.CLR.Method;
+﻿#define LOG_INOVKED_METHOD_BY_ARGS_COUNT
+
+using System;
+using ILRuntime.CLR.Method;
 using ILRuntime.CLR.TypeSystem;
 using ILRuntime.Runtime.Enviorment;
 using UnityEngine;
@@ -15,16 +18,10 @@ namespace ShipDock.Applications
     public abstract class HotFixer : MonoBehaviour
     {
         [SerializeField]
-        [Tooltip("是否脱离框架单独运行")]
-        protected bool m_ApplyRunStandalone;
-        [SerializeField]
-        [Tooltip("热更端的类名")]
-        protected string m_ClassName;
-        [SerializeField]
-        [Tooltip("主项目启动热更端的入口方法")]
-        protected string m_IniterMethodName = "ShellInited";
+        protected HotFixerStartUpInfo m_StartUpInfo = new HotFixerStartUpInfo();
 
-        private object mShellBridge;
+        protected object mShellBridge;
+
         private ILRuntimeIniter mILRuntimeIniter;
 
         protected ILMethodCacher MethodCacher { get; set; }
@@ -33,11 +30,22 @@ namespace ShipDock.Applications
         /// ILRuntime热更应用域引用
         /// </summary>
         /// <returns></returns>
-        public abstract AppDomain Enviorment();
+        public virtual ILRuntime.Runtime.Enviorment.AppDomain Enviorment()
+        {
+            return ILRuntimeExtension.GetILRuntimeHotFix().ILAppDomain;
+        }
 
         protected virtual void Awake()
         {
-            if (m_ApplyRunStandalone)
+            if (m_StartUpInfo.RunInAwake)
+            {
+                Run();
+            }
+        }
+
+        private void Run()
+        {
+            if (m_StartUpInfo.ApplyRunStandalone)
             {
                 Init();
             }
@@ -51,9 +59,16 @@ namespace ShipDock.Applications
         {
             Purge();
 
+            mILRuntimeDestroy?.Invoke();
+
             mILRuntimeIniter?.Clear();
             mILRuntimeIniter = default;
             MethodCacher = default;
+
+            mILRuntimeDestroy = default;
+            mILRuntimeFixedUpdate = default;
+            mILRuntimeUpdate = default;
+            mILRuntimeLateUpdate = default;
         }
 
         protected abstract void RunWithinFramework();
@@ -82,6 +97,11 @@ namespace ShipDock.Applications
             ILRuntimeLoaded();
         }
 
+        public virtual void RunHotFix()
+        {
+            Run();
+        }
+
         /// <summary>
         /// 
         /// 初始化热更运行时
@@ -94,37 +114,20 @@ namespace ShipDock.Applications
         {
 #if DEBUG && (UNITY_EDITOR || UNITY_ANDROID || UNITY_IPHONE)
             Enviorment().UnityMainThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
+            Enviorment().DebugService.StartDebugService(56000);
 #endif
         }
 
-        [SerializeField]
-        [Tooltip("是否应用固定帧更新回调方法")]
-        private bool m_ApplyFixedUpdate;
-        [SerializeField]
-        [Tooltip("固定帧更新回调方法名")]
-        private string m_FixedUpdateMethodName = "FixedUpdate";
-        [SerializeField]
-        [Tooltip("是否应用帧更新回调方法")]
-        private bool m_ApplyUpdate;
-        [SerializeField]
-        [Tooltip("帧更新回调方法名")]
-        private string m_UpdateMethodName = "Update";
-        [SerializeField]
-        [Tooltip("是否应用延迟帧更新回调方法")]
-        private bool m_ApplyLateUpdate;
-        [SerializeField]
-        [Tooltip("延迟帧更新回调方法名")]
-        private string m_LateUpdateMethodName = "LateUpdate";
-
         #region Unity周期函数回调
-        private System.Action mILRuntimeUpdate;
-        private System.Action mILRuntimeFixedUpdate;
-        private System.Action mILRuntimeLateUpdate;
+        private Action mILRuntimeUpdate;
+        private Action mILRuntimeFixedUpdate;
+        private Action mILRuntimeLateUpdate;
+        private Action mILRuntimeDestroy;
         #endregion
 
         private void FixedUpdate()
         {
-            mILRuntimeUpdate?.Invoke();
+            mILRuntimeFixedUpdate?.Invoke();
         }
 
         private void Update()
@@ -138,28 +141,45 @@ namespace ShipDock.Applications
         }
 
         protected virtual void ILRuntimeLoaded()
-        { 
-            mShellBridge = InstantiateFromIL(m_ClassName);
-            InvokeMethodILR(mShellBridge, m_ClassName, m_IniterMethodName, 1, this);
+        {
+            mShellBridge = InstantiateFromIL(m_StartUpInfo.ClassName);
 
             string method = "GetUpdateMethods";
-            if (m_ApplyFixedUpdate)
+            string className = m_StartUpInfo.ClassName;
+            if (m_StartUpInfo.ApplyFixedUpdate)
             {
-                InvokeMethodILR(mShellBridge, m_ClassName, method, 1, OnGetFixedUpdateMethod, m_FixedUpdateMethodName);
+                InvokeMethodILR(mShellBridge, className, method, 1, OnGetFixedUpdateMethod, m_StartUpInfo.FixedUpdateMethodName);
             }
-            if (m_ApplyUpdate)
+            if (m_StartUpInfo.ApplyUpdate)
             {
-                InvokeMethodILR(mShellBridge, m_ClassName, method, 1, OnGetFixedUpdateMethod, m_UpdateMethodName);
+                InvokeMethodILR(mShellBridge, className, method, 1, OnGetUpdateMethod, m_StartUpInfo.UpdateMethodName);
             }
-            if (m_ApplyLateUpdate)
+            if (m_StartUpInfo.ApplyLateUpdate)
             {
-                InvokeMethodILR(mShellBridge, m_ClassName, method, 1, OnGetFixedUpdateMethod, m_LateUpdateMethodName);
+                InvokeMethodILR(mShellBridge, className, method, 1, OnGetLateUpdateMethod, m_StartUpInfo.LateUpdateMethodName);
             }
+            InvokeMethodILR(mShellBridge, className, method, 1, OnGetDestroyMethod, "OnDestroy");
+            InvokeMethodILR(mShellBridge, className, m_StartUpInfo.IniterMethodName, 1, this);
+        }
+
+        private void OnGetDestroyMethod(InvocationContext context)
+        {
+            mILRuntimeDestroy = context.ReadObject<Action>();
+        }
+
+        private void OnGetLateUpdateMethod(InvocationContext context)
+        {
+            mILRuntimeLateUpdate = context.ReadObject<Action>();
+        }
+
+        private void OnGetUpdateMethod(InvocationContext context)
+        {
+            mILRuntimeUpdate = context.ReadObject<Action>();
         }
 
         private void OnGetFixedUpdateMethod(InvocationContext context)
         {
-            mILRuntimeUpdate = context.ReadObject<System.Action>();
+            mILRuntimeFixedUpdate = context.ReadObject<Action>();
         }
 
         /// <summary>
@@ -225,6 +245,9 @@ namespace ShipDock.Applications
                 {
                     ctx.PushObject(args[i]);
                 }
+#if LOG_INOVKED_METHOD_BY_ARGS_COUNT
+                Debug.Log(string.Format("HOTFIX invoke: {0}.{1}", typeName, methodName));
+#endif
                 ctx.Invoke();
             }
         }

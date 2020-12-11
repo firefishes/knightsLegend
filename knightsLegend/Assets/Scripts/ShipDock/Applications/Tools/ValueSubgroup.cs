@@ -1,5 +1,6 @@
 ﻿using ShipDock.Tools;
 using System;
+using UnityEngine;
 
 namespace ShipDock.Applications
 {
@@ -9,40 +10,63 @@ namespace ShipDock.Applications
     {
         public string keyField;
         public ValueItemType valueType;
-        public string str;
-        public float floatValue;
-        public double doubleValue;
-        public float dampTime;
-        public bool triggerValue;
+
+        [SerializeField]
+        public string m_Str;
+        [SerializeField]
+        public float m_FloatValue;
+        [SerializeField]
+        public double m_DoubleValue;
+        [SerializeField]
+        public float m_DampTime;
+        [SerializeField]
+        public bool m_TriggerValue;
+        [SerializeField]
+        public Vector3 m_Vector;
+        [SerializeField]
+        private Color m_Color;
+        [SerializeField]
+        private LayerMask m_LayerMask;
 
         private ValueItem mCached;
 
+#if UNITY_EDITOR
+        public void Sync()
+        {
+            //m_Str = str;
+            //m_FloatValue = floatValue;
+            //m_DoubleValue = doubleValue;
+            //m_DampTime = dampTime;
+            //m_TriggerValue = triggerValue;
+        }
+#endif
+
         public ValueItem GetFloat()
         {
-            return ValueItem.New(keyField, floatValue).SetDampTime(dampTime);
+            return ValueItem.New(keyField, m_FloatValue).SetDampTime(m_DampTime);
         }
 
         public ValueItem GetBool()
         {
-            return ValueItem.New(keyField, triggerValue).SetDampTime(dampTime);
+            return ValueItem.New(keyField, m_TriggerValue).SetDampTime(m_DampTime);
         }
 
         public ValueItem GetString()
         {
-            return ValueItem.New(keyField, str).SetDampTime(dampTime);
+            return ValueItem.New(keyField, m_Str).SetDampTime(m_DampTime);
         }
 
         private ValueItem GetInt()
         {
-            return ValueItem.New(keyField, (int)floatValue).SetDampTime(dampTime);
+            return ValueItem.New(keyField, (int)m_FloatValue).SetDampTime(m_DampTime);
         }
 
         private ValueItem GetDouble()
         {
-            return ValueItem.New(keyField, doubleValue).SetDampTime(dampTime);
+            return ValueItem.New(keyField, m_DoubleValue).SetDampTime(m_DampTime);
         }
         
-        public ValueItem GetValue(bool isRefresh = false)
+        public ValueItem Result(bool isRefresh = false)
         {
             if (isRefresh)
             {
@@ -76,6 +100,26 @@ namespace ShipDock.Applications
                 mCached = result;
             }
             return mCached;
+        }
+
+        public Vector2 GetV2()
+        {
+            return valueType == ValueItemType.VECTOR_2 ? new Vector2(m_Vector.x, m_Vector.y) : Vector2.zero;
+        }
+
+        public Vector3 GetV3()
+        {
+            return valueType == ValueItemType.VECTOR_3 ? m_Vector : Vector3.zero;
+        }
+
+        public Color GetColor()
+        {
+            return valueType == ValueItemType.COLOR ? m_Color : Color.clear;
+        }
+
+        public LayerMask GetLayerMask()
+        {
+            return valueType == ValueItemType.LAYER_MASK ? m_LayerMask : default;
         }
 
         public void Clean()

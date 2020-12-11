@@ -11,5 +11,8 @@
         public const int NOTICE_REMOVE_SCENE_UPDATE = -1006;
         public const int NOTICE_SCENE_UPDATE_READY = -1007;
         public const int NOTICE_SCENE_CALL_LATE = -1008;
+        public const int NOTICE_CONFIG_PRELOADED = -1009;
+
+        public const string SERVER_CONFIG = "ShipDockConfigServer";
     }
 }

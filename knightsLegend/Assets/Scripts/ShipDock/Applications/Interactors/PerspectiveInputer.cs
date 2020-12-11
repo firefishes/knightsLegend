@@ -1,6 +1,7 @@
 ﻿using ShipDock.Interfaces;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 namespace ShipDock.Applications
 {
@@ -52,18 +53,29 @@ namespace ShipDock.Applications
         private GameObject mOldTarget;
         private InputData mInputData = default;
 
+        private LayerMask LayerMask { get; set; }
+
         public bool IsNullStart
         {
             get { return mIsNullStart; }
             set { mIsNullStart = value; }
         }
 
+        public bool HasInput
+        {
+            get
+            {
+#if UNITY_EDITOR
+                return EventSystem.current.IsPointerOverGameObject();
+#else
+                return EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId);
+#endif
+            }
+        }
+
         /// <summary>是否开启输入</summary>
         public bool IsOpenInput { get; set; }
-
         public float ClickRange { get; set; }
-
-        private LayerMask LayerMask { get; set; }
 
         public PerspectiveInputer()
         {

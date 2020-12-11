@@ -6,48 +6,37 @@ using ShipDock.Notices;
 using ShipDock.Pooling;
 using ShipDock.Server;
 using ShipDock.UI;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace ShipDock.Applications
 {
-
-    [Serializable]
-    internal class GetDataProxyEvent : UnityEvent<IParamNotice<IDataProxy[]>> { }
-
-    [Serializable]
-    internal class GetLocalsConfigItemNotice : UnityEvent<Dictionary<int, string>, IConfigNotice> { }
-
-    [Serializable]
-    internal class GetServerConfigsEvent : UnityEvent<IParamNotice<IResolvableConfig[]>> { }
-
-    [Serializable]
-    internal class InitProfileEvent : UnityEvent<IParamNotice<int[]>> { }
-
-    [Serializable]
-    internal class GetGameServersEvent : UnityEvent<IParamNotice<IServer[]>> { }
-
-    [Serializable]
-    internal class InitProfileDataEvent : UnityEvent<IConfigNotice> { }
-
-    [Serializable]
-    internal class ShipDockCloseEvent : UnityEvent { }
-    
     [RequireComponent(typeof(UpdatesComponent))]
     public class ShipDockGame : MonoBehaviour
     {
         [SerializeField]
+        [Tooltip("运行帧率")]
         private int m_FrameRate = 40;
         [SerializeField]
+        [Tooltip("多语言本地化标识")]
         private string m_Locals = "CN";
         [SerializeField]
+        [Tooltip("开发设置子组")]
         private DevelopSubgroup m_DevelopSubgroup;
         [SerializeField]
+        [Tooltip("游戏应用启动系列事件")]
         private GameApplicationEvents m_GameAppEvents;
 
         private MethodUpdater mServerInitedChecker;
+
+        public DevelopSubgroup DevelopSetting
+        {
+            get
+            {
+                return m_DevelopSubgroup;
+            }
+        }
 
         public void UIRootAwaked(IUIRoot root)
         {
@@ -84,6 +73,7 @@ namespace ShipDock.Applications
             ShipDockAppComponent component = GetComponent<ShipDockAppComponent>();
             if (component != default)
             {
+                component.SetShipDockGame(this);
                 m_GameAppEvents.createTestersEvent.AddListener(component.CreateTestersHandler);
                 m_GameAppEvents.enterGameEvent.AddListener(component.EnterGameHandler);
                 m_GameAppEvents.getDataProxyEvent.AddListener(component.GetDataProxyHandler);
@@ -199,7 +189,7 @@ namespace ShipDock.Applications
                 UpdaterNotice.RemoveSceneUpdater(mServerInitedChecker);
 
                 int configInitedNoticeName = m_DevelopSubgroup.configInitedNoticeName;
-                if (configInitedNoticeName != int.MaxValue)
+                if (m_DevelopSubgroup.hasLocalsConfig && (configInitedNoticeName != int.MaxValue))
                 {
                     configInitedNoticeName.Add(OnConfigLoaded);//订阅一个配置初始化完成的消息
                     ServerContainerSubgroup server = m_DevelopSubgroup.loadConfig;
@@ -355,57 +345,4 @@ namespace ShipDock.Applications
             return result;
         }
     }
-
-    [Serializable]
-    public class DevelopSubgroup
-    {
-        public int configInitedNoticeName = int.MaxValue;
-        public string assetNameResData = "res_data/res_data";
-        public string localsNameKey = "Locals_";
-        public string[] configNames;
-        public string[] assetNamePreload;
-        public ServerContainerSubgroup loadConfig;
-    }
-
-    [Serializable]
-    public class GameApplicationEvents
-    {
-        [SerializeField]
-        internal UnityEvent createTestersEvent = new UnityEvent();
-        [SerializeField]
-        internal GetGameServersEvent getGameServersEvent = new GetGameServersEvent();
-        [SerializeField]
-        internal UnityEvent serversFinishedEvent = new UnityEvent();
-        [SerializeField]
-        internal InitProfileEvent initProfileEvent = new InitProfileEvent();
-        [SerializeField]
-        internal InitProfileDataEvent initProfileDataEvent = new InitProfileDataEvent();
-        [SerializeField]
-        internal GetServerConfigsEvent getServerConfigsEvent = new GetServerConfigsEvent();
-        [SerializeField]
-        internal GetLocalsConfigItemNotice getLocalsConfigItemEvent = new GetLocalsConfigItemNotice();
-        [SerializeField]
-        internal UnityEvent enterGameEvent = new UnityEvent();
-        [SerializeField]
-        internal GetDataProxyEvent getDataProxyEvent = new GetDataProxyEvent();
-        [SerializeField]
-        internal ShipDockCloseEvent frameworkCloseEvent = new ShipDockCloseEvent();
-    }
-
-    [Serializable]
-    public class ServerContainerSubgroup
-    {
-        /// <summary>服务容器名</summary>
-        public string serverName;
-        /// <summary>外派方法名</summary>
-        public string deliverName;
-        /// <summary>参数对象别名</summary>
-        public string alias;
-
-        public void Delive<T>(ResolveDelegate<T> customResolver = default)
-        {
-            serverName.Delive<T>(deliverName, alias, customResolver);//调用容器方法
-        }
-    }
-
 }

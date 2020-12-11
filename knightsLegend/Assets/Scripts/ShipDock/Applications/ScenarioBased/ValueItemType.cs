@@ -8,6 +8,10 @@ namespace ShipDock.Applications
         INT,
         DOUBLE,
         BOOL,
-        FLOAT
+        FLOAT,
+        VECTOR_2,
+        VECTOR_3,
+        COLOR,
+        LAYER_MASK,
     }
 }

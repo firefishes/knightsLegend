@@ -1,26 +1,22 @@
 ﻿#define G_LOG
+#define _OPEN_SHIPDOCK_EDITOR
 
 using ShipDock.Applications;
 using ShipDock.Loader;
 using ShipDock.Tools;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+#if OPEN_SHIPDOCK_EDITOR
+using System;
+#endif
 
 namespace ShipDock.Editors
 {
     public class ApplicationEditor : ShipDockEditor
     {
-        [MenuItem("ShipDock/Applicaton Editor")]
-        public static void Open()
-        {
-            InitEditorWindow<ApplicationEditor>("游戏客户端设置");
-        }
-
         [MenuItem("ShipDock/Create Application")]
         public static void CreateApplication()
         {
@@ -64,6 +60,13 @@ namespace ShipDock.Editors
             ShipDockEditorUtils.CreateGameObjectWithComponent<AssetsPoolingComponent>("AssetPool", p);
             ShipDockEditorUtils.CreateGameObjectWithComponent<CustomAssetCoordinator>("CustomAsset", p);
             ShipDockEditorUtils.CreateGameObjectWithComponent<TesterComponent>("TesterAsserter", p);
+        }
+
+#if OPEN_SHIPDOCK_EDITOR
+        [MenuItem("ShipDock/Applicaton Editor")]
+        public static void Open()
+        {
+            InitEditorWindow<ApplicationEditor>("游戏客户端设置");
         }
 
         private BuildTarget mABBuildTarget;
@@ -148,6 +151,7 @@ namespace ShipDock.Editors
             };
             return buildABFunc;
         }
+#endif
 
         protected override void ReadyClientValues()
         {

@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using ILRuntime.CLR.TypeSystem;
-using ILRuntime.CLR.Method;
+﻿using ILRuntime.CLR.Method;
 using ILRuntime.Other;
 using ILRuntime.Runtime.Intepreter;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace ILRuntime.Runtime.Enviorment
 {
@@ -18,8 +15,9 @@ namespace ILRuntime.Runtime.Enviorment
         IDelegateAdapter dummyAdapter = new DummyDelegateAdapter();
         Dictionary<Type, Func<Delegate, Delegate>> clrDelegates = new Dictionary<Type, Func<Delegate, Delegate>>(new ByReferenceKeyComparer<Type>());
         Func<Delegate, Delegate> defaultConverter;
-        Enviorment.AppDomain appdomain;
-        public DelegateManager(Enviorment.AppDomain appdomain)
+        AppDomain appdomain;
+
+        public DelegateManager(AppDomain appdomain)
         {
             this.appdomain = appdomain;
             defaultConverter = DefaultConverterStub;
@@ -38,66 +36,105 @@ namespace ILRuntime.Runtime.Enviorment
                 clrDelegates[type] = action;
             }
             else
+            {
                 throw new NotSupportedException();
+            }
+        }
+
+        private Dictionary<string, string> mGernericsMapper = new Dictionary<string, string>();
+
+        private void CheckGeneraicMapper(DelegateMapNode node)
+        {
+            var list = node.ParameterTypes;
+            int max = list.Length;
+            Type type;
+            for (int i = 0; i < max; i++)
+            {
+                type = list[i];
+                if (type.Name.Contains("`"))
+                {
+                    mClsNameTemp = type.Name;
+                    mClsNameTemp = mClsNameTemp + "&";
+                    //UnityEngine.Debug.Log("asdfas  " + type.Name);
+                    //UnityEngine.Debug.Log("put " + type.Name);
+                    mGernericsMapper[type.Name] = mClsNameTemp;
+                }
+            }
         }
 
         public void RegisterMethodDelegate<T1>()
         {
-            DelegateMapNode node = new Enviorment.DelegateManager.DelegateMapNode();
-            node.Adapter = new MethodDelegateAdapter<T1>();
-            node.ParameterTypes = new Type[] { typeof(T1) };
+            DelegateMapNode node = new DelegateMapNode
+            {
+                Adapter = new MethodDelegateAdapter<T1>(),
+                ParameterTypes = new Type[] { typeof(T1) }
+            };
             methods.Add(node);
+            CheckGeneraicMapper(node);
             RegisterDelegateConvertor<Action<T1>>(defaultConverter);
         }
 
         public void RegisterMethodDelegate<T1, T2>()
         {
-            DelegateMapNode node = new Enviorment.DelegateManager.DelegateMapNode();
-            node.Adapter = new MethodDelegateAdapter<T1, T2>();
-            node.ParameterTypes = new Type[] { typeof(T1), typeof(T2) };
+            DelegateMapNode node = new DelegateMapNode
+            {
+                Adapter = new MethodDelegateAdapter<T1, T2>(),
+                ParameterTypes = new Type[] { typeof(T1), typeof(T2) }
+            };
             methods.Add(node);
+            CheckGeneraicMapper(node);
             RegisterDelegateConvertor<Action<T1, T2>>(defaultConverter);
         }
 
         public void RegisterMethodDelegate<T1, T2, T3>()
         {
-            DelegateMapNode node = new Enviorment.DelegateManager.DelegateMapNode();
-            node.Adapter = new MethodDelegateAdapter<T1, T2, T3>();
-            node.ParameterTypes = new Type[] { typeof(T1), typeof(T2), typeof(T3) };
+            DelegateMapNode node = new DelegateMapNode
+            {
+                Adapter = new MethodDelegateAdapter<T1, T2, T3>(),
+                ParameterTypes = new Type[] { typeof(T1), typeof(T2), typeof(T3) }
+            };
             methods.Add(node);
+            CheckGeneraicMapper(node);
             RegisterDelegateConvertor<Action<T1, T2, T3>>(defaultConverter);
         }
 
         public void RegisterMethodDelegate<T1, T2, T3, T4>()
         {
-            DelegateMapNode node = new Enviorment.DelegateManager.DelegateMapNode();
-            node.Adapter = new MethodDelegateAdapter<T1, T2, T3, T4>();
-            node.ParameterTypes = new Type[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) };
+            DelegateMapNode node = new DelegateMapNode
+            {
+                Adapter = new MethodDelegateAdapter<T1, T2, T3, T4>(),
+                ParameterTypes = new Type[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) }
+            };
             methods.Add(node);
+            CheckGeneraicMapper(node);
             RegisterDelegateConvertor<Action<T1, T2, T3, T4>>(defaultConverter);
         }
 
         public void RegisterFunctionDelegate<TResult>()
         {
-            DelegateMapNode node = new Enviorment.DelegateManager.DelegateMapNode();
-            node.Adapter = new FunctionDelegateAdapter<TResult>();
-            node.ParameterTypes = new Type[] { typeof(TResult) };
+            DelegateMapNode node = new DelegateMapNode
+            {
+                Adapter = new FunctionDelegateAdapter<TResult>(),
+                ParameterTypes = new Type[] { typeof(TResult) }
+            };
             functions.Add(node);
             RegisterDelegateConvertor<Func<TResult>>(defaultConverter);
         }
 
         public void RegisterFunctionDelegate<T1, TResult>()
         {
-            DelegateMapNode node = new Enviorment.DelegateManager.DelegateMapNode();
-            node.Adapter = new FunctionDelegateAdapter<T1, TResult>();
-            node.ParameterTypes = new Type[] { typeof(T1), typeof(TResult) };
+            DelegateMapNode node = new DelegateMapNode
+            {
+                Adapter = new FunctionDelegateAdapter<T1, TResult>(),
+                ParameterTypes = new Type[] { typeof(T1), typeof(TResult) }
+            };
             functions.Add(node);
             RegisterDelegateConvertor<Func<T1, TResult>>(defaultConverter);
         }
 
         public void RegisterFunctionDelegate<T1, T2, TResult>()
         {
-            DelegateMapNode node = new Enviorment.DelegateManager.DelegateMapNode();
+            DelegateMapNode node = new DelegateMapNode();
             node.Adapter = new FunctionDelegateAdapter<T1, T2, TResult>();
             node.ParameterTypes = new Type[] { typeof(T1), typeof(T2), typeof(TResult) };
             functions.Add(node);
@@ -106,18 +143,22 @@ namespace ILRuntime.Runtime.Enviorment
 
         public void RegisterFunctionDelegate<T1, T2, T3, TResult>()
         {
-            DelegateMapNode node = new Enviorment.DelegateManager.DelegateMapNode();
-            node.Adapter = new FunctionDelegateAdapter<T1, T2, T3, TResult>();
-            node.ParameterTypes = new Type[] { typeof(T1), typeof(T2), typeof(T3), typeof(TResult) };
+            DelegateMapNode node = new DelegateMapNode
+            {
+                Adapter = new FunctionDelegateAdapter<T1, T2, T3, TResult>(),
+                ParameterTypes = new Type[] { typeof(T1), typeof(T2), typeof(T3), typeof(TResult) }
+            };
             functions.Add(node);
             RegisterDelegateConvertor<Func<T1, T2, T3, TResult>>(defaultConverter);
         }
 
         public void RegisterFunctionDelegate<T1, T2, T3, T4, TResult>()
         {
-            DelegateMapNode node = new Enviorment.DelegateManager.DelegateMapNode();
-            node.Adapter = new FunctionDelegateAdapter<T1, T2, T3, T4, TResult>();
-            node.ParameterTypes = new Type[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(TResult) };
+            DelegateMapNode node = new DelegateMapNode
+            {
+                Adapter = new FunctionDelegateAdapter<T1, T2, T3, T4, TResult>(),
+                ParameterTypes = new Type[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(TResult) }
+            };
             functions.Add(node);
             RegisterDelegateConvertor<Func<T1, T2, T3, T4, TResult>>(defaultConverter);
         }
@@ -125,7 +166,7 @@ namespace ILRuntime.Runtime.Enviorment
         internal Delegate ConvertToDelegate(Type clrDelegateType, IDelegateAdapter adapter)
         {
             Func<Delegate, Delegate> func;
-            if(adapter is DummyDelegateAdapter)
+            if (adapter is DummyDelegateAdapter)
             {
                 DelegateAdapter.ThrowAdapterNotFound(adapter.Method);
                 return null;
@@ -151,19 +192,22 @@ namespace ILRuntime.Runtime.Enviorment
                 sb.Append("((");
                 var mi = clrDelegateType.GetMethod("Invoke");
                 bool first = true;
-                foreach(var i in mi.GetParameters())
+                foreach (var i in mi.GetParameters())
                 {
                     if (first)
                     {
                         first = false;
                     }
                     else
+                    {
                         sb.Append(", ");
+                    }
+
                     sb.Append(i.Name);
                 }
                 sb.AppendLine(") =>");
                 sb.AppendLine("    {");
-                if(mi.ReturnType != appdomain.VoidType.TypeForCLR)
+                if (mi.ReturnType != appdomain.VoidType.TypeForCLR)
                 {
                     sb.Append("        return ((Func<");
                     first = true;
@@ -174,12 +218,18 @@ namespace ILRuntime.Runtime.Enviorment
                             first = false;
                         }
                         else
+                        {
                             sb.Append(", ");
+                        }
+
                         i.ParameterType.GetClassName(out clsName, out rName, out isByRef);
                         sb.Append(rName);
                     }
                     if (!first)
+                    {
                         sb.Append(", ");
+                    }
+
                     mi.ReturnType.GetClassName(out clsName, out rName, out isByRef);
                     sb.Append(rName);
                 }
@@ -194,7 +244,10 @@ namespace ILRuntime.Runtime.Enviorment
                             first = false;
                         }
                         else
+                        {
                             sb.Append(", ");
+                        }
+
                         i.ParameterType.GetClassName(out clsName, out rName, out isByRef);
                         sb.Append(rName);
                     }
@@ -208,7 +261,10 @@ namespace ILRuntime.Runtime.Enviorment
                         first = false;
                     }
                     else
+                    {
                         sb.Append(", ");
+                    }
+
                     sb.Append(i.Name);
                 }
                 sb.AppendLine(");");
@@ -217,6 +273,8 @@ namespace ILRuntime.Runtime.Enviorment
                 throw new KeyNotFoundException(sb.ToString());
             }
         }
+
+        private string mClsNameTemp;
 
         internal IDelegateAdapter FindDelegateAdapter(ILTypeInstance instance, ILMethod method)
         {
@@ -227,7 +285,10 @@ namespace ILRuntime.Runtime.Enviorment
                 {
                     res = zeroParamMethodAdapter.Instantiate(appdomain, instance, method);
                     if (instance != null)
+                    {
                         instance.SetDelegateAdapter(method, res);
+                    }
+
                     return res;
                 }
                 foreach (var i in methods)
@@ -239,6 +300,22 @@ namespace ILRuntime.Runtime.Enviorment
                         {
                             if (i.ParameterTypes[j] != method.Parameters[j].TypeForCLR)
                             {
+                                //UnityEngine.Debug.Log(i.ParameterTypes[j].Name + "=====" + method.Parameters[j].TypeForCLR.Name);
+                                if (mGernericsMapper.ContainsKey(i.ParameterTypes[j].Name))
+                                {
+                                    mClsNameTemp = mGernericsMapper[i.ParameterTypes[j].Name];
+                                    if (mClsNameTemp == method.Parameters[j].TypeForCLR.Name)
+                                    {
+                                        UnityEngine.Debug.Log("Match by another way!!!");
+                                        match = true;
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        UnityEngine.Debug.Log(mClsNameTemp + " == " + method.Parameters[j].TypeForCLR.Name);
+                                    }
+                                    //UnityEngine.Debug.Log(mClsNameTemp + "=====" + method.Parameters[j].TypeForCLR.Name);
+                                }
                                 match = false;
                                 break;
                             }
@@ -247,7 +324,10 @@ namespace ILRuntime.Runtime.Enviorment
                         {
                             res = i.Adapter.Instantiate(appdomain, instance, method);
                             if (instance != null)
+                            {
                                 instance.SetDelegateAdapter(method, res);
+                            }
+
                             return res;
                         }
                     }
@@ -274,7 +354,10 @@ namespace ILRuntime.Runtime.Enviorment
                             {
                                 res = i.Adapter.Instantiate(appdomain, instance, method);
                                 if (instance != null)
+                                {
                                     instance.SetDelegateAdapter(method, res);
+                                }
+
                                 return res;
                             }
                         }
@@ -284,7 +367,10 @@ namespace ILRuntime.Runtime.Enviorment
 
             res = dummyAdapter.Instantiate(appdomain, instance, method);
             if (instance != null)
+            {
                 instance.SetDelegateAdapter(method, res);
+            }
+
             return res;
         }
 

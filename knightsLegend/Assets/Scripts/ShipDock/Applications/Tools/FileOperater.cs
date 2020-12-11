@@ -44,6 +44,19 @@ namespace ShipDock.Applications
             fileCommandInfo.Dispose();
         }
 
+        public static void WriteBytes(byte[] vs, string filePath, FileOperater operater = null)
+        {
+            FileOperater fileOperater = (operater == null) ? new FileOperater() : operater;
+            FileCommandInfo fileCommandInfo = new FileCommandInfo
+            {
+                FileFullName = filePath,
+                FileReadType = FileCommandInfo.FileCommandInfoReadType.Bytes,
+                DataBytes = vs
+            };
+            fileOperater.WriteFile(ref fileCommandInfo);
+            fileCommandInfo.Dispose();
+        }
+
         public static string ReadUTF8Text(string filePath, FileOperater operater = null)
         {
             FileOperater fileOperater = (operater == null) ? new FileOperater() : operater;

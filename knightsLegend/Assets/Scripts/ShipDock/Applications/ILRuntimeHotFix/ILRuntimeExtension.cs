@@ -16,6 +16,11 @@ public static class ILRuntimeExtension
         frameworkApp = app;
     }
 
+    public static IAppILRuntime GetAppILRuntime(this ILRuntimeHotFix target)
+    {
+        return frameworkApp;
+    }
+
     public static ILRuntimeHotFix GetILRuntimeHotFix()
     {
         return frameworkApp.ILRuntimeHotFix;

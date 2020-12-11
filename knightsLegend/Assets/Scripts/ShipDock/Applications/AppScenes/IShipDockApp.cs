@@ -18,10 +18,18 @@ namespace ShipDock.Applications
         void EnterGameHandler();
         void GetDataProxyHandler(IParamNotice<IDataProxy[]> param);
         void ApplicationCloseHandler();
+        void SetShipDockGame(ShipDockGame comp);
     }
 
     public abstract class ShipDockAppComponent : MonoBehaviour, IShipDockApp
     {
+        protected ShipDockGame GameComponent { get; private set; }
+
+        protected virtual void OnDestroy()
+        {
+            GameComponent = default;
+        }
+
         public virtual void CreateTestersHandler()
         {
         }
@@ -81,6 +89,11 @@ namespace ShipDock.Applications
 
         public virtual void ApplicationCloseHandler()
         {
+        }
+
+        public void SetShipDockGame(ShipDockGame comp)
+        {
+            GameComponent = comp;
         }
     }
 }

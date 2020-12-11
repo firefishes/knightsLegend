@@ -10,6 +10,7 @@ namespace ShipDock.Applications
 {
     public class ConfigServer : Server.Server
     {
+        public bool hasLocalsConfig;
 
         private IConfigNotice mLoadConfigNotice;
         private string mConfigLoading;
@@ -17,7 +18,7 @@ namespace ShipDock.Applications
         private Queue<string> mWillLoadNames;
         private KeyValueList<string, IConfigHolder> mConfigHolders;
 
-        public ConfigServer(string serverName) : base(serverName) { }
+        public ConfigServer(string serverName = ShipDockConsts.SERVER_CONFIG) : base(serverName) { }
 
         public override void InitServer()
         {
@@ -26,7 +27,10 @@ namespace ShipDock.Applications
             mConfigHolders = new KeyValueList<string, IConfigHolder>();
 
             Register<IConfigNotice>(GetConfigNotice, Pooling<ConfigNotice>.Instance);
-            Register<IConfigHolder>(GetLocalCNConfig);
+            if(hasLocalsConfig)
+            {
+                Register<IConfigHolder>(GetLocalCNConfig);
+            }
         }
 
         /// <summary>配置消息对象解析器</summary>

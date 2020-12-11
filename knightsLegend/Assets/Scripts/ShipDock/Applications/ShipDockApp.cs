@@ -49,6 +49,8 @@ namespace ShipDock.Applications
         private KeyValueList<IStateMachine, IUpdate> mFSMUpdaters;
         private KeyValueList<IState, IUpdate> mStateUpdaters;
 
+        private IHotFixConfig HotFixConfig { get; set; }
+
         public bool IsStarted { get; private set; }
         public UIManager UIs { get; private set; }
         public TicksUpdater TicksUpdater { get; private set; }
@@ -89,7 +91,6 @@ namespace ShipDock.Applications
             Effects = new Effects();//新建特效管理器
             Locals = new Locals();//新建本地化管理器
             PerspectivesInputer = new PerspectiveInputer();//新建透视物体交互器
-            ILRuntimeHotFix = new ILRuntimeHotFix(this);//新建IL热更方案的管理器
 
             mFSMUpdaters = new KeyValueList<IStateMachine, IUpdate>();
             mStateUpdaters = new KeyValueList<IState, IUpdate>();
@@ -402,6 +403,24 @@ namespace ShipDock.Applications
                 proxy = Datas.GetData<IDataProxy>(dataNames[i]);
                 proxy.Unregister(target);
             }
+        }
+
+        public void SetHotFixSetting(ILRuntimeHotFix value, IHotFixConfig config)
+        {
+            if (value != default)
+            {
+                ILRuntimeHotFix = value;//新建IL热更方案的管理器
+                if (ILRuntimeHotFix.GetAppILRuntime() == default)
+                {
+                    ILRuntimeHotFix.InitFromApp(this);
+                }
+            }
+            HotFixConfig = config;
+        }
+
+        public IHotFixConfig GetHotFixConfig()
+        {
+            return HotFixConfig;
         }
     }
 }
