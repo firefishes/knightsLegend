@@ -7,15 +7,21 @@ namespace ShipDock.Applications
     [Serializable]
     public class HotFixerSubgroup
     {
+        [Header("桥接至热更端的绑定信息")]
         [SerializeField]
+        [Tooltip("AsstBundle资源名")]
         protected string m_HotFixABName;
         [SerializeField]
+        [Tooltip("dll热更资源名")]
         protected string m_HotFixDLL;
         [SerializeField]
+        [Tooltip("pdb符号表文件资源名")]
         protected string m_HotFixPDB;
         [SerializeField]
+        [Tooltip("热更端可能用到的值类型桥接设置")]
         private ValueSubgroup[] m_ComponentData;
         [SerializeField]
+        [Tooltip("热更端可能用到的引用类型桥接设置")]
         private SceneNodeSubgroup[] m_SceneNodes;
         
         public Dictionary<string, ValueSubgroup> DataMapper { get; private set; }

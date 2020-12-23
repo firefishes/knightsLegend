@@ -1,5 +1,4 @@
-﻿using ShipDock.Interfaces;
-using ShipDock.Notices;
+﻿using ShipDock.Notices;
 using ShipDock.Tools;
 using System;
 using System.Collections.Generic;
@@ -11,7 +10,7 @@ namespace ShipDock.Applications
     /// 心跳帧更新器
     /// 
     /// </summary>
-    public class TicksUpdater : IDispose, INotificationSender
+    public class TicksUpdater : INotificationSender
     {
         public const int TICKS_FIXED_UPDATE = 0;
         public const int TICKS_UPDATE = 1;

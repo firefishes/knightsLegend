@@ -1,11 +1,10 @@
-﻿using ShipDock.Interfaces;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 namespace ShipDock.Applications
 {
-    public class PerspectiveInputer : IDispose
+    public class PerspectiveInputer
     {
         #region 回调函数
         /// <summary> The on drag. </summary>
@@ -173,7 +172,7 @@ namespace ShipDock.Applications
                     mIsEnter = true;
                 }
                 onStay?.Invoke(mHitTarget);
-                if ((mOldTarget != mHitTarget) && (mOldTarget != null))
+                if ((mOldTarget != mHitTarget) && (mOldTarget != default))
                 {
                     SetExit();
                 }
@@ -182,10 +181,10 @@ namespace ShipDock.Applications
             else
             {
                 SetExit();
-                mHitTarget = null;
+                mHitTarget = default;
 
                 mInputData.screenPosition = mMousePos;
-                mInputData.target = null;
+                mInputData.target = default;
                 if (Input.GetMouseButtonDown(0))
                 {
                     mMouseDownPos = Input.mousePosition;
@@ -207,7 +206,7 @@ namespace ShipDock.Applications
                             mIsDragStart = true;
                         }
                         mIsDrag = true;
-                        curDragObj = null;
+                        curDragObj = default;
                         onDrag?.Invoke(mInputData);
                     }
                 }
@@ -224,13 +223,13 @@ namespace ShipDock.Applications
                         mInputData.target = curDragObj;
                         onDragEnd?.Invoke(mInputData);
                     }
-                    mTargetTF = null;
+                    mTargetTF = default;
                     mIsDrag = false;
-                    curDragObj = null;
+                    curDragObj = default;
                 }
             }
 
-            if (mTargetTF == null && !mIsNullStart)
+            if (mTargetTF == default && !mIsNullStart)
             {
                 return;
             }
@@ -268,7 +267,7 @@ namespace ShipDock.Applications
             if (Input.GetMouseButtonUp(0))
             {
                 mMouseDis = Vector3.Distance(mMouseDownPos, mMousePos);
-                if (mInputData != null)
+                if (mInputData != default)
                 {
                     mInputData.target = mTargetTF;
                 }
@@ -281,9 +280,9 @@ namespace ShipDock.Applications
                     //Debug.Log("onDragEnd 2" + curDragObj);
                     onDragEnd?.Invoke(mInputData);
                 }
-                mTargetTF = null;
+                mTargetTF = default;
                 mIsDrag = false;
-                curDragObj = null;
+                curDragObj = default;
             }
         }
 

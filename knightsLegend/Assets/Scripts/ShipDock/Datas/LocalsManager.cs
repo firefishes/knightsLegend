@@ -1,5 +1,4 @@
-﻿using ShipDock.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,7 +9,7 @@ namespace ShipDock.Datas
     /// 本地化多语言管理器
     /// 
     /// </summary>
-    public class Locals : IDispose
+    public class Locals
     {
         public AssetBundle languageAssetBundle;
 

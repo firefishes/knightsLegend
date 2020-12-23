@@ -66,6 +66,7 @@ namespace ShipDock.Applications
         public Tester Tester { get; private set; }
         public PerspectiveInputer PerspectivesInputer { get; private set; }
         public ILRuntimeHotFix ILRuntimeHotFix { get; private set; }
+        public DecorativeModulars AppModulars { get; private set; }
 
         public void Start(int ticks)
         {
@@ -91,6 +92,7 @@ namespace ShipDock.Applications
             Effects = new Effects();//新建特效管理器
             Locals = new Locals();//新建本地化管理器
             PerspectivesInputer = new PerspectiveInputer();//新建透视物体交互器
+            AppModulars = new DecorativeModulars();//新建装饰模块管理器
 
             mFSMUpdaters = new KeyValueList<IStateMachine, IUpdate>();
             mStateUpdaters = new KeyValueList<IState, IUpdate>();
@@ -318,17 +320,18 @@ namespace ShipDock.Applications
             Utils.Reclaim(ref mFSMUpdaters);
             Utils.Reclaim(ref mStateUpdaters);
 
-            Utils.Reclaim(Locals);
-            Utils.Reclaim(Effects);
-            Utils.Reclaim(Notificater);
-            Utils.Reclaim(TicksUpdater);
-            Utils.Reclaim(Components);
-            Utils.Reclaim(Servers);
-            Utils.Reclaim(StateMachines);
-            Utils.Reclaim(Datas);
-            Utils.Reclaim(AssetsPooling);
-            Utils.Reclaim(ABs);
-            Utils.Reclaim(PerspectivesInputer);
+            Locals?.Dispose();
+            Effects?.Dispose();
+            Notificater?.Dispose();
+            TicksUpdater?.Dispose();
+            Components?.Dispose();
+            Servers?.Dispose();
+            StateMachines?.Dispose();
+            Datas?.Dispose();
+            AssetsPooling?.Dispose();
+            ABs?.Dispose();
+            PerspectivesInputer?.Dispose();
+            AppModulars?.Dispose();
 
             Tester?.Dispose();
 
@@ -347,6 +350,7 @@ namespace ShipDock.Applications
             Tester = default;
             PerspectivesInputer = default;
             ILRuntimeHotFix = default;
+            AppModulars = default;
 
             GC.Collect();
         }

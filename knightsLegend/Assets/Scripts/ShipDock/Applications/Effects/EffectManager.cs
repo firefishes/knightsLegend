@@ -1,7 +1,4 @@
-﻿using ShipDock.Interfaces;
-using ShipDock.Notices;
-using ShipDock.Tools;
-using System;
+﻿using ShipDock.Tools;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,7 +9,7 @@ namespace ShipDock.Applications
     /// 特效资源管理器
     /// 
     /// </summary>
-    public class Effects : IDispose
+    public class Effects
     {
         private class Effect
         {
@@ -100,7 +97,7 @@ namespace ShipDock.Applications
             return mPrefabRaw.ContainsKey(id);
         }
 
-        public void CreateSource(int id, ref ResPrefabBridge source, int total, int preCreate = 0)
+        public void CreateSource(int id, ref GameObject source, int total, int preCreate = 0)
         {
             Effect effect;
             if (mPrefabRaw.ContainsKey(id))
@@ -111,7 +108,7 @@ namespace ShipDock.Applications
             {
                 effect = new Effect
                 {
-                    source = source.Prefab,
+                    source = source,
                     total = total
                 };
                 effect.Init();
@@ -124,7 +121,13 @@ namespace ShipDock.Applications
             }
         }
 
-        public void FillFromSource(int id, ref ResPrefabBridge source)
+        public void CreateSource(int id, ref ResPrefabBridge source, int total, int preCreate = 0)
+        {
+            GameObject prefab = source.Prefab;
+            CreateSource(id, ref prefab, total, preCreate);
+        }
+
+        public void FillToPrefabBridge(int id, ref ResPrefabBridge source)
         {
             if (mPrefabRaw.ContainsKey(id))
             {
@@ -159,11 +162,11 @@ namespace ShipDock.Applications
             }
             else
             {
-                UnityEngine.Object.Destroy(target);
+                Object.Destroy(target);
             }
         }
 
-        public void RemoveEffectRaw(int id, ref ResPrefabBridge source)
+        public void RemoveEffectRaw(int id)
         {
             if (mPrefabRaw.ContainsKey(id))
             {

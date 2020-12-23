@@ -16,7 +16,7 @@
         Popup,
     }
 
-    public class UIStack : IUIStack
+    public class UIStack : object, IUIStack
     {
         public virtual void Init()
         {
@@ -52,8 +52,8 @@
             IsStackAdvanced = true;
         }
 
-        public bool IsExited { get; private set; }
-        public bool IsStackAdvanced { get; private set; }
+        public virtual bool IsExited { get; private set; }
+        public virtual bool IsStackAdvanced { get; private set; }
         /// <summary>是否栈式UI模块</summary>
         public virtual bool IsStackable { get; } = true;
         /// <summary>UI资源名（预制体名）</summary>

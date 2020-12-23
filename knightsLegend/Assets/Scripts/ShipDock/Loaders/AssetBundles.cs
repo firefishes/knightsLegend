@@ -1,5 +1,4 @@
-﻿using ShipDock.Interfaces;
-using ShipDock.Tools;
+﻿using ShipDock.Tools;
 using UnityEngine;
 
 namespace ShipDock.Loader
@@ -9,7 +8,7 @@ namespace ShipDock.Loader
     /// 资源包管理器
     /// 
     /// </summary>
-    public class AssetBundles : IDispose, IAssetBundles
+    public class AssetBundles : IAssetBundles
     {
         public const string ASSET_BUNDLE_MANIFEST = "AssetBundleManifest";
 

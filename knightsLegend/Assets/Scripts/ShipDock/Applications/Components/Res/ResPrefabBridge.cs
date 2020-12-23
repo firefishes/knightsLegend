@@ -6,6 +6,18 @@ namespace ShipDock.Applications
 {
     public class ResPrefabBridge : ResBridge, IResPrefabBridge
     {
+        public bool IsCreateInAwake
+        {
+            get
+            {
+                return m_IsCreateInAwake;
+            }
+            set
+            {
+                m_IsCreateInAwake = value;
+            }
+        }
+
         protected override void Awake()
         {
             base.Awake();

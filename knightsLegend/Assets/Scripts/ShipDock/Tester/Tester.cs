@@ -114,7 +114,7 @@ namespace ShipDock.Testers
         }
 
         [System.Diagnostics.Conditional("G_LOG")]
-        public void AddLogger(ITester tester, string logID, string format, string logColor = "", System.Action<string[]> onLogedMethod = null)
+        public void AddLogger(ITester tester, string logID, string format, string logColor = "", Action<string[]> onLogedMethod = default)
         {
             if (!mTesterMapper.ContainsKey(logID))
             {

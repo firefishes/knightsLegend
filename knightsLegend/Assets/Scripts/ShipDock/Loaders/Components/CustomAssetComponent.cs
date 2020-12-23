@@ -60,7 +60,7 @@ namespace ShipDock.Loader
                     {
                         m_Assets[i].refresh = false;
                         m_Assets[i].UpdateCustomAssetName();
-                        name = m_Assets[i].assetName;
+                        name = m_BundleName.Append(": ", m_Assets[i].assetName);
                         break;
                     }
                 }

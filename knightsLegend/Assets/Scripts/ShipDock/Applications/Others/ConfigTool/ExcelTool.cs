@@ -9,14 +9,24 @@ namespace ShipDock.Applications
 {
     public class ExcelTool
     {
+        /// <summary>
+        /// 配置转换的相关设置
+        /// </summary>
         public class ExeclSetting
         {
+            /// <summary>配置数据的起始行列定义</summary>
             public ExeclDefination dataStart;
+            /// <summary>类信息（类名等）的行列定义</summary>
             public ExeclDefination classDefine;
+            /// <summary>类模板信息（映射对象、静态类等）的行列定义</summary>
             public ExeclDefination classType;
+            /// <summary>id字段名的行列定义</summary>
             public ExeclDefination IDFieldName;
+            /// <summary>字段类型的行列定义</summary>
             public ExeclDefination dataType;
+            /// <summary>字段名的行列定义</summary>
             public ExeclDefination keyFieldDef;
+            /// <summary>注释的行列定义</summary>
             public ExeclDefination noteFieldDef;
         }
 
@@ -70,6 +80,31 @@ namespace ShipDock.Applications
             };
         }
 
+        public class ClassTemplateInfo
+        {
+            public StringBuilder sb;
+            public DataRowCollection collect;
+            public int notesRow;
+            public int dataStartCol;
+            public string className;
+            public string typeValue;
+            public string IDName;
+            /// <summary>类名标记</summary>
+            public string rplClsName = "%cls%";
+            /// <summary>id字段名标记</summary>
+            public string idKeyName = "%id%";
+            /// <summary>字段类型标记</summary>
+            public string typeName = "%type%";
+            /// <summary>字段名标记</summary>
+            public string fieldName = "%fieldName%";
+            /// <summary>解析配置的代码段落标记</summary>
+            public string parseCode = "%parseCode%";
+            /// <summary>其他代码段落标记（类的字段等代码）</summary>
+            public string codes = "%codes%";
+            /// <summary注释标记</summary>
+            public string notes = "%notes%";
+        }
+
         /// <summary>
         /// 读取表数据，生成对应的数组
         /// </summary>
@@ -79,10 +114,7 @@ namespace ShipDock.Applications
         {
             InitExeclDefs();
 
-            //获得表数据
-            DataRowCollection collect = ReadExcel(filePath, out int rowSize, out int colSize);
-
-            uint id;
+            DataRowCollection collect = ReadExcel(filePath, out int rowSize, out int colSize);//获得表数据
             int col = Setting.classDefine.column, row = Setting.classDefine.row;
             string className = collect[row][col].ToString();//类名
 
@@ -97,59 +129,35 @@ namespace ShipDock.Applications
             int dataStartRow = Setting.dataStart.row;
             int dataStartCol = Setting.dataStart.column;
 
-            //colSize -= rowSize;
-            int max = colSize;
             object[] result = new object[colSize];
-            object item;
-            DataRow dataRow;
-            ByteBuffer buffer = ByteBuffer.Allocate(0);
             StringBuilder sb = new StringBuilder();
 
-            int typeRow = Setting.dataType.row;//dataStartRow - 4;//类型名所在行//
-            Debug.Log(Setting.dataType.row);
-            Debug.Log(Setting.keyFieldDef.row);
-            Debug.Log(Setting.noteFieldDef.row);
-            int keyRow = Setting.keyFieldDef.row;//dataStartRow - 2;//字段名所在行
-            int notesRow = Setting.noteFieldDef.row;//// dataStartRow - 1;//注释所在行
+            int typeRow = Setting.dataType.row;//类型名所在行
+            int keyRow = Setting.keyFieldDef.row;//字段名所在行
+            int notesRow = Setting.noteFieldDef.row;//注释所在行
             object IDTypeCell = collect[typeRow][dataStartCol];
             string typeValue = GetTypeValueByCell(IDTypeCell.ToString());
 
-            string rplClsName = "%cls%";
-            string idKeyName = "%id%";
-            string typeName = "%type%";
-            string parseCode = "%parseCode%";
-            string codes = "%codes%";
-            string fieldName = "%fieldName%";
-            string notes = "%notes%";
+            ClassTemplateInfo info = new ClassTemplateInfo
+            {
+                sb = sb,
+                collect = collect,
+                className = className,
+                notesRow = notesRow,
+                dataStartCol = dataStartCol,
+                typeValue = typeValue,
+                IDName = IDName,
+            };
+
             switch (classType)
             {
-                case "mapper"://用于映射到字典的可实例化对象的配置
-                    sb.Append("using ShipDock.Applications;\r\n\r\n");
-                    sb.Append("namespace StaticConfig\r\n");
-                    sb.Append("{\r\n");
-                    sb.Append("    public class %cls% : IConfig\r\n".Replace(rplClsName, className));
-                    sb.Append("    {\r\n");
-                    sb.Append("        /// <summary>\r\n");
-                    sb.Append("        /// %notes%\r\n").Replace(notes, collect[notesRow][dataStartCol].ToString());
-                    sb.Append("        /// <summary>\r\n");
-                    sb.Append("        public %type% %id%;\r\n\r\n").Replace(typeName, typeValue).Replace(idKeyName, IDName);//ID
-                    sb.Append("        %codes%\r\n");//容纳其他代码
-                    sb.Append("        public string CRCValue { get; }\r\n\r\n");
-                    sb.Append("        public %type% GetID()\r\n").Replace(typeName, typeValue);
-                    sb.Append("        {\r\n");
-                    sb.Append("            return id;\r\n");
-                    sb.Append("        }\r\n\r\n");
-                    sb.Append("        public void Parse(ByteBuffer buffer)\r\n");
-                    sb.Append("        {\r\n");
-                    sb.Append("            %parseCode%\r\n");
-                    sb.Append("        }\r\n\r\n");
-                    sb.Append("    }\r\n");
-                    sb.Append("}\r\n");
+                case "mapper":
+                    TemplateMapperConfig(info);
                     break;
                 case "const"://常量类
                     sb.Append("namespace StaticConfig");
                     sb.Append("{");
-                    sb.Append("    public static class %cls%".Replace(rplClsName, className));
+                    sb.Append("    public static class %cls%".Replace(info.rplClsName, className));
                     sb.Append("    {");
                     sb.Append("    }");
                     sb.Append("}");
@@ -159,6 +167,7 @@ namespace ShipDock.Applications
             string script = sb.ToString();
             sb.Clear();
 
+            object item;
             string parserCode = IDName.Append(GetParseMethodByType(IDTypeCell.ToString()));
             for (int i = dataStartCol + 1; i < colSize; i++)//从id列顺延下一个字段开始构建剩余的脚本
             {
@@ -174,15 +183,15 @@ namespace ShipDock.Applications
                 item = collect[keyRow][i];//字段名
                 field = item.ToString();
                 sb.Append("/// <summary>");
-                sb.Append("\r\n        /// %notes%").Replace(notes, collect[notesRow][i].ToString());
+                sb.Append("\r\n        /// %notes%").Replace(info.notes, collect[notesRow][i].ToString());
                 sb.Append("\r\n        /// <summary>\r\n        ");
-                sb.Append("public %type% %fieldName%;\r\n").Replace(typeName, typeValue).Replace(fieldName, field);
+                sb.Append("public %type% %fieldName%;\r\n").Replace(info.typeName, typeValue).Replace(info.fieldName, field);
                 sb.Append("        ");
 
                 parserCode = parserCode.Append(field, GetParseMethodByType(collect[typeRow][i].ToString()));
             }
-            script = script.Replace(codes, sb.ToString());
-            script = script.Replace(parseCode, parserCode);
+            script = script.Replace(info.codes, sb.ToString());
+            script = script.Replace(info.parseCode, parserCode);
             sb.Clear();
 
             string path = Application.dataPath.Append("/HotFix~/StaticConfigs/".Append(className, ".cs"));
@@ -206,6 +215,36 @@ namespace ShipDock.Applications
             path = Application.dataPath.Append("/StreamingAssets/res_data/configs/".Append(className, ".bin"));
             FileOperater.WriteBytes(byteBuffer.ToArray(), path);
             return result;
+        }
+
+        /// <summary>
+        /// 用于映射到字典的可实例化对象的配置
+        /// </summary>
+        /// <param name="info"></param>
+        private static void TemplateMapperConfig(ClassTemplateInfo info)
+        {
+            StringBuilder sb = info.sb;
+            sb.Append("using ShipDock.Applications;\r\n\r\n");
+            sb.Append("namespace StaticConfig\r\n");
+            sb.Append("{\r\n");
+            sb.Append("    public class %cls% : IConfig\r\n".Replace(info.rplClsName, info.className));
+            sb.Append("    {\r\n");
+            sb.Append("        /// <summary>\r\n");
+            sb.Append("        /// %notes%\r\n").Replace(info.notes, info.collect[info.notesRow][info.dataStartCol].ToString());
+            sb.Append("        /// <summary>\r\n");
+            sb.Append("        public %type% %id%;\r\n\r\n").Replace(info.typeName, info.typeValue).Replace(info.idKeyName, info.IDName);//ID
+            sb.Append("        %codes%\r\n");//容纳其他代码
+            sb.Append("        public string CRCValue { get; }\r\n\r\n");
+            sb.Append("        public %type% GetID()\r\n").Replace(info.typeName, info.typeValue);
+            sb.Append("        {\r\n");
+            sb.Append("            return id;\r\n");
+            sb.Append("        }\r\n\r\n");
+            sb.Append("        public void Parse(ByteBuffer buffer)\r\n");
+            sb.Append("        {\r\n");
+            sb.Append("            %parseCode%\r\n");
+            sb.Append("        }\r\n\r\n");
+            sb.Append("    }\r\n");
+            sb.Append("}\r\n");
         }
 
         private static void WriteField(ref ByteBuffer byteBuffer, string typeValue, string field)

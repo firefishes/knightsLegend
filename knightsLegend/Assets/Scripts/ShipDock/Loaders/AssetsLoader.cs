@@ -79,6 +79,7 @@ namespace ShipDock.Loader
                     relativeName = relativeName,
                     isGetDependencies = isDependenciesLoader
                 };
+                "log: mOpertions enqueue ".Log(opertion.relativeName);
                 mOpertions.Enqueue(opertion);
             }
             return this;
@@ -105,27 +106,42 @@ namespace ShipDock.Loader
                 mCurrentOption = mOpertions.Dequeue();
 
                 string source = mCurrentOption.relativeName;
-                if (mCurrentOption.isGetDependencies)
+                if (mCurrentOption.isGetDependencies)//资源依赖
                 {
                     InitDependencesList(source);
                     mIndex = 0;
                     source = GetValidSourceByIndex(ref source);
                     mIndex++;
                 }
-                else if (!mCurrentOption.isManifest)
+                else if (!mCurrentOption.isManifest)//资源主依赖
                 {
                     source = mCurrentOption.url;
                 }
 
-                if(!string.IsNullOrEmpty(source))
+                if(string.IsNullOrEmpty(source))
                 {
-                    "load res".Log(source);
-                    mLoader.Load(source);
+                    LoadNext(out statu);//若依赖资源的路径为空，加载下一个资源
+                    "empty deps".Log(statu == 2);
                 }
                 else
                 {
-                    statu = 2;
+                    "load res".Log(source);
+                    mLoader.Load(source);//加载当前资源的依赖资源
                 }
+            }
+            else
+            {
+                statu = 2;
+            }
+        }
+
+        private void LoadNext(out int statu)
+        {
+            statu = 0;
+            if (mOpertions.Count > 0)
+            {
+                mCurrentOption = default;
+                Load(out statu);//加载下一个资源
             }
             else
             {
@@ -163,7 +179,7 @@ namespace ShipDock.Loader
                 dep = list[i];
                 if (dep.Length > 0)
                 {
-                    "deps".Log(dep, deped);
+                    "deps".Log(deped, dep);
                     WalkDependences(dep);
                     if (!mDependences.Contains(dep))
                     {
@@ -177,7 +193,6 @@ namespace ShipDock.Loader
         {
             if(mIndex >= mDependences.Count)
             {
-                "empty deps".Log();
                 return string.Empty;
             }
             source = mDependences[mIndex];

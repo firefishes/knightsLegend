@@ -702,7 +702,7 @@ namespace ILRuntime.CLR.TypeSystem
             {
                 foreach (var i in lst)
                 {
-                    if (i.ParameterCount == param.Count)
+                    if ((param != default) && (i.ParameterCount == param.Count))
                     {
                         bool match = true;
                         if (genericArguments != null && i.GenericParameterCount == genericArguments.Length)

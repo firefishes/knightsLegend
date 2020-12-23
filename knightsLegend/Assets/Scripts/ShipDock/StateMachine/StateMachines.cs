@@ -1,5 +1,4 @@
-﻿using ShipDock.Interfaces;
-using ShipDock.Tools;
+﻿using ShipDock.Tools;
 using System;
 
 namespace ShipDock.FSM
@@ -11,7 +10,7 @@ namespace ShipDock.FSM
     /// add by Minghua.ji
     /// 
     /// </summary>
-    public class StateMachines : IDispose
+    public class StateMachines
     {
 
         private KeyValueList<int, IStateMachine> mFSMMapper;

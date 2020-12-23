@@ -1,13 +1,17 @@
 ﻿#define G_LOG
-#define LOADER
-#define LOADER_FAILED
-#define _LOADER_SUCCESS
-#define _LOADER_DEPS
-#define _LOADER_LOAD
-#define POOLING
+#define _LOG_NOTICE
+#define LOG_LOADER
+#define LOG_LOADER_FAILED
+#define _LOG_LOADER_SUCCESS
+#define _LOG_LOADER_DEPS
+#define _LOG_LOADER_LOAD
+#define LOG_POOLING
 #define LOG_WHEN_ERROR_POOL_TYPE
 #define _LOG_DIR_FROM_DEVICE_LOCAL_CHECKED
 #define LOG_FSM
+
+using ShipDock.Notices;
+using System;
 
 namespace ShipDock.Testers
 {
@@ -18,7 +22,12 @@ namespace ShipDock.Testers
             Tester tester = Tester.Instance;
             tester.AddTester(this);
             tester.AddLogger(this, "debug", "{0}");
-#if POOLING
+#if LOG_NOTICE
+            tester.AddLogger(this, "notice add", "log: {0}- Notice {1} registered");
+            tester.AddLogger(this, "notice send", "log: {0}- Send notice {1} ");
+            tester.AddLogger(this, "notice rm", "log: {0}- Remove notice {1}");
+#endif
+#if LOG_POOLING
 #if LOG_WHEN_ERROR_POOL_TYPE
             tester.AddLogger(this, "pool type error", "error: A wrong pooling revert, instance type is {0}");
 #endif
@@ -27,20 +36,20 @@ namespace ShipDock.Testers
             tester.AddLogger(this, LOG2, "log: Asset is from priv: {0}, path key is: {1}");
             tester.AddLogger(this, LOG3, "log: Asset path is : {0}");
 #endif
-#if LOADER
-#if LOADER_FAILED
+#if LOG_LOADER
+#if LOG_LOADER_FAILED
             tester.AddLogger(this, "loader failed", "error: Loader load failed, Url is {0}");
 #endif
-#if LOADER_SUCCESS
+#if LOG_LOADER_SUCCESS
             tester.AddLogger(this, "loader success", "log: Loader successed: {0}");
 #endif
-#if LOADER_DEPS
+#if LOG_LOADER_DEPS
             tester.AddLogger(this, "loader deps", "log: Loader complete and get dependency: {0}");
-            tester.AddLogger(this, "empty deps", "warning: : dependences is empty");
+            tester.AddLogger(this, "empty deps", "warning: dependences is empty");
             tester.AddLogger(this, "deps", "log: Dependence: {0} => {1}");
             tester.AddLogger(this, "walk deps", "log: Walk dependences will out of stacks");
 #endif
-#if LOADER_LOAD
+#if LOG_LOADER_LOAD
             tester.AddLogger(this, "load res", "log: Load res in dependence {0}");
 #endif
 #endif

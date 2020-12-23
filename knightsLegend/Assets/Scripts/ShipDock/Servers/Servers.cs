@@ -1,5 +1,4 @@
 ﻿using ShipDock.Applications;
-using ShipDock.Interfaces;
 using ShipDock.Tools;
 using System;
 using System.Collections.Generic;
@@ -12,7 +11,7 @@ namespace ShipDock.Server
     /// 服务容器管理器
     /// 
     /// </summary>
-    public class Servers : IDispose, IServersHolder
+    public class Servers : IServersHolder
     {
         private static readonly Type resolvableAttrType = typeof(ResolvableAttribute);
         private static readonly Type serverPriorityAttrType = typeof(ServerPriority);

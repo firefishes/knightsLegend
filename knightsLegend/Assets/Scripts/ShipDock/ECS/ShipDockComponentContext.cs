@@ -1,6 +1,5 @@
 ﻿#define _G_LOG
 
-using ShipDock.Interfaces;
 using ShipDock.Tools;
 using System;
 using System.Collections.Generic;
@@ -18,7 +17,7 @@ namespace ShipDock.ECS
     /// ECS组件上下文环境
     /// 
     /// </summary>
-    public class ShipDockComponentContext : IShipDockComponentContext, IDispose
+    public class ShipDockComponentContext : IShipDockComponentContext
     {
         private int mFinalUpdateTime;
         private IShipDockEntitas mFinalUpdateEntitas;

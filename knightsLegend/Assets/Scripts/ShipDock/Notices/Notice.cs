@@ -47,7 +47,7 @@ namespace ShipDock.Notices
             Purge();
         }
 
-        public void SetNoticeName(int value)
+        public virtual void SetNoticeName(int value)
         {
             Name = value;
         }
@@ -57,8 +57,8 @@ namespace ShipDock.Notices
             return target == NotifcationSender;
         }
 
-        public bool IsRecivedNotice { get; set; }
+        public virtual bool IsRecivedNotice { get; set; }
         public virtual int Name { get; private set; }
-        public INotificationSender NotifcationSender { get; set; }
+        public virtual INotificationSender NotifcationSender { get; set; }
     }
 }

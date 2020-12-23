@@ -1,5 +1,4 @@
-﻿using ShipDock.Interfaces;
-using ShipDock.Tools;
+﻿using ShipDock.Tools;
 
 namespace ShipDock.Datas
 {
@@ -8,7 +7,7 @@ namespace ShipDock.Datas
     /// 数据代理管理器
     /// 
     /// </summary>
-    public class DataWarehouse : IDispose
+    public class DataWarehouse
     {
         private KeyValueList<int, IDataProxy> mDataMapper;
 

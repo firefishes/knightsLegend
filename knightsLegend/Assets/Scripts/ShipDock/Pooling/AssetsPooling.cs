@@ -3,8 +3,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 using ShipDock.Tools;
-using ShipDock.Testers;
-using ShipDock.Interfaces;
+#if G_LOG
+#endif
 using ShipDock.Applications;
 
 namespace ShipDock.Pooling
@@ -17,7 +17,7 @@ namespace ShipDock.Pooling
     /// add by Minghua.ji
     /// 
     /// </summary>
-    public class AssetsPooling : IDispose
+    public class AssetsPooling
     {
 
         public delegate void OnGameObjectPoolItem(GameObject target);

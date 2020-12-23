@@ -1,6 +1,7 @@
 ﻿#define _G_LOG
 
 using ShipDock.Tools;
+using System;
 using System.Collections.Generic;
 
 namespace ShipDock.UI
@@ -27,7 +28,7 @@ namespace ShipDock.UI
             return mUICached.ContainsKey(stackName) ? (T)mUICached[stackName] : default;
         }
 
-        public T CreateOrGetUICache<T>(string stackName) where T : IUIStack, new()
+        public T CreateOrGetUICache<T>(string stackName, Func<object> creater = default) where T : IUIStack, new()
         {
             T result = default;
             if(mUICached.ContainsKey(stackName))
@@ -44,7 +45,7 @@ namespace ShipDock.UI
             }
             else
             {
-                result = new T();
+                result = creater == default ? new T() : (T)creater();
                 result.Init();
                 mUICached[result.Name] = result;
 

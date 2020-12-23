@@ -109,6 +109,7 @@ namespace ShipDock.Applications
             }
             else
             {
+                "error: GetClassCache error, do not exist class, class name is {0}".Log(!appDomain.LoadedTypes.ContainsKey(type), type);
                 cls = appDomain.LoadedTypes[type];
                 mCacheType[type] = cls;
             }
@@ -123,14 +124,14 @@ namespace ShipDock.Applications
             mCacheType.Clear();
             mCacherByParamCount.Clear();
 
-            int max = mCacheMethodList.Count;
+            int max = mCacheMethodList != default ? mCacheMethodList.Count : 0;
             Dictionary<string, IMethod> mapper;
             for (int i = 0; i < max; i++)
             {
                 mapper = mCacheMethodList[i];
                 mapper.Clear();
             }
-            mCacheMethodList.Clear();
+            mCacheMethodList?.Clear();
         }
     }
 }

@@ -1122,7 +1122,10 @@ namespace ILRuntime.Runtime.Enviorment
                 return new InvocationContext(inteptreter, (ILMethod)m);
             }
             else
+            {
+                UnityEngine.Debug.Log(m);
                 throw new NotSupportedException("Cannot invoke CLRMethod");
+            }
         }
         internal IMethod GetMethod(object token, ILType contextType, ILMethod contextMethod, out bool invalidToken)
         {

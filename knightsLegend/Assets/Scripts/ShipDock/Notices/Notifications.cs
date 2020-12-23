@@ -1,5 +1,4 @@
-﻿using ShipDock.Interfaces;
-using ShipDock.Tools;
+﻿using ShipDock.Tools;
 using System;
 
 namespace ShipDock.Notices
@@ -30,7 +29,7 @@ namespace ShipDock.Notices
     /// add by Minghua.ji
     /// 
     /// </summary>
-    public class Notifications<NameT> : IDispose, INotificationSender
+    public class Notifications<NameT> : INotificationSender
     {
         #region 私有属性
         private HandlerMapper<NameT> mNoticeHandlers;

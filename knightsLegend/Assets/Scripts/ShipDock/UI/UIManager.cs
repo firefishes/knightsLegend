@@ -1,4 +1,4 @@
-﻿using ShipDock.Interfaces;
+﻿using System;
 
 namespace ShipDock.UI
 {
@@ -7,7 +7,7 @@ namespace ShipDock.UI
     /// UI管理器
     /// 
     /// </summary>
-    public class UIManager : IDispose
+    public class UIManager
     {
         private IUIStack mCurrent;
         private IUIStack mPrevious;
@@ -37,9 +37,9 @@ namespace ShipDock.UI
             return mUICacher.GetUICache<T>(stackName);
         }
 
-        public T Open<T>(string stackName) where T : IUIStack, new()
+        public T Open<T>(string stackName, Func<object> creater = default) where T : IUIStack, new()
         {
-            T result = mUICacher.CreateOrGetUICache<T>(stackName);
+            T result = mUICacher.CreateOrGetUICache<T>(stackName, creater);
 
             if(!result.IsExited)
             {

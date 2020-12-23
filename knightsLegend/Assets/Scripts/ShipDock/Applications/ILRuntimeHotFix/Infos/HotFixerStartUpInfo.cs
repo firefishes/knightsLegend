@@ -5,6 +5,7 @@ namespace ShipDock.Applications
     [System.Serializable]
     public class HotFixerStartUpInfo
     {
+        [Header("热更端桥接类、方法信息")]
         [SerializeField]
         [Tooltip("是否脱离框架单独运行")]
         protected bool m_ApplyRunStandalone;
@@ -35,6 +36,16 @@ namespace ShipDock.Applications
         [SerializeField]
         [Tooltip("延迟帧更新回调方法名")]
         private string m_LateUpdateMethodName = "LateUpdate";
+        [Tooltip("调试端口")]
+        private int m_DebugPort = 56000;
+
+        public int DebugPort
+        {
+            get
+            {
+                return m_DebugPort;
+            }
+        }
 
         public bool ApplyRunStandalone
         {
@@ -70,6 +81,10 @@ namespace ShipDock.Applications
             {
                 return m_ApplyFixedUpdate;
             }
+            set
+            {
+                m_ApplyFixedUpdate = value;
+            }
         }
 
         public bool ApplyUpdate
@@ -78,6 +93,10 @@ namespace ShipDock.Applications
             {
                 return m_ApplyUpdate;
             }
+            set
+            {
+                m_ApplyUpdate = value;
+            }
         }
 
         public bool ApplyLateUpdate
@@ -85,6 +104,10 @@ namespace ShipDock.Applications
             get
             {
                 return m_ApplyLateUpdate;
+            }
+            set
+            {
+                m_ApplyLateUpdate = value;
             }
         }
 

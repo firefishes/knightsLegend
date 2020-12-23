@@ -1,6 +1,4 @@
-﻿using ShipDock.Tools;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
@@ -8,6 +6,8 @@ static public class ShipDockExtension
 {
 
     private static StringBuilder mBuilder;
+    private static Ray rayForMainCamera;
+    private static Transform cameraTF;
 
     public static string Append(this string target, params string[] args)
     {
@@ -19,9 +19,11 @@ static public class ShipDockExtension
         mBuilder.Append(target);
 
         int max = args.Length;
+        string temp;
         for (int i = 0; i < max; i++)
         {
-            mBuilder.Append(args[i]);
+            temp = args[i];
+            mBuilder.Append(temp);
         }
         return mBuilder.ToString();
     }
@@ -31,10 +33,12 @@ static public class ShipDockExtension
         string connector;
         string result = string.Empty;
         int max = target.Length;
+        string temp;
         for (int i = 0; i < max; i++)
         {
             connector = (i == max - 1) ? string.Empty : symbol;
-            result = result.Append(target[i], connector);
+            temp = target[i];
+            result = result.Append(temp, connector);
         }
         return result;
     }
@@ -44,10 +48,12 @@ static public class ShipDockExtension
         string connector;
         string result = string.Empty;
         int max = target.Count;
+        string temp;
         for (int i = 0; i < max; i++)
         {
             connector = (i == max - 1) ? string.Empty : symbol;
-            result = result.Append(target[i], connector);
+            temp = target[i];
+            result = result.Append(temp, connector);
         }
         return result;
     }
@@ -55,9 +61,11 @@ static public class ShipDockExtension
     public static List<T> Contact<T>(this List<T> target, List<T> list)
     {
         int max = (list != default) ? list.Count : 0;
+        T temp;
         for (int i = 0; i < max; i++)
         {
-            target.Add(list[i]);
+            temp = list[i];
+            target.Add(temp);
         }
         return target;
     }
@@ -65,9 +73,11 @@ static public class ShipDockExtension
     public static List<T> Contact<T>(this List<T> target, T[] list)
     {
         int max = (list != default) ? list.Length : 0;
+        T temp;
         for (int i = 0; i < max; i++)
         {
-            target.Add(list[i]);
+            temp = list[i];
+            target.Add(temp);
         }
         return target;
     }
@@ -75,9 +85,11 @@ static public class ShipDockExtension
     public static T[] ContactToArr<T>(this List<T> target, List<T> list)
     {
         int max = (list != default) ? list.Count : 0;
+        T temp;
         for (int i = 0; i < max; i++)
         {
-            target.Add(list[i]);
+            temp = list[i];
+            target.Add(temp);
         }
         return target.ToArray();
     }
@@ -85,9 +97,11 @@ static public class ShipDockExtension
     public static T[] ContactToArr<T>(this List<T> target, T[] list)
     {
         int max = (list != default) ? list.Length : 0;
+        T temp;
         for (int i = 0; i < max; i++)
         {
-            target.Add(list[i]);
+            temp = list[i];
+            target.Add(temp);
         }
         return target.ToArray();
     }
@@ -138,9 +152,6 @@ static public class ShipDockExtension
             return isGetShareMat? target.sharedMaterial: target.material;
         }
     }
-    
-    private static Ray rayForMainCamera;
-    private static Transform cameraTF;
 
     public static void ResetMain(this Camera target)
     {
