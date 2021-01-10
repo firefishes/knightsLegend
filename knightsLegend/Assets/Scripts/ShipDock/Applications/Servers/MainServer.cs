@@ -1,22 +1,19 @@
-﻿using ShipDock.Server;
-using ShipDock.Notices;
+﻿using ShipDock.Notices;
 using ShipDock.Pooling;
-using System.Collections.Generic;
+using ShipDock.Server;
 using UnityEngine;
-using System;
 
 namespace ShipDock.Applications
 {
     public class MainServer : Server.Server
     {
-        public readonly static List<IResolvableConfig> ServerConfigs = new List<IResolvableConfig>
+        private readonly static IResolvableConfig[] ServerConfigs = new IResolvableConfig[]
         {
             new ResolvableConfigItem<INotice, Notice>("Notice"),
             new ResolvableConfigItem<IParamNotice<int>, ParamNotice<int>>("Int"),
             new ResolvableConfigItem<IParamNotice<bool>, ParamNotice<bool>>("Bool"),
             new ResolvableConfigItem<IParamNotice<Vector3>, ParamNotice<bool>>("V3"),
             new ResolvableConfigItem<IParamNotice<string>, ParamNotice<string>>("string"),
-            new ResolvableConfigItem<IConfigNotice, ConfigNotice>("ConfigNotice"),
         };
 
         public MainServer(string serverName)
@@ -27,6 +24,8 @@ namespace ShipDock.Applications
         public override void InitServer()
         {
             base.InitServer();
+
+            ServersHolder.AddResolvableConfig(ServerConfigs);
 
             Register<INotice>(NoticeResolver, Pooling<Notice>.Instance);
             Register<IParamNotice<int>>(IntParamerResolver, Pooling<ParamNotice<int>>.Instance);

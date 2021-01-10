@@ -1,0 +1,15 @@
+@echo off
+
+::类库dll
+::set lib_name=ShipDockIOC
+set root=%~dp0
+
+set list=ShipDockCore,ShipDockIOC,ShipDockModulars,ShipDockNotices,ShipDockTicks
+for %%i in (%list%) do (call %root%\%%i\UpdateShipDockLib.bat)
+::set dll=%lib_name%.dll
+::set pdb=%lib_name%.pdb
+::set to_path=..\ShipDockPlugins\Framework_
+
+::echo Update %lib_name% dll...
+
+echo Finished..

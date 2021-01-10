@@ -1,5 +1,6 @@
-﻿using Excel;
-using System;
+﻿#define XLSX
+
+using Excel;
 using System.Data;
 using System.IO;
 using System.Text;
@@ -110,7 +111,7 @@ namespace ShipDock.Applications
         /// </summary>
         /// <param name="filePath">excel文件全路径</param>
         /// <returns>Item数组</returns>
-        public static object[] CreateItemArrayWithExcel(string filePath)// where T : IConfigItem, new()
+        public static object[] CreateItemArrayWithExcel(string filePath)
         {
             InitExeclDefs();
 
@@ -233,7 +234,7 @@ namespace ShipDock.Applications
             sb.Append("        /// %notes%\r\n").Replace(info.notes, info.collect[info.notesRow][info.dataStartCol].ToString());
             sb.Append("        /// <summary>\r\n");
             sb.Append("        public %type% %id%;\r\n\r\n").Replace(info.typeName, info.typeValue).Replace(info.idKeyName, info.IDName);//ID
-            sb.Append("        %codes%\r\n");//容纳其他代码
+            sb.Append("        %codes%\r\n");//此处容纳其他代码
             sb.Append("        public string CRCValue { get; }\r\n\r\n");
             sb.Append("        public %type% GetID()\r\n").Replace(info.typeName, info.typeValue);
             sb.Append("        {\r\n");
@@ -326,12 +327,14 @@ namespace ShipDock.Applications
         static DataRowCollection ReadExcel(string filePath, out int rowSize, out int colSize, int sheetIndex = 0)
         {
             FileStream stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+#if XLSX
             IExcelDataReader excelReader = ExcelReaderFactory.CreateOpenXmlReader(stream);//xlsx
-            //IExcelDataReader excelReader = ExcelReaderFactory.CreateBinaryReader(stream);//xls
+#else
+            IExcelDataReader excelReader = ExcelReaderFactory.CreateBinaryReader(stream);//xls
+#endif
 
             DataSet result = excelReader.AsDataSet();
-            //Tables[0] 下标0表示excel文件中第一张表的数据
-            DataTable dataTable = result.Tables[sheetIndex];
+            DataTable dataTable = result.Tables[sheetIndex];//下标0表示excel文件中第一张表的数据
             rowSize = dataTable.Rows.Count;
             colSize = dataTable.Columns.Count;
             return dataTable.Rows;

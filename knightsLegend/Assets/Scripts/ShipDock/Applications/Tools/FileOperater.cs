@@ -31,7 +31,7 @@ namespace ShipDock.Applications
 
     public class FileOperater
     {
-        public static void WriteUTF8Text(string content, string filePath, FileOperater operater = null)
+        public static void WriteUTF8Text(string content, string filePath, FileOperater operater = default)
         {
             FileOperater fileOperater = (operater == null) ? new FileOperater() : operater;
             FileCommandInfo fileCommandInfo = new FileCommandInfo
@@ -44,7 +44,13 @@ namespace ShipDock.Applications
             fileCommandInfo.Dispose();
         }
 
-        public static void WriteBytes(byte[] vs, string filePath, FileOperater operater = null)
+        public static void WriteBytes(string content, string filePath, FileOperater operater = default)
+        {
+            byte[] vs = Encoding.UTF8.GetBytes(content);
+            WriteBytes(vs, filePath, operater);
+        }
+
+        public static void WriteBytes(byte[] vs, string filePath, FileOperater operater = default)
         {
             FileOperater fileOperater = (operater == null) ? new FileOperater() : operater;
             FileCommandInfo fileCommandInfo = new FileCommandInfo
@@ -72,6 +78,22 @@ namespace ShipDock.Applications
             fileCommandInfo.Dispose();
 
             return result;
+        }
+
+        public static byte[] ReadBytes(string filePath, FileOperater operater = default)
+        {
+            FileOperater fileOperater = (operater == null) ? new FileOperater() : operater;
+            FileCommandInfo fileCommandInfo = new FileCommandInfo
+            {
+                FileFullName = filePath,
+                FileReadType = FileCommandInfo.FileCommandInfoReadType.Bytes
+            };
+            fileOperater.ReadFile(ref fileCommandInfo);
+
+            byte[] bytes = fileCommandInfo.DataBytes;
+            fileCommandInfo.Dispose();
+
+            return bytes;
         }
 
         public bool IsDirectoryExistsOrCreateIt(ref string fileFullName, bool isCreateDirect = true)
@@ -104,8 +126,20 @@ namespace ShipDock.Applications
 
             if (!File.Exists(fileFullName))
             {
+#if UNITY_EDITOR
+                switch(fileInfo.FileReadType)
+                {
+                    case FileCommandInfo.FileCommandInfoReadType.Chars:
+                        WriteUTF8Text(string.Empty, fileFullName);
+                        break;
+                    case FileCommandInfo.FileCommandInfoReadType.Bytes:
+                        WriteBytes(new byte[] { }, fileFullName);
+                        break;
+                }
+#else
                 Debug.Log("error: File is not exists, path is ".Append(fileFullName));
                 return;
+#endif
             }
 
             using (FileStream fs = new FileStream(fileFullName, FileMode.Open))

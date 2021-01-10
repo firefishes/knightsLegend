@@ -3,19 +3,20 @@ using ILRuntime.CLR.Method;
 using ILRuntime.Runtime.Enviorment;
 using ILRuntime.Runtime.Intepreter;
 
-namespace ELGame
+namespace ShipDock.Applications
 {   
     public class HotFixerInteractorAdapter : CrossBindingAdaptor
     {
         static CrossBindingMethodInfo mRelease_0 = new CrossBindingMethodInfo("Release");
-        static CrossBindingMethodInfo<ShipDock.Applications.HotFixerUI, ShipDock.Applications.HotFixerUIAgent> mInitInteractor_1 = new CrossBindingMethodInfo<ShipDock.Applications.HotFixerUI, ShipDock.Applications.HotFixerUIAgent>("InitInteractor");
-        static CrossBindingMethodInfo<System.Int32, ShipDock.Notices.INoticeBase<System.Int32>> mDispatch_2 = new CrossBindingMethodInfo<System.Int32, ShipDock.Notices.INoticeBase<System.Int32>>("Dispatch");
+        static CrossBindingMethodInfo<HotFixerUI, HotFixerUIAgent> mInitInteractor_1 = new CrossBindingMethodInfo<HotFixerUI, HotFixerUIAgent>("InitInteractor");
+        static CrossBindingMethodInfo<int, Notices.INoticeBase<int>> mDispatch_2 = new CrossBindingMethodInfo<int, Notices.INoticeBase<int>>("Dispatch");
         static CrossBindingMethodInfo mUpdateInteractor_3 = new CrossBindingMethodInfo("UpdateInteractor");
+
         public override Type BaseCLRType
         {
             get
             {
-                return typeof(ShipDock.Applications.HotFixerInteractor);
+                return typeof(HotFixerInteractor);
             }
         }
 

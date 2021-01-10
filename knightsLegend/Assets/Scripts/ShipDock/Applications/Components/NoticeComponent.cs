@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using ShipDock.Infos;
+﻿using ShipDock.Notices;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace ShipDock.Applications

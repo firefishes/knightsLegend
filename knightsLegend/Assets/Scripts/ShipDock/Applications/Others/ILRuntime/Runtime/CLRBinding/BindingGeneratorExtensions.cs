@@ -431,7 +431,10 @@ namespace ILRuntime.Runtime.CLRBinding
                     sb.AppendLine("            *(ulong*)&__ret->Value = result_of_this_method;");
                 }
                 else
-                    throw new NotImplementedException();
+                {
+                    UnityEngine.Debug.LogError(type.Name);
+                    //throw new NotImplementedException();
+                }
                 sb.AppendLine("            return __ret + 1;");
 
             }

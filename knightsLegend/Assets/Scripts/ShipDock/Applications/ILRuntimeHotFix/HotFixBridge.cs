@@ -22,12 +22,15 @@ namespace ShipDock.Applications
 
         protected override void RunWithinFramework() { }
 
-        protected override void InitILRuntime()
+        protected override void Init()
         {
-            base.InitILRuntime();
+            //以下步骤须按注释的顺序调用（包括 base.Init 的执行）
+            //在运行到此处以前，设置热更新器实例及热更配置，例如：ShipDockApp.Instance.SetHotFixSetting(new ILRuntimeHotFix(ShipDockApp.Instance), new AppHotFixConfig());
+            //启动热更新器 ILRuntimeHotFix 实例，例如： ShipDockApp.Instance.ILRuntimeHotFix.Start();
 
-            //此处启动已封装的 ILRuntimeHotFix 实例，例如： ShipDockApp.Instance.ILRuntimeHotFix.Start();
+            base.Init();
 
+            //添加热更新脚本 StartHotfix(dll, pdb);
         }
     }
 

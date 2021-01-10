@@ -1,5 +1,6 @@
 ﻿#define _G_LOG
 
+using ShipDock.Notices;
 using ShipDock.Pooling;
 using ShipDock.Server;
 using ShipDock.Tools;
@@ -24,9 +25,12 @@ namespace ShipDock.Applications
         {
             base.InitServer();
 
+            ServersHolder.AddResolvableConfig(new ResolvableConfigItem<IConfigNotice, ConfigNotice>("ConfigNotice"));
+
             mConfigHolders = new KeyValueList<string, IConfigHolder>();
 
             Register<IConfigNotice>(GetConfigNotice, Pooling<ConfigNotice>.Instance);
+
             if(hasLocalsConfig)
             {
                 Register<IConfigHolder>(GetLocalCNConfig);

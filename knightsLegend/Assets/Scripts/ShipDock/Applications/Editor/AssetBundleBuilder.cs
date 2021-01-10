@@ -153,7 +153,7 @@ namespace ShipDock.Editors
             }
 
             ShipDockEditorData editorData = ShipDockEditorData.Instance;
-            editorData.outputRoot = AppPaths.StreamingResDataRoot;
+            editorData.outputRoot = AppPaths.ABBuildOutputRoot;
             editorData.platformPath = GetSuffix(buildPlatform);
             editorData.buildPlatform = buildPlatform;
 
@@ -170,15 +170,12 @@ namespace ShipDock.Editors
                 {
                     return;
                 }
-
                 if (File.Exists(strNeedDeleteDIR + ".meta"))
                 {
                     File.Delete(strNeedDeleteDIR + ".meta");
                 }
-                //注意： 这里参数"true"表示可以删除非空目录
-                Directory.Delete(strNeedDeleteDIR, true);
-                //刷新
-                AssetDatabase.Refresh();
+                Directory.Delete(strNeedDeleteDIR, true);//注意： 这里参数"true"表示可以删除非空目录
+                AssetDatabase.Refresh();//刷新
             }
         }
     }

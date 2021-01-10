@@ -306,13 +306,13 @@ namespace ILRuntime.Runtime.Enviorment
                                     mClsNameTemp = mGernericsMapper[i.ParameterTypes[j].Name];
                                     if (mClsNameTemp == method.Parameters[j].TypeForCLR.Name)
                                     {
-                                        UnityEngine.Debug.Log("Match by another way!!!");
+                                        //UnityEngine.Debug.Log("Match by another way!!!");
                                         match = true;
                                         break;
                                     }
                                     else
                                     {
-                                        UnityEngine.Debug.Log(mClsNameTemp + " == " + method.Parameters[j].TypeForCLR.Name);
+                                        //UnityEngine.Debug.Log(mClsNameTemp + " == " + method.Parameters[j].TypeForCLR.Name);
                                     }
                                     //UnityEngine.Debug.Log(mClsNameTemp + "=====" + method.Parameters[j].TypeForCLR.Name);
                                 }

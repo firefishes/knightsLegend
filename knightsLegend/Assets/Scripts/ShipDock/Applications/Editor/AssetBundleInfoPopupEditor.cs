@@ -12,26 +12,34 @@ namespace ShipDock.Editors
     {
         public static AssetBundleInfoPopupEditor Popup()
         {
-            InitEditorWindow<AssetBundleInfoPopupEditor>("资源包信息");//, new Rect(0, 0, 400, 400));
+            InitEditorWindow<AssetBundleInfoPopupEditor>("资源打包与版本配置");//, new Rect(0, 0, 400, 400));
             return focusedWindow as AssetBundleInfoPopupEditor;
         }
+
+        private Vector2 mResShowerScrollPos;
+
+        public UnityEngine.Object[] ResList { get; set; } = new UnityEngine.Object[0];
 
         protected override void InitConfigFlagAndValues()
         {
             base.InitConfigFlagAndValues();
 
-            //SetValueItem("abName", string.Empty);
+            SetValueItem("is_build_ab", "true");
+            SetValueItem("is_build_versions", "true");
+            SetValueItem("override_to_streaming", "false");
             SetValueItem("ab_item_name", string.Empty);
-            //SetValueItem("abPath", string.Empty);
+            SetValueItem("update_addition_version", "true");
+            SetValueItem("update_total_version", "false");
+            SetValueItem("sync_app_version", "false");
+            SetValueItem("is_ignore_remote", "false");
+            SetValueItem("is_sync_client_versions", "true");
+            SetValueItem("res_version_root_url", "http://127.0.0.1");
+            SetValueItem("display_res_shower", "true");
         }
 
-        protected override void ReadyClientValues()
-        {
-        }
+        protected override void ReadyClientValues() { }
 
-        protected override void UpdateClientValues()
-        {
-        }
+        protected override void UpdateClientValues() { }
 
         protected override void CheckGUI()
         {
@@ -39,28 +47,69 @@ namespace ShipDock.Editors
 
             EditorGUILayout.Space();
             EditorGUILayout.BeginVertical();
-            EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField("资源包名称：");
-            //ValueItemTextField("abName");
-            //ValueItemTextField("abPath");
-            EditorGUILayout.Space();
-            EditorGUILayout.EndHorizontal();
-
-            ResList = ShipDockEditorData.Instance.selections;
-
-            CreateAssetItemWithButton();
-
-            string abName = string.Empty;
-            if (GUILayout.Button("Build"))
+            bool isIgnoreRemote = false;
+            bool isBuildAB = ValueItemTriggle("is_build_ab", "创建资源包");
+            if (isBuildAB)
             {
-                AssetBuilding(ref abName);
+                ValueItemTriggle("override_to_streaming", "    资源打包完成后复制到 SteamingAssets");
             }
+            bool isBuildVersions = ValueItemTriggle("is_build_versions", "生成资源版本");
+            if (isBuildVersions)
+            {
+                if (isBuildAB)
+                {
+                    //ValueItemTriggle("is_zip_patch", "zip压缩包：");
+                    ValueItemTriggle("sync_app_version", "    更新版本配置的App版本号");
+                    ValueItemTriggle("update_total_version", "    提升版本配置的总版本号");
+                    ValueItemTriggle("update_addition_version", "    更新各增量资源版本号");
+                    ValueItemTriggle("is_sync_client_versions", "    作为最新版客户端的资源配置模板");
+                }
+                isIgnoreRemote = ValueItemTriggle("is_ignore_remote", "    不基于远程版本配置生成新版本配置");
+                if(!isIgnoreRemote)
+                {
+                    ValueItemTextAreaField("res_version_root_url", true, "远程版本配置所在服务端 URL", false);
+                }
+            }
+            if (isBuildAB)
+            {
+                ResList = ShipDockEditorData.Instance.selections;
+
+                ShowABWillBuildResult();
+
+                if (GUILayout.Button("Build Assets"))
+                {
+                    AssetBuilding();
+                }
+            }
+            else if (isBuildVersions)
+            {
+                if (isIgnoreRemote)
+                {
+                    if (GUILayout.Button("Build Versions Only"))
+                    {
+                        BuildVersions(default, string.Empty);
+                    }
+                }
+                else
+                {
+                    if (GUILayout.Button("Sync Versions From Remote"))
+                    {
+                        BuildVersions(default, string.Empty);
+                    }
+                }
+            }
+            else
+            {
+                ValueItemLabel(string.Empty, "请从以上提供的选项中，选择一个或多个以继续", false);
+            }
+
             EditorGUILayout.Space();
             EditorGUILayout.EndVertical();
         }
 
-        private void AssetBuilding(ref string abName)
+        private void AssetBuilding()
         {
+            string abName = string.Empty;
             ShipDockEditorData editorData = ShipDockEditorData.Instance;
 
             editorData.ABCreaterMapper?.Clear();
@@ -69,18 +118,46 @@ namespace ShipDock.Editors
             editorData.ABCreaterMapper = new KeyValueList<string, List<ABAssetCreater>>();
             CreateAssetImporters(ref abName, ref editorData.ABCreaterMapper);
 
-            string output = editorData.outputRoot;//.Append(abPath);
+            string output = editorData.outputRoot;
             if (!Directory.Exists(output))
             {
                 Directory.CreateDirectory(output);
             }
 
-            BuildAssetByCreater();
+            BuildAssetByCreater(out List<string> abNames);
 
-            if (EditorUtility.DisplayDialog("提示", string.Format("资源打包完成!!!"), "OK"))
+            if (EditorUtility.DisplayDialog("提示", string.Format("操作完成，如遇到问题可根据输出日志做出调整"), "朕知道了"))
             {
                 AssetDatabase.Refresh();
+
+                bool overrideToStreaming = GetValueItem("override_to_streaming").Bool;
+                string path;
+                int max = abNames.Count;
+                byte[] vs;
+                DateTime dateTime = DateTime.Now;
+                string tempPath = string.Format(AppPaths.ABBuildOutputTempRoot, dateTime.ToFileTime().ToString());
+                for (int i = 0; i < max; i++)
+                {
+                    path = AppPaths.ABBuildOutputRoot.Append(abNames[i]);
+                    vs = FileOperater.ReadBytes(path);
+
+                    path = tempPath.Append(abNames[i]);
+                    FileOperater.WriteBytes(vs, path);
+
+                    if (overrideToStreaming)
+                    {
+                        path = AppPaths.StreamingResDataRoot.Append(abNames[i]);
+                        FileOperater.WriteBytes(vs, path);
+                    }
+                }
+
+                BuildVersions(abNames, tempPath);
             }
+        }
+
+        private string GetResItemKey(int index)
+        {
+            return "res_".Append(index.ToString());
         }
 
         private void CreateAssetImporters(ref string abName, ref KeyValueList<string, List<ABAssetCreater>> mapper)
@@ -92,112 +169,142 @@ namespace ShipDock.Editors
 
             FileInfo fileInfo;
             List<ABAssetCreater> list;
+            string name;
             int starterLen = starter.Length;
             int max = ResList.Length;
+            ValueItem item;
             for (int i = 0; i < max; i++)
             {
-                assetItemName = GetValueItem("res_" + i).Value;//"res_1"
+                name = GetResItemKey(i);
+                item = GetValueItem(name);
+                if (item == default)
+                {
+                    continue;
+                }
+                assetItemName = item.Value;//"res_1"
                 relativeName = assetItemName.Replace("Assets/".Append(AppPaths.resDataRoot), string.Empty);
                 path = AppPaths.DataPathResDataRoot.Append(relativeName);
 
                 fileInfo = new FileInfo(path);
                 string ext = fileInfo.Extension;
-                if (ext == ".cs")
+                if (ext != ".cs")
                 {
-                    continue;
-                }
-                int index = path.IndexOf(starter, StringComparison.Ordinal);
-                ABAssetCreater creater = new ABAssetCreater(path.Substring(index + starterLen));
-                abName = creater.GetABName();
-                bool isScene = ext == ".unity";
-                if (isScene)
-                {
-                    abName = abName.Append("_unityscene");
-                }
+                    int index = path.IndexOf(starter, StringComparison.Ordinal);
+                    ABAssetCreater creater = new ABAssetCreater(path.Substring(index + starterLen));
+                    abName = creater.GetABName();
+                    bool isScene = ext == ".unity";
+                    if (isScene)
+                    {
+                        abName = abName.Append("_unityscene");
+                    }
 
-                if (mapper.ContainsKey(abName))
-                {
-                    list = mapper[abName];
+                    if (mapper.ContainsKey(abName))
+                    {
+                        list = mapper[abName];
+                    }
+                    else
+                    {
+                        list = new List<ABAssetCreater>();
+                        mapper[abName] = list;
+                    }
+                    creater.Importer = AssetImporter.GetAtPath(assetItemName);
+                    list.Add(creater);
+                    //Debug.Log("Importers: " + abName);
+                    //Debug.Log("FileInfo: " + fileInfo.Name);
                 }
-                else
-                {
-                    list = new List<ABAssetCreater>();
-                    mapper[abName] = list;
-                }
-                creater.Importer = AssetImporter.GetAtPath(assetItemName);
-                list.Add(creater);
             }
         }
 
-        private void BuildAssetByCreater(bool isClearAssetName = false)
+        private void BuildAssetByCreater(out List<string> abNames)
         {
-            ShipDockEditorData editorData = ShipDockEditorData.Instance;
-
             string abName;
             List<ABAssetCreater> list;
 
+            ShipDockEditorData editorData = ShipDockEditorData.Instance;
             int max = editorData.ABCreaterMapper.Size;
-            List<string> abNames = editorData.ABCreaterMapper.Keys;
+            abNames = editorData.ABCreaterMapper.Keys;
             List<List<ABAssetCreater>> creaters = editorData.ABCreaterMapper.Values;
             for (int i = 0; i < max; i++)
             {
-                if (isClearAssetName)
-                {
-                    abName = string.Empty;
-                }
-                else
-                {
-                    abName = abNames[i];
-                }
+                abName = abNames[i];
                 list = creaters[i];
                 int m = list.Count;
                 for (int n = 0; n < m; n++)
                 {
                     list[n].Importer.assetBundleName = abName;
-                    // Debug.Log(abName);
+                    //Debug.Log(abName);
                 }
-                //output = editorData.outputRoot.Append(abName);
-                //Debug.Log(output);
-                //if (!Directory.Exists(output))
-                //{
-                //    Directory.CreateDirectory(output);
-                //}
-
-                //for (int n = 0; n < m; n++)
-                //{
-                //    list[n].Importer.assetBundleName = default;
-                //}
             }
-            if (!isClearAssetName)
-            {
-                BuildPipeline.BuildAssetBundles(editorData.outputRoot, BuildAssetBundleOptions.None, editorData.buildPlatform);
-                //BuildAssetByCreater(true);
-            }
-
+            BuildPipeline.BuildAssetBundles(editorData.outputRoot, BuildAssetBundleOptions.None, editorData.buildPlatform);
         }
 
-        private void CreateAssetItemWithButton()
+        private void BuildVersions(List<string> abNames, string tempOuputPath)
+        {
+            bool isBuildVersions = GetValueItem("is_build_versions").Bool;
+            if (isBuildVersions)
+            {
+                string remoteGateway = GetValueItem("res_version_root_url").Value;
+                bool isIgnoreRemote = GetValueItem("is_ignore_remote").Bool;
+                bool isSyncClientVersions = GetValueItem("is_sync_client_versions").Bool;
+                bool isUpdateAdditionVersion = GetValueItem("update_addition_version").Bool;
+                bool isUpdateResVersion = GetValueItem("update_total_version").Bool;
+                bool isSyncAppVersion = GetValueItem("sync_app_version").Bool;
+
+                ResDataVersionEditorCreater creater = new ResDataVersionEditorCreater()
+                {
+                    ABNamesWillBuild = abNames,
+                    resRemoteGateWay = remoteGateway,
+                    isSyncClientVersions = isSyncClientVersions,
+                    isUpdateVersion = isUpdateAdditionVersion,
+                    isUpdateResVersion = isUpdateResVersion,
+                    isSyncAppVersion = isSyncAppVersion,
+                    tempOutputPath = tempOuputPath,
+                };
+                creater.CreateResDataVersion(isIgnoreRemote);
+            }
+        }
+
+        private void ShowABWillBuildResult()
         {
             if (ResList == default)
             {
                 return;
             }
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.Space();
+            EditorGUILayout.EndHorizontal();
+            bool displayShower = ValueItemTriggle("display_res_shower", "查看即将打包的资源");
+            if (displayShower)
+            {
+                EditorGUILayout.LabelField("资源名清单：");
+                mResShowerScrollPos = EditorGUILayout.BeginScrollView(mResShowerScrollPos, false, true);
+            }
             int max = ResList.Length;
             UnityEngine.Object item;
-            string fieldValue;
+            string path;
+            string key, fieldValue, keyABItemName = "ab_item_name";
             for (int i = 0; i < max; i++)
             {
                 item = ResList[i];
-                SetValueItem("res_" + i.ToString(), AssetDatabase.GetAssetPath(item));
-                if (i <= 20 && GUILayout.Button(ResList[i].name))
+                key = GetResItemKey(i);// key Sample: "res_1"
+                path = AssetDatabase.GetAssetPath(item);
+                if (!path.EndsWith(".cs"))//排除脚本文件
                 {
-                    fieldValue = GetValueItem("res_" + i).Value;
-                    GetValueItem("ab_item_name")?.Change(fieldValue);
+                    SetValueItem(key, path);
+                    if (displayShower && GUILayout.Button(ResList[i].name))
+                    {
+                        fieldValue = GetValueItem(key).Value;
+                        GetValueItem(keyABItemName)?.Change(fieldValue);
+                    }
                 }
             }
-            ValueItemLabel("ab_item_name");
+            if(displayShower)
+            {
+                EditorGUILayout.EndScrollView();
+                ValueItemLabel(keyABItemName);
+            }
+            EditorGUILayout.Space();
+            ValueItemLabel(string.Empty, string.Format("即将构建的资源数量：{0}", max.ToString()));
         }
-
-        public UnityEngine.Object[] ResList { get; set; } = new UnityEngine.Object[0];
     }
 }

@@ -97,7 +97,7 @@ namespace ShipDock.Applications
             IHotFixConfig config = this.GetAppILRuntime().GetHotFixConfig();
             config.RegisterMethods?.Invoke(ILAppDomain);//注册函数适配器
 
-            CrossBindingAdaptor[] list = config.Adaptors;
+            CrossBindingAdaptor[] list = config.Adapters;
             int max = list == default ? 0 : list.Length;
             for (int i = 0; i < max; i++)
             {

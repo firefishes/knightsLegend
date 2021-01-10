@@ -3,6 +3,7 @@ using ILRuntime.Runtime.Enviorment;
 using ShipDock.Loader;
 using ShipDock.Notices;
 using ShipDock.Pooling;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace ShipDock.Applications
@@ -56,20 +57,9 @@ namespace ShipDock.Applications
 
             AssetBundles abs = ShipDockApp.Instance.ABs;
             TextAsset dll = abs.Get<TextAsset>(m_Settings.HotFixABName, m_Settings.HotFixDLL);
-
-            byte[] dllVS = dll != default ? dll.bytes : default;
-#if RELEASE
-            StartHotfix(dllVS);//正式发布时不加载pdb文件
-#else
             TextAsset pdb = abs.Get<TextAsset>(m_Settings.HotFixABName, m_Settings.HotFixPDB);
-            byte[] pdbVS = pdb != default ? pdb.bytes : default;
 
-            StartHotfix(dllVS, pdbVS);
-#endif
-#if LOG_HOT_FIX_COMP_START
-            "HotFixer InstantiateFromIL, class name is {0}".Log(m_StartUpInfo.ClassName);
-            "HotFixer {0} loaded.".Log(mShellBridge.ToString());
-#endif
+            StartHotFixeByAsset(this, dll, pdb);
         }
 
         protected override void ILRuntimeLoaded()
@@ -125,7 +115,7 @@ namespace ShipDock.Applications
             }
             else
             {
-                InvokeMethodILR(mShellBridge, m_StartUpInfo.ClassName, methodName, 0, OnGetIDAsNoticeHandler);
+                ILRuntimeUtils.InvokeMethodILR(mShellBridge, m_StartUpInfo.ClassName, methodName, 0, OnGetIDAsNoticeHandler);
                 if (mIDAsNotice == default)
                 {
                     mIDAsNotice = Pooling<Notice>.From();

@@ -1,6 +1,7 @@
 ﻿using ShipDock.Datas;
 using ShipDock.Notices;
 using ShipDock.Server;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -30,25 +31,15 @@ namespace ShipDock.Applications
             GameComponent = default;
         }
 
-        public virtual void CreateTestersHandler()
-        {
-        }
+        public virtual void CreateTestersHandler() { }
 
-        public virtual void EnterGameHandler()
-        {
-        }
+        public virtual void EnterGameHandler() { }
 
-        public virtual void GetDataProxyHandler(IParamNotice<IDataProxy[]> param)
-        {
-        }
+        public virtual void GetDataProxyHandler(IParamNotice<IDataProxy[]> param) { }
 
-        public virtual void GetGameServersHandler(IParamNotice<IServer[]> param)
-        {
-        }
+        public virtual void GetGameServersHandler(IParamNotice<IServer[]> param) { }
 
-        public virtual void GetLocalsConfigItemHandler(Dictionary<int, string> raw, IConfigNotice param)
-        {
-        }
+        public virtual void GetLocalsConfigItemHandler(Dictionary<int, string> raw, IConfigNotice param) { }
 
         protected void SetDataFromLocalsConfig<T>(ref string locals, ref string localsConfigName, ref IConfigNotice param, ref Dictionary<int, string> raw) where T : IConfig, new()
         {
@@ -71,25 +62,17 @@ namespace ShipDock.Applications
 
         protected abstract string GetLocalsDescription<T>(ref string locals, ref T item) where T : IConfig, new();
 
-        public virtual void InitProfileDataHandler(IConfigNotice param)
-        {
-        }
+        public virtual void InitProfileDataHandler(IConfigNotice param) { }
 
-        public virtual void GetServerConfigsHandler(IParamNotice<IResolvableConfig[]> param)
-        {
-        }
+        public virtual void GetServerConfigsHandler(IParamNotice<IResolvableConfig[]> param) { }
 
-        public virtual void InitProfileHandler(IParamNotice<int[]> param)
-        {
-        }
+        public virtual void InitProfileHandler(IParamNotice<int[]> param) { }
 
-        public virtual void ServerFinishedHandler()
-        {
-        }
+        public virtual void ServerFinishedHandler() { }
 
-        public virtual void ApplicationCloseHandler()
-        {
-        }
+        public virtual void ApplicationCloseHandler() { }
+
+        public virtual void UpdateRemoteAssetHandler() { }
 
         public void SetShipDockGame(ShipDockGame comp)
         {

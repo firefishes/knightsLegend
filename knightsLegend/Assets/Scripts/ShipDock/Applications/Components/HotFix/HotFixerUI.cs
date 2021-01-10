@@ -1,5 +1,4 @@
 ﻿using ShipDock.Loader;
-using ShipDock.Notices;
 using ShipDock.Pooling;
 using ShipDock.UI;
 using UnityEngine;
@@ -49,7 +48,7 @@ namespace ShipDock.Applications
         public void SetHotFixInteractor(HotFixerInteractor target)
         {
             HotFixerInteractor = target;
-            Agent.InvokeMethodILR(target, Agent.UIInteractorName, "InitInteractor", 2, this, Agent);
+            ILRuntimeUtils.InvokeMethodILR(target, Agent.UIInteractorName, "InitInteractor", 2, this, Agent);
         }
 
         public void SetHotFixerAgent(HotFixerUIAgent agent)

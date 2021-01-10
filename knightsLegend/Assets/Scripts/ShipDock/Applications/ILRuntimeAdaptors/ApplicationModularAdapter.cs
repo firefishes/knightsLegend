@@ -3,7 +3,7 @@ using ILRuntime.CLR.Method;
 using ILRuntime.Runtime.Enviorment;
 using ILRuntime.Runtime.Intepreter;
 
-namespace ELGame
+namespace ShipDock.Applications
 {
     public class ApplicationModularAdapter : CrossBindingAdaptor
     {
@@ -12,8 +12,8 @@ namespace ELGame
         static CrossBindingFunctionInfo<System.Int32[]> mget_ModularNoticeListener_2 = new CrossBindingFunctionInfo<System.Int32[]>("get_ModularNoticeListener");
         static CrossBindingFunctionInfo<System.Int32> mget_ModularName_3 = new CrossBindingFunctionInfo<System.Int32>("get_ModularName");
         static CrossBindingMethodInfo<System.Int32> mset_ModularName_4 = new CrossBindingMethodInfo<System.Int32>("set_ModularName");
-        static CrossBindingFunctionInfo<ShipDock.Applications.IAppModulars> mget_Modulars_5 = new CrossBindingFunctionInfo<ShipDock.Applications.IAppModulars>("get_Modulars");
-        static CrossBindingMethodInfo<ShipDock.Applications.IAppModulars> mset_Modulars_6 = new CrossBindingMethodInfo<ShipDock.Applications.IAppModulars>("set_Modulars");
+        static CrossBindingFunctionInfo<ShipDock.Modulars.IAppModulars> mget_Modulars_5 = new CrossBindingFunctionInfo<ShipDock.Modulars.IAppModulars>("get_Modulars");
+        static CrossBindingMethodInfo<ShipDock.Modulars.IAppModulars> mset_Modulars_6 = new CrossBindingMethodInfo<ShipDock.Modulars.IAppModulars>("set_Modulars");
         static CrossBindingMethodInfo mDispose_7 = new CrossBindingMethodInfo("Dispose");
         static CrossBindingMethodInfo mInitModular_8 = new CrossBindingMethodInfo("InitModular");
         static CrossBindingMethodInfo mPurge_9 = new CrossBindingMethodInfo("Purge");
@@ -21,12 +21,12 @@ namespace ELGame
         static CrossBindingFunctionInfo<System.Int32, ShipDock.Notices.INoticeBase<System.Int32>> mNoticeCreater_11 = new CrossBindingFunctionInfo<System.Int32, ShipDock.Notices.INoticeBase<System.Int32>>("NoticeCreater");
         static CrossBindingMethodInfo<System.Int32, ShipDock.Notices.INoticeBase<System.Int32>> mNoticeDecorator_12 = new CrossBindingMethodInfo<System.Int32, ShipDock.Notices.INoticeBase<System.Int32>>("NoticeDecorator");
         static CrossBindingFunctionInfo<System.Int32, ShipDock.Notices.INoticeBase<System.Int32>, ShipDock.Notices.INoticeBase<System.Int32>> mNotifyModular_13 = new CrossBindingFunctionInfo<System.Int32, ShipDock.Notices.INoticeBase<System.Int32>, ShipDock.Notices.INoticeBase<System.Int32>>("NotifyModular");
-        static CrossBindingMethodInfo<ShipDock.Applications.IAppModulars> mSetModularManager_14 = new CrossBindingMethodInfo<ShipDock.Applications.IAppModulars>("SetModularManager");
+        static CrossBindingMethodInfo<ShipDock.Modulars.IAppModulars> mSetModularManager_14 = new CrossBindingMethodInfo<ShipDock.Modulars.IAppModulars>("SetModularManager");
         public override Type BaseCLRType
         {
             get
             {
-                return typeof(ShipDock.Applications.ApplicationModular);
+                return typeof(ShipDock.Modulars.ApplicationModular);
             }
         }
 
@@ -43,7 +43,7 @@ namespace ELGame
             return new Adapter(appdomain, instance);
         }
 
-        public class Adapter : ShipDock.Applications.ApplicationModular, CrossBindingAdaptorType
+        public class Adapter : ShipDock.Modulars.ApplicationModular, CrossBindingAdaptorType
         {
             ILTypeInstance instance;
             ILRuntime.Runtime.Enviorment.AppDomain appdomain;
@@ -114,7 +114,7 @@ namespace ELGame
                     return mNotifyModular_13.Invoke(this.instance, name, param);
             }
 
-            public override void SetModularManager(ShipDock.Applications.IAppModulars modulars)
+            public override void SetModularManager(ShipDock.Modulars.IAppModulars modulars)
             {
                 if (mSetModularManager_14.CheckShouldInvokeBase(this.instance))
                     base.SetModularManager(modulars);
@@ -172,7 +172,7 @@ namespace ELGame
                 }
             }
 
-            protected override ShipDock.Applications.IAppModulars Modulars
+            protected override ShipDock.Modulars.IAppModulars Modulars
             {
                 get
                 {

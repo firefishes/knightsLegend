@@ -7,7 +7,7 @@ namespace ShipDock.Applications
     {
         string SpaceName { get; set; }
         System.Action<AppDomain> RegisterMethods { get; set; }
-        CrossBindingAdaptor[] Adaptors { get; set; }
-        AutoAdaptorGeneratesDic AutoAdaptorGenerates { get; set; }
+        CrossBindingAdaptor[] Adapters { get; set; }
+        AutoAdaptorGeneratesDic AutoAdapterGenerates { get; set; }
     }
 }

@@ -60,9 +60,20 @@ namespace ShipDock.Loader
                     {
                         m_Assets[i].refresh = false;
                         m_Assets[i].UpdateCustomAssetName();
-                        name = m_BundleName.Append(": ", m_Assets[i].assetName);
                         break;
                     }
+                }
+                if (max == 1)
+                {
+                    name = m_BundleName.Append(": ", m_Assets[0].assetName);
+                }
+                else if (max > 1)
+                {
+                    name = m_BundleName.Append(": ", m_Assets[0].assetName, ", others ", max.ToString());
+                }
+                else
+                {
+                    name = m_BundleName.Append(" have nothing,. ", max.ToString());
                 }
             }
         }

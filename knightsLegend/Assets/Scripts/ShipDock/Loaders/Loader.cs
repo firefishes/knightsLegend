@@ -1,4 +1,5 @@
 ﻿using ShipDock.Interfaces;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -37,20 +38,36 @@ namespace ShipDock.Loader
         {
             CompleteEvent.RemoveAllListeners();
 
-            SetUrl(string.Empty);
+            Abort();
+            Url = string.Empty;
 
-            if (AysncOperation != default)
-            {
-                AysncOperation.completed -= CheckResult;
-            }
+            AfterCheckResult();
 
-            AysncOperation = default;
+            ApplyAssetBundleVersion = false;
+            Asyncer = default;
             mRequester = default;
 
             AudioClip = default;
             ResultData = default;
+            TextData = default;
             Assets = default;
             TextData = string.Empty;
+        }
+
+        private void AfterCheckResult()
+        {
+            if (Asyncer != default)
+            {
+                Asyncer.completed -= CheckResult;
+            }
+        }
+
+        private void BeforeCheckResult()
+        {
+            if (Asyncer != default)
+            {
+                Asyncer.completed += CheckResult;
+            }
         }
 
         public void InitLoader(int loadType)
@@ -79,41 +96,38 @@ namespace ShipDock.Loader
             mRequester?.Abort();
             if (IsLoading)
             {
-                if(AysncOperation != default)
-                {
-                    AysncOperation.completed -= CheckResult;
-                }
-                AysncOperation = default;
+                AfterCheckResult();
+                Asyncer = default;
             }
         }
 
         private void CreateLoader()
         {
-            if (IsLoading)
+            if (!IsLoading)
             {
-                return;
-            }
-            switch (LoadType)
-            {
-                case LOADER_ASSETBUNDLE:
-                    mRequester = UnityWebRequestAssetBundle.GetAssetBundle(Url);
-                    break;
-                case LOADER_AUDIO_CLIP:
-                    mRequester = UnityWebRequestMultimedia.GetAudioClip(Url, AudioType);//MP3 格式在PC平台下需要做转换再加载
-                    break;
-                case LOADER_TEXT:
-                    mRequester = UnityWebRequest.Get(Url);
-                    break;
-                case LOADER_TEXTURE:
-                    mRequester = UnityWebRequest.Get(Url);
-                    mRequester.downloadHandler = new DownloadHandlerTexture(true);
-                    break;
-                default:
-                    mRequester = new UnityWebRequest(Url)
-                    {
-                        downloadHandler = new DownloadHandlerBuffer()
-                    };
-                    break;
+                switch (LoadType)
+                {
+                    case LOADER_ASSETBUNDLE:
+                        mRequester?.Abort();
+                        mRequester = default;
+                        break;
+                    case LOADER_AUDIO_CLIP:
+                        mRequester = UnityWebRequestMultimedia.GetAudioClip(Url, AudioType);//MP3 格式在PC平台下需要做转换再加载
+                        break;
+                    case LOADER_TEXT:
+                        mRequester = UnityWebRequest.Get(Url);
+                        break;
+                    case LOADER_TEXTURE:
+                        mRequester = UnityWebRequestTexture.GetTexture(Url);
+                        mRequester.downloadHandler = new DownloadHandlerTexture(true);
+                        break;
+                    default:
+                        mRequester = new UnityWebRequest(Url)
+                        {
+                            downloadHandler = new DownloadHandlerBuffer()
+                        };
+                        break;
+                }
             }
         }
 
@@ -122,7 +136,8 @@ namespace ShipDock.Loader
             switch (LoadType)
             {
                 case LOADER_ASSETBUNDLE:
-                    Assets = DownloadHandlerAssetBundle.GetContent(mRequester);
+                    AssetBundleCreateRequest sync = Asyncer as AssetBundleCreateRequest;
+                    Assets = sync.assetBundle;
                     break;
                 case LOADER_TEXT:
                     TextData = mRequester.downloadHandler.text;
@@ -131,15 +146,20 @@ namespace ShipDock.Loader
                     AudioClip = DownloadHandlerAudioClip.GetContent(mRequester);
                     break;
                 case LOADER_TEXTURE:
-                    DownloadHandlerTexture downloadHandler = mRequester.downloadHandler as DownloadHandlerTexture;
-                    Texture2D = downloadHandler.texture;
-                    TextureText = downloadHandler.text;
+                    Texture2D = DownloadHandlerTexture.GetContent(mRequester);
+                    TextureText = mRequester.downloadHandler.text;
                     break;
                 default:
-                    DownloadHandlerBuffer handler = mRequester.downloadHandler as DownloadHandlerBuffer;
-                    ResultData = handler.data;
+                    SetResultData();
                     break;
             }
+        }
+
+        private void SetResultData()
+        {
+            DownloadHandlerBuffer handler = mRequester.downloadHandler as DownloadHandlerBuffer;
+            ResultData = handler.data;
+            TextData = handler.text;
         }
 
         private void StartLoad()
@@ -148,7 +168,16 @@ namespace ShipDock.Loader
             {
                 IsLoading = true;
                 SetAsync();
-                AysncOperation.completed += CheckResult;
+                BeforeCheckResult();
+            }
+            else
+            {
+                if (LoadType == LOADER_ASSETBUNDLE)
+                {
+                    IsLoading = true;
+                    Asyncer = AssetBundle.LoadFromFileAsync(Url);
+                    BeforeCheckResult();
+                }
             }
         }
 
@@ -157,8 +186,19 @@ namespace ShipDock.Loader
 #if UNITY_5_6_5
             mAsyncOperation = mRequester.Send();
 #elif UNITY_5_6_OR_NEWER
-            AysncOperation = mRequester.SendWebRequest();
+//#if RELEASE
+            Asyncer = mRequester.SendWebRequest();
+//#else
+//            AsyncLoad(mRequester);
+//#endif
 #endif
+        }
+
+        private IEnumerator AsyncLoad(UnityWebRequest request)
+        {
+            yield return request.SendWebRequest();
+
+            CheckResult(default);
         }
 
         private void CheckResult(AsyncOperation sync)
@@ -170,7 +210,16 @@ namespace ShipDock.Loader
             }
             else
             {
-                if ((mRequester.downloadHandler != default) && (mRequester.responseCode == 200))
+                bool flag = false;
+                if (mRequester != default)
+                {
+                    flag = (mRequester.downloadHandler != default) && (mRequester.responseCode == 200);
+                }
+                else if(Asyncer != default)
+                {
+                    flag = Asyncer.isDone;
+                }
+                if (flag)
                 {
                     Loaded();
                 }
@@ -191,20 +240,27 @@ namespace ShipDock.Loader
 
         protected virtual void Loaded()
         {
-            AysncOperation.completed -= CheckResult;
+            AfterCheckResult();
             CreateResult();
             CompleteEvent.Invoke(true, this);
         }
 
         private bool IsError()
         {
+            if (mRequester != default)
+            {
 #if UNITY_5_6_5
-            return (mRequester.isError);
+                return (mRequester.isError);
 #elif UNITY_5_6_OR_NEWER
-            return mRequester.isNetworkError || mRequester.isHttpError;
+                return mRequester.isNetworkError || mRequester.isHttpError;
 #else
-            return false;
+                return false;
 #endif
+            }
+            else
+            {
+                return false;
+            }
         }
 
         protected virtual void LoadFailed()
@@ -217,7 +273,7 @@ namespace ShipDock.Loader
             }
             else
             {
-                AysncOperation.completed -= CheckResult;
+                AfterCheckResult();
                 CompleteEvent.Invoke(false, this);
             }
         }
@@ -237,18 +293,20 @@ namespace ShipDock.Loader
         {
             get
             {
-                return AysncOperation != default ? AysncOperation.progress : 0f;
+                return Asyncer != default ? Asyncer.progress : 0f;
             }
         }
         
         protected int RetryCount { get; set; }
 
-        public AsyncOperation AysncOperation { get; private set; }
+        public AsyncOperation Asyncer { get; private set; }
         public OnLoaderCompleted CompleteEvent { get; private set; } = new OnLoaderCompleted();
         public AudioType AudioType { get; set; }
         public int LoadType { get; private set; } = LOADER_DEFAULT;
+        public uint AssetBundleVersion { get; set; }
         public bool IsLoading { get; private set; }
         public bool AlwaysRetry { get; set; }
+        public bool ApplyAssetBundleVersion { get; set; }
         public string LoadError { get; private set; }
         public string Url { get; private set; }
         public string TextData { get; private set; }

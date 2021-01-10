@@ -55,8 +55,10 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="ShipDock\HotFixBase.cs" />
-    <Compile Include="ShipDock\HotFixBridge.cs" />
-    <Compile Include="ShipDock\UIModularHotFixer.cs" />
+    <Compile Include="ShipDock\Modulars\ApplicationModular.cs" />
+    <Compile Include="ShipDock\Modulars\DecorativeModulars.cs" />
+    <Compile Include="ShipDock\Modulars\IAppModulars.cs" />
+    <Compile Include="ShipDock\Modulars\IModular.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

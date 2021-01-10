@@ -28,6 +28,9 @@ namespace ShipDock.Applications
     internal class InitProfileDataEvent : UnityEvent<IConfigNotice> { }
 
     [Serializable]
+    internal class UpdateRemoteAssetEvent : UnityEvent { }
+
+    [Serializable]
     internal class ShipDockCloseEvent : UnityEvent { }
 
     [Serializable]
@@ -60,6 +63,9 @@ namespace ShipDock.Applications
         [SerializeField]
         [Header("数据代理初始化事件")]
         internal GetDataProxyEvent getDataProxyEvent = new GetDataProxyEvent();
+        [SerializeField]
+        [Header("更新远程资源事件")]
+        internal UpdateRemoteAssetEvent updateRemoteAssetEvent = new UpdateRemoteAssetEvent();
         [SerializeField]
         [Header("框架关闭事件")]
         internal ShipDockCloseEvent frameworkCloseEvent = new ShipDockCloseEvent();

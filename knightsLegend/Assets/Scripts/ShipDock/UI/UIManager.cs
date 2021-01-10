@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace ShipDock.UI
 {
@@ -35,6 +36,14 @@ namespace ShipDock.UI
         public T GetUI<T>(string stackName) where T : IUIStack
         {
             return mUICacher.GetUICache<T>(stackName);
+        }
+
+        public T OpenResourceUI<T>(string resName) where T : Component
+        {
+            GameObject raw = Resources.Load<GameObject>("ui/".Append(resName));
+            raw = UnityEngine.Object.Instantiate(raw, UIRoot.MainCanvas.transform);
+            T result = raw.GetComponent<T>();
+            return result;
         }
 
         public T Open<T>(string stackName, Func<object> creater = default) where T : IUIStack, new()

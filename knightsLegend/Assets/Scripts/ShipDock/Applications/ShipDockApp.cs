@@ -1,33 +1,42 @@
 ﻿#define _G_LOG
+#define _SHIPDOCK_MODULARS
 
+using ShipDock.Commons;
 using ShipDock.Datas;
 using ShipDock.ECS;
 using ShipDock.FSM;
 using ShipDock.Loader;
+using ShipDock.Modulars;
 using ShipDock.Notices;
 using ShipDock.Pooling;
 using ShipDock.Server;
 using ShipDock.Testers;
+using ShipDock.Ticks;
 using ShipDock.Tools;
 using ShipDock.UI;
 using System;
+using UnityEngine;
 
 namespace ShipDock.Applications
 {
+
     /// <summary>
     /// 
     /// ShipDock 框架单例，门面
     /// 
     /// </summary>
-    public class ShipDockApp : Singletons<ShipDockApp>, IAppILRuntime
+    public class ShipDockApp : Singletons<ShipDockApp>, IAppILRuntime, ICustomFramework
     {
         public static void StartUp(int ticks, Action onStartUp = default)
         {
-            if (onStartUp != default)
-            {
-                Instance.AddStart(onStartUp);
-            }
-            Instance.Start(ticks);
+            Application.targetFrameRate = ticks;
+
+            ShipDockApp app = Instance;
+
+            Framework.Instance.InitCustomFramework(app);
+
+            app.AddStart(onStartUp);
+            app.Start(ticks);
         }
 
         /// <summary>
@@ -48,6 +57,7 @@ namespace ShipDock.Applications
         private Action mAppStarted;
         private KeyValueList<IStateMachine, IUpdate> mFSMUpdaters;
         private KeyValueList<IState, IUpdate> mStateUpdaters;
+        private MethodUpdater mServerMainThreadChecker;
 
         private IHotFixConfig HotFixConfig { get; set; }
 
@@ -55,7 +65,7 @@ namespace ShipDock.Applications
         public UIManager UIs { get; private set; }
         public TicksUpdater TicksUpdater { get; private set; }
         public Notifications<int> Notificater { get; private set; }
-        public ShipDockComponentContext Components { get; private set; }
+        public ShipDockComponentContext ECSContext { get; private set; }
         public Servers Servers { get; private set; }
         public DataWarehouse Datas { get; private set; }
         public AssetBundles ABs { get; private set; }
@@ -67,6 +77,10 @@ namespace ShipDock.Applications
         public PerspectiveInputer PerspectivesInputer { get; private set; }
         public ILRuntimeHotFix ILRuntimeHotFix { get; private set; }
         public DecorativeModulars AppModulars { get; private set; }
+        public IFrameworkUnit[] FrameworkUnits { get; private set; }
+        public Action MainThreadeady { get; set; }
+        public Action SceneUpdaterReady { get; set; }
+        public bool IsSceneUpdateReady { get; private set; }
 
         public void Start(int ticks)
         {
@@ -79,9 +93,9 @@ namespace ShipDock.Applications
             Tester.Init(new TesterBaseApp());
             "log".AssertLog("framework start", "Welcom..");
 
-            Notificater = new Notifications<int>();//新建消息中心
+            Notificater = NotificatonsInt.Instance.Notificater;//new Notifications<int>();//新建消息中心
             ABs = new AssetBundles();//新建资源包管理器
-            Servers = new Servers(OnServersInit);//新建服务容器管理器
+            Servers = new Servers();//新建服务容器管理器
             Datas = new DataWarehouse();//新建数据管理器
             AssetsPooling = new AssetsPooling();//新建场景资源对象池
             StateMachines = new StateMachines//新建有限状态机管理器
@@ -93,6 +107,12 @@ namespace ShipDock.Applications
             Locals = new Locals();//新建本地化管理器
             PerspectivesInputer = new PerspectiveInputer();//新建透视物体交互器
             AppModulars = new DecorativeModulars();//新建装饰模块管理器
+
+            FrameworkUnits = new IFrameworkUnit[]
+            {
+                Servers
+            };
+            Framework.Instance.LoadUnit(FrameworkUnits);
 
             mFSMUpdaters = new KeyValueList<IStateMachine, IUpdate>();
             mStateUpdaters = new KeyValueList<IState, IUpdate>();
@@ -107,10 +127,19 @@ namespace ShipDock.Applications
 
             IsStarted = true;
             mAppStarted?.Invoke();
-            mAppStarted = null;
+            mAppStarted = default;
 
+            ShipDockConsts.NOTICE_SCENE_UPDATE_READY.Add(OnSceneUpdateReady);
             ShipDockConsts.NOTICE_APPLICATION_STARTUP.Broadcast();//框架启动完成
             "log".AssertLog("framework start", "Framework Started");
+        }
+
+        private void OnSceneUpdateReady(INoticeBase<int> time)
+        {
+            ShipDockConsts.NOTICE_SCENE_UPDATE_READY.Remove(OnSceneUpdateReady);
+
+            IsSceneUpdateReady = true;
+            SceneUpdaterReady?.Invoke();
         }
 
         private void OnStateFrameUpdater(IState state, bool isAdd)
@@ -157,20 +186,108 @@ namespace ShipDock.Applications
         }
 
         /// <summary>
-        /// 所有服务容器初始化完成
+        /// 启动 IOC 功能
         /// </summary>
-        private void OnServersInit()
+        /// <param name="servers">需要添加的服务容器</param>
+        /// <param name="mainThreadServersReady">当服务容器初始化完成后在主线程上的回调</param>
+        /// <param name="onInitedCallbacks">服务容器初始化完成后在子线程上的一组回调函数</param>
+        /// <param name="onFinishedCallbacks">服务容器初始化完成后在子线程上的一组回调函数</param>
+        public void StartIOC(IServer[] servers, Action mainThreadServersReady, Action[] onInitedCallbacks = default, Action[] onFinishedCallbacks = default)
         {
-            Components = new ShipDockComponentContext
+            PreaddServers(ref servers);
+            if (mainThreadServersReady != default)
             {
-                FrameTimeInScene = (int)(UnityEngine.Time.deltaTime * 1000)
-            };
+                MainThreadeady += mainThreadServersReady;
+            }
+            SetServersCallback(ref onInitedCallbacks, ref onFinishedCallbacks);
 
+            if (IsSceneUpdateReady)
+            {
+                mServerMainThreadChecker = new MethodUpdater();
+                mServerMainThreadChecker.Update += CheckServerInitedInMainThread;
+                UpdaterNotice.AddSceneUpdater(mServerMainThreadChecker);
+            }
+            else
+            {
+                SceneUpdaterReady += () => 
+                {
+                    StartIOC(servers, default);
+                };
+            }
+        }
+
+        private void SetServersCallback(ref Action[] onInitedCallbacks, ref Action[] onFinishedCallbacks)
+        {
+            int max = onInitedCallbacks != default ? onInitedCallbacks.Length : 0;
+            if (max > 0)
+            {
+                for (int i = 0; i < max; i++)
+                {
+                    Servers.AddOnServerInited(onInitedCallbacks[i]);
+                }
+            }
+            max = onFinishedCallbacks != default ? onFinishedCallbacks.Length : 0;
+            if (max > 0)
+            {
+                for (int i = 0; i < max; i++)
+                {
+                    Servers.AddOnServerFinished(onFinishedCallbacks[i]);
+                }
+            }
+        }
+
+        private void PreaddServers(ref IServer[] servers)
+        {
+            bool hasDefaultServer = servers != default;
+            int max = hasDefaultServer ? servers.Length : 0;
+            if (max > 0)
+            {
+                for (int i = 0; i < max; i++)
+                {
+                    Servers.Add(servers[i]);
+                }
+            }
+        }
+
+        private void CheckServerInitedInMainThread(int time)
+        {
+            UpdaterNotice.RemoveSceneUpdater(mServerMainThreadChecker);
+            if (Servers.IsServersReady)
+            {
+                "log".AssertLog("game", "ServerFinished");
+
+                MainThreadeady?.Invoke();
+                MainThreadeady = default;
+            }
+        }
+
+        /// <summary>
+        /// 启动 ECS 功能
+        /// </summary>
+        public void StartECS()
+        {
+            if (IsSceneUpdateReady)
+            {
+                ECSContext = new ShipDockComponentContext
+                {
+                    FrameTimeInScene = (int)(Time.deltaTime * UpdatesCacher.UPDATE_CACHER_TIME_SCALE)
+                };
+
+                InitECSUpdateModes();
+            }
+            else
+            {
+                SceneUpdaterReady += StartECS;
+            }
+        }
+
+        private void InitECSUpdateModes()
+        {
             MethodUpdater updater = ShipDockECSSetting.isMergeUpdateMode ?
                 new MethodUpdater
                 {
                     Update = MergeUpdateMode
-                }: 
+                } :
                 new MethodUpdater
                 {
                     Update = AlternateFrameUpdateMode//框架默认为此模式
@@ -178,9 +295,19 @@ namespace ShipDock.Applications
             UpdaterNotice notice = Pooling<UpdaterNotice>.From();
             notice.ParamValue = updater;
             ShipDockConsts.NOTICE_ADD_UPDATE.Broadcast(notice);
-            notice.ToPool();
 
-            ShipDockConsts.NOTICE_SCENE_UPDATE_READY.Add(OnSceneUpdateReady);
+            updater = ShipDockECSSetting.isMergeUpdateMode ?
+                new MethodUpdater
+                {
+                    Update = MergeUpdateModeInScene
+                } :
+                new MethodUpdater
+                {
+                    Update = AlternateFramUpdateModeInScene
+                };
+            notice.ParamValue = updater;
+            ShipDockConsts.NOTICE_ADD_SCENE_UPDATE.Broadcast(notice);
+            notice.ToPool();
         }
 
         /// <summary>
@@ -190,20 +317,20 @@ namespace ShipDock.Applications
         {
             if (ShipDockECSSetting.isUpdateByCallLate)
             {
-                Components.UpdateComponentUnit(time, ComponentUnitUpdate);
+                ECSContext.UpdateComponentUnit(time, ComponentUnitUpdate);
                 if (mFrameSign > 0)
                 {
-                    Components.FreeComponentUnit(time, ComponentUnitUpdate);//奇数帧检测是否有需要释放的实体
-                    Components.RemoveSingedComponents();
+                    ECSContext.FreeComponentUnit(time, ComponentUnitUpdate);//奇数帧检测是否有需要释放的实体
+                    ECSContext.RemoveSingedComponents();
                 }
             }
             else
             {
-                Components.UpdateComponentUnit(time);//框架默认为此模式
+                ECSContext.UpdateComponentUnit(time);//框架默认为此模式
                 if (mFrameSign > 0)
                 {
-                    Components.FreeComponentUnit(time);//奇数帧检测是否有需要释放的实体，框架默认为此模式
-                    Components.RemoveSingedComponents();
+                    ECSContext.FreeComponentUnit(time);//奇数帧检测是否有需要释放的实体，框架默认为此模式
+                    ECSContext.RemoveSingedComponents();
                 }
             }
             mFrameSign++;
@@ -217,15 +344,15 @@ namespace ShipDock.Applications
         {
             if (ShipDockECSSetting.isUpdateByCallLate)
             {
-                Components.UpdateComponentUnit(time, ComponentUnitUpdate);
-                Components.FreeComponentUnit(time, ComponentUnitUpdate);
-                Components.RemoveSingedComponents();
+                ECSContext.UpdateComponentUnit(time, ComponentUnitUpdate);
+                ECSContext.FreeComponentUnit(time, ComponentUnitUpdate);
+                ECSContext.RemoveSingedComponents();
             }
             else
             {
-                Components.UpdateComponentUnit(time);
-                Components.FreeComponentUnit(time);
-                Components.RemoveSingedComponents();
+                ECSContext.UpdateComponentUnit(time);
+                ECSContext.FreeComponentUnit(time);
+                ECSContext.RemoveSingedComponents();
             }
         }
 
@@ -240,9 +367,9 @@ namespace ShipDock.Applications
         /// <summary>
         /// 主线程的场景更新已就绪，用于需要在主线程中更新的组件
         /// </summary>
-        private void OnSceneUpdateReady(INoticeBase<int> obj)
+        private void OnSceneUpdateReady2(INoticeBase<int> obj)
         {
-            ShipDockConsts.NOTICE_SCENE_UPDATE_READY.Remove(OnSceneUpdateReady);
+            ShipDockConsts.NOTICE_SCENE_UPDATE_READY.Remove(OnSceneUpdateReady2);
 
             MethodUpdater updater = ShipDockECSSetting.isMergeUpdateMode ?
                 new MethodUpdater
@@ -267,20 +394,20 @@ namespace ShipDock.Applications
         {
             if (ShipDockECSSetting.isUpdateByCallLate)
             {
-                Components.UpdateComponentUnitInScene(time, ComponentUnitUpdateInScene);
+                ECSContext.UpdateComponentUnitInScene(time, ComponentUnitUpdateInScene);
                 if (mFrameSignInScene > 0)
                 {
-                    Components.FreeComponentUnitInScene(time, ComponentUnitUpdateInScene);//奇数帧检测是否有需要释放的实体
-                    Components.RemoveSingedComponents();
+                    ECSContext.FreeComponentUnitInScene(time, ComponentUnitUpdateInScene);//奇数帧检测是否有需要释放的实体
+                    ECSContext.RemoveSingedComponents();
                 }
             }
             else
             {
-                Components.UpdateComponentUnitInScene(time);
+                ECSContext.UpdateComponentUnitInScene(time);
                 if (mFrameSignInScene > 0)
                 {
-                    Components.FreeComponentUnitInScene(time);//奇数帧检测是否有需要释放的实体
-                    Components.RemoveSingedComponents();
+                    ECSContext.FreeComponentUnitInScene(time);//奇数帧检测是否有需要释放的实体
+                    ECSContext.RemoveSingedComponents();
                 }
             }
             mFrameSignInScene++;
@@ -294,15 +421,15 @@ namespace ShipDock.Applications
         {
             if (ShipDockECSSetting.isUpdateByCallLate)
             {
-                Components.UpdateComponentUnitInScene(time, ComponentUnitUpdateInScene);
-                Components.FreeComponentUnitInScene(time, ComponentUnitUpdateInScene);
-                Components.RemoveSingedComponents();
+                ECSContext.UpdateComponentUnitInScene(time, ComponentUnitUpdateInScene);
+                ECSContext.FreeComponentUnitInScene(time, ComponentUnitUpdateInScene);
+                ECSContext.RemoveSingedComponents();
             }
             else
             {
-                Components.UpdateComponentUnitInScene(time);
-                Components.FreeComponentUnitInScene(time);
-                Components.RemoveSingedComponents();
+                ECSContext.UpdateComponentUnitInScene(time);
+                ECSContext.FreeComponentUnitInScene(time);
+                ECSContext.RemoveSingedComponents();
             }
         }
 
@@ -324,7 +451,7 @@ namespace ShipDock.Applications
             Effects?.Dispose();
             Notificater?.Dispose();
             TicksUpdater?.Dispose();
-            Components?.Dispose();
+            ECSContext?.Dispose();
             Servers?.Dispose();
             StateMachines?.Dispose();
             Datas?.Dispose();
@@ -339,7 +466,7 @@ namespace ShipDock.Applications
 
             Notificater = default;
             TicksUpdater = default;
-            Components = default;
+            ECSContext = default;
             Servers = default;
             StateMachines = default;
             Datas = default;
@@ -357,13 +484,16 @@ namespace ShipDock.Applications
 
         public void AddStart(Action method)
         {
-            if (IsStarted)
+            if (method != default)
             {
-                method();
-            }
-            else
-            {
-                mAppStarted += method;
+                if (IsStarted)
+                {
+                    method();
+                }
+                else
+                {
+                    mAppStarted += method;
+                }
             }
         }
 
@@ -425,6 +555,11 @@ namespace ShipDock.Applications
         public IHotFixConfig GetHotFixConfig()
         {
             return HotFixConfig;
+        }
+
+        public void SetStarted(bool value)
+        {
+            IsStarted = value;
         }
     }
 }

@@ -1,0 +1,6 @@
+F:\Work\BuildShip\Knights\KnightMaster\KnightsMaster\Assets\Scripts\ShipDock\Projects~\ShipDockCore\obj\Debug\ShipDockCore.csprojAssemblyReference.cache
+F:\Work\BuildShip\Knights\KnightMaster\KnightsMaster\Assets\Scripts\ShipDock\Projects~\ShipDockCore\obj\Debug\ShipDockCore.csproj.CoreCompileInputs.cache
+F:\Work\BuildShip\Knights\KnightMaster\KnightsMaster\Assets\Scripts\ShipDock\Projects~\ShipDockCore\bin\Debug\ShipDockCore.dll
+F:\Work\BuildShip\Knights\KnightMaster\KnightsMaster\Assets\Scripts\ShipDock\Projects~\ShipDockCore\bin\Debug\ShipDockCore.pdb
+F:\Work\BuildShip\Knights\KnightMaster\KnightsMaster\Assets\Scripts\ShipDock\Projects~\ShipDockCore\obj\Debug\ShipDockCore.dll
+F:\Work\BuildShip\Knights\KnightMaster\KnightsMaster\Assets\Scripts\ShipDock\Projects~\ShipDockCore\obj\Debug\ShipDockCore.pdb

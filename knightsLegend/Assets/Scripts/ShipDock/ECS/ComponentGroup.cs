@@ -10,7 +10,7 @@ namespace ShipDock.ECS
         {
         }
 
-        public ComponentGroup(K[] keys, int[] componentNames) : this(ShipDockApp.Instance.Components, ref keys, ref componentNames)
+        public ComponentGroup(K[] keys, int[] componentNames) : this(ShipDockApp.Instance.ECSContext, ref keys, ref componentNames)
         {
         }
 
@@ -47,7 +47,7 @@ namespace ShipDock.ECS
 
     public class DataComponentGroup<C, K> where C : IShipDockComponent, IDataValidable
     {
-        public DataComponentGroup(K[] keys, int[] componentNames) : this(ShipDockApp.Instance.Components, ref keys, ref componentNames)
+        public DataComponentGroup(K[] keys, int[] componentNames) : this(ShipDockApp.Instance.ECSContext, ref keys, ref componentNames)
         {
         }
 

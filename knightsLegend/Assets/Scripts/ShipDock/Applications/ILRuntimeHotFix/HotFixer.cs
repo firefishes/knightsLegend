@@ -1,5 +1,6 @@
 ﻿#define _LOG_INOVKED_METHOD_BY_ARGS_COUNT
 #define _LOG_INITER
+#define _LOG_HOT_FIX_COMP_START
 
 using ILRuntime.CLR.Method;
 using ILRuntime.CLR.TypeSystem;
@@ -18,6 +19,17 @@ namespace ShipDock.Applications
     {
         private static bool isDebugServiceStarted;
 
+        public static void StartHotFixeByAsset(HotFixer target, TextAsset dll, TextAsset pdb = default)
+        {
+            byte[] dllVS = dll != default ? dll.bytes : default;
+#if RELEASE
+            target.StartHotfix(dllVS);//正式发布时不加载pdb文件
+#else
+            byte[] pdbVS = pdb != default ? pdb.bytes : default;
+            target.StartHotfix(dllVS, pdbVS);
+#endif
+        }
+
         [SerializeField]
         protected HotFixerStartUpInfo m_StartUpInfo = new HotFixerStartUpInfo();
 
@@ -33,15 +45,13 @@ namespace ShipDock.Applications
             }
         }
 
-        protected ILMethodCacher MethodCacher { get; set; }
-
         /// <summary>
         /// ILRuntime热更应用域引用
         /// </summary>
         /// <returns></returns>
         protected virtual AppDomain ILAppDomain()
         {
-            return ILRuntimeExtension.GetILRuntimeHotFix().ILAppDomain;
+            return ILRuntimeUtils.GetILRuntimeHotFix().ILAppDomain;
         }
 
         protected virtual void Awake()
@@ -72,7 +82,6 @@ namespace ShipDock.Applications
 
             mILRuntimeIniter?.Clear();
             mILRuntimeIniter = default;
-            MethodCacher = default;
 
             mILRuntimeDestroy = default;
             mILRuntimeFixedUpdate = default;
@@ -90,7 +99,7 @@ namespace ShipDock.Applications
         {
             mILRuntimeIniter = new ILRuntimeIniter(ILAppDomain());
 
-            MethodCacher = ILRuntimeExtension.GetILRuntimeHotFix().MethodCacher;
+            //MethodCacher = ILRuntimeExtension.GetILRuntimeHotFix().MethodCacher;
         }
 
         /// <summary>
@@ -138,13 +147,17 @@ namespace ShipDock.Applications
                     Debug.LogError(m_StartUpInfo.ClassName + "- dll do not allow an null value, in MultDomain Mode.");
                     break;
                 default:
-                    Debug.Log(m_StartUpInfo.ClassName + "- dll loaded");
+                    Debug.Log((string.IsNullOrEmpty(m_StartUpInfo.ClassName) ? name : m_StartUpInfo.ClassName) + "- dll loaded");
                     break;
             }
 #endif
-
             InitILRuntime();
             ILRuntimeLoaded();
+
+#if LOG_HOT_FIX_COMP_START
+            "HotFixer InstantiateFromIL, class name is {0}".Log(m_StartUpInfo.ClassName);
+            "HotFixer {0} loaded.".Log(statu != 0 && mShellBridge != default ? mShellBridge.ToString() : "do not need, may be is UI");
+#endif
         }
 
         public virtual void RunHotFix()
@@ -204,24 +217,24 @@ namespace ShipDock.Applications
                 return;
             }
 
-            mShellBridge = InstantiateFromIL(m_StartUpInfo.ClassName);
+            mShellBridge = ILRuntimeUtils.InstantiateFromIL(m_StartUpInfo.ClassName);
 
             string method = "GetUpdateMethods";
             string className = m_StartUpInfo.ClassName;
             if (m_StartUpInfo.ApplyFixedUpdate)
             {
-                InvokeMethodILR(mShellBridge, className, method, 1, OnGetFixedUpdateMethod, m_StartUpInfo.FixedUpdateMethodName);
+                ILRuntimeUtils.InvokeMethodILR(mShellBridge, className, method, 1, OnGetFixedUpdateMethod, m_StartUpInfo.FixedUpdateMethodName);
             }
             if (m_StartUpInfo.ApplyUpdate)
             {
-                InvokeMethodILR(mShellBridge, className, method, 1, OnGetUpdateMethod, m_StartUpInfo.UpdateMethodName);
+                ILRuntimeUtils.InvokeMethodILR(mShellBridge, className, method, 1, OnGetUpdateMethod, m_StartUpInfo.UpdateMethodName);
             }
             if (m_StartUpInfo.ApplyLateUpdate)
             {
-                InvokeMethodILR(mShellBridge, className, method, 1, OnGetLateUpdateMethod, m_StartUpInfo.LateUpdateMethodName);
+                ILRuntimeUtils.InvokeMethodILR(mShellBridge, className, method, 1, OnGetLateUpdateMethod, m_StartUpInfo.LateUpdateMethodName);
             }
-            InvokeMethodILR(mShellBridge, className, method, 1, OnGetDestroyMethod, "OnDestroy");
-            InvokeMethodILR(mShellBridge, className, m_StartUpInfo.IniterMethodName, 1, this);
+            ILRuntimeUtils.InvokeMethodILR(mShellBridge, className, method, 1, OnGetDestroyMethod, "OnDestroy");
+            ILRuntimeUtils.InvokeMethodILR(mShellBridge, className, m_StartUpInfo.IniterMethodName, 1, this);
         }
 
         private void OnGetDestroyMethod(InvocationContext context)
@@ -242,76 +255,6 @@ namespace ShipDock.Applications
         private void OnGetFixedUpdateMethod(InvocationContext context)
         {
             mILRuntimeFixedUpdate = context.ReadObject<System.Action>();
-        }
-
-        /// <summary>
-        /// 实例化热更里的类
-        /// </summary>
-        /// <typeparam name="T">泛型参数</typeparam>
-        /// <param name="typeName">类名</param>
-        /// <param name="args">实例化时传入的参数</param>
-        /// <returns></returns>
-        public object InstantiateFromIL(string typeName, params object[] args)
-        {
-            object result = ILAppDomain().Instantiate(typeName, args);
-            return result;
-        }
-
-        /// <summary>
-        /// 实例化热更里的类
-        /// </summary>
-        /// <typeparam name="T">泛型参数</typeparam>
-        /// <param name="typeName">类名</param>
-        /// <returns></returns>
-        public object InstantiateFromIL(string typeName)
-        {
-            IType type = MethodCacher.GetClassCache(typeName, ILAppDomain());
-            object result = ((ILType)type).Instantiate();
-            return result;
-        }
-
-        /// <summary>
-        /// 通过实例调用成员方法
-        /// </summary>
-        /// <param name="instance">实例</param>
-        /// <param name="typeName">类名</param>
-        /// <param name="methodName">方法名</param>
-        /// <param name="paramCount">方法的参数个数</param>
-        /// <param name="resultCallback">获取方法值的回调</param>
-        public void InvokeMethodILR(object instance, string typeName, string methodName, int paramCount, System.Action<InvocationContext> resultCallback, params object[] args)
-        {
-            ILRuntimeInvokeCacher methodCacher = MethodCacher.GetMethodCacher(typeName);
-            IMethod method = methodCacher.GetMethodFromCache(ILAppDomain(), typeName, methodName, paramCount);
-            using (InvocationContext ctx = ILAppDomain().BeginInvoke(method))
-            {
-                ctx.PushObject(instance);
-                int max = args.Length;
-                for (int i = 0; i < max; i++)
-                {
-                    ctx.PushObject(args[i]);
-                }
-                ctx.Invoke();
-                resultCallback?.Invoke(ctx);
-            }
-        }
-
-        public void InvokeMethodILR(object instance, string typeName, string methodName, int paramCount, params object[] args)
-        {
-            ILRuntimeInvokeCacher methodCacher = MethodCacher.GetMethodCacher(typeName);
-            IMethod method = methodCacher.GetMethodFromCache(ILAppDomain(), typeName, methodName, paramCount);
-            using (InvocationContext ctx = ILAppDomain().BeginInvoke(method))
-            {
-                ctx.PushObject(instance);
-                int max = args.Length;
-                for (int i = 0; i < max; i++)
-                {
-                    ctx.PushObject(args[i]);
-                }
-#if LOG_INOVKED_METHOD_BY_ARGS_COUNT
-                Debug.Log(string.Format("HOTFIX invoke: {0}.{1}", typeName, methodName));
-#endif
-                ctx.Invoke();
-            }
         }
     }
 }

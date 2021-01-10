@@ -23,7 +23,7 @@ namespace ShipDock.Applications
             base.InitComponents();
 
             IShipDockComponent component;
-            var manager = ShipDockApp.Instance.Components;
+            var manager = ShipDockApp.Instance.ECSContext;
             int name;
             int max = ComponentNames != default ? ComponentNames.Length : 0;
             for (int i = 0; i < max; i++)
@@ -39,7 +39,7 @@ namespace ShipDock.Applications
         /// </summary>
         public T GetComponentByName<T>(int name) where T : IShipDockComponent
         {
-            return (T)ShipDockApp.Instance.Components.RefComponentByName(name);
+            return (T)ShipDockApp.Instance.ECSContext.RefComponentByName(name);
         }
 
         public T GetComponentFromEntitas<T>(int aid) where T : IShipDockComponent
@@ -48,7 +48,7 @@ namespace ShipDock.Applications
             if (HasComponent(aid))
             {
                 int index = ComponentList.IndexOf(aid);
-                result = (T)ShipDockApp.Instance.Components.RefComponentByName(ComponentList[index]);
+                result = (T)ShipDockApp.Instance.ECSContext.RefComponentByName(ComponentList[index]);
             }
             return result;
         }

@@ -1,0 +1,10 @@
+D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockTester\bin\Debug\ShipDockTester.dll
+D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockTester\bin\Debug\ShipDockTester.pdb
+D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockTester\obj\Debug\ShipDockTester.csprojAssemblyReference.cache
+D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockTester\obj\Debug\ShipDockTester.csproj.CoreCompileInputs.cache
+D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockTester\obj\Debug\ShipDockTester.dll
+D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockTester\obj\Debug\ShipDockTester.pdb
+D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockTester\bin\Debug\UnityEngine.UI.dll
+D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockTester\obj\Debug\ShipDockTester.csproj.CopyComplete
+D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockTester\bin\Debug\ShipDockCommon.dll
+D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockTester\bin\Debug\ShipDockCommon.pdb

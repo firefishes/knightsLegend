@@ -15,6 +15,8 @@ namespace ShipDock.Loader
         private List<CustomAssetComponent> m_Assets;
         [SerializeField]
         private bool m_SyncCusntomList;
+        [SerializeField]
+        private bool m_RemoveEmptyAssets;
 
         private CustomAssetBundle mCustomAssetBundle;
 
@@ -49,6 +51,21 @@ namespace ShipDock.Loader
                 {
                     m_Assets.Add(list[i]);
                 }
+            }
+            if (m_RemoveEmptyAssets)
+            {
+                m_RemoveEmptyAssets = false;
+                List<CustomAssetComponent> list = new List<CustomAssetComponent>();
+                int max = m_Assets.Count;
+                for (int i = 0; i < max; i++)
+                {
+                    if (m_Assets[i] != default)
+                    {
+                        list.Add(m_Assets[i]);
+                    }
+                }
+                m_Assets.Clear();
+                m_Assets = list;
             }
         }
 #endif

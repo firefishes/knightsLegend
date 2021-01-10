@@ -5,7 +5,7 @@ using ShipDock.Applications;
 using System.Collections.Generic;
 using ParamBuilderAction = System.Action<ILRuntime.Runtime.Enviorment.InvocationContext, object[]>;
 
-public static class ILRuntimeExtension
+public static class ILRuntimeUtils
 {
     private static IAppILRuntime frameworkApp;
     private static AppDomain appDomain;
@@ -26,7 +26,7 @@ public static class ILRuntimeExtension
         return frameworkApp.ILRuntimeHotFix;
     }
 
-    private static AppDomain Enviorment()
+    private static AppDomain ILAppDomain()
     {
         if (appDomain == default)
         {
@@ -58,7 +58,7 @@ public static class ILRuntimeExtension
     /// <param name="method">方法名</param>
     public static void StaticInvokeILR(this string typeName, string method)
     {
-        Enviorment().Invoke(typeName, method, default, default);
+        ILAppDomain().Invoke(typeName, method, default, default);
     }
 
     /// <summary>
@@ -69,7 +69,7 @@ public static class ILRuntimeExtension
     /// <param name="args">参数列表</param>
     public static void StaticInvokeILR(this string typeName, string method, params object[] args)
     {
-        Enviorment().Invoke(typeName, method, default, args);
+        ILAppDomain().Invoke(typeName, method, default, args);
     }
 
     /// <summary>
@@ -82,7 +82,7 @@ public static class ILRuntimeExtension
     /// <param name="args">参数列表</param>
     public static void StaticInvokeILR(this string typeName, string methodName, int paramCount, ParamBuilderAction paramBuilderCallback, params object[] args)
     {
-        AppDomain appDomain = Enviorment();
+        AppDomain appDomain = ILAppDomain();
         ILRuntimeInvokeCacher cacher = MethodCacher().GetMethodCacher(typeName);
         IMethod method = cacher.GetMethodFromCache(appDomain, typeName, methodName, paramCount);//预先获得IMethod，可以减低每次调用查找方法耗用的时间
         if (paramBuilderCallback != default)
@@ -109,7 +109,7 @@ public static class ILRuntimeExtension
     /// <param name="args">参数列表</param>
     public static void StaticInvokeILR(this string typeName, string methodName, System.Type[] types, ParamBuilderAction paramBuilderCallback, params object[] args)
     {
-        AppDomain appDomain = Enviorment();
+        AppDomain appDomain = ILAppDomain();
 
         IType typeTemp;
         List<IType> paramList = new List<IType>();//参数类型列表
@@ -145,7 +145,7 @@ public static class ILRuntimeExtension
     /// <param name="args"></param>
     public static void StaticGenericILR(this string typeName, string methodName, System.Type[] generics, params object[] args)
     {
-        AppDomain appDomain = Enviorment();
+        AppDomain appDomain = ILAppDomain();
         int max = generics.Length;
         IType type;
         IType[] genericArgs = new IType[max];
@@ -155,5 +155,76 @@ public static class ILRuntimeExtension
             genericArgs[i] = type;
         }
         appDomain.InvokeGenericMethod(typeName, methodName, genericArgs, default, args);
+    }
+
+
+    /// <summary>
+    /// 实例化热更里的类
+    /// </summary>
+    /// <typeparam name="T">泛型参数</typeparam>
+    /// <param name="typeName">类名</param>
+    /// <param name="args">实例化时传入的参数</param>
+    /// <returns></returns>
+    public static object InstantiateFromIL(string typeName, params object[] args)
+    {
+        object result = ILAppDomain().Instantiate(typeName, args);
+        return result;
+    }
+
+    /// <summary>
+    /// 实例化热更里的类
+    /// </summary>
+    /// <typeparam name="T">泛型参数</typeparam>
+    /// <param name="typeName">类名</param>
+    /// <returns></returns>
+    public static object InstantiateFromIL(string typeName)
+    {
+        IType type = MethodCacher().GetClassCache(typeName, ILAppDomain());
+        object result = ((ILType)type).Instantiate();
+        return result;
+    }
+
+    /// <summary>
+    /// 通过实例调用成员方法
+    /// </summary>
+    /// <param name="instance">实例</param>
+    /// <param name="typeName">类名</param>
+    /// <param name="methodName">方法名</param>
+    /// <param name="paramCount">方法的参数个数</param>
+    /// <param name="resultCallback">获取方法值的回调</param>
+    public static void InvokeMethodILR(object instance, string typeName, string methodName, int paramCount, System.Action<InvocationContext> resultCallback, params object[] args)
+    {
+        ILRuntimeInvokeCacher methodCacher = MethodCacher().GetMethodCacher(typeName);
+        IMethod method = methodCacher.GetMethodFromCache(ILAppDomain(), typeName, methodName, paramCount);
+        using (InvocationContext ctx = ILAppDomain().BeginInvoke(method))
+        {
+            ctx.PushObject(instance);
+            int max = args.Length;
+            for (int i = 0; i < max; i++)
+            {
+                ctx.PushObject(args[i]);
+            }
+            ctx.Invoke();
+            resultCallback?.Invoke(ctx);
+        }
+    }
+
+    public static void InvokeMethodILR(object instance, string typeName, string methodName, int paramCount, params object[] args)
+    {
+        ILRuntimeInvokeCacher methodCacher = MethodCacher().GetMethodCacher(typeName);
+        IMethod method = methodCacher.GetMethodFromCache(ILAppDomain(), typeName, methodName, paramCount);
+        using (InvocationContext ctx = ILAppDomain().BeginInvoke(method))
+        {
+            ctx.PushObject(instance);
+            int max = args.Length;
+            for (int i = 0; i < max; i++)
+            {
+                ctx.PushObject(args[i]);
+            }
+#if LOG_INOVKED_METHOD_BY_ARGS_COUNT
+                Debug.Log(string.Format("HOTFIX invoke: {0}.{1}", typeName, methodName));
+#endif
+            ctx.Invoke();
+        }
     }
 }

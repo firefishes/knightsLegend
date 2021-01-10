@@ -93,27 +93,116 @@ namespace ShipDock.Editors
 
         public void SetValueItem(string keyField, string value)
         {
-            ValueItem valueItem = ValueItem.New(keyField, value);
-            mValueItemMapper[keyField] = valueItem;
+            if (mValueItemMapper != default)
+            {
+                ValueItem valueItem = ValueItem.New(keyField, value);
+                mValueItemMapper[keyField] = valueItem;
+            }
         }
 
         public ValueItem GetValueItem(string keyField)
         {
-            return mValueItemMapper[keyField];
+            return mValueItemMapper != default ? mValueItemMapper[keyField] : default;
         }
 
-        protected void ValueItemTextField(string keyField)
+        public void WriteValueItemDataToEditor(string keyField)
         {
+            string value = mValueItemMapper[keyField].Value;
+            EditorPrefs.SetString(keyField, value);
+        }
+
+        public void ReadValueItemValueFromEditor(string keyField)
+        {
+            string value = EditorPrefs.GetString(keyField);
+            ValueItem item = ValueItem.New(value);
+            if (mValueItemMapper != default)
+            {
+                mValueItemMapper[keyField] = item;
+            }
+        }
+
+        protected void ValueItemTextField(string keyField, string title = "", bool isLayoutH = true)
+        {
+            CheckValueItemArea(ref title, isLayoutH);
+
             string input = GetValueItem(keyField).Value;
             string value = EditorGUILayout.TextField(input);
             GetValueItem(keyField).Change(value);
+
+            CheckValueItemArea(ref title, isLayoutH, true);
         }
 
-        protected void ValueItemLabel(string keyField)
+        protected bool ValueItemTriggle(string keyField, string title = "", bool isLayoutH = true)
         {
+            CheckValueItemArea(ref title, isLayoutH);
+
             ValueItem item = GetValueItem(keyField);
-            string input = item != default ? item.Value : string.Empty;
-            EditorGUILayout.LabelField(input);
+            bool value = item != default ? GetValueItem(keyField).Bool : false;
+            bool toggle = EditorGUILayout.Toggle(value);
+            SetValueItem(keyField, toggle.ToString());
+
+            CheckValueItemArea(ref title, isLayoutH, true);
+            return toggle;
+        }
+
+        protected void ValueItemTextAreaField(string keyField, bool isReadFromEditor = false, string title = "", bool isLayoutH = true)
+        {
+            CheckValueItemArea(ref title, isLayoutH);
+
+            if (isReadFromEditor)
+            {
+                ReadValueItemValueFromEditor(keyField);
+            }
+            ValueItem item = GetValueItem(keyField);
+            if(item != default)
+            {
+                string input = GetValueItem(keyField).Value;
+                string value = EditorGUILayout.TextField(input);
+                GetValueItem(keyField).Change(value);
+                if (isReadFromEditor)
+                {
+                    WriteValueItemDataToEditor(keyField);
+                }
+            }
+            CheckValueItemArea(ref title, isLayoutH, true);
+        }
+
+        protected void ValueItemLabel(string keyField, string title = "", bool isLayoutH = true)
+        {
+            CheckValueItemArea(ref title, isLayoutH);
+
+            ValueItem item = GetValueItem(keyField);
+            if (item != default)
+            {
+                string input = item.Value;
+                EditorGUILayout.LabelField(input);
+            }
+
+            CheckValueItemArea(ref title, isLayoutH, true);
+        }
+
+        private void CheckValueItemArea(ref string title, bool isLayoutH, bool isCheckEnd = false)
+        {
+            bool hasTitle = !string.IsNullOrEmpty(title);
+
+            if (isCheckEnd)
+            {
+                if (hasTitle && isLayoutH)
+                {
+                    EditorGUILayout.EndHorizontal();
+                }
+            }
+            else
+            {
+                if (hasTitle)
+                {
+                    if (isLayoutH)
+                    {
+                        EditorGUILayout.BeginHorizontal();
+                    }
+                    EditorGUILayout.LabelField(title);
+                }
+            }
         }
 
         private void OnGUI()

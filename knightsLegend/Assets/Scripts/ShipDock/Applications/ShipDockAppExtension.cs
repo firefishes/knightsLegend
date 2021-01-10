@@ -9,6 +9,7 @@ using UnityEngine;
 
 public static class ShipDockAppExtension
 {
+#if ADD
     public static void Add(this int target, Action<INoticeBase<int>> handler)
     {
         ShipDockApp.Instance.Notificater?.Add(target, handler);
@@ -70,6 +71,7 @@ public static class ShipDockAppExtension
     {
         return ShipDockApp.Instance.Servers.GetServer<IServer>(serverName);
     }
+#endif
 
     public static void MakeResolver<I>(this string serverName, string alias, string resolverName, ResolveDelegate<I> handler)
     {
@@ -84,43 +86,6 @@ public static class ShipDockAppExtension
     public static T GetData<T>(this int target) where T : IDataProxy
     {
         return ShipDockApp.Instance.Datas.GetData<T>(target);
-    }
-
-    [System.Diagnostics.Conditional("G_LOG")]
-    public static void Log(this string logID, params string[] args)
-    {
-        Tester.Instance.Log(logID, args);
-    }
-
-    [System.Diagnostics.Conditional("G_LOG")]
-    public static void Log(this string target, bool logFilters, params string[] args)
-    {
-        Tester.Instance.Log(target, logFilters, args);
-    }
-
-    [System.Diagnostics.Conditional("G_LOG")]
-    public static void AssertLog(this string target, string title, string assertTarget, params string[] args)
-    {
-        Tester.Instance.LogAndAssert(target, title, assertTarget, args.Length == 0 ? new string[] { assertTarget } : args);
-    }
-
-    [System.Diagnostics.Conditional("G_LOG")]
-    public static void AssertLog(this string target, bool logFilters, string title, string assertTarget, params string[] args)
-    {
-        if (logFilters)
-        {
-            target.AssertLog(title, assertTarget, args);
-        }
-    }
-
-    [System.Diagnostics.Conditional("G_LOG")]
-    public static void Assert(this string target, string assertTarget, params string[] args)
-    {
-        Tester.Instance.Asserting(target, assertTarget);
-        if (args.Length > 0)
-        {
-            target.Log(args);
-        }
     }
 
     public static string Language(this string target, params string[] args)

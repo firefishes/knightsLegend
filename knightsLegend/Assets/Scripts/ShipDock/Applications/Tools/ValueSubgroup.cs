@@ -1,4 +1,5 @@
 ﻿using ShipDock.Tools;
+using Sirenix.OdinInspector;
 using System;
 using UnityEngine;
 
@@ -9,23 +10,31 @@ namespace ShipDock.Applications
     public class ValueSubgroup
     {
         public string keyField;
+        [EnumPaging]
         public ValueItemType valueType;
+        [SerializeField]
+        private float m_DampTime;
 
         [SerializeField]
-        public string m_Str;
+        [ShowIf("valueType", ValueItemType.STRING)]
+        private string m_Str;
         [SerializeField]
-        public float m_FloatValue;
-        [SerializeField]
+        [ShowIf("valueType", ValueItemType.DOUBLE)]
         public double m_DoubleValue;
         [SerializeField]
-        public float m_DampTime;
+        [ShowIf("@this.valueType == ValueItemType.FLOAT || this.valueType == ValueItemType.INT")]
+        private float m_FloatValue;
         [SerializeField]
-        public bool m_TriggerValue;
+        [ShowIf("valueType", ValueItemType.BOOL)]
+        private bool m_TriggerValue;
         [SerializeField]
-        public Vector3 m_Vector;
+        [ShowIf("valueType", ValueItemType.VECTOR_2)]
+        private Vector3 m_Vector;
         [SerializeField]
+        [ShowIf("valueType", ValueItemType.COLOR)]
         private Color m_Color;
         [SerializeField]
+        [ShowIf("valueType", ValueItemType.LAYER_MASK)]
         private LayerMask m_LayerMask;
 
         private ValueItem mCached;

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace ShipDock.Applications
 {
     public abstract class HotFixBase
     {
-        public abstract void ShellInited(UnityEngine.Object target);
+        public abstract void ShellInited(MonoBehaviour target);
 
         private Dictionary<string, Action> mHotFixMethods;
 

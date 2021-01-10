@@ -1,4 +1,5 @@
 ﻿using ShipDock.Interfaces;
+using ShipDock.Notices;
 using System;
 
 namespace ShipDock.Applications
@@ -19,12 +20,13 @@ namespace ShipDock.Applications
 
         public void Start()
         {
-            ShipDockApp.Instance.AddStart(OnAppStart);
+            Framework.Instance.AddStart(OnAppStart);
         }
 
         private void OnAppStart()
         {
-            ShipDockApp.Instance.Servers.AddOnServerFinished(mOnStarted);
+            Server.Servers ioc = Framework.Instance.GetUnit<Server.Servers>(Framework.UNIT_IOC);
+            ioc.AddOnServerFinished(mOnStarted);
         }
     }
 

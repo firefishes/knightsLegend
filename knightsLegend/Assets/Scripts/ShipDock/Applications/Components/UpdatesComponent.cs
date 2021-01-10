@@ -1,3 +1,5 @@
+using ShipDock.Notices;
+using ShipDock.Ticks;
 using UnityEngine;
 
 namespace ShipDock.Applications
@@ -39,22 +41,20 @@ namespace ShipDock.Applications
 
         private void Update()
         {
-            mUpdatesCacher?.CheckDeleted();
             int time = (int)(Time.deltaTime * UpdatesCacher.UPDATE_CACHER_TIME_SCALE);
             mUpdatesCacher?.Update(time);
         }
 
         private void FixedUpdate()
         {
-            mUpdatesCacher?.CheckDeleted();
             int time = (int)(Time.fixedDeltaTime * UpdatesCacher.UPDATE_CACHER_TIME_SCALE);
             mUpdatesCacher?.FixedUpdate(time);
         }
 
         private void LateUpdate()
         {
-            mUpdatesCacher?.CheckDeleted();
             mUpdatesCacher?.LateUpdate();
+            mUpdatesCacher?.CheckDeleted();
         }
     }
 }

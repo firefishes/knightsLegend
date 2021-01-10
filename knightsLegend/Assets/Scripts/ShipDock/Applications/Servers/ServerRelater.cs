@@ -30,7 +30,7 @@ namespace ShipDock.Applications
                 {
                     mCompCached = new KeyValueList<int, IShipDockComponent>();
                 }
-                var components = app.Components;
+                var components = app.ECSContext;
                 for (int i = 0; i < max; i++)
                 {
                     name = ComponentNames[i];

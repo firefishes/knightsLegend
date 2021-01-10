@@ -1,16 +1,28 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace ShipDock.Tools
+namespace ShipDock.Editors
 {
     public static class ShipDockEditorUtils
     {
 #if UNITY_EDITOR
+        /// <summary>
+        /// 从编辑器项目面板中查找资源文件
+        /// </summary>
+        /// <typeparam name="T">要查找的文件泛型</typeparam>
+        /// <param name="result">结果列表</param>
+        /// <param name="filters">过滤器，Sample: "t:GameObject"</param>
+        /// <param name="assetPaths">文件路径，Sample：sample: new string[] { @"Assets\Scripts\ShipDock\Applications\Prefabs" }</param>
         public static void FindAssetInEditorProject<T>(ref List<T> result, string filters, params string[] assetPaths) where T : Object
         {
-            //"t:GameObject", new string[] { "Assets/Resources/UI" }
+            Debug.Log("Find asset in editor project: ");
+            foreach(var i in assetPaths)
+            {
+                Debug.Log(i);
+            }
+            Debug.Log("Find end..");
+
             string[] guids = AssetDatabase.FindAssets(filters, assetPaths);//查找指定路径下指定类型的所有资源，返回的是资源GUID
             //从GUID获得资源所在路径
             List<string> paths = new List<string>();

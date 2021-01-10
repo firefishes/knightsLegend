@@ -78,7 +78,7 @@ namespace ShipDock.Editors
             splits = splits[0].Split('/');
             string name = splits[splits.Length - 1];
             string code = string.Empty;
-            var className = config.AutoAdaptorGenerates;
+            var className = config.AutoAdapterGenerates;
             foreach(var item in className)
             {
                 if (item.Key == name)
