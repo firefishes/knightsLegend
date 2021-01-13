@@ -32,13 +32,28 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ShipDockCommon">
+      <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockCommon.dll</HintPath>
+    </Reference>
+    <Reference Include="ShipDockConfig">
+      <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockConfig.dll</HintPath>
+    </Reference>
     <Reference Include="ShipDockCore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockCore.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="ShipDockDatas">
+      <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockDatas.dll</HintPath>
+    </Reference>
+    <Reference Include="ShipDockECS">
+      <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockECS.dll</HintPath>
+    </Reference>
     <Reference Include="ShipDockIOC">
       <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockIOC.dll</HintPath>
+    </Reference>
+    <Reference Include="ShipDockLoader">
+      <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockLoader.dll</HintPath>
     </Reference>
     <Reference Include="ShipDockModulars">
       <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockModulars.dll</HintPath>
@@ -46,6 +61,12 @@
     <Reference Include="ShipDockNotices">
       <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockNotices.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="ShipDockRelates">
+      <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockRelates.dll</HintPath>
+    </Reference>
+    <Reference Include="ShipDockTester">
+      <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockTester.dll</HintPath>
     </Reference>
     <Reference Include="ShipDockTicks">
       <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockTicks.dll</HintPath>

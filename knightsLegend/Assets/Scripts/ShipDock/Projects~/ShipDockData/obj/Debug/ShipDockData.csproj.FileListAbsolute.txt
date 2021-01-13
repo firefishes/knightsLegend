@@ -1,0 +1,9 @@
+D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockData\bin\Debug\ShipDockCommon.dll
+D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockData\bin\Debug\ShipDockCommon.pdb
+D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockData\obj\Debug\ShipDockData.csprojAssemblyReference.cache
+D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockData\obj\Debug\ShipDockData.csproj.CoreCompileInputs.cache
+D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockData\obj\Debug\ShipDockData.csproj.CopyComplete
+D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockData\bin\Debug\ShipDockDatas.dll
+D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockData\bin\Debug\ShipDockDatas.pdb
+D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockData\obj\Debug\ShipDockDatas.dll
+D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockData\obj\Debug\ShipDockDatas.pdb

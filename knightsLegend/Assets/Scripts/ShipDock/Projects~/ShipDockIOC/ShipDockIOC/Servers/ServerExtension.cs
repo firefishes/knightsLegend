@@ -14,7 +14,7 @@ public static class ServerExtension
     public static IServer GetServer(this string serverName)
     {
         Servers ioc = Framework.Instance.GetUnit<Servers>(Framework.UNIT_IOC);
-        return ioc.GetServer<IServer>(serverName);//ShipDockIOC.Instance.Servers.GetServer<IServer>(serverName);
+        return ioc.GetServer<IServer>(serverName);
     }
 
     public static I Delive<I>(this string serverName, string resolverName, string alias, ResolveDelegate<I> customResolver = default, bool isMakeResolver = false, bool isReregister = false)
@@ -54,6 +54,7 @@ public static class ServerExtension
     public static P Resolve<P>(this string serverName, string alias, ResolveDelegate<P> customResolver = default, string resolverName = "")
     {
         IServer server = serverName.GetServer();
+        UnityEngine.Debug.Log(server);
         P result = server.Resolve(alias, resolverName, customResolver);
         return result;
     }

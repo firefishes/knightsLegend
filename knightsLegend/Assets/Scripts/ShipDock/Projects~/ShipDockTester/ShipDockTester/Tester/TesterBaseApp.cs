@@ -61,7 +61,7 @@ namespace ShipDock.Testers
             tester.AddLogger(this, "error", "error: {0} ");
             tester.AddLogger(this, "todo", "todo: {0} ");
 
-            tester.AddAsserter("framework start", false, "Welcom..", "Managers Ready", "Ticks Ready", "Framework Started");
+            tester.AddAsserter("framework start", false, "Welcom..", "Ticks Ready", "Managers Ready", "Framework Started");
         }
 
         public string Name { get; set; }

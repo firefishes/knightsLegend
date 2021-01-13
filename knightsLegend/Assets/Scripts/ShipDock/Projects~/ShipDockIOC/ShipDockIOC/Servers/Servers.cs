@@ -11,13 +11,12 @@ namespace ShipDock.Server
     /// 服务容器管理器
     /// 
     /// </summary>
-    public class Servers : IServersHolder, IFrameworkUnit
+    public class Servers : IServersHolder
     {
         private static readonly Type resolvableAttrType = typeof(ResolvableAttribute);
         private static readonly Type serverPriorityAttrType = typeof(ServerPriority);
 
         private bool mCanCheckServers;
-        private IServer mGlobalServer;
         private object[] mServerPriorAttrs;
         private List<IServer> mNewServers;
         private List<IServer> mServersWillCheck;
@@ -36,8 +35,6 @@ namespace ShipDock.Server
         public bool IsInited { get; private set; }
         public Action OnFinished { get; private set; }
         public Action OnInit { get; private set; }
-
-        public int Name { get; } = Framework.UNIT_IOC;
 
         public Servers(params Action[] onInites)
         {
@@ -82,22 +79,6 @@ namespace ShipDock.Server
             Utils.Reclaim(ref mResolvableConfigs, true, true);
 
             OnFinished = default;
-        }
-
-        public void InitGlobalServer(Action onInit, Action onReady = default, string serverName = "/")
-        {
-            mGlobalServer = new Server(serverName)
-            {
-                Prioriity = -int.MaxValue
-            };
-
-            int statu = 0;
-            string nameTemp = default;
-            CacheServer(ref nameTemp, ref mGlobalServer, ref statu);
-            onInit?.Invoke();
-
-            mGlobalServer.ServerReady();
-            onReady?.Invoke();
         }
 
         public void Add(IServer server)
@@ -203,7 +184,7 @@ namespace ShipDock.Server
             IServer temp = default;
             InitServers(ref temp, out statu);
             ServersReady(ref temp, ref statu);
-            AfterServersInited();
+            ServersInited();
         }
 
         private void InitServers(ref IServer target, out int statu)
@@ -256,13 +237,20 @@ namespace ShipDock.Server
             }
         }
 
-        private void AfterServersInited()
+        public void ServersInited()
         {
-            IsServersReady = true;
-            if (OnFinished != default)
+            if (mServersWillSort != default)
             {
-                OnFinished.Invoke();
-                OnFinished = default;
+                IsServersReady = true;
+                if (mServersWillSort.Count != 0)
+                {
+                    if (OnFinished != default)
+                    {
+                        OnFinished.Invoke();
+                        OnFinished = default;
+                    }
+                }
+                mServersWillSort.Clear();
             }
         }
 
@@ -328,7 +316,7 @@ namespace ShipDock.Server
         {
             IResolvableConfig confItem;
             int id, statu;
-            int max = args.Length;
+            int max = args != default ? args.Length : 0;
             for (int i = 0; i < max; i++)
             {
                 confItem = args[i];
@@ -499,11 +487,6 @@ namespace ShipDock.Server
         public T GetServer<T>(string name) where T : IServer
         {
             return (T)mServerMapper[name];
-        }
-
-        public IServer GlobalServer()
-        {
-            return mGlobalServer;
         }
     }
 }

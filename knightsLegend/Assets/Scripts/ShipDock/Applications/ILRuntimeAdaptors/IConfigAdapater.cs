@@ -8,13 +8,13 @@ namespace ShipDock.Applications
     public class IConfigAdapter : CrossBindingAdaptor
     {
         static CrossBindingFunctionInfo<System.Int32> mGetID_0 = new CrossBindingFunctionInfo<System.Int32>("GetID");
-        static CrossBindingMethodInfo<ShipDock.Applications.ByteBuffer> mParse_1 = new CrossBindingMethodInfo<ShipDock.Applications.ByteBuffer>("Parse");
+        static CrossBindingMethodInfo<ShipDock.Tools.ByteBuffer> mParse_1 = new CrossBindingMethodInfo<ShipDock.Tools.ByteBuffer>("Parse");
         static CrossBindingFunctionInfo<System.String> mget_CRCValue_2 = new CrossBindingFunctionInfo<System.String>("get_CRCValue");
         public override Type BaseCLRType
         {
             get
             {
-                return typeof(ShipDock.Applications.IConfig);
+                return typeof(ShipDock.Config.IConfig);
             }
         }
 
@@ -31,7 +31,7 @@ namespace ShipDock.Applications
             return new Adapter(appdomain, instance);
         }
 
-        public class Adapter : ShipDock.Applications.IConfig, CrossBindingAdaptorType
+        public class Adapter : ShipDock.Config.IConfig, CrossBindingAdaptorType
         {
             ILTypeInstance instance;
             ILRuntime.Runtime.Enviorment.AppDomain appdomain;
@@ -54,7 +54,7 @@ namespace ShipDock.Applications
                 return mGetID_0.Invoke(this.instance);
             }
 
-            public void Parse(ShipDock.Applications.ByteBuffer buffer)
+            public void Parse(ShipDock.Tools.ByteBuffer buffer)
             {
                 mParse_1.Invoke(this.instance, buffer);
             }

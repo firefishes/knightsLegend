@@ -47,7 +47,7 @@ namespace ShipDock.Editors
         {
         }
 
-        protected virtual void InitConfigFlagAndValues()
+        private void InitConfigFlagAndValues()
         {
             mGUIFlagKeys = new List<int>();
             mFlagKeys = new List<string>();
@@ -57,6 +57,7 @@ namespace ShipDock.Editors
 
             mApplyValues = new KeyValueList<string, bool>();
 
+            ReadyClientValues();
         }
 
         protected void CheckClientConfigApplyed(string flagKey, ref bool clientConfigFlag)
@@ -121,7 +122,7 @@ namespace ShipDock.Editors
             }
         }
 
-        protected void ValueItemTextField(string keyField, string title = "", bool isLayoutH = true)
+        public void ValueItemTextField(string keyField, string title = "", bool isLayoutH = true)
         {
             CheckValueItemArea(ref title, isLayoutH);
 
@@ -132,7 +133,7 @@ namespace ShipDock.Editors
             CheckValueItemArea(ref title, isLayoutH, true);
         }
 
-        protected bool ValueItemTriggle(string keyField, string title = "", bool isLayoutH = true)
+        public bool ValueItemTriggle(string keyField, string title = "", bool isLayoutH = true)
         {
             CheckValueItemArea(ref title, isLayoutH);
 
@@ -145,7 +146,7 @@ namespace ShipDock.Editors
             return toggle;
         }
 
-        protected void ValueItemTextAreaField(string keyField, bool isReadFromEditor = false, string title = "", bool isLayoutH = true)
+        public void ValueItemTextAreaField(string keyField, bool isReadFromEditor = false, string title = "", bool isLayoutH = true)
         {
             CheckValueItemArea(ref title, isLayoutH);
 
@@ -167,7 +168,7 @@ namespace ShipDock.Editors
             CheckValueItemArea(ref title, isLayoutH, true);
         }
 
-        protected void ValueItemLabel(string keyField, string title = "", bool isLayoutH = true)
+        public void ValueItemLabel(string keyField, string title = "", bool isLayoutH = true)
         {
             CheckValueItemArea(ref title, isLayoutH);
 
@@ -181,7 +182,7 @@ namespace ShipDock.Editors
             CheckValueItemArea(ref title, isLayoutH, true);
         }
 
-        private void CheckValueItemArea(ref string title, bool isLayoutH, bool isCheckEnd = false)
+        public void CheckValueItemArea(ref string title, bool isLayoutH, bool isCheckEnd = false)
         {
             bool hasTitle = !string.IsNullOrEmpty(title);
 

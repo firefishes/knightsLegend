@@ -9,11 +9,59 @@ namespace ShipDock.Editors
 {
     public class ResDataVersionEditorCreater
     {
+        public static void SetEditorValueItems(ShipDockEditor editor)
+        {
+            editor.SetValueItem("res_version_root_url", "http://127.0.0.1");
+            editor.SetValueItem("is_ignore_remote", "false");
+            editor.SetValueItem("is_sync_client_versions", "true");
+            editor.SetValueItem("update_addition_version", "true");
+            editor.SetValueItem("update_total_version", "false");
+            editor.SetValueItem("sync_app_version", "false");
+        }
+
+        public static void CheckEditorGUI(ShipDockEditor editor)
+        {
+            //editor.ValueItemTriggle("is_zip_patch", "zip压缩包：");
+            editor.ValueItemTriggle("sync_app_version", "    更新版本配置的App版本号");
+            editor.ValueItemTriggle("update_total_version", "    提升版本配置的总版本号");
+            editor.ValueItemTriggle("update_addition_version", "    更新各增量资源版本号");
+            editor.ValueItemTriggle("is_sync_client_versions", "    作为最新版客户端的资源配置模板");
+        }
+
+        public static void CheckGatewayEditorGUI(ShipDockEditor editor, out bool isIgnoreRemote)
+        {
+            isIgnoreRemote = editor.ValueItemTriggle("is_ignore_remote", "    不基于远程版本配置生成新版本配置");
+            if (!isIgnoreRemote)
+            {
+                editor.ValueItemTextAreaField("res_version_root_url", true, "远程版本配置所在服务端 URL", false);
+            }
+        }
+
+        public static void BuildVersions(ShipDockEditor editor, ref List<string> abNames)
+        {
+            string remoteGateway = editor.GetValueItem("res_version_root_url").Value;
+            bool isIgnoreRemote = editor.GetValueItem("is_ignore_remote").Bool;
+            bool isSyncClientVersions = editor.GetValueItem("is_sync_client_versions").Bool;
+            bool isUpdateAdditionVersion = editor.GetValueItem("update_addition_version").Bool;
+            bool isUpdateResVersion = editor.GetValueItem("update_total_version").Bool;
+            bool isSyncAppVersion = editor.GetValueItem("sync_app_version").Bool;
+
+            ResDataVersionEditorCreater creater = new ResDataVersionEditorCreater()
+            {
+                ABNamesWillBuild = abNames,
+                resRemoteGateWay = remoteGateway,
+                isSyncClientVersions = isSyncClientVersions,
+                isUpdateVersion = isUpdateAdditionVersion,
+                isUpdateResVersion = isUpdateResVersion,
+                isSyncAppVersion = isSyncAppVersion,
+            };
+            creater.CreateResDataVersion(isIgnoreRemote);
+        }
+
         public bool isUpdateVersion;
         public bool isSyncClientVersions;
         public bool isUpdateResVersion;
         public bool isSyncAppVersion;
-        public string tempOutputPath;
         /// <summary>即将创建资源包的名称列表</summary>
         public List<string> ABNamesWillBuild;
         /// <summary>远程资源服务器网关</summary>
@@ -52,7 +100,13 @@ namespace ShipDock.Editors
             ResDataVersion remoteVers = default;
             if (flag)
             {
-                string data = ld.TextData;
+                //string data = ld.TextData;
+                string data = System.Text.Encoding.UTF8.GetString(ld.ResultData);
+                if (data.Contains("}{"))
+                {
+                    Debug.Log("Match the '}{'");
+                    data = data.Split(new string[] { "}{" }, System.StringSplitOptions.None)[0].Append("}");
+                }
                 remoteVers = JsonUtility.FromJson<ResDataVersion>(data);
 
                 if (remoteVers == default)
@@ -74,9 +128,36 @@ namespace ShipDock.Editors
         /// <param name="remoteVers"></param>
         private void BuildVersionConfig(ref ResDataVersion remoteVers)
         {
-            string versions;// = FileOperater.ReadUTF8Text(AppPaths.ABBuildOutputRoot.Append(ResDataVersion.FILE_RES_DATA_VERSIONS_NAME));
-            ResDataVersion resDataVersion;// = JsonUtility.FromJson<ResDataVersion>(versions);
-            
+            string versions = default;
+            ResDataVersion resDataVersion = default;
+
+            GetVersionDataFromRemote(ref remoteVers, ref versions, ref resDataVersion);
+
+            //RemoveInvalidABName();
+
+            string[] abNamesValue = ABNamesWillBuild != default ? ABNamesWillBuild.ToArray() : new string[0];
+            resDataVersion.CreateNewResVersion(ref resRemoteGateWay, isUpdateVersion, isUpdateResVersion, isSyncAppVersion, ref remoteVers, ref abNamesValue);
+            resDataVersion.Refresh();
+
+            if (isSyncClientVersions)
+            {
+                List<ScriptableObject> list = default;
+                ShipDockEditorUtils.FindAssetInEditorProject(ref list, "t:ScriptableObject", @"Assets\Prefabs");
+                ClientResVersion clientRes = (ClientResVersion)list[0];
+                clientRes.Versions.CloneVersionsFrom(ref resDataVersion);
+                clientRes.SetChanges(resDataVersion.ResChanges);
+            }
+
+            versions = JsonUtility.ToJson(resDataVersion);
+            FileOperater.WriteUTF8Text(versions, AppPaths.ABBuildOutputRoot.Append(ResDataVersion.FILE_RES_DATA_VERSIONS_NAME.Append(".json~")));//仅用于查看
+            FileOperater.WriteBytes(versions, AppPaths.ABBuildOutputRoot.Append(ResDataVersion.FILE_RES_DATA_VERSIONS_NAME));//位于资源主目录里的正式文件
+
+            resDataVersion.Clean();
+            remoteVers?.Clean();
+        }
+
+        private void GetVersionDataFromRemote(ref ResDataVersion remoteVers, ref string versions, ref ResDataVersion resDataVersion)
+        {
             if (remoteVers == default)
             {
                 versions = FileOperater.ReadUTF8Text(AppPaths.ABBuildOutputRoot.Append(ResDataVersion.FILE_RES_DATA_VERSIONS_NAME));
@@ -95,29 +176,6 @@ namespace ShipDock.Editors
                 resDataVersion = new ResDataVersion();
                 resDataVersion.CloneVersionsFrom(ref remoteVers);
             }
-
-            RemoveInvalidABName();
-
-            string[] abNamesValue = ABNamesWillBuild != default ? ABNamesWillBuild.ToArray() : new string[0];
-            resDataVersion.CreateNewResVersion(ref resRemoteGateWay, isUpdateVersion, isUpdateResVersion, isSyncAppVersion, ref remoteVers, ref abNamesValue);
-            resDataVersion.Refresh();
-
-            if (isSyncClientVersions)
-            {
-                List<ScriptableObject> list = default;
-                ShipDockEditorUtils.FindAssetInEditorProject(ref list, "t:ScriptableObject", @"Assets\Prefabs");
-                ClientResVersion clientRes = (ClientResVersion)list[0];
-                clientRes.Versions.CloneVersionsFrom(ref resDataVersion);
-                clientRes.SetChanges(resDataVersion.ResChanges);
-            }
-
-            versions = JsonUtility.ToJson(resDataVersion);
-            //FileOperater.WriteBytes(versions, AppPaths.ABBuildOutput);//临时目录里的正式文件
-            FileOperater.WriteUTF8Text(versions, AppPaths.ABBuildOutputRoot.Append(ResDataVersion.FILE_RES_DATA_VERSIONS_NAME.Append(".json~")));//仅用于查看
-            FileOperater.WriteBytes(versions, AppPaths.ABBuildOutputRoot.Append(ResDataVersion.FILE_RES_DATA_VERSIONS_NAME));//位于资源主目录里的正式文件
-
-            resDataVersion.Clean();
-            remoteVers?.Clean();
         }
 
         private void RemoveInvalidABName()

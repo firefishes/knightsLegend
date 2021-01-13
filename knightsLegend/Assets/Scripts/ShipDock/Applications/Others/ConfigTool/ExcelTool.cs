@@ -1,12 +1,14 @@
 ﻿#define XLSX
 
 using Excel;
+using ShipDock.Applications;
+using ShipDock.Tools;
 using System.Data;
 using System.IO;
 using System.Text;
 using UnityEngine;
 
-namespace ShipDock.Applications
+namespace ShipDock.Editors
 {
     public class ExcelTool
     {
@@ -111,7 +113,7 @@ namespace ShipDock.Applications
         /// </summary>
         /// <param name="filePath">excel文件全路径</param>
         /// <returns>Item数组</returns>
-        public static object[] CreateItemArrayWithExcel(string filePath)
+        public static void CreateItemArrayWithExcel(string filePath, out string relativeName)
         {
             InitExeclDefs();
 
@@ -130,7 +132,6 @@ namespace ShipDock.Applications
             int dataStartRow = Setting.dataStart.row;
             int dataStartCol = Setting.dataStart.column;
 
-            object[] result = new object[colSize];
             StringBuilder sb = new StringBuilder();
 
             int typeRow = Setting.dataType.row;//类型名所在行
@@ -196,9 +197,11 @@ namespace ShipDock.Applications
             sb.Clear();
 
             string path = Application.dataPath.Append("/HotFix~/StaticConfigs/".Append(className, ".cs"));
-            FileOperater.WriteUTF8Text(script, path);
+            FileOperater.WriteUTF8Text(script, path);//生成代码
 
             ByteBuffer byteBuffer = ByteBuffer.Allocate(0);
+            int dataRealSize = rowSize - dataStartRow;
+            byteBuffer.WriteInt(dataRealSize);
             for (int i = dataStartRow; i < rowSize; i++)
             {
                 Debug.Log("Writing in ID = " + collect[i][dataStartCol].ToString());
@@ -213,9 +216,10 @@ namespace ShipDock.Applications
                 }
             }
             Debug.Log("Write finished.. length = " + byteBuffer.GetCapacity());
-            path = Application.dataPath.Append("/StreamingAssets/res_data/configs/".Append(className, ".bin"));
-            FileOperater.WriteBytes(byteBuffer.ToArray(), path);
-            return result;
+
+            relativeName = "configs/".Append(className.ToLower(), ".bytes");
+            path = AppPaths.DataPathResDataRoot.Append(relativeName);
+            FileOperater.WriteBytes(byteBuffer.ToArray(), path);//生成配置数据
         }
 
         /// <summary>
@@ -225,7 +229,8 @@ namespace ShipDock.Applications
         private static void TemplateMapperConfig(ClassTemplateInfo info)
         {
             StringBuilder sb = info.sb;
-            sb.Append("using ShipDock.Applications;\r\n\r\n");
+            sb.Append("using ShipDock.Config;\r\n\r\n");
+            sb.Append("using ShipDock.Tools;\r\n\r\n");
             sb.Append("namespace StaticConfig\r\n");
             sb.Append("{\r\n");
             sb.Append("    public class %cls% : IConfig\r\n".Replace(info.rplClsName, info.className));

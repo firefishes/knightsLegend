@@ -1,0 +1,4 @@
+F:\Work\BuildShip\Knights\KnightMaster\KnightsMaster\Assets\Scripts\ShipDock\Projects\ShipDockTools\ShipDockTools\obj\Debug\ShipDockTools.csprojAssemblyReference.cache
+F:\Work\BuildShip\Knights\KnightMaster\KnightsMaster\Assets\Scripts\ShipDock\Projects\ShipDockTools\ShipDockTools\obj\Debug\ShipDockTools.csproj.CoreCompileInputs.cache
+F:\Work\BuildShip\Knights\KnightMaster\KnightsMaster\Assets\Scripts\ShipDock\Projects~\ShipDockTools\obj\Debug\ShipDockTools.csprojAssemblyReference.cache
+F:\Work\BuildShip\Knights\KnightMaster\KnightsMaster\Assets\Scripts\ShipDock\Projects~\ShipDockTools\obj\Debug\ShipDockTools.csproj.CoreCompileInputs.cache

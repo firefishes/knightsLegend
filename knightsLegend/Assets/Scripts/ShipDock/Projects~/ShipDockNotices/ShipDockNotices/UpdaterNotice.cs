@@ -1,6 +1,7 @@
 ﻿using ShipDock.Commons;
 using ShipDock.Pooling;
 using System;
+using SceneCallLaterNotice = ShipDock.Notices.ParamNotice<System.Action<int>>;
 
 namespace ShipDock.Notices
 {
@@ -10,7 +11,6 @@ namespace ShipDock.Notices
         {
             UpdaterNotice notice = Pooling<UpdaterNotice>.From();
             notice.ParamValue = target;
-            //ShipDockConsts.NOTICE_ADD_UPDATE.Broadcast(notice);
             notice.SetNoticeName(ShipDockConsts.NOTICE_ADD_UPDATE);
             NotificatonsInt.Instance.Notificater.Broadcast(notice);
             notice.ToPool();
@@ -20,7 +20,6 @@ namespace ShipDock.Notices
         {
             UpdaterNotice notice = Pooling<UpdaterNotice>.From();
             notice.ParamValue = target;
-            //ShipDockConsts.NOTICE_REMOVE_UPDATE.Broadcast(notice);
             notice.SetNoticeName(ShipDockConsts.NOTICE_REMOVE_UPDATE);
             NotificatonsInt.Instance.Notificater.Broadcast(notice);
             notice.ToPool();
@@ -30,7 +29,6 @@ namespace ShipDock.Notices
         {
             UpdaterNotice notice = Pooling<UpdaterNotice>.From();
             notice.ParamValue = target;
-            //ShipDockConsts.NOTICE_ADD_SCENE_UPDATE.Broadcast(notice);
             notice.SetNoticeName(ShipDockConsts.NOTICE_ADD_SCENE_UPDATE);
             NotificatonsInt.Instance.Notificater.Broadcast(notice);
             notice.ToPool();
@@ -40,7 +38,6 @@ namespace ShipDock.Notices
         {
             UpdaterNotice notice = Pooling<UpdaterNotice>.From();
             notice.ParamValue = target;
-            //ShipDockConsts.NOTICE_REMOVE_SCENE_UPDATE.Broadcast(notice);
             notice.SetNoticeName(ShipDockConsts.NOTICE_REMOVE_SCENE_UPDATE);
             NotificatonsInt.Instance.Notificater.Broadcast(notice);
             notice.ToPool();
@@ -48,9 +45,8 @@ namespace ShipDock.Notices
 
         public static void SceneCallLater(Action<int> target)
         {
-            ParamNotice<Action<int>> notice = Pooling<ParamNotice<Action<int>>>.From();
+            SceneCallLaterNotice notice = Pooling<SceneCallLaterNotice>.From();
             notice.ParamValue = target;
-            //ShipDockConsts.NOTICE_SCENE_CALL_LATE.Broadcast(notice);
             notice.SetNoticeName(ShipDockConsts.NOTICE_SCENE_CALL_LATE);
             NotificatonsInt.Instance.Notificater.Broadcast(notice);
             notice.ToPool();

@@ -66,9 +66,9 @@ namespace ShipDock.Ticks
             }
 
             UpdaterNotice notice = param as UpdaterNotice;
-            IUpdate target = notice.ParamValue;
+            IUpdate target = notice != default ? notice.ParamValue : default;
 
-            if (!mDeleted.Contains(target))
+            if ((target != default) && !mDeleted.Contains(target))
             {
                 mDeleted.Add(target);
             }

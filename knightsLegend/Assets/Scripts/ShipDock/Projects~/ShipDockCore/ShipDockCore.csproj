@@ -55,9 +55,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShipDockCore\Framework\FrameworkUnitBrige.cs" />
     <Compile Include="ShipDockCore\Framework\Framework.cs" />
     <Compile Include="ShipDockCore\Framework\Interfaces\ICustomFramework.cs" />
     <Compile Include="ShipDockCore\Framework\Interfaces\IFrameworkUnit.cs" />
+    <Compile Include="ShipDockCore\Framework\Interfaces\IUpdatesComponent.cs" />
     <Compile Include="ShipDockCore\Notices\Interfaces\INoticeBase.cs" />
     <Compile Include="ShipDockCore\Notices\Interfaces\INotificationSender.cs" />
     <Compile Include="ShipDockCore\Notices\Notice.cs" />

@@ -41,14 +41,15 @@
     </Reference>
     <Reference Include="ShipDockNotices, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ShipDockNotices\bin\Debug\ShipDockNotices.dll</HintPath>
+      <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockNotices.dll</HintPath>
     </Reference>
-    <Reference Include="ShipDockTester">
+    <Reference Include="ShipDockTester, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockTester.dll</HintPath>
     </Reference>
     <Reference Include="ShipDockTicks, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ShipDockTicks\bin\Debug\ShipDockTicks.dll</HintPath>
+      <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockTicks.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -64,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShipDockIOC\Applications\Servers\MainServer.cs" />
     <Compile Include="ShipDockIOC\Servers\Attributes\ResolvableAttribute.cs" />
     <Compile Include="ShipDockIOC\Servers\Attributes\ServerPriority.cs" />
     <Compile Include="ShipDockIOC\Servers\Infos\ResolvableInfo.cs" />

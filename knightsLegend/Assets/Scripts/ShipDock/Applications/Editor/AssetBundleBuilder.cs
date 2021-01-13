@@ -153,7 +153,6 @@ namespace ShipDock.Editors
             }
 
             ShipDockEditorData editorData = ShipDockEditorData.Instance;
-            editorData.outputRoot = AppPaths.ABBuildOutputRoot;
             editorData.platformPath = GetSuffix(buildPlatform);
             editorData.buildPlatform = buildPlatform;
 

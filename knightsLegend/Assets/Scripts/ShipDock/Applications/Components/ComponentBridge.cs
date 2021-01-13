@@ -1,5 +1,4 @@
 ﻿using ShipDock.Interfaces;
-using ShipDock.Notices;
 using System;
 
 namespace ShipDock.Applications
@@ -25,8 +24,15 @@ namespace ShipDock.Applications
 
         private void OnAppStart()
         {
-            Server.Servers ioc = Framework.Instance.GetUnit<Server.Servers>(Framework.UNIT_IOC);
-            ioc.AddOnServerFinished(mOnStarted);
+            ICustomFramework app = Framework.Instance.App;
+            if (app.UpdatesComponent != default)
+            {
+                mOnStarted?.Invoke();
+            }
+            else
+            {
+                app.MergeCallOnMainThread += mOnStarted;
+            }
         }
     }
 

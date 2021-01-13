@@ -1,4 +1,6 @@
-﻿namespace ShipDock
+﻿using System;
+
+namespace ShipDock
 {
     public interface IFrameworkUnit
     {

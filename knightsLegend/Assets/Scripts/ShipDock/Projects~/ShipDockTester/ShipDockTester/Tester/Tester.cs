@@ -148,7 +148,6 @@ namespace ShipDock.Testers
             {
                 mTesterMapper[logID] = tester;
             }
-            Debug.Log("mAsserterMapper " + tester.Name);
             if (!mLoggerMapper.ContainsKey(tester.Name))
             {
                 mLoggerMapper[tester.Name] = new Dictionary<string, LogItem>();

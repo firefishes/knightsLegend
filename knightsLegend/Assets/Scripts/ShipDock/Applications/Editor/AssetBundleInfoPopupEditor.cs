@@ -20,24 +20,16 @@ namespace ShipDock.Editors
 
         public UnityEngine.Object[] ResList { get; set; } = new UnityEngine.Object[0];
 
-        protected override void InitConfigFlagAndValues()
+        protected override void ReadyClientValues()
         {
-            base.InitConfigFlagAndValues();
-
             SetValueItem("is_build_ab", "true");
-            SetValueItem("is_build_versions", "true");
             SetValueItem("override_to_streaming", "false");
             SetValueItem("ab_item_name", string.Empty);
-            SetValueItem("update_addition_version", "true");
-            SetValueItem("update_total_version", "false");
-            SetValueItem("sync_app_version", "false");
-            SetValueItem("is_ignore_remote", "false");
-            SetValueItem("is_sync_client_versions", "true");
-            SetValueItem("res_version_root_url", "http://127.0.0.1");
             SetValueItem("display_res_shower", "true");
-        }
+            SetValueItem("is_build_versions", "true");
 
-        protected override void ReadyClientValues() { }
+            ResDataVersionEditorCreater.SetEditorValueItems(this);
+        }
 
         protected override void UpdateClientValues() { }
 
@@ -58,17 +50,9 @@ namespace ShipDock.Editors
             {
                 if (isBuildAB)
                 {
-                    //ValueItemTriggle("is_zip_patch", "zip压缩包：");
-                    ValueItemTriggle("sync_app_version", "    更新版本配置的App版本号");
-                    ValueItemTriggle("update_total_version", "    提升版本配置的总版本号");
-                    ValueItemTriggle("update_addition_version", "    更新各增量资源版本号");
-                    ValueItemTriggle("is_sync_client_versions", "    作为最新版客户端的资源配置模板");
+                    ResDataVersionEditorCreater.CheckEditorGUI(this);
                 }
-                isIgnoreRemote = ValueItemTriggle("is_ignore_remote", "    不基于远程版本配置生成新版本配置");
-                if(!isIgnoreRemote)
-                {
-                    ValueItemTextAreaField("res_version_root_url", true, "远程版本配置所在服务端 URL", false);
-                }
+                ResDataVersionEditorCreater.CheckGatewayEditorGUI(this, out isIgnoreRemote);
             }
             if (isBuildAB)
             {
@@ -87,14 +71,14 @@ namespace ShipDock.Editors
                 {
                     if (GUILayout.Button("Build Versions Only"))
                     {
-                        BuildVersions(default, string.Empty);
+                        BuildVersions(default);
                     }
                 }
                 else
                 {
                     if (GUILayout.Button("Sync Versions From Remote"))
                     {
-                        BuildVersions(default, string.Empty);
+                        BuildVersions(default);
                     }
                 }
             }
@@ -118,7 +102,7 @@ namespace ShipDock.Editors
             editorData.ABCreaterMapper = new KeyValueList<string, List<ABAssetCreater>>();
             CreateAssetImporters(ref abName, ref editorData.ABCreaterMapper);
 
-            string output = editorData.outputRoot;
+            string output = AppPaths.ABBuildOutputRoot;
             if (!Directory.Exists(output))
             {
                 Directory.CreateDirectory(output);
@@ -151,7 +135,7 @@ namespace ShipDock.Editors
                     }
                 }
 
-                BuildVersions(abNames, tempPath);
+                BuildVersions(abNames);
             }
         }
 
@@ -235,32 +219,15 @@ namespace ShipDock.Editors
                     //Debug.Log(abName);
                 }
             }
-            BuildPipeline.BuildAssetBundles(editorData.outputRoot, BuildAssetBundleOptions.None, editorData.buildPlatform);
+            BuildPipeline.BuildAssetBundles(AppPaths.ABBuildOutputRoot, BuildAssetBundleOptions.None, editorData.buildPlatform);
         }
 
-        private void BuildVersions(List<string> abNames, string tempOuputPath)
+        private void BuildVersions(List<string> abNames)
         {
             bool isBuildVersions = GetValueItem("is_build_versions").Bool;
             if (isBuildVersions)
             {
-                string remoteGateway = GetValueItem("res_version_root_url").Value;
-                bool isIgnoreRemote = GetValueItem("is_ignore_remote").Bool;
-                bool isSyncClientVersions = GetValueItem("is_sync_client_versions").Bool;
-                bool isUpdateAdditionVersion = GetValueItem("update_addition_version").Bool;
-                bool isUpdateResVersion = GetValueItem("update_total_version").Bool;
-                bool isSyncAppVersion = GetValueItem("sync_app_version").Bool;
-
-                ResDataVersionEditorCreater creater = new ResDataVersionEditorCreater()
-                {
-                    ABNamesWillBuild = abNames,
-                    resRemoteGateWay = remoteGateway,
-                    isSyncClientVersions = isSyncClientVersions,
-                    isUpdateVersion = isUpdateAdditionVersion,
-                    isUpdateResVersion = isUpdateResVersion,
-                    isSyncAppVersion = isSyncAppVersion,
-                    tempOutputPath = tempOuputPath,
-                };
-                creater.CreateResDataVersion(isIgnoreRemote);
+                ResDataVersionEditorCreater.BuildVersions(this, ref abNames);
             }
         }
 

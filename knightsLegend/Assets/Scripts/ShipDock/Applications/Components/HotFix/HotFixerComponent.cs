@@ -3,7 +3,6 @@ using ILRuntime.Runtime.Enviorment;
 using ShipDock.Loader;
 using ShipDock.Notices;
 using ShipDock.Pooling;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace ShipDock.Applications

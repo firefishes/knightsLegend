@@ -1,5 +1,6 @@
 ﻿using ILRuntime.Runtime.Enviorment;
 using ShipDock.Applications;
+using ShipDock.Config;
 using ShipDock.Interfaces;
 using ShipDock.Modulars;
 using ShipDock.Notices;
@@ -10,7 +11,7 @@ using AutoAdaptorGeneratesDic = System.Collections.Generic.Dictionary<string, Sy
 
 public class AppHotFixConfigBase : IHotFixConfig
 {
-    public virtual string SpaceName { get; set; } = string.Empty;
+    public virtual string SpaceName { get; set; } = "ShipDock.Applications";
     public System.Action<AppDomain> RegisterMethods { get; set; }
     public CrossBindingAdaptor[] Adapters { get; set; }
     public AutoAdaptorGeneratesDic AutoAdapterGenerates { get; set; }
@@ -32,6 +33,7 @@ public class AppHotFixConfigBase : IHotFixConfig
             new IConfigAdapter(),
             new IPoolableAdapter(),
             new ApplicationModularAdapter(),
+            //new ParamNotice_1_String_ArrayAdapter(),
         };
     }
 
@@ -44,6 +46,8 @@ public class AppHotFixConfigBase : IHotFixConfig
             ["HotFixerInteractorAdapter"] = typeof(HotFixerInteractor),
             ["IConfigAdapter"] = typeof(IConfig),
             ["ApplicationModularAdapter"] = typeof(ApplicationModular),
+            ["ParamNoticeStringAdapter"] = typeof(ParamNotice<string>),
+            ["ParamStringsNoticeAdapter"] = typeof(ParamNotice<string[]>),
         };
     }
 
@@ -55,7 +59,7 @@ public class AppHotFixConfigBase : IHotFixConfig
         appdomain.DelegateManager.RegisterMethodDelegate<System.Boolean, ShipDock.Loader.AssetsLoader>();        appdomain.DelegateManager.RegisterMethodDelegate<System.Int32, ShipDock.Notices.INoticeBase<System.Int32>>();
         appdomain.DelegateManager.RegisterMethodDelegate<InputData>();
         appdomain.DelegateManager.RegisterMethodDelegate<GameObject>();        appdomain.DelegateManager.RegisterMethodDelegate<UnityEngine.Vector3>();        appdomain.DelegateManager.RegisterFunctionDelegate<System.Object>();        appdomain.DelegateManager.RegisterFunctionDelegate<INoticeBase<int>>();        appdomain.DelegateManager.RegisterFunctionDelegate<UnityEngine.Vector3>();        appdomain.DelegateManager.RegisterFunctionDelegate<System.Int32, ShipDock.Notices.INoticeBase<System.Int32>>();
-
+        appdomain.DelegateManager.RegisterFunctionDelegate<ShipDock.Applications.IDisposeAdapter.Adapter, ShipDock.Applications.IDisposeAdapter.Adapter, System.Int32>();        appdomain.DelegateManager.RegisterFunctionDelegate<ShipDock.Config.IConfigHolder>();        appdomain.DelegateManager.RegisterMethodDelegate<ILRuntime.Runtime.Intepreter.ILTypeInstance>();        appdomain.DelegateManager.RegisterFunctionDelegate<ILRuntime.Runtime.Intepreter.ILTypeInstance>();
         appdomain.DelegateManager.RegisterDelegateConvertor<UnityEngine.Events.UnityAction<InputData>>((act) =>
         {
             return new UnityEngine.Events.UnityAction<InputData>((arg0) =>
@@ -94,6 +98,12 @@ public class AppHotFixConfigBase : IHotFixConfig
             return new DG.Tweening.Core.DOGetter<UnityEngine.Vector3>(() =>
             {
                 return ((System.Func<UnityEngine.Vector3>)act)();
+            });
+        });        appdomain.DelegateManager.RegisterDelegateConvertor<System.Comparison<ShipDock.Applications.IDisposeAdapter.Adapter>>((act) =>
+        {
+            return new System.Comparison<ShipDock.Applications.IDisposeAdapter.Adapter>((x, y) =>
+            {
+                return ((System.Func<ShipDock.Applications.IDisposeAdapter.Adapter, ShipDock.Applications.IDisposeAdapter.Adapter, System.Int32>)act)(x, y);
             });
         });
     }

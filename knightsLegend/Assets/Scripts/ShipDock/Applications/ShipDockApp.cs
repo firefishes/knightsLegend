@@ -29,14 +29,8 @@ namespace ShipDock.Applications
     {
         public static void StartUp(int ticks, Action onStartUp = default)
         {
-            Application.targetFrameRate = ticks;
-
-            ShipDockApp app = Instance;
-
-            Framework.Instance.InitCustomFramework(app);
-
-            app.AddStart(onStartUp);
-            app.Start(ticks);
+            ICustomFramework app = Instance;
+            Framework.Instance.InitCustomFramework(app, ticks, onStartUp);
         }
 
         /// <summary>
@@ -49,7 +43,7 @@ namespace ShipDock.Applications
 
         public static void Close()
         {
-            Instance.Clean();
+            Framework.Instance.Clean();
         }
 
         private int mFrameSign;
@@ -57,7 +51,8 @@ namespace ShipDock.Applications
         private Action mAppStarted;
         private KeyValueList<IStateMachine, IUpdate> mFSMUpdaters;
         private KeyValueList<IState, IUpdate> mStateUpdaters;
-        private MethodUpdater mServerMainThreadChecker;
+        private MethodUpdater mMainThreadReadyChecker;
+        private IServer[] mServersWillAdd;
 
         private IHotFixConfig HotFixConfig { get; set; }
 
@@ -77,13 +72,16 @@ namespace ShipDock.Applications
         public PerspectiveInputer PerspectivesInputer { get; private set; }
         public ILRuntimeHotFix ILRuntimeHotFix { get; private set; }
         public DecorativeModulars AppModulars { get; private set; }
+        public ConfigHelper Configs { get; private set; }
         public IFrameworkUnit[] FrameworkUnits { get; private set; }
-        public Action MainThreadeady { get; set; }
+        public Action MergeCallOnMainThread { get; set; }
         public Action SceneUpdaterReady { get; set; }
         public bool IsSceneUpdateReady { get; private set; }
+        public IUpdatesComponent UpdatesComponent { get; private set; }
 
         public void Start(int ticks)
         {
+            Application.targetFrameRate = ticks <= 0 ? 10 : ticks;
             if (IsStarted)
             {
                 "error".Log("ShipDockApplication has started");
@@ -98,6 +96,10 @@ namespace ShipDock.Applications
             Servers = new Servers();//新建服务容器管理器
             Datas = new DataWarehouse();//新建数据管理器
             AssetsPooling = new AssetsPooling();//新建场景资源对象池
+            ECSContext = new ShipDockComponentContext//新建 ECS 组件上下文
+            {
+                FrameTimeInScene = (int)(Time.deltaTime * UpdatesCacher.UPDATE_CACHER_TIME_SCALE)
+            };
             StateMachines = new StateMachines//新建有限状态机管理器
             {
                 FSMFrameUpdater = OnFSMFrameUpdater,
@@ -107,29 +109,32 @@ namespace ShipDock.Applications
             Locals = new Locals();//新建本地化管理器
             PerspectivesInputer = new PerspectiveInputer();//新建透视物体交互器
             AppModulars = new DecorativeModulars();//新建装饰模块管理器
+            Configs = new ConfigHelper();//新建配置管理器
 
+            Framework framework = Framework.Instance;
             FrameworkUnits = new IFrameworkUnit[]
             {
-                Servers
+                framework.CreateAsUnitBridge(Framework.UNIT_DATA, Datas),
+                framework.CreateAsUnitBridge(Framework.UNIT_AB, ABs),
+                framework.CreateAsUnitBridge(Framework.UNIT_MODULARS, AppModulars),
+                framework.CreateAsUnitBridge(Framework.UNIT_ECS, ECSContext),
+                framework.CreateAsUnitBridge(Framework.UNIT_IOC, Servers),
+                framework.CreateAsUnitBridge(Framework.UNIT_CONFIG, Configs),
             };
-            Framework.Instance.LoadUnit(FrameworkUnits);
+            framework.LoadUnit(FrameworkUnits);
 
             mFSMUpdaters = new KeyValueList<IStateMachine, IUpdate>();
             mStateUpdaters = new KeyValueList<IState, IUpdate>();
-
+            TicksUpdater = new TicksUpdater(Application.targetFrameRate);//新建客户端心跳帧更新器
+            "log".AssertLog("framework start", "Ticks Ready");
             "log".AssertLog("framework start", "Managers Ready");
-
-            if (ticks > 0)
-            {
-                TicksUpdater = new TicksUpdater(ticks);//新建客户端心跳帧更新器
-                "log".AssertLog("framework start", "Ticks Ready");
-            }
-
             IsStarted = true;
             mAppStarted?.Invoke();
             mAppStarted = default;
 
             ShipDockConsts.NOTICE_SCENE_UPDATE_READY.Add(OnSceneUpdateReady);
+            UpdatesComponent?.Init();
+
             ShipDockConsts.NOTICE_APPLICATION_STARTUP.Broadcast();//框架启动完成
             "log".AssertLog("framework start", "Framework Started");
         }
@@ -146,7 +151,7 @@ namespace ShipDock.Applications
         {
             if (isAdd)
             {
-                if(!mStateUpdaters.IsContainsKey(state))
+                if (!mStateUpdaters.IsContainsKey(state))
                 {
                     MethodUpdater updater = new MethodUpdater
                     {
@@ -169,7 +174,7 @@ namespace ShipDock.Applications
             {
                 return;
             }
-            if(isAdd)
+            if (isAdd)
             {
                 MethodUpdater updater = new MethodUpdater
                 {
@@ -194,25 +199,34 @@ namespace ShipDock.Applications
         /// <param name="onFinishedCallbacks">服务容器初始化完成后在子线程上的一组回调函数</param>
         public void StartIOC(IServer[] servers, Action mainThreadServersReady, Action[] onInitedCallbacks = default, Action[] onFinishedCallbacks = default)
         {
-            PreaddServers(ref servers);
             if (mainThreadServersReady != default)
             {
-                MainThreadeady += mainThreadServersReady;
+                MergeCallOnMainThread += mainThreadServersReady;
             }
             SetServersCallback(ref onInitedCallbacks, ref onFinishedCallbacks);
 
+            MergeToMainThread(out bool flag);
+            if (!flag)
+            {
+                SceneUpdaterReady += () =>
+                {
+                    StartIOC(default, default);
+                };
+            }
+            if (mServersWillAdd == default)
+            {
+                mServersWillAdd = servers;
+            }
+        }
+
+        private void MergeToMainThread(out bool isSceneUpdateReady)
+        {
+            isSceneUpdateReady = IsSceneUpdateReady;
             if (IsSceneUpdateReady)
             {
-                mServerMainThreadChecker = new MethodUpdater();
-                mServerMainThreadChecker.Update += CheckServerInitedInMainThread;
-                UpdaterNotice.AddSceneUpdater(mServerMainThreadChecker);
-            }
-            else
-            {
-                SceneUpdaterReady += () => 
-                {
-                    StartIOC(servers, default);
-                };
+                mMainThreadReadyChecker = new MethodUpdater();
+                mMainThreadReadyChecker.Update += OnCheckMainThreadReady;
+                UpdaterNotice.AddSceneUpdater(mMainThreadReadyChecker);//将调用并入主线程调用
             }
         }
 
@@ -236,29 +250,43 @@ namespace ShipDock.Applications
             }
         }
 
-        private void PreaddServers(ref IServer[] servers)
+        private void OnCheckMainThreadReady(int time)
         {
-            bool hasDefaultServer = servers != default;
-            int max = hasDefaultServer ? servers.Length : 0;
-            if (max > 0)
+            if (Servers.IsServersReady)
             {
-                for (int i = 0; i < max; i++)
+                UpdaterNotice.RemoveSceneUpdater(mMainThreadReadyChecker);
+
+                "log".AssertLog("game", "ServerFinished");
+
+                AddServers();
+                MergeCallOnMainThread?.Invoke();
+                MergeCallOnMainThread = default;
+            }
+            else
+            {
+                bool hasPreset = mServersWillAdd != default;
+                if (hasPreset)
                 {
-                    Servers.Add(servers[i]);
+                    AddServers();
+                }
+                else
+                {
+                    Servers.ServersInited();
                 }
             }
         }
 
-        private void CheckServerInitedInMainThread(int time)
+        private void AddServers()
         {
-            UpdaterNotice.RemoveSceneUpdater(mServerMainThreadChecker);
-            if (Servers.IsServersReady)
+            int max = mServersWillAdd != default ? mServersWillAdd.Length : 0;
+            if (max > 0)
             {
-                "log".AssertLog("game", "ServerFinished");
-
-                MainThreadeady?.Invoke();
-                MainThreadeady = default;
+                for (int i = 0; i < max; i++)
+                {
+                    Servers.Add(mServersWillAdd[i]);
+                }
             }
+            Utils.Reclaim(ref mServersWillAdd);
         }
 
         /// <summary>
@@ -268,11 +296,6 @@ namespace ShipDock.Applications
         {
             if (IsSceneUpdateReady)
             {
-                ECSContext = new ShipDockComponentContext
-                {
-                    FrameTimeInScene = (int)(Time.deltaTime * UpdatesCacher.UPDATE_CACHER_TIME_SCALE)
-                };
-
                 InitECSUpdateModes();
             }
             else
@@ -292,9 +315,7 @@ namespace ShipDock.Applications
                 {
                     Update = AlternateFrameUpdateMode//框架默认为此模式
                 };
-            UpdaterNotice notice = Pooling<UpdaterNotice>.From();
-            notice.ParamValue = updater;
-            ShipDockConsts.NOTICE_ADD_UPDATE.Broadcast(notice);
+            UpdaterNotice.AddUpdater(updater);
 
             updater = ShipDockECSSetting.isMergeUpdateMode ?
                 new MethodUpdater
@@ -305,9 +326,7 @@ namespace ShipDock.Applications
                 {
                     Update = AlternateFramUpdateModeInScene
                 };
-            notice.ParamValue = updater;
-            ShipDockConsts.NOTICE_ADD_SCENE_UPDATE.Broadcast(notice);
-            notice.ToPool();
+            UpdaterNotice.AddSceneUpdater(updater);
         }
 
         /// <summary>
@@ -361,7 +380,7 @@ namespace ShipDock.Applications
         /// </summary>
         private void ComponentUnitUpdate(Action<int> method)
         {
-            TicksUpdater.CallLater(method);
+            TicksUpdater?.CallLater(method);
         }
 
         /// <summary>
@@ -560,6 +579,11 @@ namespace ShipDock.Applications
         public void SetStarted(bool value)
         {
             IsStarted = value;
+        }
+
+        public void SetUpdatesComp(IUpdatesComponent component)
+        {
+            UpdatesComponent = component;
         }
     }
 }

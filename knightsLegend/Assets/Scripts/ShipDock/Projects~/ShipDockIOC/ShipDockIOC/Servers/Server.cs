@@ -1,7 +1,6 @@
 ﻿#define _G_LOG
 
 using ShipDock.Pooling;
-using ShipDock.Testers;
 using System;
 using System.Reflection;
 
@@ -199,10 +198,9 @@ namespace ShipDock.Server
             int resultError;
             InterfaceT result = default;
             IResolvable resolvable = ServersHolder.GetResolvable(ref alias, out resultError);
-            if (resolvable == default)
-            {
-                UnityEngine.Debug.Log("Resolvable is null, alias is " + alias);
-            }
+
+            "error:Resolvable is null, alias is {0}".Log(resolvable == default, alias);
+
             if (resultError == 0)
             {
                 IResolverHandler resolverHandler;

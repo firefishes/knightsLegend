@@ -4,11 +4,11 @@ using System;
 
 namespace ShipDock.Notices
 {
-    public class ShipDockNotification<T> : Singletons<ShipDockNotification<T>>
+    public class NoticeManagerBase<T> : Singletons<NoticeManagerBase<T>>
     {
         public Notifications<T> Notificater { get; private set; }
 
-        public ShipDockNotification()
+        public NoticeManagerBase()
         {
             Notificater = new Notifications<T>();
         }
@@ -21,10 +21,7 @@ namespace ShipDock.Notices
         }
     }
 
-    public class NotificatonsInt : ShipDockNotification<int>
-    {
-
-    }
+    public class NotificatonsInt : NoticeManagerBase<int> { }
 
 }
 

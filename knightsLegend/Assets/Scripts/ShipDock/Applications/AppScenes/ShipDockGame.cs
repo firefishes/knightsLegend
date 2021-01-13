@@ -110,11 +110,6 @@ namespace ShipDock.Applications
         private void OnShipDockStart()
         {
             CreateTesters();
-
-            "debug".AssertLog("game", "Game start.");
-
-            ShipDockApp.Instance.AddStart(OnAppStarted);
-
             InitDataProxy();
             InitServerContainers();
         }
@@ -123,7 +118,7 @@ namespace ShipDock.Applications
         {
             ShipDockApp app = ShipDockApp.Instance;
             bool flag = m_DevelopSubgroup.startUpIOC;
-            IServer[] servers = flag ? GetGameServers() : new IServer[] { new MainServer("ShipDockMainServer") };
+            IServer[] servers = flag ? GetGameServers() : default;
             Action[] onInited = flag ? new Action[] { AddResolvableConfigs } : default;
             Action[] onFinished = flag ? new Action[] { OnServersFinished } : default;
             app.StartIOC(servers, MainThreadServerReady, onInited, onFinished);
@@ -141,11 +136,6 @@ namespace ShipDock.Applications
             }
 
             InitProfile(ref proxyNames);
-        }
-
-        protected virtual void OnAppStarted()
-        {
-            "debug".AssertLog("game", "Game start callback");
         }
 
         private void AddResolvableConfigs()
@@ -272,6 +262,8 @@ namespace ShipDock.Applications
         private void CreateTesters()
         {
             m_GameAppEvents.createTestersEvent?.Invoke();
+
+            "debug".AssertLog("game", "Game start.");
         }
 
         private T CommonEventInovker<T>(UnityEvent<IParamNotice<T>> commonEvent, bool applyPooling = false, T param = default)

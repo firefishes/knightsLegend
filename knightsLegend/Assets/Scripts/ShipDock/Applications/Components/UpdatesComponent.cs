@@ -5,7 +5,7 @@ using UnityEngine;
 namespace ShipDock.Applications
 {
     [DisallowMultipleComponent]
-    public class UpdatesComponent : MonoBehaviour
+    public class UpdatesComponent : MonoBehaviour, IUpdatesComponent
     {
         [SerializeField]
         private int m_ReadyNoticeName = ShipDockConsts.NOTICE_SCENE_UPDATE_READY;
@@ -16,22 +16,19 @@ namespace ShipDock.Applications
         [SerializeField]
         private int m_CallLateItemNoticeName = ShipDockConsts.NOTICE_SCENE_CALL_LATE;
 
-        private ComponentBridge mCompBridge;
         private UpdatesCacher mUpdatesCacher;
 
         private void Awake()
         {
-            mCompBridge = new ComponentBridge(Init);
-            mCompBridge.Start();
+            Framework.Instance.Updates = this;
         }
 
-        private void Init()
+        public void Init()
         {
             if ((int.MaxValue != m_AddItemNoticeName) && (int.MinValue != m_RemoveItemNoticeName))
             {
                 mUpdatesCacher = new UpdatesCacher(m_AddItemNoticeName, m_RemoveItemNoticeName, m_CallLateItemNoticeName);
             }
-            mCompBridge.Dispose();
 
             if(m_ReadyNoticeName != int.MaxValue)
             {

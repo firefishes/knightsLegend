@@ -16,7 +16,7 @@ namespace ShipDock.Notices
             Pooling<ParamNotice<T>>.To(this);
         }
 
-        public T ParamValue { get; set; }
+        public virtual T ParamValue { get; set; }
     }
 
     public interface IParamNotice<T> : INotice
