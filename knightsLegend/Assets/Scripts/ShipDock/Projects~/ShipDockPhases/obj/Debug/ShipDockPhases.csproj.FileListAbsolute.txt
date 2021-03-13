@@ -1,0 +1,6 @@
+D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockPhases\obj\Debug\ShipDockPhases.csprojAssemblyReference.cache
+D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockPhases\obj\Debug\ShipDockPhases.csproj.CoreCompileInputs.cache
+D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockPhases\bin\Debug\ShipDockPhases.dll
+D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockPhases\bin\Debug\ShipDockPhases.pdb
+D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockPhases\obj\Debug\ShipDockPhases.dll
+D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockPhases\obj\Debug\ShipDockPhases.pdb

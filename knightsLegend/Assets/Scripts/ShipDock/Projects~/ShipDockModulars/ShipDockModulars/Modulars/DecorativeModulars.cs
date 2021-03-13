@@ -4,10 +4,16 @@ using System;
 
 namespace ShipDock.Modulars
 {
+    /// <summary>
+    /// 装饰化模块管理器
+    /// </summary>
     public class DecorativeModulars : IAppModulars
     {
+        /// <summary>所有模块</summary>
         private KeyValueList<int, IModular> mModulars;
+        /// <summary>消息生成器函数的映射</summary>
         private KeyValueList<int, Func<int, INoticeBase<int>>> mNoticeCreaters;
+        /// <summary>装饰器函数的映射</summary>
         private KeyValueList<int, Action<int, INoticeBase<int>>> mNoticeDecorator;
 
         public DecorativeModulars()
@@ -24,6 +30,11 @@ namespace ShipDock.Modulars
             mNoticeDecorator?.Dispose();
         }
 
+        /// <summary>
+        /// 添加消息装饰器函数
+        /// </summary>
+        /// <param name="noticeName">消息名</param>
+        /// <param name="method">装饰器函数</param>
         public void AddNoticeDecorator(int noticeName, Action<int, INoticeBase<int>> method)
         {
             if (mNoticeDecorator.ContainsKey(noticeName))
@@ -39,6 +50,11 @@ namespace ShipDock.Modulars
             }
         }
 
+        /// <summary>
+        /// 移除消息装饰器函数
+        /// </summary>
+        /// <param name="noticeName"></param>
+        /// <param name="method"></param>
         public void RemoveNoticeDecorator(int noticeName, Action<int, INoticeBase<int>> method)
         {
             if (mNoticeDecorator.ContainsKey(noticeName))
@@ -48,6 +64,11 @@ namespace ShipDock.Modulars
             }
         }
 
+        /// <summary>
+        /// 添加消息生成器函数
+        /// </summary>
+        /// <param name="noticeName"></param>
+        /// <param name="method"></param>
         public void AddNoticeCreater(int noticeName, Func<int, INoticeBase<int>> method)
         {
             "error".Log(mNoticeCreaters.ContainsKey(noticeName), string.Format("{0}'s creater is existed..", noticeName));
@@ -58,6 +79,11 @@ namespace ShipDock.Modulars
             }
         }
 
+        /// <summary>
+        /// 移除消息生成器函数
+        /// </summary>
+        /// <param name="noticeName"></param>
+        /// <param name="method"></param>
         public void RemoveNoticeCreater(int noticeName, Func<int, INoticeBase<int>> method)
         {
             if (mNoticeCreaters.ContainsKey(noticeName))
@@ -67,6 +93,10 @@ namespace ShipDock.Modulars
             }
         }
 
+        /// <summary>
+        /// 添加模块
+        /// </summary>
+        /// <param name="modulars"></param>
         public void AddModular(params IModular[] modulars)
         {
             IModular modular;
@@ -89,26 +119,35 @@ namespace ShipDock.Modulars
             }
         }
 
-        public INoticeBase<int> NotifyModular(int name, INoticeBase<int> param = default)
+        /// <summary>
+        /// 发送模块消息
+        /// </summary>
+        /// <param name="noticeName">消息名</param>
+        /// <param name="param">消息体对象，如不为空，则不调用对应的生成器函数</param>
+        /// <returns></returns>
+        public INoticeBase<int> NotifyModular(int noticeName, INoticeBase<int> param = default)
         {
-            Func<int, INoticeBase<int>> func = mNoticeCreaters[name];
+            Func<int, INoticeBase<int>> creater = mNoticeCreaters[noticeName];
             bool applyCreater = param == default;
-            INoticeBase<int> notice = applyCreater ? func?.Invoke(name) : param;
+            INoticeBase<int> notice = applyCreater ? creater?.Invoke(noticeName) : param;//调用消息体对象生成器函数
 
-            "error".Log(param == default && func == default, "Notice creater is null..".Append(" notice = ", name.ToString()));
-            "warning".Log(notice == default, "Brocast notice is null..".Append(" notice = ", name.ToString()));
-            "warning".Log(!mNoticeDecorator.ContainsKey(name), string.Format("Notice {0} decorator is empty..", name));
+            #region Logs
+            "error".Log(param == default && creater == default, "Notice creater is null..".Append(" notice = ", noticeName.ToString()));
+            "warning".Log(notice == default, "Brocast notice is null..".Append(" notice = ", noticeName.ToString()));
+            "warning".Log(!mNoticeDecorator.ContainsKey(noticeName), string.Format("Notice {0} decorator is empty..", noticeName));
+            #endregion
 
             if (notice != default)
             {
-                mNoticeDecorator[name]?.Invoke(name, notice);
-                name.Broadcast(notice);
-                "log".Log(string.Format("Modular App brodcast {0}", name.ToString()));
+                Action<int, INoticeBase<int>> decorator = mNoticeDecorator[noticeName];
+                decorator?.Invoke(noticeName, notice);//调用消息体装饰器函数
+                noticeName.Broadcast(notice);//广播模块装饰后的消息
+                "log".Log(string.Format("Modular App brodcast {0}", noticeName.ToString()));
             }
             else
             {
                 "log".Log("Notify modular by default notice");
-                name.Broadcast(notice);
+                noticeName.Broadcast(notice);//广播普通消息
             }
             return notice;
         }

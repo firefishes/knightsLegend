@@ -14,13 +14,13 @@ namespace ShipDock.Applications
         /// <summary> The on drag start. </summary>
         public UnityAction<InputData> onDragStart = default;
         /// <summary> The on click object up. </summary>
-        public UnityAction<InputData> onClickObjUp = default;
+        public UnityAction<InputData> onClickUp = default;
         /// <summary> The on click object down. </summary>
-        public UnityAction<InputData> onClickObjDown = default;
+        public UnityAction<InputData> onClickDown = default;
         /// <summary> The on click object stay. </summary>
-        public UnityAction<GameObject> onClickObjStay = default;
+        public UnityAction<GameObject> onClickStay = default;
         /// <summary> The on click object. </summary>
-        public UnityAction<GameObject> onClickObj = default;
+        public UnityAction<GameObject> onClick = default;
 
         /// <summary> The on enter object. </summary>
         public UnityAction<GameObject> onEnter = default;
@@ -37,7 +37,6 @@ namespace ShipDock.Applications
         #endregion
 
         private bool mIsEnter = false;
-        private bool mIsNullStart;
         private bool mIsDrag, mIsDragStart;
         private float mMouseDis;
         private Ray mInputRay;
@@ -46,19 +45,19 @@ namespace ShipDock.Applications
         private Vector3 mMouseDownPos;
         private Vector3 mScreenSpace, mOffset;
         private Camera mCamera;
-        private Transform mTargetTF;
-        private Transform curDragObj;
+        private Transform mTargetTrans;
+        private Transform mCurDraging;
         private GameObject mHitTarget;
-        private GameObject mOldTarget;
+        private GameObject mPrevTarget;
         private InputData mInputData = default;
 
-        private LayerMask LayerMask { get; set; }
 
-        public bool IsNullStart
-        {
-            get { return mIsNullStart; }
-            set { mIsNullStart = value; }
-        }
+        public bool IsNullStart { get; set; }
+        /// <summary>是否开启输入</summary>
+        public bool IsOpenInput { get; set; }
+        public float ClickRange { get; set; }
+
+        private LayerMask LayerMask { get; set; }
 
         public bool HasInput
         {
@@ -71,10 +70,6 @@ namespace ShipDock.Applications
 #endif
             }
         }
-
-        /// <summary>是否开启输入</summary>
-        public bool IsOpenInput { get; set; }
-        public float ClickRange { get; set; }
 
         public PerspectiveInputer()
         {
@@ -136,11 +131,11 @@ namespace ShipDock.Applications
                 return;
             }
 
-            if (mCamera == null)
+            if (mCamera == default)
             {
                 mCamera = Camera.main;
             }
-            if (mInputData == null)
+            if (mInputData == default)
             {
                 mInputData = new InputData();
             }
@@ -156,31 +151,31 @@ namespace ShipDock.Applications
                     mIsDragStart = false;
 
                     mMouseDownPos = Input.mousePosition;
-                    mTargetTF = mInputHit.transform;
-                    mScreenSpace = mCamera.WorldToScreenPoint(mTargetTF.position);
+                    mTargetTrans = mInputHit.transform;
+                    mScreenSpace = mCamera.WorldToScreenPoint(mTargetTrans.position);
 
                     Vector3 screenPos = new Vector3(mMousePos.x, mMousePos.y, mScreenSpace.z);
-                    mOffset = mTargetTF.position - mCamera.ScreenToWorldPoint(screenPos);
+                    mOffset = mTargetTrans.position - mCamera.ScreenToWorldPoint(screenPos);
 
+                    mInputData.target = mTargetTrans;
                     mInputData.screenPosition = mMousePos;
-                    mInputData.target = mTargetTF;
-                    onClickObjDown?.Invoke(mInputData);
+                    onClickDown?.Invoke(mInputData);
                 }
                 if (!mIsEnter)
                 {
-                    onEnter?.Invoke(mHitTarget);
                     mIsEnter = true;
+                    onEnter?.Invoke(mHitTarget);
                 }
                 onStay?.Invoke(mHitTarget);
-                if ((mOldTarget != mHitTarget) && (mOldTarget != default))
+                if ((mPrevTarget != default) && (mPrevTarget != mHitTarget))
                 {
-                    SetExit();
+                    InteractExit();
                 }
-                mOldTarget = mHitTarget;
+                mPrevTarget = mHitTarget;
             }
             else
             {
-                SetExit();
+                InteractExit();
                 mHitTarget = default;
 
                 mInputData.screenPosition = mMousePos;
@@ -201,12 +196,11 @@ namespace ShipDock.Applications
                     {
                         if (!mIsDragStart)
                         {
-                            //Debug.Log("onDragStart 1");
                             onDragStart?.Invoke(mInputData);
                             mIsDragStart = true;
                         }
                         mIsDrag = true;
-                        curDragObj = default;
+                        mCurDraging = default;
                         onDrag?.Invoke(mInputData);
                     }
                 }
@@ -219,17 +213,16 @@ namespace ShipDock.Applications
                     }
                     else
                     {
-                        //Debug.Log("onDragEnd 1" + curDragObj);
-                        mInputData.target = curDragObj;
+                        mInputData.target = mCurDraging;
                         onDragEnd?.Invoke(mInputData);
                     }
-                    mTargetTF = default;
                     mIsDrag = false;
-                    curDragObj = default;
+                    mTargetTrans = default;
+                    mCurDraging = default;
                 }
             }
 
-            if (mTargetTF == default && !mIsNullStart)
+            if (mTargetTrans == default && !IsNullStart)
             {
                 return;
             }
@@ -238,29 +231,28 @@ namespace ShipDock.Applications
             {
                 if (Physics.Raycast(mInputRay, out mInputHit, float.MaxValue, LayerMask))
                 {
-                    onClickObj?.Invoke(mInputHit.transform.gameObject);
+                    onClick?.Invoke(mInputHit.transform.gameObject);
                 }
                 mMouseDis = Vector3.Distance(mMouseDownPos, mMousePos);
                 if (mIsDrag == false && mMouseDis < ClickRange)
                 {
-                    onClickObjStay?.Invoke(mTargetTF.gameObject);
+                    onClickStay?.Invoke(mTargetTrans.gameObject);
                 }
                 else
                 {
                     if (!mIsDragStart)
                     {
-                        //Debug.Log("onDragStart 2");
                         onDragStart?.Invoke(mInputData);
                         mIsDragStart = true;
                     }
                     mIsDrag = true;
                     Vector3 curScreenSpace = new Vector3(mMousePos.x, mMousePos.y, mScreenSpace.z);
-                    Vector3 CurPosition = mCamera.ScreenToWorldPoint(curScreenSpace) + mOffset;
+                    Vector3 curPosition = mCamera.ScreenToWorldPoint(curScreenSpace) + mOffset;
 
-                    mInputData.target = mTargetTF;
-                    mInputData.position = CurPosition;
+                    mInputData.target = mTargetTrans;
+                    mInputData.position = curPosition;
                     mInputData.screenPosition = curScreenSpace;
-                    curDragObj = mTargetTF;
+                    mCurDraging = mTargetTrans;
                     onDrag?.Invoke(mInputData);
                 }
             }
@@ -269,30 +261,30 @@ namespace ShipDock.Applications
                 mMouseDis = Vector3.Distance(mMouseDownPos, mMousePos);
                 if (mInputData != default)
                 {
-                    mInputData.target = mTargetTF;
+                    mInputData.target = mTargetTrans;
                 }
                 if (mMouseDis < ClickRange && !mIsDrag)
                 {
-                    onClickObjUp?.Invoke(mInputData);
+                    onClickUp?.Invoke(mInputData);
                 }
                 else
                 {
-                    //Debug.Log("onDragEnd 2" + curDragObj);
                     onDragEnd?.Invoke(mInputData);
                 }
-                mTargetTF = default;
                 mIsDrag = false;
-                curDragObj = default;
+                mTargetTrans = default;
+                mCurDraging = default;
             }
         }
 
-        private void SetExit()
+        private void InteractExit()
         {
             if (mIsEnter)
             {
-                onExit?.Invoke(mOldTarget);
                 mIsEnter = false;
-                mOldTarget = null;
+                onExit?.Invoke(mPrevTarget);
+                mPrevTarget = default;
+                mInputHit = default;
             }
         }
 
@@ -304,25 +296,25 @@ namespace ShipDock.Applications
             mCamera = default;
             mInputData = default;
             mHitTarget = default;
-            mOldTarget = default;
-            curDragObj = default;
+            mPrevTarget = default;
+            mCurDraging = default;
 
             mMouseDis = 5;
-            mIsNullStart = false;
+            IsNullStart = false;
 
-            onDrag = null;
-            onDragEnd = null;
-            onDragStart = null;
-            onClickObjUp = null;
-            onClickObjDown = null;
-            onClickObjStay = null;
-            onEnter = null;
-            onExit = null;
-            onStay = null;
-            onClickObj = null;
-            onClickNoneDown = null;
-            onClickNoneUp = null;
-            onClickNoneStay = null;
+            onDrag = default;
+            onDragEnd = default;
+            onDragStart = default;
+            onClickUp = default;
+            onClickDown = default;
+            onClickStay = default;
+            onEnter = default;
+            onExit = default;
+            onStay = default;
+            onClick = default;
+            onClickNoneDown = default;
+            onClickNoneUp = default;
+            onClickNoneStay = default;
         }
     }
 

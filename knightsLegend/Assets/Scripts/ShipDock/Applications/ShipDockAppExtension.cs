@@ -78,16 +78,6 @@ public static class ShipDockAppExtension
         serverName.GetServer().MakeResolver(alias, resolverName, handler);
     }
 
-    public static void AddToWarehouse(this IDataProxy target)
-    {
-        ShipDockApp.Instance.Datas.AddData(target);
-    }
-
-    public static T GetData<T>(this int target) where T : IDataProxy
-    {
-        return ShipDockApp.Instance.Datas.GetData<T>(target);
-    }
-
     public static string Language(this string target, params string[] args)
     {
         return ShipDockApp.Instance.Locals.Language(target, args);

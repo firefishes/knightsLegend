@@ -21,6 +21,8 @@ namespace ShipDock.Editors
             public ExeclDefination dataStart;
             /// <summary>类信息（类名等）的行列定义</summary>
             public ExeclDefination classDefine;
+            /// <summary>生成的配置文件名</summary>
+            public ExeclDefination generateFileName;
             /// <summary>类模板信息（映射对象、静态类等）的行列定义</summary>
             public ExeclDefination classType;
             /// <summary>id字段名的行列定义</summary>
@@ -37,6 +39,12 @@ namespace ShipDock.Editors
         {
             public int row;
             public int column;
+
+            public ExeclDefination(int y, int x)
+            {
+                row = y;
+                column = x;
+            }
         }
 
         public static ExeclSetting Setting { get; set; }
@@ -45,41 +53,14 @@ namespace ShipDock.Editors
         {
             Setting = new ExeclSetting
             {
-                classDefine = new ExeclDefination
-                {
-                    row = 0,
-                    column = 0,
-                },
-                classType = new ExeclDefination
-                {
-                    row = 0,
-                    column = 1,
-                },
-                IDFieldName = new ExeclDefination
-                {
-                    row = 0,
-                    column = 2,
-                },
-                dataStart = new ExeclDefination
-                {
-                    row = 5,
-                    column = 1,
-                },
-                dataType = new ExeclDefination
-                {
-                    row = 1,
-                    column = 0,
-                },
-                keyFieldDef = new ExeclDefination
-                {
-                    row = 3,
-                    column = 0,
-                },
-                noteFieldDef = new ExeclDefination
-                {
-                    row = 4,
-                    column = 0,
-                }
+                classDefine = new ExeclDefination(0, 0),
+                generateFileName = new ExeclDefination(1, 0),
+                classType = new ExeclDefination(0, 1),
+                IDFieldName = new ExeclDefination(0, 2),
+                dataStart = new ExeclDefination(5, 1),
+                dataType = new ExeclDefination(1, 0),
+                keyFieldDef = new ExeclDefination(3, 0),
+                noteFieldDef = new ExeclDefination(4, 0),
             };
         }
 
@@ -120,6 +101,11 @@ namespace ShipDock.Editors
             DataRowCollection collect = ReadExcel(filePath, out int rowSize, out int colSize);//获得表数据
             int col = Setting.classDefine.column, row = Setting.classDefine.row;
             string className = collect[row][col].ToString();//类名
+
+            col = Setting.generateFileName.column;
+            row = Setting.generateFileName.row;
+            string fileName = collect[row][col].ToString();//生成的配置文件名
+            fileName = string.IsNullOrEmpty(fileName) ? className : fileName;
 
             col = Setting.classType.column;
             row = Setting.classType.row;
@@ -212,12 +198,12 @@ namespace ShipDock.Editors
 
                     field = collect[i][j].ToString();//数据
 
-                    WriteField(ref byteBuffer, typeValue, field);
+                    WriteField(ref byteBuffer, typeValue, field, collect[keyRow][j].ToString());
                 }
             }
             Debug.Log("Write finished.. length = " + byteBuffer.GetCapacity());
 
-            relativeName = "configs/".Append(className.ToLower(), ".bytes");
+            relativeName = "configs/".Append(fileName.ToLower(), ".bytes");
             path = AppPaths.DataPathResDataRoot.Append(relativeName);
             FileOperater.WriteBytes(byteBuffer.ToArray(), path);//生成配置数据
         }
@@ -233,7 +219,7 @@ namespace ShipDock.Editors
             sb.Append("using ShipDock.Tools;\r\n\r\n");
             sb.Append("namespace StaticConfig\r\n");
             sb.Append("{\r\n");
-            sb.Append("    public class %cls% : IConfig\r\n".Replace(info.rplClsName, info.className));
+            sb.Append("    public partial class %cls% : IConfig\r\n".Replace(info.rplClsName, info.className));
             sb.Append("    {\r\n");
             sb.Append("        /// <summary>\r\n");
             sb.Append("        /// %notes%\r\n").Replace(info.notes, info.collect[info.notesRow][info.dataStartCol].ToString());
@@ -253,25 +239,26 @@ namespace ShipDock.Editors
             sb.Append("}\r\n");
         }
 
-        private static void WriteField(ref ByteBuffer byteBuffer, string typeValue, string field)
+        private static void WriteField(ref ByteBuffer byteBuffer, string typeValue, string field, string propName)
         {
             switch(typeValue)
             {
                 case "int32":
-                    Debug.Log("Write in int32, " + int.Parse(field));
+                    Debug.Log("Write in int32, " + propName + " = " + int.Parse(field));
                     byteBuffer.WriteInt(int.Parse(field));
                     break;
                 case "string":
-                    Debug.Log("Write in string, " + field);
+                    Debug.Log("Write in string, " + propName + " = " + field);
                     byteBuffer.WriteString(field);
                     break;
                 case "float":
-                    Debug.Log("Write in float, " + float.Parse(field));
+                    Debug.Log("Write in float, " + propName + " = " + float.Parse(field));
                     byteBuffer.WriteFloat(float.Parse(field));
                     break;
                 case "bool":
-                    Debug.Log("Write in bool, " + field);
-                    int value = field == "TRUE" ? 1 : 0;
+                    int value = field == "True" ? 1 : 0;
+                    Debug.Log("Write in bool, field is " + field);
+                    Debug.Log("Write in bool, " + propName + " = " + value);
                     byteBuffer.WriteInt(value);
                     break;
             }

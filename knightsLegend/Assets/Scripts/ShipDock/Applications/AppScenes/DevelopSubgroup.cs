@@ -12,6 +12,8 @@ namespace ShipDock.Applications
         public int configInitedNoticeName = ShipDockConsts.NOTICE_CONFIG_PRELOADED;
         [Tooltip("资源总依赖清单所在的ab包文件")]
         public string assetNameResData = "res_data";
+        [Tooltip("位于Resource目录的首屏加载弹窗资源路径")]
+        public string resUpdatePopupPath = "res_update_popup/ResUpdatePopup";
         [Tooltip("加载资源时是否自动识别使用本地缓存还是Streaming目录")]
         public bool applyManifestAutoPath = false;
         [Tooltip("是否启动IOC功能")]

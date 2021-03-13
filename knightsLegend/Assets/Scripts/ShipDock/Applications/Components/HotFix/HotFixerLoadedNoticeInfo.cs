@@ -12,15 +12,27 @@ namespace ShipDock.Applications
         private bool m_IsSendIDAsNotice;
         [SerializeField]
         [Tooltip("是否以 GameObject为消息名")]
+#if ODIN_INSPECTOR
+        [Sirenix.OdinInspector.ShowIf("m_IsSendIDAsNotice", true)]
+#endif
         private bool m_ApplyGameObjectID = true;
         [SerializeField]
         [Tooltip("是否使用默认的消息类型发送")]
+#if ODIN_INSPECTOR
+        [Sirenix.OdinInspector.ShowIf("m_IsSendIDAsNotice", true)]
+#endif
         private bool m_ApplyDefaultNoticeType = true;
         [SerializeField]
         [Tooltip("是否推迟到下一帧发送消息")]
+#if ODIN_INSPECTOR
+        [Sirenix.OdinInspector.ShowIf("m_IsSendIDAsNotice", true)]
+#endif
         private bool m_ApplyCallLate;
         [SerializeField]
         [Tooltip("能从热更端对象获取自定义的消息类型的函数名")]
+#if ODIN_INSPECTOR
+        [Sirenix.OdinInspector.ShowIf("m_IsSendIDAsNotice", true)]
+#endif
         private string m_GetIDAsCustomNoticeMethod;
 
         /// <summary>

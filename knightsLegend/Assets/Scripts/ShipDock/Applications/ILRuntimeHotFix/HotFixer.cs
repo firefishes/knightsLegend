@@ -2,8 +2,6 @@
 #define _LOG_INITER
 #define _LOG_HOT_FIX_COMP_START
 
-using ILRuntime.CLR.Method;
-using ILRuntime.CLR.TypeSystem;
 using ILRuntime.Runtime.Enviorment;
 using UnityEngine;
 
@@ -33,9 +31,9 @@ namespace ShipDock.Applications
         [SerializeField]
         protected HotFixerStartUpInfo m_StartUpInfo = new HotFixerStartUpInfo();
 
-        protected object mShellBridge;
-
         private ILRuntimeIniter mILRuntimeIniter;
+
+        public object ShellBridge { get; private set; }
 
         public HotFixerStartUpInfo StartUpInfo
         {
@@ -98,8 +96,6 @@ namespace ShipDock.Applications
         protected virtual void Init()
         {
             mILRuntimeIniter = new ILRuntimeIniter(ILAppDomain());
-
-            //MethodCacher = ILRuntimeExtension.GetILRuntimeHotFix().MethodCacher;
         }
 
         /// <summary>
@@ -109,7 +105,9 @@ namespace ShipDock.Applications
         /// <param name="pdb"></param>
         protected virtual void StartHotfix(byte[] dll, byte[] pdb = default)
         {
+#if LOG_INITER
             int statu = 0;
+#endif
             bool hasDll = dll != default;
 
             if (ILRuntimeIniter.HasLoadAnyAssembly)
@@ -118,6 +116,7 @@ namespace ShipDock.Applications
                 {
                     mILRuntimeIniter.Build(dll, pdb);
                 }
+#if LOG_INITER
                 else
                 {
                     if (!ILRuntimeIniter.ApplySingleHotFixMode)
@@ -125,6 +124,7 @@ namespace ShipDock.Applications
                         statu = 2;//多热更端的模式下，必须指定热更文件
                     }
                 }
+#endif
             }
             else
             {
@@ -132,10 +132,12 @@ namespace ShipDock.Applications
                 {
                     mILRuntimeIniter.Build(dll, pdb);
                 }
+#if LOG_INITER
                 else
                 {
                     statu = 1;//没有任何热更端的文件被加载
                 }
+#endif
             }
 #if LOG_INITER
             switch (statu)
@@ -209,32 +211,39 @@ namespace ShipDock.Applications
 
         protected virtual void ILRuntimeLoaded()
         {
-            if (string.IsNullOrEmpty(m_StartUpInfo.ClassName))
+            if (m_StartUpInfo.ApplyClassName)
             {
+                if (string.IsNullOrEmpty(m_StartUpInfo.ClassName))
+                {
 #if LOG_INITER
-                Debug.Log(GetType().Name + "'s ClassName is null.");
+                    Debug.Log(GetType().Name + "'s ClassName is null.");
 #endif
+                    return;
+                }
+            }
+            else
+            {
                 return;
             }
 
-            mShellBridge = ILRuntimeUtils.InstantiateFromIL(m_StartUpInfo.ClassName);
+            ShellBridge = ILRuntimeUtils.InstantiateFromIL(m_StartUpInfo.ClassName);
 
             string method = "GetUpdateMethods";
             string className = m_StartUpInfo.ClassName;
             if (m_StartUpInfo.ApplyFixedUpdate)
             {
-                ILRuntimeUtils.InvokeMethodILR(mShellBridge, className, method, 1, OnGetFixedUpdateMethod, m_StartUpInfo.FixedUpdateMethodName);
+                ILRuntimeUtils.InvokeMethodILR(ShellBridge, className, method, 1, OnGetFixedUpdateMethod, m_StartUpInfo.FixedUpdateMethodName);
             }
             if (m_StartUpInfo.ApplyUpdate)
             {
-                ILRuntimeUtils.InvokeMethodILR(mShellBridge, className, method, 1, OnGetUpdateMethod, m_StartUpInfo.UpdateMethodName);
+                ILRuntimeUtils.InvokeMethodILR(ShellBridge, className, method, 1, OnGetUpdateMethod, m_StartUpInfo.UpdateMethodName);
             }
             if (m_StartUpInfo.ApplyLateUpdate)
             {
-                ILRuntimeUtils.InvokeMethodILR(mShellBridge, className, method, 1, OnGetLateUpdateMethod, m_StartUpInfo.LateUpdateMethodName);
+                ILRuntimeUtils.InvokeMethodILR(ShellBridge, className, method, 1, OnGetLateUpdateMethod, m_StartUpInfo.LateUpdateMethodName);
             }
-            ILRuntimeUtils.InvokeMethodILR(mShellBridge, className, method, 1, OnGetDestroyMethod, "OnDestroy");
-            ILRuntimeUtils.InvokeMethodILR(mShellBridge, className, m_StartUpInfo.IniterMethodName, 1, this);
+            ILRuntimeUtils.InvokeMethodILR(ShellBridge, className, method, 1, OnGetDestroyMethod, "OnDestroy");
+            ILRuntimeUtils.InvokeMethodILR(ShellBridge, className, m_StartUpInfo.IniterMethodName, 1, this);
         }
 
         private void OnGetDestroyMethod(InvocationContext context)

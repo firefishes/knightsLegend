@@ -1,5 +1,6 @@
 ﻿using ShipDock.Interfaces;
 using System.Collections;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -260,13 +261,13 @@ namespace ShipDock.Loader
             }
             else
             {
-                return false;
+                return Asyncer == default;
             }
         }
 
         protected virtual void LoadFailed()
         {
-            LoadError = mRequester.error;
+            LoadError = mRequester != default ? mRequester.error : "Loader do not load by requester, it may be other error.";
             if (AlwaysRetry)
             {
                 SetUrl(string.Empty);

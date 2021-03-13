@@ -60,9 +60,7 @@
     <Compile Include="ShipDockCommon\Tools\IntegerMapper.cs" />
     <Compile Include="ShipDockCommon\Applications\Interfaces\ICamerLens.cs" />
     <Compile Include="ShipDockCommon\Tools\Interfaces\IDispose.cs" />
-    <Compile Include="ShipDockCommon\Tools\Interfaces\IQueueExecuter.cs" />
     <Compile Include="ShipDockCommon\Tools\KeyValueList.cs" />
-    <Compile Include="ShipDockCommon\Tools\QueueExecuter.cs" />
     <Compile Include="ShipDockCommon\Tools\ScopeChecker.cs" />
     <Compile Include="ShipDockCommon\Tools\ShipDockExtension.cs" />
     <Compile Include="ShipDockCommon\Tools\Singletons.cs" />

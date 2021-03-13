@@ -26,6 +26,9 @@ namespace ShipDock.Applications
         [Tooltip("开发设置子组")]
         private DevelopSubgroup m_DevelopSubgroup;
         [SerializeField]
+        [Tooltip("ILRuntime热更子组")]
+        private HotFixSubgroup m_HotFixSubgroup;
+        [SerializeField]
         [Tooltip("游戏应用启动系列事件")]
         private GameApplicationEvents m_GameAppEvents;
 
@@ -37,9 +40,21 @@ namespace ShipDock.Applications
             }
         }
 
+        public HotFixSubgroup HotFixSubgroup
+        {
+            get
+            {
+                return m_HotFixSubgroup;
+            }
+        }
+
         public void UIRootAwaked(IUIRoot root)
         {
+#if RELEASE
+            Debug.unityLogger.logEnabled = false;
+#endif
             ShipDockApp.Instance.InitUIRoot(root);
+            ShipDockApp.StartUp(m_FrameRate, OnShipDockStart);
         }
 
         private void Awake()
@@ -99,12 +114,27 @@ namespace ShipDock.Applications
             }
         }
 
-        private void Start()
+        protected virtual void OnApplicationQuit()
         {
-#if RELEASE
-            Debug.unityLogger.logEnabled = false;
+            BackgroundOperation(true);
+        }
+
+        protected virtual void OnApplicationFocus(bool focus)
+        {
+            if (focus)
+            {
+                BackgroundOperation(false);
+            }
+        }
+
+        protected virtual void BackgroundOperation(bool isCleanVersionCache)
+        {
+#if !UNITY_EDITOR
+            if (m_DevelopSubgroup.ApplyRemoteAssets)
+            {
+                m_DevelopSubgroup.remoteAssetVersions.CacheResVersion(isCleanVersionCache);
+            }
 #endif
-            ShipDockApp.StartUp(m_FrameRate, OnShipDockStart);
         }
 
         private void OnShipDockStart()
@@ -269,7 +299,7 @@ namespace ShipDock.Applications
         private T CommonEventInovker<T>(UnityEvent<IParamNotice<T>> commonEvent, bool applyPooling = false, T param = default)
         {
             IParamNotice<T> notice = applyPooling ? Pooling<ParamNotice<T>>.From() : new ParamNotice<T>();
-            if (param != default)
+            if (param != null)
             {
                 notice.ParamValue = param;
             }

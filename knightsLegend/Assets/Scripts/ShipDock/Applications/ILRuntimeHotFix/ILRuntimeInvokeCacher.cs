@@ -25,26 +25,31 @@ namespace ShipDock.Applications
         /// <param name="target">ILRuntime方法</param>
         private void AddMethodToCache(string methodName, int paramCountKey, IMethod target)
         {
-            Dictionary<string, IMethod> mapper;
-            if (mCacherByParamCount.ContainsKey(paramCountKey))
+            if (target != default)
             {
-                int cacherIndex = mCacherByParamCount[paramCountKey];
-                mapper = mCacheMethodList[cacherIndex];
-            }
-            else
-            {
-                if (mCacheMethodList == default)
+                Dictionary<string, IMethod> mapper;
+                if (mCacherByParamCount.ContainsKey(paramCountKey))
                 {
-                    mCacheMethodList = new List<Dictionary<string, IMethod>>();
+                    int cacherIndex = mCacherByParamCount[paramCountKey];
+                    mapper = mCacheMethodList[cacherIndex];
                 }
+                else
+                {
+                    if (mCacheMethodList == default)
+                    {
+                        mCacheMethodList = new List<Dictionary<string, IMethod>>();
+                    }
+                    else { }
 
-                mapper = new Dictionary<string, IMethod>();
-                mCacheMethodList.Add(mapper);
+                    mapper = new Dictionary<string, IMethod>();
+                    mCacheMethodList.Add(mapper);
 
-                int cacherIndex = mCacheMethodList.Count - 1;
-                mCacherByParamCount[paramCountKey] = cacherIndex;
+                    int cacherIndex = mCacheMethodList.Count - 1;
+                    mCacherByParamCount[paramCountKey] = cacherIndex;
+                }
+                mapper[methodName] = target;
             }
-            mapper[methodName] = target;
+            else { }
         }
 
         /// <summary>
@@ -90,7 +95,13 @@ namespace ShipDock.Applications
         {
             IType cls = GetClassCache(ref appDomain, ref type);
             result = cls.GetMethod(methodName, paramCountKey);
-
+#if !RELEASE
+            if (result == default)
+            {
+                UnityEngine.Debug.Log("ILRuntimeInvokeCacher error: Method is null, name is ".Append(methodName, ", param count need ", paramCountKey.ToString()));
+            }
+            else { }
+#endif
             AddMethodToCache(methodName, paramCountKey, result);
         }
 
@@ -109,8 +120,22 @@ namespace ShipDock.Applications
             }
             else
             {
-                "error: GetClassCache error, do not exist class, class name is {0}".Log(!appDomain.LoadedTypes.ContainsKey(type), type);
+                bool isExist = appDomain.LoadedTypes.ContainsKey(type);
                 cls = appDomain.LoadedTypes[type];
+#if !RELEASE
+                if (!isExist)
+                {
+                    UnityEngine.Debug.Log("ILRuntimeInvokeCacher warning: Class do not exist in ILRuntime domain, class name is ".Append(type));
+                }
+                else { }
+
+                if (cls == default)
+                {
+                    UnityEngine.Debug.Log("ILRuntimeInvokeCacher error: Class do not exist in app domain, class name is ".Append(type));
+                    return default;
+                }
+                else { }
+#endif
                 mCacheType[type] = cls;
             }
             return cls;

@@ -9,10 +9,14 @@ namespace ShipDock.Datas
         private List<IDataExtracter> mDataHandlers;
         private Action<IDataProxy, int> mOnDataProxyNotify;
 
-        public DataProxy(int dataName)
+        public DataProxy()
+        {
+            mDataHandlers = new List<IDataExtracter>();
+        }
+
+        public DataProxy(int dataName) : this()
         {
             DataName = dataName;
-            mDataHandlers = new List<IDataExtracter>();
         }
 
         public virtual void Dispose()
@@ -39,7 +43,7 @@ namespace ShipDock.Datas
             }
         }
 
-        public void Register(IDataExtracter dataHandler)
+        public virtual void Register(IDataExtracter dataHandler)
         {
             if((dataHandler == default) || mDataHandlers.Contains(dataHandler))
             {
@@ -49,7 +53,7 @@ namespace ShipDock.Datas
             mOnDataProxyNotify += dataHandler.OnDataProxyNotify;
         }
 
-        public void Unregister(IDataExtracter dataHandler)
+        public virtual void Unregister(IDataExtracter dataHandler)
         {
             if((dataHandler == default) || mDataHandlers == default || !mDataHandlers.Contains(dataHandler))
             {
@@ -59,6 +63,16 @@ namespace ShipDock.Datas
             mOnDataProxyNotify -= dataHandler.OnDataProxyNotify;
         }
 
-        public int DataName { get; private set; }
+        public void AddDataProxyNotify(Action<IDataProxy, int> notifyHandler)
+        {
+            mOnDataProxyNotify += notifyHandler;
+        }
+
+        public void RemoveDataProxyNotify(Action<IDataProxy, int> notifyHandler)
+        {
+            mOnDataProxyNotify -= notifyHandler;
+        }
+
+        public virtual int DataName { get; private set; }
     }
 }

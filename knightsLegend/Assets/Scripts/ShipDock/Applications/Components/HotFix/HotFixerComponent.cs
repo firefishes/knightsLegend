@@ -9,10 +9,13 @@ namespace ShipDock.Applications
 {
     public class HotFixerComponent : HotFixer
     {
+
         [SerializeField]
         private HotFixerSubgroup m_Settings = new HotFixerSubgroup();
         [SerializeField]
         private HotFixerLoadedNoticeInfo m_LoadedNoticeInfo = new HotFixerLoadedNoticeInfo();
+
+        public TextAsset hotFixAsset;
 
         private ComponentBridge mCompBridge;
         private INoticeBase<int> mIDAsNotice;
@@ -33,6 +36,7 @@ namespace ShipDock.Applications
             mCompBridge?.Dispose();
             mCompBridge = default;
             m_Settings.Clear();
+            m_Settings = default;
         }
 
         protected override void RunWithinFramework()
@@ -54,9 +58,17 @@ namespace ShipDock.Applications
 
             m_Settings.Init();
 
-            AssetBundles abs = ShipDockApp.Instance.ABs;
-            TextAsset dll = abs.Get<TextAsset>(m_Settings.HotFixABName, m_Settings.HotFixDLL);
-            TextAsset pdb = abs.Get<TextAsset>(m_Settings.HotFixABName, m_Settings.HotFixPDB);
+            TextAsset dll, pdb = default;
+            if (hotFixAsset != default)
+            {
+                dll = hotFixAsset;
+            }
+            else
+            {
+                AssetBundles abs = ShipDockApp.Instance.ABs;
+                dll = abs.Get<TextAsset>(m_Settings.HotFixABName, m_Settings.HotFixDLL);
+                pdb = abs.Get<TextAsset>(m_Settings.HotFixABName, m_Settings.HotFixPDB);
+            }
 
             StartHotFixeByAsset(this, dll, pdb);
         }
@@ -80,6 +92,7 @@ namespace ShipDock.Applications
                 {
                     ApplyCustomNotice();
                 }
+
                 if (m_LoadedNoticeInfo.ApplyCallLate)
                 {
                     UpdaterNotice.SceneCallLater(SendLoadedNoticeAndRelease);
@@ -89,10 +102,17 @@ namespace ShipDock.Applications
                     SendLoadedNoticeAndRelease(0);
                 }
             }
+            else { }
         }
 
         private void SendLoadedNoticeAndRelease(int time)
         {
+            if (m_Settings == default)
+            {
+                return;
+            }
+            else { }
+
             int noticeName = m_LoadedNoticeInfo.ApplyGameObjectID ? gameObject.GetInstanceID() : GetInstanceID();
             noticeName.Broadcast(mIDAsNotice);
             if (mIDAsNotice is IPoolable item)
@@ -114,11 +134,12 @@ namespace ShipDock.Applications
             }
             else
             {
-                ILRuntimeUtils.InvokeMethodILR(mShellBridge, m_StartUpInfo.ClassName, methodName, 0, OnGetIDAsNoticeHandler);
+                ILRuntimeUtils.InvokeMethodILR(ShellBridge, m_StartUpInfo.ClassName, methodName, 0, OnGetIDAsNoticeHandler);
                 if (mIDAsNotice == default)
                 {
                     mIDAsNotice = Pooling<Notice>.From();
                 }
+                else { }
             }
         }
 

@@ -12,19 +12,17 @@ namespace ShipDock.Notices
     {
         [SerializeField]
         private int m_Notice = int.MaxValue;
-
+        
         [SerializeField]
         private NoticeHandlerEvent m_NoticeEvent = new NoticeHandlerEvent();
 
         public void Init()
         {
-            //m_Notice.Add(OnNoticeListenerHandler);
             NotificatonsInt.Instance.Notificater.Add(m_Notice, OnNoticeListenerHandler);
         }
 
         public void Deinit()
         {
-            //m_Notice.Remove(OnNoticeListenerHandler);
             NotificatonsInt.Instance.Notificater.Remove(m_Notice, OnNoticeListenerHandler);
         }
 

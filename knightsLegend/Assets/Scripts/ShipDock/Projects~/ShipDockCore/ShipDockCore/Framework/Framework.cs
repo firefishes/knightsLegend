@@ -11,6 +11,9 @@ namespace ShipDock
         public const int UNIT_ECS = 3;
         public const int UNIT_AB = 4;
         public const int UNIT_CONFIG = 5;
+        public const int UNIT_UI = 6;
+        public const int UNIT_ASSET_POOL = 7;
+        public const int UNIT_FSM = 8;
 
         private Action mOnStart;
 
@@ -45,7 +48,7 @@ namespace ShipDock
             App?.Clean();
         }
 
-        public IFrameworkUnit CreateAsUnitBridge<T>(int name, T target)
+        public IFrameworkUnit CreateUnitByBridge<T>(int name, T target)
         {
             return new FrameworkUnitBrige<T>(name, target);
         }

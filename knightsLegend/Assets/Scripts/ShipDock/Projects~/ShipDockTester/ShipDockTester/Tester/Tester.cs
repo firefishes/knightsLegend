@@ -27,6 +27,7 @@ namespace ShipDock.Testers
 
     public class LogItem
     {
+        public bool enabled = true;
         public string format;
         public string logColor;
         public Action<string[]> onLoged;
@@ -44,6 +45,7 @@ namespace ShipDock.Testers
                 {
                     instance = new Tester();
                 }
+                else { }
                 return instance;
             }
         }
@@ -102,6 +104,7 @@ namespace ShipDock.Testers
                 AddLogger(mDefaultTester, "tester hited", "Tester: [{0}] Assert coincide {1}/{2}. correct is {3}", "#7FE939");
                 AddLogger(mDefaultTester, "all tester hited", "Tester: {0} All hit！", "#48DD22");
             }
+            else { }
         }
 
         /// <summary>接收日志消息的回调函数</summary>
@@ -117,12 +120,40 @@ namespace ShipDock.Testers
         }
 
         [System.Diagnostics.Conditional("G_LOG")]
+        public void LogEnabled(string logID, bool value, ITester tester = default)
+        {
+            ITester target = tester ?? mDefaultTester;
+            if (target == default)
+            {
+                return;
+            }
+            else { }
+
+            string testerName = target.Name;
+            if (mLoggerMapper.ContainsKey(testerName))
+            {
+                Dictionary<string, LogItem> list = mLoggerMapper[testerName];
+                if (list.TryGetValue(logID, out LogItem item))
+                {
+                    item.enabled = value;
+                }
+                else
+                {
+                    list[logID] = new LogItem() { enabled = value };
+                }
+            }
+            else { }
+        }
+
+        [System.Diagnostics.Conditional("G_LOG")]
         public void AddTester(ITester tester)
         {
             if (tester == mDefaultTester)
             {
                 return;
             }
+            else { }
+
             bool emptyName = string.IsNullOrEmpty(tester.Name);
             Type type = tester.GetType();
             string name = emptyName ? type.Name : tester.Name;
@@ -130,6 +161,8 @@ namespace ShipDock.Testers
             {
                 tester.Name = name;
             }
+            else { }
+
             if (!mAsserterMapper.ContainsKey(name))
             {
                 mAsserterMapper[name] = new List<Asserter>();
@@ -138,7 +171,9 @@ namespace ShipDock.Testers
                 {
                     tester.Name = name;
                 }
+                else { }
             }
+            else { }
         }
 
         [System.Diagnostics.Conditional("G_LOG")]
@@ -148,12 +183,26 @@ namespace ShipDock.Testers
             {
                 mTesterMapper[logID] = tester;
             }
-            if (!mLoggerMapper.ContainsKey(tester.Name))
+            else { }
+
+            string testerName = tester.Name;
+            if (!mLoggerMapper.ContainsKey(testerName))
             {
-                mLoggerMapper[tester.Name] = new Dictionary<string, LogItem>();
+                mLoggerMapper[testerName] = new Dictionary<string, LogItem>();
             }
-            Dictionary<string, LogItem> list = mLoggerMapper[tester.Name];
-            list[logID] = new LogItem { format = format, logColor = logColor, onLoged = onLogedMethod };
+            else { }
+
+            Dictionary<string, LogItem> list = mLoggerMapper[testerName];
+            if (list.TryGetValue(logID, out LogItem item))
+            {
+                item.format = format;
+                item.logColor = logColor;
+                item.onLoged = onLogedMethod;
+            }
+            else
+            {
+                list[logID] = new LogItem() { format = format, logColor = logColor, onLoged = onLogedMethod };
+            }
         }
 
         [System.Diagnostics.Conditional("G_LOG")]
@@ -177,6 +226,7 @@ namespace ShipDock.Testers
             {
                 Log(string.Empty, args);
             }
+            else { }
         }
 
         [System.Diagnostics.Conditional("G_LOG")]
@@ -186,6 +236,7 @@ namespace ShipDock.Testers
             {
                 Log(logID, args);
             }
+            else { }
         }
 
         [System.Diagnostics.Conditional("G_LOG")]
@@ -202,6 +253,7 @@ namespace ShipDock.Testers
                 LogFromTester(logID, args);
                 Asserting(title, assertTarget);
             }
+            else { }
         }
 
         [System.Diagnostics.Conditional("G_LOG")]
@@ -303,6 +355,7 @@ namespace ShipDock.Testers
             {
                 return;
             }
+            else { }
 
             List<Asserter> list;
             if (mAsserterMapper.ContainsKey(title))
@@ -358,7 +411,9 @@ namespace ShipDock.Testers
                     }
 #endif
                 }
+                else { }
             }
+            else { }
         }
 
         [System.Diagnostics.Conditional("G_LOG")]
@@ -369,12 +424,15 @@ namespace ShipDock.Testers
                 index++;
                 mTesterIndexs[title] = index;
             }
+            else { }
+
             if (index >= max)
             {
                 "all tester hited".Log(title);
                 mAsserterMapper.Remove(title);
                 mTesterIndexs.Remove(title);
             }
+            else { }
         }
 
         [System.Diagnostics.Conditional("G_LOG")]
@@ -384,6 +442,7 @@ namespace ShipDock.Testers
             {
                 raw = value;
             }
+            else { }
         }
 
         [System.Diagnostics.Conditional("G_LOG")]

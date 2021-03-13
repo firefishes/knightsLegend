@@ -872,8 +872,10 @@ namespace ILRuntime.CLR.TypeSystem
                     args[i] = genericArguments[i].Value.TypeForCLR;
                 }
                 Type newType = clrType.MakeGenericType(args);
-                var res = new CLRType(newType, appdomain);
-                res.genericArguments = genericArguments;
+                var res = new CLRType(newType, appdomain)
+                {
+                    genericArguments = genericArguments
+                };
 
                 genericInstances.Add(res);
                 return res;

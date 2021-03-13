@@ -11,6 +11,8 @@ namespace ShipDock.Applications
         [SerializeField]
         private bool m_EnableReadyNotice;
         [SerializeField]
+        private string m_UIModularName;
+        [SerializeField]
         private string m_UIInteractorName;
 
         public HotFixerUI Bridge { get; private set; }
@@ -23,8 +25,18 @@ namespace ShipDock.Applications
             }
         }
 
+        public string UIModularName
+        {
+            get
+            {
+                return m_UIModularName;
+            }
+        }
+
         protected override void Awake()
         {
+            m_StartUpInfo.ApplyClassName = false;//不使用热更类启动，使用 m_UIInteractorName 定义的类名启动
+
             base.Awake();
 
             if (!m_EnableReadyNotice)

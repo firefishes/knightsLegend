@@ -18,7 +18,7 @@ namespace ShipDock.Testers
         /// <summary>是否为调试模式</summary>
         public static bool isDebug = false;
 
-        private static readonly int logLine = 0;
+        //private static readonly int logLine = 0;
         private static int logLineMax = 0;
         private static Text logText;
 
@@ -112,11 +112,11 @@ namespace ShipDock.Testers
 #if !COLOR_LOG
             colorValueInLog = string.Empty;
 #endif
-            bool isTODO = colorInLog.IndexOf(COLOR_LOG_MATCHER_TODO, StringComparison.OrdinalIgnoreCase) != -1;
-            bool isWarning = colorInLog.IndexOf(COLOR_LOG_MATCHER_WARNING, StringComparison.OrdinalIgnoreCase) != -1;
-            bool isLog = colorInLog.IndexOf(COLOR_LOG_MATCHER_LOG, StringComparison.OrdinalIgnoreCase) != -1;
-            bool isError = colorInLog.IndexOf(COLOR_LOG_MATCHER_ERROR, StringComparison.OrdinalIgnoreCase) != -1;
-            bool isTester = colorInLog.IndexOf(COLOR_LOG_MATCHER_TESTER, StringComparison.OrdinalIgnoreCase) != -1;
+            bool isTODO = colorInLog.StartsWith(COLOR_LOG_MATCHER_TODO);//, StringComparison.OrdinalIgnoreCase) != -1;
+            bool isWarning = colorInLog.StartsWith(COLOR_LOG_MATCHER_WARNING);//, StringComparison.OrdinalIgnoreCase) != -1;
+            bool isLog = colorInLog.StartsWith(COLOR_LOG_MATCHER_LOG);//, StringComparison.OrdinalIgnoreCase) != -1;
+            bool isError = colorInLog.StartsWith(COLOR_LOG_MATCHER_ERROR);//, StringComparison.OrdinalIgnoreCase) != -1;
+            bool isTester = colorInLog.StartsWith(COLOR_LOG_MATCHER_TESTER);//, StringComparison.OrdinalIgnoreCase) != -1;
             if (string.IsNullOrEmpty(colorValueInLog))
             {
                 if (isTODO)

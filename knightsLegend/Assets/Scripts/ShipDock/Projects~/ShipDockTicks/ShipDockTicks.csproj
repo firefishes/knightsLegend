@@ -34,13 +34,16 @@
   <ItemGroup>
     <Reference Include="ShipDockCommon">
       <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockCommon.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="ShipDockCore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ShipDockCore\bin\Debug\ShipDockCore.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="ShipDockNotices">
       <HintPath>..\ShipDockNotices\bin\Debug\ShipDockNotices.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -52,21 +55,6 @@
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
       <HintPath>..\References\2018.4.3f1\UnityEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.PhysicsModule">
-      <HintPath>..\References\2018.4.3f1\UnityEngine.PhysicsModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>..\References\2018.4.3f1\UnityEngine.UI.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.UIElementsModule">
-      <HintPath>..\References\2018.4.3f1\UnityEngine.UIElementsModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.UIModule">
-      <HintPath>..\References\2018.4.3f1\UnityEngine.UIModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>

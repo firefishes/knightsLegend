@@ -34,12 +34,15 @@
   <ItemGroup>
     <Reference Include="ShipDockCommon">
       <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockCommon.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="ShipDockCore">
       <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockCore.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="ShipDockTester">
       <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockTester.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -58,6 +61,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShipDockLoader\Loaders\AssetBundleInfo.cs" />
     <Compile Include="ShipDockLoader\Loaders\AssetBundles.cs" />
+    <Compile Include="ShipDockLoader\Loaders\AssetQuoteder.cs" />
     <Compile Include="ShipDockLoader\Loaders\AssetsLoader.cs" />
     <Compile Include="ShipDockLoader\Loaders\Events\LoaderEvents.cs" />
     <Compile Include="ShipDockLoader\Loaders\Interfaces\ICustomAssetBundle.cs" />

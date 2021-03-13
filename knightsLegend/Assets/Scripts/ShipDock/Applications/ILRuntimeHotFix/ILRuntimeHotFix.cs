@@ -1,8 +1,5 @@
 ﻿
 using ILRuntime.Runtime.Enviorment;
-#if ILRuntime
-//using ILRuntime.Runtime.Generated;
-#endif
 
 namespace ShipDock.Applications
 {
@@ -103,9 +100,9 @@ namespace ShipDock.Applications
             {
                 ILAppDomain.RegisterCrossBindingAdaptor(list[i]);//注册跨域类适配器
             }
-#if ILRuntime
+
+            LitJson.JsonMapper.RegisterILRuntimeCLRRedirection(ILAppDomain);//注册热更端JSON解析器
             ILRuntime.Runtime.Generated.CLRBindings.Initialize(ILAppDomain);//注册重定向的方法
-#endif
         }
 
         public void Reset()
@@ -124,8 +121,20 @@ namespace ShipDock.Applications
             MethodCacher = default;
             ILAppDomain = default;
 
+            IsStart = false;
             ILRuntimeIniter.ApplySingleHotFixMode = true;
             ILRuntimeIniter.HasLoadAnyAssembly = false;
         }
+    }
+}
+
+namespace ILRuntime.Runtime.Generated
+{
+    partial class CLRBindings
+    {
+        /// <summary>
+        /// 解决热更模式下未生成绑定文件的报错，便于正常模式与热更模式的平顺切换
+        /// </summary>
+        public static void Initialize(ILRuntime.Runtime.Enviorment.AppDomain app, bool defaultFlag = true) { }
     }
 }

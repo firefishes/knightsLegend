@@ -8,15 +8,15 @@ namespace ShipDock.Applications
     public class HotFixerInteractorAdapter : CrossBindingAdaptor
     {
         static CrossBindingMethodInfo mRelease_0 = new CrossBindingMethodInfo("Release");
-        static CrossBindingMethodInfo<HotFixerUI, HotFixerUIAgent> mInitInteractor_1 = new CrossBindingMethodInfo<HotFixerUI, HotFixerUIAgent>("InitInteractor");
-        static CrossBindingMethodInfo<int, Notices.INoticeBase<int>> mDispatch_2 = new CrossBindingMethodInfo<int, Notices.INoticeBase<int>>("Dispatch");
-        static CrossBindingMethodInfo mUpdateInteractor_3 = new CrossBindingMethodInfo("UpdateInteractor");
-
+        static CrossBindingMethodInfo<ShipDock.Applications.HotFixerUI, ShipDock.Applications.HotFixerUIAgent> mInitInteractor_1 = new CrossBindingMethodInfo<ShipDock.Applications.HotFixerUI, ShipDock.Applications.HotFixerUIAgent>("InitInteractor");
+        static CrossBindingMethodInfo<System.Int32, ShipDock.Notices.INoticeBase<System.Int32>> mDispatch_2 = new CrossBindingMethodInfo<System.Int32, ShipDock.Notices.INoticeBase<System.Int32>>("Dispatch");
+        //static CrossBindingMethodInfo<System.Boolean, System.Action<System.Boolean>> mHotFixUIExit_3 = new CrossBindingMethodInfo<System.Boolean, System.Action<System.Boolean>>("HotFixUIExit");
+        static CrossBindingMethodInfo mUpdateInteractor_4 = new CrossBindingMethodInfo("UpdateInteractor");
         public override Type BaseCLRType
         {
             get
             {
-                return typeof(HotFixerInteractor);
+                return typeof(ShipDock.Applications.HotFixerInteractor);
             }
         }
 
@@ -75,9 +75,17 @@ namespace ShipDock.Applications
                     mDispatch_2.Invoke(this.instance, name, param);
             }
 
+            //public override void HotFixUIExit(System.Boolean isDestroy, System.Action<System.Boolean> onUIStackExit)
+            //{
+            //    if (mHotFixUIExit_3.CheckShouldInvokeBase(this.instance))
+            //        base.HotFixUIExit(isDestroy, onUIStackExit);
+            //    else
+            //        mHotFixUIExit_3.Invoke(this.instance, isDestroy, onUIStackExit);
+            //}
+
             public override void UpdateInteractor()
             {
-                mUpdateInteractor_3.Invoke(this.instance);
+                mUpdateInteractor_4.Invoke(this.instance);
             }
 
             public override string ToString()

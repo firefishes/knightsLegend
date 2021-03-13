@@ -6,6 +6,28 @@ namespace ShipDock.Applications
 {
     public class ConfigsResult
     {
+
+        public bool IsClearHolderList
+        {
+            get
+            {
+                return mIsClearHolderList;
+            }
+            set
+            {
+                mIsClearHolderList = value;
+
+                if (mIsClearHolderList)
+                {
+                    Clean();
+                }
+            }
+        }
+
+        public KeyValueList<string, IConfigHolder> ConfigHolders { get; private set; }
+
+        private bool mIsClearHolderList;
+
         public void SetConfigHolders(params IConfigHolder[] args)
         {
             ConfigHolders = new KeyValueList<string, IConfigHolder>();
@@ -29,14 +51,17 @@ namespace ShipDock.Applications
             IsClearHolderList = false;
         }
 
-        public Dictionary<int, T> GetConfigRaw<T>(string name) where T : IConfig, new()
+        public Dictionary<int, T> GetConfigRaw<T>(string name, out int statu) where T : IConfig, new()
         {
+            statu = 0;
+            if (ConfigHolders == default)
+            {
+                statu = 1;
+                return default;
+            }
             ConfigHolder<T> holder = ConfigHolders[name] as ConfigHolder<T>;
             return holder.Config;
         }
-
-        public bool IsClearHolderList { get; set; }
-        public KeyValueList<string, IConfigHolder> ConfigHolders { get; private set; }
     }
 
 }

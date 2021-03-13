@@ -1,0 +1,6 @@
+D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockVersioning\obj\Debug\ShipDockVersioning.csprojAssemblyReference.cache
+D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockVersioning\obj\Debug\ShipDockVersioning.csproj.CoreCompileInputs.cache
+D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockVersioning\bin\Debug\ShipDockVersioning.dll
+D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockVersioning\bin\Debug\ShipDockVersioning.pdb
+D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockVersioning\obj\Debug\ShipDockVersioning.dll
+D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockVersioning\obj\Debug\ShipDockVersioning.pdb

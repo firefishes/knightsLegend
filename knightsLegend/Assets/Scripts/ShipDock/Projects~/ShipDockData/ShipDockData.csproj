@@ -34,6 +34,7 @@
   <ItemGroup>
     <Reference Include="ShipDockCommon">
       <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockCommon.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="ShipDockCore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -56,6 +57,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShipDockDatas\Datas\DataProxy.cs" />
+    <Compile Include="ShipDockDatas\Datas\DatasExtension.cs" />
     <Compile Include="ShipDockDatas\Datas\DataStorager.cs" />
     <Compile Include="ShipDockDatas\Datas\DataWarehouse.cs" />
     <Compile Include="ShipDockDatas\Datas\FieldableData.cs" />

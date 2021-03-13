@@ -34,22 +34,27 @@
   <ItemGroup>
     <Reference Include="ShipDockCommon">
       <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockCommon.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="ShipDockCore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockCore.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="ShipDockNotices, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockNotices.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="ShipDockTester, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockTester.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="ShipDockTicks, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockTicks.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -61,6 +66,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
       <HintPath>..\References\2018.4.3f1\UnityEngine.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>

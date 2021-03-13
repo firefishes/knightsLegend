@@ -44,11 +44,19 @@ namespace ShipDock.Applications
             {
                 return;
             }
+            else { }
 
             mDllMemeoryStream = new MemoryStream(dll);
-            mPdbMemeoryStream = new MemoryStream(pdb);
 
-            ILRuntimeDomain.LoadAssembly(mDllMemeoryStream, mPdbMemeoryStream, new PdbReaderProvider());
+            if (pdb == default)
+            {
+                ILRuntimeDomain.LoadAssembly(mDllMemeoryStream);
+            }
+            else
+            {
+                mPdbMemeoryStream = new MemoryStream(pdb);
+                ILRuntimeDomain.LoadAssembly(mDllMemeoryStream, mPdbMemeoryStream, new PdbReaderProvider());
+            }
 
             HasLoadAnyAssembly = true;
         }

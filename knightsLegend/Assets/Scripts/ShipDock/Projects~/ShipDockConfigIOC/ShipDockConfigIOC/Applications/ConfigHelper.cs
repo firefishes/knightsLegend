@@ -9,13 +9,14 @@ namespace ShipDock.Applications
 {
     public class ConfigHelper
     {
-        private string mABName;
         private string mConfigLoading;
         private Action<ConfigsResult> mLoadConfigNotice;
         private Queue<string> mWillLoadNames;
         private List<string> mConfigReady;
         private KeyValueList<string, IConfigHolder> mConfigHolders;
         private KeyValueList<string, Func<IConfigHolder>> mConfigHolderCreater;
+
+        public string ConfigResABName { get; set; }
 
         public ConfigHelper()
         {
@@ -37,12 +38,20 @@ namespace ShipDock.Applications
             mConfigHolderCreater[name] = creater;
         }
 
-        public void Load(string configABName, Action<ConfigsResult> target, params string[] configNames)
+        public void Load(Action<ConfigsResult> target, params string[] configNames)
         {
-            mABName = configABName;
+            if (string.IsNullOrEmpty(ConfigResABName))
+            {
+                "error".Log("ConfigHelper need set ConfigResABName for get config res.");
+                return;
+            }
             if (mWillLoadNames != default)
             {
+#if HOT_FIX
+                mWillLoadNames.Clear();
+#else
                 Utils.Reclaim(ref mWillLoadNames, false);
+#endif
             }
             mConfigReady = new List<string>();
             mWillLoadNames = new Queue<string>();
@@ -80,6 +89,7 @@ namespace ShipDock.Applications
         private IConfigHolder GetHolder(string name)
         {
             Func<IConfigHolder> func = mConfigHolderCreater[name];
+            "error: Config holder creater is null, name is {0}".Log(func == default, name);
             return func.Invoke();
         }
 
@@ -108,8 +118,9 @@ namespace ShipDock.Applications
 
             mConfigLoading = mWillLoadNames.Dequeue();
             AssetBundles abs = Framework.Instance.GetUnit<AssetBundles>(Framework.UNIT_AB);
-            TextAsset data = abs.Get<TextAsset>(mABName, mConfigLoading);
+            TextAsset data = abs.Get<TextAsset>(ConfigResABName, mConfigLoading);
 
+            "log:Config data is null, name is {0}".Log(data == default, mConfigLoading);
             LoaderConfirm(data.bytes);
         }
 

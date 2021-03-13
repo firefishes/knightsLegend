@@ -60,6 +60,7 @@ namespace ShipDock.Loader
                     {
                         m_Assets[i].refresh = false;
                         m_Assets[i].UpdateCustomAssetName();
+                        m_Assets[i].SyncCustomAssetType();
                         break;
                     }
                 }

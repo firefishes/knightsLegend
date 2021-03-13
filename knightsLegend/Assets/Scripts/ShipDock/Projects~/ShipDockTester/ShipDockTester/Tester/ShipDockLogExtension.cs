@@ -29,6 +29,7 @@ public static class ShipDockLogExtension
         {
             target.AssertLog(title, assertTarget, args);
         }
+        else { }
     }
 
     [System.Diagnostics.Conditional("G_LOG")]
@@ -39,5 +40,30 @@ public static class ShipDockLogExtension
         {
             target.Log(args);
         }
+        else { }
+    }
+
+    [System.Diagnostics.Conditional("G_LOG")]
+    public static void Log(this object target, params string[] logs)
+    {
+        target.ToString().Log(logs);
+    }
+
+    [System.Diagnostics.Conditional("G_LOG")]
+    public static void Log(this object target, bool filters, params string[] logs)
+    {
+        target.ToString().Log(filters, logs);
+    }
+
+    [System.Diagnostics.Conditional("G_LOG")]
+    public static void LogWithoutType(this object target, params string[] logs)
+    {
+        string.Empty.Log(logs);
+    }
+
+    [System.Diagnostics.Conditional("G_LOG")]
+    public static void LogWithoutType(this object target, bool filters, params string[] logs)
+    {
+        string.Empty.Log(filters, logs);
     }
 }

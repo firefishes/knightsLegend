@@ -37,7 +37,7 @@ namespace ShipDock.Applications
         /// <summary>UI模块的资源包名</summary>
         public virtual string ABName { get; }
         /// <summary>需要关联的数据代理</summary>
-        public abstract int[] DataProxyLinks { get; }
+        public abstract int[] DataProxyLinks { get; set; }
         /// <summary>UI层级</summary>
         public virtual int UILayer { get; protected set; }
 
@@ -85,6 +85,9 @@ namespace ShipDock.Applications
                 case UILayerType.WIDGET:
                     parent = root.Widgets;
                     break;
+                default:
+                    parent = root.MainCanvas.transform;
+                    break;
             }
         }
 
@@ -104,7 +107,7 @@ namespace ShipDock.Applications
 
         private void CheckDisplay()
         {
-            ShipDockApp.Instance.DataProxyLink(this, DataProxyLinks);
+            this.DataProxyLink(DataProxyLinks);
 
             if (mUI != default)
             {
@@ -147,7 +150,8 @@ namespace ShipDock.Applications
         {
             base.Exit(isDestroy);
 
-            ShipDockApp.Instance.DataProxyDelink(this, DataProxyLinks);
+            //ShipDockApp.Instance.DataProxyDelink(this, DataProxyLinks);
+            this.DataProxyDelink(DataProxyLinks);
 
             if (mUI != default)
             {
@@ -155,7 +159,7 @@ namespace ShipDock.Applications
 
                 if (isDestroy)
                 {
-                    Object.Destroy(mUI);
+                    Object.Destroy(mUI.gameObject);
                 }
                 else
                 {

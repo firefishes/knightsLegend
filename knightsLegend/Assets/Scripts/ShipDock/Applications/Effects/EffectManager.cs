@@ -50,12 +50,13 @@ namespace ShipDock.Applications
                 return Surplus > 0;
             }
 
-            internal GameObject GetUniqueCache()
+            public GameObject GetUniqueCache()
             {
                 int index = CacheIndex;
                 CacheIndex++;
                 CacheIndex = CacheIndex >= total - 1 ? 0 : CacheIndex;
-                return UniqueCache[index];
+                GameObject result = index >= 0 && index < UniqueCache.Count ? UniqueCache[index] : default;
+                return result;
             }
 
             private int CacheIndex { get; set; }
@@ -109,7 +110,8 @@ namespace ShipDock.Applications
                 effect = new Effect
                 {
                     source = source,
-                    total = total
+                    total = total,
+                    poolID = id,
                 };
                 effect.Init();
                 mPrefabRaw[id] = effect;
@@ -136,7 +138,7 @@ namespace ShipDock.Applications
             }
         }
 
-        public void CreateEffect(int id, out GameObject result)
+        public void CreateEffect(int id, out GameObject result, bool isFromPool = true)
         {
             result = default;
             if (mPrefabRaw.ContainsKey(id))
@@ -144,7 +146,7 @@ namespace ShipDock.Applications
                 Effect effect = mPrefabRaw[id];
                 if (effect.ShouldCreate())
                 {
-                    effect.CreateAndFill(out result);
+                    effect.CreateAndFill(out result, isFromPool);
                 }
                 else
                 {

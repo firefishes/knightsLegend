@@ -34,20 +34,28 @@
   <ItemGroup>
     <Reference Include="ShipDockCommon">
       <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockCommon.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="ShipDockConfig">
       <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockConfig.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="ShipDockCore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockCore.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="ShipDockDatas">
+      <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockDatas.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="ShipDockIOC">
       <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockIOC.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="ShipDockLoader">
       <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockLoader.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="ShipDockNotices">
       <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockNotices.dll</HintPath>
@@ -55,6 +63,7 @@
     </Reference>
     <Reference Include="ShipDockTester">
       <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockTester.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -71,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShipDockConfigIOC\Applications\Datas\ConfigData.cs" />
     <Compile Include="ShipDockConfigIOC\Applications\Notices\ConfigNotice.cs" />
     <Compile Include="ShipDockConfigIOC\Applications\Notices\ConfigsResult.cs" />
     <Compile Include="ShipDockConfigIOC\Applications\Notices\IConfigNotice.cs" />

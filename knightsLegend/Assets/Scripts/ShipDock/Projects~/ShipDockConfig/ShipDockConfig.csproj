@@ -34,13 +34,16 @@
   <ItemGroup>
     <Reference Include="ShipDockCommon">
       <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockCommon.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="ShipDockLoader">
       <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockLoader.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="ShipDockTester, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ShipDockPlugins\Framework_2018_4\ShipDockTester.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

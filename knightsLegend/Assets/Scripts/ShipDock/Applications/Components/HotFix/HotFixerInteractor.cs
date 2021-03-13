@@ -1,4 +1,5 @@
 ﻿using ShipDock.Notices;
+using System;
 
 namespace ShipDock.Applications
 {
@@ -9,11 +10,18 @@ namespace ShipDock.Applications
     {
         public HotFixerUI UI { get; private set; }
         public HotFixerUIAgent Agent { get; private set; }
+        public UIModularHotFixer UIModular { get; private set; }
 
         public virtual void Release()
         {
             UI = default;
             Agent = default;
+            UIModular = default;
+        }
+
+        public void SetUIModular(UIModularHotFixer modular)
+        {
+            UIModular = modular;
         }
 
         public virtual void InitInteractor(HotFixerUI UIOwner, HotFixerUIAgent agent)

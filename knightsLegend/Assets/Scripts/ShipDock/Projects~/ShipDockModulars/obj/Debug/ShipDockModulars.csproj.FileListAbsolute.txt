@@ -11,16 +11,7 @@ F:\Work\BuildShip\Knights\KnightMaster\KnightsMaster\Assets\Scripts\ShipDock\Pro
 F:\Work\BuildShip\Knights\KnightMaster\KnightsMaster\Assets\Scripts\ShipDock\Projects~\ShipDockModulars\obj\Debug\ShipDockModulars.pdb
 D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockModulars\bin\Debug\ShipDockModulars.dll
 D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockModulars\bin\Debug\ShipDockModulars.pdb
-D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockModulars\bin\Debug\ShipDockCore.dll
-D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockModulars\bin\Debug\ShipDockNotices.dll
-D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockModulars\bin\Debug\ShipDockCore.pdb
-D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockModulars\bin\Debug\ShipDockNotices.pdb
 D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockModulars\obj\Debug\ShipDockModulars.csprojAssemblyReference.cache
 D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockModulars\obj\Debug\ShipDockModulars.csproj.CoreCompileInputs.cache
-D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockModulars\obj\Debug\ShipDockModulars.csproj.CopyComplete
 D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockModulars\obj\Debug\ShipDockModulars.dll
 D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockModulars\obj\Debug\ShipDockModulars.pdb
-D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockModulars\bin\Debug\ShipDockTester.dll
-D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockModulars\bin\Debug\ShipDockTester.pdb
-D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockModulars\bin\Debug\ShipDockCommon.dll
-D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockModulars\bin\Debug\ShipDockCommon.pdb

@@ -45,7 +45,7 @@ namespace ShipDock.Loader
             }
             else
             {
-                "warning:".Log("AssetBundles is null, will create new one.");
+                "warning:".Log("AB包管理器为空，请在 Framework 定制模块中定义");
                 ABs = new AssetBundles();
             }
 
@@ -125,7 +125,7 @@ namespace ShipDock.Loader
                     relativeName = relativeName,
                     isRemote = true,
                 };
-                "log: Loader add opertions remote file: {0}".Log(opertion.relativeName);
+                "log: 添加远端资源队列: {0}".Log(opertion.relativeName);
                 mOpertions.Enqueue(opertion);
             }
             return this;
@@ -148,7 +148,7 @@ namespace ShipDock.Loader
                     isManifest = true,
                     isPersistentPath = isPersistent,
                 };
-                "log: Loader add opertions main manifest: {0}".Log(opertion.relativeName);
+                "log: 添加资源主依赖队列: {0}".Log(opertion.relativeName);
                 mOpertions.Enqueue(opertion);
             }
             return this;
@@ -170,7 +170,7 @@ namespace ShipDock.Loader
                     isGetDependencies = isDependenciesLoader,
                     isPersistentPath = isPersistent,
                 };
-                "log: Loader add opertions asset(dep): {0}".Log(opertion.relativeName);
+                "log: 添加本地资源队列: {0}".Log(opertion.relativeName);
                 mOpertions.Enqueue(opertion);
             }
             return this;
@@ -186,7 +186,7 @@ namespace ShipDock.Loader
                     isPersistentPath = isPersistent,
                     isConfig = true,
                 };
-                "log: Loader add opertions config: {0}".Log(opertion.relativeName);
+                "log: 添加配置资源队列: {0}".Log(opertion.relativeName);
                 mOpertions.Enqueue(opertion);
             }
             return this;
@@ -249,7 +249,7 @@ namespace ShipDock.Loader
                     }
                     else
                     {
-                        "error".Log("Loader option error.");
+                        "error".Log("加载的操作项出错.");
                     }
                 }
 
@@ -278,12 +278,24 @@ namespace ShipDock.Loader
             }
         }
 
+        private static bool isLogTODO;
+
         private string GetPathByLoaderOption(LoaderOpertion opertion, string source)
         {
-            //TODO 根据版本号决定是缓存目录还是项目目录获取
+            if (!isLogTODO)
+            {
+                isLogTODO = true;
+                "todo".Log("根据版本号决定是缓存目录还是项目目录获取");
+            }
             string path = opertion.isPersistentPath ?
-                AppPaths.PersistentResDataRoot.Append(source) :
+                GetPersistentAResPath(out _, ref source) :
                 AppPaths.StreamingResDataRoot.Append(source);
+            return path;
+        }
+
+        private string GetPersistentAResPath(out string path, ref string relativeName)
+        {
+            path = AppPaths.PersistentResDataRoot.Append(relativeName);
             return path;
         }
 
@@ -335,19 +347,23 @@ namespace ShipDock.Loader
                 "walk deps".Log();
                 return;
             }
-            string[] list = AessetManifest.GetDirectDependencies(deped);
-            int max = list.Length;
-            string dep = string.Empty;
-            for (int i = 0; i < max; i++)
+            string[] list = AessetManifest != default ? AessetManifest.GetDirectDependencies(deped) : default;
+            "error".Log(AessetManifest == default, "遍历依赖资源时资源主依赖不可为空.");
+            int max = list != default ? list.Length : 0;
+            if (max > 0)
             {
-                dep = list[i];
-                if (dep.Length > 0)
+                string dep = string.Empty;
+                for (int i = 0; i < max; i++)
                 {
-                    "deps".Log(deped, dep);
-                    WalkDependences(dep);
-                    if (!mDependences.Contains(dep))
+                    dep = list[i];
+                    if (dep.Length > 0)
                     {
-                        mDependences.Add(dep);
+                        "deps".Log(deped, dep);
+                        WalkDependences(dep);
+                        if (!mDependences.Contains(dep))
+                        {
+                            mDependences.Add(dep);
+                        }
                     }
                 }
             }
@@ -443,8 +459,8 @@ namespace ShipDock.Loader
         /// <param name="target"></param>
         private void GetRemote(ref Loader target)
         {
-            //TODO 版本控制
-            string path = AppPaths.PersistentResDataRoot.Append(mCurrentOption.relativeName);
+            "todo".Log("根据版本控制实时更新并加载");
+            GetPersistentAResPath(out string path, ref mCurrentOption.relativeName);
             FileOperater.WriteBytes(target.ResultData, path);
             RemoteAssetUpdated?.Invoke(true, mCurrentOption.relativeName);
             mCurrentOption = default;

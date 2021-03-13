@@ -67,63 +67,6 @@
         private double mDouble;
         private string mValue;
 
-        public ValueItem(string value)
-        {
-            Type = STRING;
-            Change(value);
-        }
-
-        public ValueItem(bool value)
-        {
-            Bool = value;
-        }
-
-        public ValueItem(int value)
-        {
-            Int = value;
-        }
-
-        public ValueItem(float value)
-        {
-            Float = value;
-        }
-
-        public ValueItem(double value)
-        {
-            Double = value;
-        }
-
-        public ValueItem SetDampTime(float time)
-        {
-            DampTime = time;
-            return this;
-        }
-
-        public void Change(string value)
-        {
-            if (!value.Equals(Value))
-            {
-                Value = value;
-                
-                if (!bool.TryParse(Value, out mBool))
-                {
-                    mBool = default;
-                }
-                if (!int.TryParse(Value, out mInt))
-                {
-                    mInt = default;
-                }
-                if (!float.TryParse(Value, out mFloat))
-                {
-                    mFloat = default;
-                }
-                if (!double.TryParse(Value, out mDouble))
-                {
-                    mDouble = default;
-                }
-            }
-        }
-
         public virtual int Int
         {
             get
@@ -204,5 +147,64 @@
         public string Value { get; private set; }
         public string KeyField { get; set; }
         public float DampTime { get; set; }
+
+        public ValueItem() : this(string.Empty) { }
+
+        public ValueItem(string value)
+        {
+            Type = STRING;
+            Change(value);
+        }
+
+        public ValueItem(bool value)
+        {
+            Bool = value;
+        }
+
+        public ValueItem(int value)
+        {
+            Int = value;
+        }
+
+        public ValueItem(float value)
+        {
+            Float = value;
+        }
+
+        public ValueItem(double value)
+        {
+            Double = value;
+        }
+
+        public ValueItem SetDampTime(float time)
+        {
+            DampTime = time;
+            return this;
+        }
+
+        public void Change(string value)
+        {
+            if (!value.Equals(Value))
+            {
+                Value = value;
+                
+                if (!bool.TryParse(Value, out mBool))
+                {
+                    mBool = default;
+                }
+                if (!int.TryParse(Value, out mInt))
+                {
+                    mInt = default;
+                }
+                if (!float.TryParse(Value, out mFloat))
+                {
+                    mFloat = default;
+                }
+                if (!double.TryParse(Value, out mDouble))
+                {
+                    mDouble = default;
+                }
+            }
+        }
     }
 }

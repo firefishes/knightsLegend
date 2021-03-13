@@ -480,10 +480,18 @@ namespace ShipDock.Tools
         /// <summary>
         /// 世界坐标转UI坐标
         /// </summary>
-        public static bool WorldToUIPosition(ref string pos, GameObject parent, ref Camera UICamera, out Vector3 localPos)
+        public static bool WorldToUIPosition(ref string worldPositionText, GameObject parent, ref Camera UICamera, out Vector3 localPos)
         {
-            Vector3 position = Vector3Parse(ref pos);
-            Vector3 viewPos = Camera.main.WorldToViewportPoint(position);
+            Vector3 position = Vector3Parse(ref worldPositionText);
+            return WorldToUIPosition(position, parent, ref UICamera, out localPos);
+        }
+
+        /// <summary>
+        /// 世界坐标转UI坐标
+        /// </summary>
+        public static bool WorldToUIPosition(Vector3 worldPosition, GameObject parent, ref Camera UICamera, out Vector3 localPos)
+        {
+            Vector3 viewPos = Camera.main.WorldToViewportPoint(worldPosition);
             if (viewPos.z < 0)
             {
                 localPos = Vector3.zero;

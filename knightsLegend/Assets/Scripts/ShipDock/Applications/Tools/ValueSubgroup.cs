@@ -12,47 +12,67 @@ namespace ShipDock.Applications
     public class ValueSubgroup
     {
         public string keyField;
+
 #if ODIN_INSPECTOR
         [EnumPaging]
+        [Indent(1)]
 #endif
         public ValueItemType valueType;
+
+#if ODIN_INSPECTOR
+        [Indent(1)]
+#endif
         [SerializeField]
-        private float m_DampTime;
+        private bool m_HasDampTimeValue;
 
         [SerializeField]
 #if ODIN_INSPECTOR
-        [ShowIf("valueType", ValueItemType.STRING)]
+        [ShowIf("m_HasDampTimeValue", true)]
+        [Indent(1)]
 #endif
-        private string m_Str;
+        private float m_DampTime;
+
+#if ODIN_INSPECTOR
+        [ShowIf("valueType", ValueItemType.STRING)]
+        [Indent(1)]
+#endif
         [SerializeField]
+        private string m_Str;
 #if ODIN_INSPECTOR
         [ShowIf("valueType", ValueItemType.DOUBLE)]
+        [Indent(1)]
 #endif
-        public double m_DoubleValue;
         [SerializeField]
+        public double m_DoubleValue;
 #if ODIN_INSPECTOR
         [ShowIf("@this.valueType == ValueItemType.FLOAT || this.valueType == ValueItemType.INT")]
+        [Indent(1)]
 #endif
-        private float m_FloatValue;
         [SerializeField]
+        private float m_FloatValue;
 #if ODIN_INSPECTOR
         [ShowIf("valueType", ValueItemType.BOOL)]
+        [Indent(1)]
 #endif
+        [SerializeField]
         private bool m_TriggerValue;
-        [SerializeField]
 #if ODIN_INSPECTOR
-        [ShowIf("valueType", ValueItemType.VECTOR_2)]
+        [ShowIf("@this.valueType == ValueItemType.VECTOR_2 || this.valueType == ValueItemType.VECTOR_3")]
+        [Indent(1)]
 #endif
-        private Vector3 m_Vector;
         [SerializeField]
+        private Vector3 m_Vector;
 #if ODIN_INSPECTOR
         [ShowIf("valueType", ValueItemType.COLOR)]
+        [Indent(1)]
 #endif
-        private Color m_Color;
         [SerializeField]
+        private Color m_Color;
 #if ODIN_INSPECTOR
         [ShowIf("valueType", ValueItemType.LAYER_MASK)]
+        [Indent(1)]
 #endif
+        [SerializeField]
         private LayerMask m_LayerMask;
 
         private ValueItem mCached;

@@ -17,7 +17,7 @@ using ShipDock.UI;
 using System;
 using UnityEngine;
 
-namespace ShipDock.Applications
+namespace ShipDock.Applications 
 {
 
     /// <summary>
@@ -62,7 +62,6 @@ namespace ShipDock.Applications
         public Notifications<int> Notificater { get; private set; }
         public ShipDockComponentContext ECSContext { get; private set; }
         public Servers Servers { get; private set; }
-        public DataWarehouse Datas { get; private set; }
         public AssetBundles ABs { get; private set; }
         public AssetsPooling AssetsPooling { get; private set; }
         public StateMachines StateMachines { get; private set; }
@@ -79,6 +78,14 @@ namespace ShipDock.Applications
         public bool IsSceneUpdateReady { get; private set; }
         public IUpdatesComponent UpdatesComponent { get; private set; }
 
+        public DataWarehouse Datas
+        {
+            get
+            {
+                return Framework.Instance.GetUnit<DataWarehouse>(Framework.UNIT_DATA);
+            }
+        }
+
         public void Start(int ticks)
         {
             Application.targetFrameRate = ticks <= 0 ? 10 : ticks;
@@ -94,7 +101,7 @@ namespace ShipDock.Applications
             Notificater = NotificatonsInt.Instance.Notificater;//new Notifications<int>();//新建消息中心
             ABs = new AssetBundles();//新建资源包管理器
             Servers = new Servers();//新建服务容器管理器
-            Datas = new DataWarehouse();//新建数据管理器
+            DataWarehouse datas = new DataWarehouse();//新建数据管理器
             AssetsPooling = new AssetsPooling();//新建场景资源对象池
             ECSContext = new ShipDockComponentContext//新建 ECS 组件上下文
             {
@@ -111,15 +118,18 @@ namespace ShipDock.Applications
             AppModulars = new DecorativeModulars();//新建装饰模块管理器
             Configs = new ConfigHelper();//新建配置管理器
 
+            "debug".Log("UI root ready 2222");
             Framework framework = Framework.Instance;
             FrameworkUnits = new IFrameworkUnit[]
             {
-                framework.CreateAsUnitBridge(Framework.UNIT_DATA, Datas),
-                framework.CreateAsUnitBridge(Framework.UNIT_AB, ABs),
-                framework.CreateAsUnitBridge(Framework.UNIT_MODULARS, AppModulars),
-                framework.CreateAsUnitBridge(Framework.UNIT_ECS, ECSContext),
-                framework.CreateAsUnitBridge(Framework.UNIT_IOC, Servers),
-                framework.CreateAsUnitBridge(Framework.UNIT_CONFIG, Configs),
+                framework.CreateUnitByBridge(Framework.UNIT_DATA, datas),
+                framework.CreateUnitByBridge(Framework.UNIT_AB, ABs),
+                framework.CreateUnitByBridge(Framework.UNIT_MODULARS, AppModulars),
+                framework.CreateUnitByBridge(Framework.UNIT_ECS, ECSContext),
+                framework.CreateUnitByBridge(Framework.UNIT_IOC, Servers),
+                framework.CreateUnitByBridge(Framework.UNIT_CONFIG, Configs),
+                framework.CreateUnitByBridge(Framework.UNIT_UI, UIs),
+                framework.CreateUnitByBridge(Framework.UNIT_FSM, StateMachines),
             };
             framework.LoadUnit(FrameworkUnits);
 
@@ -163,29 +173,28 @@ namespace ShipDock.Applications
             }
             else
             {
-                IUpdate updater = mStateUpdaters[state];
+                IUpdate updater = mStateUpdaters.GetValue(state, true);
                 UpdaterNotice.RemoveSceneUpdater(updater);
             }
         }
 
         private void OnFSMFrameUpdater(IStateMachine fsm, bool isAdd)
         {
-            if (mFSMUpdaters == default)
-            {
-                return;
-            }
             if (isAdd)
             {
-                MethodUpdater updater = new MethodUpdater
+                if (!mFSMUpdaters.ContainsKey(fsm))
                 {
-                    Update = fsm.UpdateState
-                };
-                mFSMUpdaters[fsm] = updater;
-                UpdaterNotice.AddSceneUpdater(updater);
+                    MethodUpdater updater = new MethodUpdater
+                    {
+                        Update = fsm.UpdateState
+                    };
+                    mFSMUpdaters[fsm] = updater;
+                    UpdaterNotice.AddSceneUpdater(updater);
+                }
             }
             else
             {
-                IUpdate updater = mFSMUpdaters[fsm];
+                IUpdate updater = mFSMUpdaters.GetValue(fsm, true);
                 UpdaterNotice.RemoveSceneUpdater(updater);
             }
         }
@@ -459,6 +468,8 @@ namespace ShipDock.Applications
 
         public void Clean()
         {
+            Framework.Instance.IsStarted = false;
+
             ShipDockConsts.NOTICE_APPLICATION_CLOSE.Broadcast();
 
             ILRuntimeHotFix?.Clear();
@@ -488,7 +499,6 @@ namespace ShipDock.Applications
             ECSContext = default;
             Servers = default;
             StateMachines = default;
-            Datas = default;
             AssetsPooling = default;
             ABs = default;
             Locals = default;
@@ -533,9 +543,8 @@ namespace ShipDock.Applications
 
         public KeyValueList<int, IDataProxy> DataProxyLink(IDataExtracter target, params int[] dataNames)
         {
+            int name, max = dataNames == default ? 0 : dataNames.Length;
             IDataProxy proxy;
-            int name;
-            int max = dataNames != default ? dataNames.Length : 0;
             KeyValueList<int, IDataProxy> result = new KeyValueList<int, IDataProxy>();
             for (int i = 0; i < max; i++)
             {
@@ -549,8 +558,8 @@ namespace ShipDock.Applications
 
         public void DataProxyDelink(IDataExtracter target, params int[] dataNames)
         {
-            IDataProxy proxy;
             int max = dataNames == default ? 0 : dataNames.Length;
+            IDataProxy proxy;
             for (int i = 0; i < max; i++)
             {
                 proxy = Datas.GetData<IDataProxy>(dataNames[i]);

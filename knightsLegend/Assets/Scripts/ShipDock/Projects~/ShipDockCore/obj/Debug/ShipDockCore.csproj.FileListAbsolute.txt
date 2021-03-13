@@ -13,10 +13,9 @@ D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDo
 D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\obj\Debug\ShipDockCore.pdb
 D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\bin\Debug\ShipDockCore.dll
 D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\bin\Debug\ShipDockCore.pdb
-D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\bin\Debug\UnityEngine.UI.dll
-D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\bin\Debug\UnityEngine.xml
-D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\obj\Debug\ShipDockCore.csproj.CopyComplete
-D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\bin\Debug\ShipDockTester.dll
-D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\bin\Debug\ShipDockTester.pdb
-D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\bin\Debug\ShipDockCommon.dll
-D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\bin\Debug\ShipDockCommon.pdb
+D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\bin\Debug\ShipDockCore.dll
+D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\bin\Debug\ShipDockCore.pdb
+D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\obj\Debug\ShipDockCore.csprojAssemblyReference.cache
+D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\obj\Debug\ShipDockCore.csproj.CoreCompileInputs.cache
+D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\obj\Debug\ShipDockCore.dll
+D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\obj\Debug\ShipDockCore.pdb

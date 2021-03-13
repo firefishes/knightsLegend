@@ -7,7 +7,7 @@ namespace ShipDock.Applications
 {   
     public class IDisposeAdapter : CrossBindingAdaptor
     {
-        static CrossBindingMethodInfo mDispose_0 = new CrossBindingMethodInfo("Dispose");
+        static CrossBindingMethodInfo dispose = new CrossBindingMethodInfo("Dispose");
 
         public override Type BaseCLRType
         {
@@ -50,7 +50,7 @@ namespace ShipDock.Applications
 
             public void Dispose()
             {
-                mDispose_0.Invoke(instance);
+                dispose.Invoke(instance);
             }
 
             public override string ToString()

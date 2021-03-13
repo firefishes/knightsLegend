@@ -1123,7 +1123,6 @@ namespace ILRuntime.Runtime.Enviorment
             }
             else
             {
-                UnityEngine.Debug.Log(m);
                 throw new NotSupportedException("Cannot invoke CLRMethod");
             }
         }

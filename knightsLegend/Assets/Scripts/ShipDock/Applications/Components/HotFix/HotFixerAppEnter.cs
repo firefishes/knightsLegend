@@ -51,7 +51,7 @@ namespace ShipDock.Applications
         {
             base.ILRuntimeLoaded();
 
-            ILRuntimeUtils.InvokeMethodILR(mShellBridge, m_StartUpInfo.ClassName, "SetEnterInitedCallback", 2, ShipDockAppOwner, ILHotFixerEnterInited);
+            ILRuntimeUtils.InvokeMethodILR(ShellBridge, m_StartUpInfo.ClassName, "SetEnterInitedCallback", 2, ShipDockAppOwner, ILHotFixerEnterInited);
         }
     }
 }
