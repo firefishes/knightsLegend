@@ -26,7 +26,7 @@ public class HelloDragonBones : BaseDemo
         var armatureComponent = UnityFactory.factory.BuildArmatureComponent("mecha_1002_101d", "mecha_1002_101d_show");
 
         // 3.Play animation
-        armatureComponent.animation.Play("idle");
+        armatureComponent.ArmAnimation.Play("idle");
 
         // Set name
         armatureComponent.name = "dynamic_mecha_1002_101d";

@@ -75,7 +75,6 @@ namespace ShipDock.Applications
                 GameObject mainBridge = Resources.Load<GameObject>(hotFixSubgroup.initerNameInResource);
                 mainBridge = Instantiate(mainBridge);
 
-                ILRuntimeIniter.ApplySingleHotFixMode = false;
                 HotFixerComponent hotfixer = mainBridge.GetComponent<HotFixerComponent>();
                 ILRuntimeUtils.InvokeMethodILR(hotfixer.ShellBridge, hotFixSubgroup.initerClassName, hotFixSubgroup.initerGameCompSetter, 1, GameComponent);
             }

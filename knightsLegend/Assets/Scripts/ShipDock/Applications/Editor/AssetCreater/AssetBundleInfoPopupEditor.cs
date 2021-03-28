@@ -130,6 +130,12 @@ namespace ShipDock.Editors
                     path = AppPaths.ABBuildOutputRoot.Append(abNames[i]);
                     vs = FileOperater.ReadBytes(path);
 
+                    if (vs == default || vs.Length == 0)
+                    {
+                        Debug.Log(path);
+                    }
+                    else { }
+
                     path = tempPath.Append(abNames[i]);
                     FileOperater.WriteBytes(vs, path);
 

@@ -25,7 +25,7 @@ public class DragonBonesEvent : BaseDemo
 		// Add sound event listener
 		UnityFactory.factory.soundEventManager.AddDBEventListener(EventObject.SOUND_EVENT, this.OnSoundEventHandler);
 
-        this._mechaArmatureComp.animation.Play("walk");
+        this._mechaArmatureComp.ArmAnimation.Play("walk");
     }
 
     // Update is called once per frame
@@ -33,7 +33,7 @@ public class DragonBonesEvent : BaseDemo
     {
 		if(Input.GetMouseButtonDown(0))
 		{
-			this._mechaArmatureComp.animation.FadeIn("skill_03", 0.2f);
+			this._mechaArmatureComp.ArmAnimation.FadeIn("skill_03", 0.2f);
 		}
     }
 	//
@@ -50,7 +50,7 @@ public class DragonBonesEvent : BaseDemo
 	{
 		if(eventObject.animationState.name == "skill_03")
 		{
-			this._mechaArmatureComp.animation.FadeIn("walk", 0.2f);
+			this._mechaArmatureComp.ArmAnimation.FadeIn("walk", 0.2f);
 		}
 	}
 }

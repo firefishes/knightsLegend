@@ -243,7 +243,7 @@ public class Mecha
 
         if (this._speedX != 0.0f)
         {
-            position.x += this._speedX * this._armatureComponent.animation.timeScale;
+            position.x += this._speedX * this._armatureComponent.ArmAnimation.timeScale;
 
             if (position.x < -4.0f)
             {
@@ -259,11 +259,11 @@ public class Mecha
         {
             if (this._speedY > -0.05f && this._speedY + CoreElement.G <= -0.05f)
             {
-                this._armatureComponent.animation.FadeIn("jump_3", -1.0f, -1, 0, NORMAL_ANIMATION_GROUP).resetToPose = false;
+                this._armatureComponent.ArmAnimation.FadeIn("jump_3", -1.0f, -1, 0, NORMAL_ANIMATION_GROUP).resetToPose = false;
             }
 
             this._speedY += CoreElement.G;
-            position.y += this._speedY * this._armatureComponent.animation.timeScale;
+            position.y += this._speedY * this._armatureComponent.ArmAnimation.timeScale;
 
             if (position.y < CoreElement.GROUND)
             {
@@ -272,7 +272,7 @@ public class Mecha
                 this._isJumpingB = false;
                 this._speedX = 0.0f;
                 this._speedY = 0.0f;
-                this._armatureComponent.animation.FadeIn("jump_4", -1.0f, -1, 0, NORMAL_ANIMATION_GROUP).resetToPose = false;
+                this._armatureComponent.ArmAnimation.FadeIn("jump_4", -1.0f, -1, 0, NORMAL_ANIMATION_GROUP).resetToPose = false;
             }
         }
 
@@ -326,11 +326,11 @@ public class Mecha
             // Animation mixing.
             if (this._aimDir >= 0)
             {
-                this._aimState = this._armatureComponent.animation.FadeIn("aim_up", -1.0f, 1, 0, AIM_ANIMATION_GROUP, AnimationFadeOutMode.SameGroup);
+                this._aimState = this._armatureComponent.ArmAnimation.FadeIn("aim_up", -1.0f, 1, 0, AIM_ANIMATION_GROUP, AnimationFadeOutMode.SameGroup);
             }
             else
             {
-                this._aimState = this._armatureComponent.animation.FadeIn("aim_down", -1.0f, 1, 0, AIM_ANIMATION_GROUP, AnimationFadeOutMode.SameGroup);
+                this._aimState = this._armatureComponent.ArmAnimation.FadeIn("aim_down", -1.0f, 1, 0, AIM_ANIMATION_GROUP, AnimationFadeOutMode.SameGroup);
             }
 
             this._aimState.resetToPose = false;
@@ -413,7 +413,7 @@ public class Mecha
         var bulletArmatureComonponnet = UnityFactory.factory.BuildArmatureComponent("bullet_01");
         var bulletComonponnet = bulletArmatureComonponnet.gameObject.AddComponent<Bullet>();
         var radian = _faceDir < 0 ? Mathf.PI - this._aimRadian : this._aimRadian;
-        bulletArmatureComonponnet.animation.timeScale = _armatureComponent.animation.timeScale;
+        bulletArmatureComonponnet.ArmAnimation.timeScale = _armatureComponent.ArmAnimation.timeScale;
         bulletComonponnet.transform.position = firePoint;
         bulletComonponnet.Init("fire_effect_01", radian + Random.Range(-0.01f, 0.01f), 0.4f);
     }
@@ -496,8 +496,8 @@ public class Bullet : MonoBehaviour
 
     public void Init(string effectArmatureName, float radian, float speed)
     {
-        this._speed.x = Mathf.Cos(radian) * speed * this._armatureComponent.animation.timeScale;
-        this._speed.y = -Mathf.Sin(radian) * speed * this._armatureComponent.animation.timeScale;
+        this._speed.x = Mathf.Cos(radian) * speed * this._armatureComponent.ArmAnimation.timeScale;
+        this._speed.y = -Mathf.Sin(radian) * speed * this._armatureComponent.ArmAnimation.timeScale;
 
         var rotation = this.transform.localEulerAngles;
         rotation.z = -radian * DragonBones.Transform.RAD_DEG;
@@ -520,11 +520,11 @@ public class Bullet : MonoBehaviour
             effectScale.x = Random.Range(1.0f, 2.0f);
             effectScale.y = Random.Range(1.0f, 1.5f);
 
-            this._effectComponent.animation.timeScale = this._armatureComponent.animation.timeScale;
+            this._effectComponent.ArmAnimation.timeScale = this._armatureComponent.ArmAnimation.timeScale;
             this._effectComponent.transform.localPosition = this.transform.localPosition;
             this._effectComponent.transform.localEulerAngles = effectRotation;
             this._effectComponent.transform.localScale = effectScale;
-            this._effectComponent.animation.Play("idle");
+            this._effectComponent.ArmAnimation.Play("idle");
         }
     }
 

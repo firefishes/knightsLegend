@@ -7,7 +7,7 @@ namespace ShipDock.Applications
 {
     public class TimeUpdater : MethodUpdater
     {
-        public static TimeUpdater GetTimUpdater(float totalTime, Action method, Func<bool> cancelCondition = default, int repeats = 0)
+        public static TimeUpdater GetTimeUpdater(float totalTime, Action method, Func<bool> cancelCondition = default, int repeats = 0)
         {
             return new TimeUpdater(totalTime, method, cancelCondition, repeats);
         }

@@ -21,7 +21,7 @@ namespace ShipDock.Tools
         public QueueNextUnit OnNextUnit { get; set; }
         public QueueUnitCompleted OnUnitCompleted { get; set; }
         public QueueUnitExecuted OnUnitExecuted { get; set; }
-        public bool ShouldNextAfterCommit { get; }
+        public bool ImmediatelyCommitNext { get; set; }
         public bool IgnoreInQueue { get; set; }
 
         public TimerQueueItem() { }

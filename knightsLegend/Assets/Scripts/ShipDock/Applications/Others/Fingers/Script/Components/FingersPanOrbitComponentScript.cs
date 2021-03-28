@@ -179,9 +179,9 @@ namespace DigitalRubyShared
         private void OnEnable()
         {
             // create a scale gesture to zoom orbiter in and out
-            ScaleGesture = new ScaleGestureRecognizer { ZoomSpeed = ZoomSpeed };
-            ScaleGesture.StateUpdated += ScaleGesture_Updated;
-            ScaleGesture.ThresholdUnits = ZoomThresholdUnits;
+            //ScaleGesture = new ScaleGestureRecognizer { ZoomSpeed = ZoomSpeed };
+            //ScaleGesture.StateUpdated += ScaleGesture_Updated;
+            //ScaleGesture.ThresholdUnits = ZoomThresholdUnits;
 
             // pan gesture
             PanGesture = new PanGestureRecognizer();
@@ -396,7 +396,8 @@ namespace DigitalRubyShared
                         }
                     }
                     yDegrees += addAngle;
-                    Orbiter.RotateAround(OrbitTarget.transform.position, Vector3.up, addAngle);
+                    //Orbiter.RotateAround(OrbitTarget.transform.position, Vector3.up, addAngle);
+                    Orbiter.RotateAround(OrbitTarget.transform.position, new Vector3(0, -1, 0), addAngle);
                 }
             }
         }

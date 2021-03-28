@@ -33,7 +33,7 @@ public class ReplaceSlotDisplay : BaseDemo
         //
         this._armatureComp.CloseCombineMeshs();
 
-        this._armatureComp.animation.Play("idle");
+        this._armatureComp.ArmAnimation.Play("idle");
 
         this._armatureComp.transform.localPosition = new Vector3(0.0f, -2.0f, 0.0f);
 

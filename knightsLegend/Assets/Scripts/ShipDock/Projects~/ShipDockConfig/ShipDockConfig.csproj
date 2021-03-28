@@ -63,6 +63,8 @@
     <Compile Include="ShipDockConfig\ConfigHelper\ConfigHolder.cs" />
     <Compile Include="ShipDockConfig\ConfigHelper\IConfig.cs" />
     <Compile Include="ShipDockConfig\ConfigHelper\IConfigHolder.cs" />
+    <Compile Include="ShipDockConfig\DataParser.cs" />
+    <Compile Include="ShipDockConfig\TDData.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

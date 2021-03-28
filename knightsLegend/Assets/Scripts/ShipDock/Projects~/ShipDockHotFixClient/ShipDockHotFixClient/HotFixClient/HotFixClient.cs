@@ -32,7 +32,6 @@ namespace ShipDock.HotFix
         public Network.NetDistributer NetDistributer { get; private set; }
         public StateMachines FSMs { get; private set; }
         public SoundEffects Sounds { get; private set; }
-        //public AssetBundles Abs { get; private set; }
 
         private IConfig SettingsConfig { get; set; }
 

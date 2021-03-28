@@ -37,12 +37,12 @@ public class InverseKinematics : BaseDemo
         this._circleBone = this._floorBoardComp.armature.GetBone("circle");
         this._floorBoardBone = this._floorBoardComp.armature.GetBone("floor_board");
         // Play animation
-        this._armatureComp.animation.Play("idle");
-        this._aimState = this._armatureComp.animation.FadeIn("aim", 0.1f, 1, 0, "aimGroup");
+        this._armatureComp.ArmAnimation.Play("idle");
+        this._aimState = this._armatureComp.ArmAnimation.FadeIn("aim", 0.1f, 1, 0, "aimGroup");
         this._aimState.resetToPose = false;
         this._aimState.Stop();
         //
-        this._floorBoardComp.animation.Play("idle");
+        this._floorBoardComp.ArmAnimation.Play("idle");
         this._floorBoardComp.armature.GetSlot("player").display = this._armatureComp.gameObject;
         // Set localPosition
         this._armatureComp.transform.localPosition = Vector3.zero;

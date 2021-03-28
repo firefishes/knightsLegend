@@ -55,13 +55,22 @@ namespace ILRuntime.Runtime.CLRBinding
                     }
                     else
                         ts = new Type[0];
-                    var prop = type.GetProperty(t[1], ts);
-                    if (prop == null)
+
+                    try
                     {
-                        return true;
+                        var prop = type.GetProperty(t[1], ts);
+                        if (prop == null)
+                        {
+                            return true;
+                        }
+                        if (prop.GetCustomAttributes(typeof(ObsoleteAttribute), true).Length > 0)
+                            return true;
+
                     }
-                    if (prop.GetCustomAttributes(typeof(ObsoleteAttribute), true).Length > 0)
-                        return true;
+                    catch (Exception err)
+                    {
+                        UnityEngine.Debug.Log(err.Message + ": " + type.Name + " method is " + t[1]);
+                    }
                 }
             }
             if (i.GetCustomAttributes(typeof(ObsoleteAttribute), true).Length > 0)

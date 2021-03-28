@@ -6,10 +6,9 @@ namespace ShipDock.FSM
 {
     public class AnimatorStateMachine : StateMachine
     {
-
         private IAnimatorState mAniState;
 
-        public AnimatorParamer AniParamer { get; protected set; }
+        public AnimatorParamer AniParamer { get; private set; } = default;
 
         public AnimatorStateMachine(Animator target, int name, Action<IStateMachine> fsmRegister = default) : base(name, fsmRegister)
         {
@@ -46,7 +45,14 @@ namespace ShipDock.FSM
                     animatorState = state as IAnimatorState;
                     animatorState.SetAnimator(ref target);
                 }
+                else { }
+
+                InitAniState(ref state);
             }
+        }
+
+        protected virtual void InitAniState(ref IState state)
+        {
         }
 
         public void SetAnimator(ref Animator animator)
@@ -69,6 +75,7 @@ namespace ShipDock.FSM
                     mAniState.CheckMotionComplete(AniParamer);
                 }
             }
+            else { }
         }
 
         protected override void StateChanging()
@@ -89,7 +96,9 @@ namespace ShipDock.FSM
                     state.CheckStateAnimation(AniParamer);
                     mAniState = state;
                 }
+                else { }
             }
+            else { }
         }
     }
 }

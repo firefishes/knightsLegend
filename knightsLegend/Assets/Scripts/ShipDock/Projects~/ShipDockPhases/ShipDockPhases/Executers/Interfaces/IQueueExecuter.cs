@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace ShipDock.Interfaces
 {
     public delegate void QueueNextUnit(IQueueExecuter param);
@@ -12,7 +13,7 @@ namespace ShipDock.Interfaces
         QueueUnitExecuted OnUnitExecuted { get; set; }
         QueueUnitCompleted OnUnitCompleted { get; set; }
         Action ActionUnit { get; set; }
-        bool ShouldNextAfterCommit { get; }
+        bool ImmediatelyCommitNext { get; set; }
         bool IgnoreInQueue { get; set; }
 
         int QueueSize { get; }
@@ -49,6 +50,8 @@ namespace ShipDock.Interfaces
         {
             return;
         }
+        else { }
+
         mIsDispose = true;
 
         OnNextUnit = default;

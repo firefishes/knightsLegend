@@ -4,3 +4,9 @@ D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDo
 D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockConfigIOC\obj\Debug\ShipDockConfigIOC.csproj.CoreCompileInputs.cache
 D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockConfigIOC\obj\Debug\ShipDockConfigIOC.dll
 D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockConfigIOC\obj\Debug\ShipDockConfigIOC.pdb
+D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockConfigIOC\bin\Debug\ShipDockConfigIOC.dll
+D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockConfigIOC\bin\Debug\ShipDockConfigIOC.pdb
+D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockConfigIOC\obj\Debug\ShipDockConfigIOC.csprojAssemblyReference.cache
+D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockConfigIOC\obj\Debug\ShipDockConfigIOC.csproj.CoreCompileInputs.cache
+D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockConfigIOC\obj\Debug\ShipDockConfigIOC.dll
+D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockConfigIOC\obj\Debug\ShipDockConfigIOC.pdb

@@ -29,7 +29,7 @@ public class Performance : MonoBehaviour
                 var armatureComponent = UnityFactory.factory.BuildArmatureComponent("mecha_1406", "", "", "", gameObject);
 				// armatureComponent.gameObject.AddComponent<CombineMesh>();
                 armatureComponent.armature.cacheFrameRate = 24; // Cache animation.
-                armatureComponent.animation.Play("walk");
+                armatureComponent.ArmAnimation.Play("walk");
                 armatureComponent.transform.localPosition = position;
 				armatureComponent.transform.localScale = Vector3.one * 0.5f;
 

@@ -64,6 +64,7 @@ namespace ShipDock.FSM
             {
                 mFSM = GetFSM() as AnimatorStateMachine;
             }
+            else { }
         }
 
         public void CheckStateAniDuringSetStateParam(ref IStateParam param)
@@ -93,10 +94,13 @@ namespace ShipDock.FSM
                     {
                         paramer.SetMotionWillPlay(AnimationName, StateName, LayerIndex);//同步状态数据到参数器中
                     }
+                    else { }
 
                     PlayMotion(ref paramer);
                 }
+                else { }
             }
+            else { }
         }
 
         protected virtual void PlayMotion(ref AnimatorParamer paramer)
@@ -105,6 +109,8 @@ namespace ShipDock.FSM
             {
                 mParamerFields = new ParamerFields();
             }
+            else { }
+
             if (IsRewind)//是否倒播
             {
                 paramer.SetNormalizedTime(1f);
@@ -112,7 +118,8 @@ namespace ShipDock.FSM
                 mParamerFields.speedRevert = Animator.GetFloat(mParamerFields.speedField);
                 Animator.SetFloat(mParamerFields.speedField, -1f);
             }
-            
+            else { }
+
             mMotionNameTemp = paramer.MotionName;//设置动画名
             int layerIndex = paramer.AniMaskLayerWillPlay;//设置遮罩层索引
             float normalizedTime = paramer.NormalizedTime;//设置播放起点的标准化时间
@@ -141,6 +148,7 @@ namespace ShipDock.FSM
                     {
                         IsAniPlaying = false;
                     }
+                    else { }
                 }
                 if (!IsAniPlaying)
                 {
@@ -151,7 +159,9 @@ namespace ShipDock.FSM
                     paramer.ResetMotionState();
                     paramer.ResetMotionWillPlay();
                 }
+                else { }
             }
+            else { }
         }
 
         private void MotionCompletionRepeatable(ref AnimatorParamer paramer)
@@ -164,7 +174,9 @@ namespace ShipDock.FSM
                 {
                     IsAniPlaying = false;
                 }
+                else { }
             }
+            else { }
         }
 
         protected virtual void AfterMotionCompleted()
@@ -175,7 +187,9 @@ namespace ShipDock.FSM
                 {
                     Animator.SetFloat(mParamerFields.speedField, mParamerFields.speedRevert);
                 }
+                else { }
             }
+            else { }
         }
 
         protected virtual bool IsAnimationComplete(ref AnimatorParamer paramer)

@@ -95,6 +95,6 @@
          /// </summary>
          /// <version>DragonBones 3.0</version>
          /// <language>zh_CN</language>
-         Animation animation { get; }
+         Animation ArmAnimation { get; }
     }
 }

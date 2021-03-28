@@ -92,7 +92,7 @@ public class ReplaceSkin : BaseDemo
         this._bodyArmatureComp.AddDBEventListener(EventObject.LOOP_COMPLETE, this._OnFrameEventHandler);
 
         // Play idle animation
-        this._bodyArmatureComp.animation.Play("idle", 0);
+        this._bodyArmatureComp.ArmAnimation.Play("idle", 0);
 
         // Init the first suit
         var initSuitIndex = 0;
@@ -129,11 +129,11 @@ public class ReplaceSkin : BaseDemo
         if (type == EventObject.LOOP_COMPLETE)
         {
             // Random animation index
-            var randomAniIndex = Random.Range(0, this._bodyArmatureComp.animation.animationNames.Count);
+            var randomAniIndex = Random.Range(0, this._bodyArmatureComp.ArmAnimation.animationNames.Count);
             //
-            var animationName = this._bodyArmatureComp.animation.animationNames[randomAniIndex];
+            var animationName = this._bodyArmatureComp.ArmAnimation.animationNames[randomAniIndex];
             // Play animation
-            this._bodyArmatureComp.animation.FadeIn(animationName, 0.3f, 0);
+            this._bodyArmatureComp.ArmAnimation.FadeIn(animationName, 0.3f, 0);
         }
     }
     //

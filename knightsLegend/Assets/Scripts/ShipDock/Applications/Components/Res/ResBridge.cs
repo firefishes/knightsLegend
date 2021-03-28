@@ -50,6 +50,7 @@ namespace ShipDock.Applications
             {
                 m_PoolID = id;
             }
+            else { }
         }
 
         public void IsCreateInAwake(bool value)

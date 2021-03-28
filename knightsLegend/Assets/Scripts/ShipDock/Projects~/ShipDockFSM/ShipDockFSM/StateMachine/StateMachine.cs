@@ -135,6 +135,7 @@ namespace ShipDock.FSM
                     Utils.Reclaim(mStateList[i]);
                 }
             }
+            else { }
 
             Utils.Reclaim(ref mStates, true);
             Utils.Reclaim(ref mStateList, true);
@@ -191,10 +192,12 @@ namespace ShipDock.FSM
         /// <summary>添加状态</summary>
         public void AddState(int index, ref IState info)
         {
-            if (mStates == null)
+            if (mStates == default)
             {
                 return;
             }
+            else { }
+
             CreateStatesMap(info.StateName, info, index);
         }
 
@@ -209,6 +212,7 @@ namespace ShipDock.FSM
                 "fsm state repeate".Log(mFSMName.ToString());
                 return null;
             }
+
             if ((index == -1) || (mStateList.Count <= index))
             {
                 mStateList.Add(state);
@@ -232,8 +236,9 @@ namespace ShipDock.FSM
         {
             if (mStates == default)
             {
-                return; 
+                return;
             }
+            else { }
 
             IState state = mStates.Remove(name);
             int index = mStateList.IndexOf(state);
@@ -243,6 +248,8 @@ namespace ShipDock.FSM
             {
                 ChangeToDefaultState();
             }
+            else { }
+
             Utils.Reclaim(state);
         }
 
@@ -262,81 +269,93 @@ namespace ShipDock.FSM
         /// <summary>更改至下一个状态</summary>
         public void ChangeToNextState(IStateParam param = null)
         {
-            if (Current != null)
+            if (Current == default)
+            {
+                return;
+            }
+            else
             {
                 if (Current.NextState == int.MaxValue)
                 {
                     mNext = mStates.GetValue(Current.NextState);
                 }
-                if ((mNext == null) && Current.IsApplyAutoNext)
+                else { }
+
+                if ((mNext == default) && Current.IsApplyAutoNext)
                 {
                     int n = mStateIndex + 1;
-                    mNext = (n <= (mStateList.Count - 1)) ? mStateList[n] : null;
+                    mNext = (n <= (mStateList.Count - 1)) ? mStateList[n] : default;
                 }
-                if (mNext == null)
+                else { }
+
+                if (mNext == default)
                 {
                     return;
                 }
-            }
-            else
-            {
-                return;
+                else { }
             }
             SetCurrentState(ref mNext, param);
         }
 
         /// <summary>更改至上一个状态</summary>
-        public void ChangeToPreviousState(IStateParam param = null)
+        public void ChangeToPreviousState(IStateParam param = default)
         {
-            if (mPrevious == null)
+            if (mPrevious == default)
             {
-                if ((Current != null) && (Current.PreviousState == int.MaxValue))
+                if ((Current != default) && (Current.PreviousState == int.MaxValue))
                 {
                     mPrevious = mStates.GetValue(Current.PreviousState);
                 }
                 else
                 {
-                    mPrevious = (mStateIndex - 1 >= 0) ? mStateList[mStateIndex - 1] : null;
+                    mPrevious = (mStateIndex - 1 >= 0) ? mStateList[mStateIndex - 1] : default;
                 }
             }
-            if (mPrevious == null)
+            else { }
+
+            if (mPrevious == default)
             {
                 return;
             }
+            else { }
+
             SetCurrentState(ref mPrevious, param);
         }
 
         /// <summary>更改至指定状态</summary>
-        public virtual void ChangeState(int name, IStateParam param = null)
+        public virtual void ChangeState(int name, IStateParam param = default)
         {
-            IState state = mStates.IsContainsKey(name) ? mStates[name] : null;
+            IState state = mStates.IsContainsKey(name) ? mStates[name] : default;
             SetCurrentState(ref state, param);
         }
 
-        public virtual void ChangeStateByIndex(int index, IStateParam param = null)
+        public virtual void ChangeStateByIndex(int index, IStateParam param = default)
         {
             IState state = GetState(index);
             SetCurrentState(ref state, param);
         }
 
         /// <summary>更改至默认状态</summary>
-        public virtual void ChangeToDefaultState(IStateParam param = null)
+        public virtual void ChangeToDefaultState(IStateParam param = default)
         {
             IState defaultState = mStates.GetValue(DefaultState);
-            if (defaultState != null)
+            if (defaultState != default)
             {
                 SetCurrentState(ref defaultState, param);
             }
+            else { }
         }
 
         /// <summary>设置当前状态</summary>
-        private void SetCurrentState(ref IState state, IStateParam param = null)
+        private void SetCurrentState(ref IState state, IStateParam param = default)
         {
             if (state == default)
             {
                 ChangeToDefaultState(param);
                 return;
             }
+            else { }
+
             if (mChangingState != state)
             {
                 IsStateChanging = true;
@@ -347,20 +366,22 @@ namespace ShipDock.FSM
                 {
                     ChangedStateFinish();
                 }
+                else { }
             }
             else
             {
-                if (Current != null)
+                if (Current != default)
                 {
                     Current.SetStateParam(param);
                 }
+                else { }
             }
         }
         #endregion
 
         #region 启动、停止和更新
         /// <summary>运行状态机</summary>
-        public virtual void Run(IStateParam param = null, int initState = int.MaxValue)
+        public virtual void Run(IStateParam param = default, int initState = int.MaxValue)
         {
             IsRun = true;
 
@@ -374,6 +395,7 @@ namespace ShipDock.FSM
             {
                 ChangeToDefaultState(param);
             }
+            else { }
         }
 
         /// <summary>停止状态机</summary>
@@ -391,12 +413,8 @@ namespace ShipDock.FSM
             {
                 ChangedStateFinish();
             }
+            else { }
             #endregion
-
-            //if (Current != null)
-            //{
-            //    Current.UpdateState(dTime);
-            //}
         }
 
         private void ChangedStateFinish()
@@ -409,17 +427,20 @@ namespace ShipDock.FSM
                 {
                     return;//防止 DeinitState 的逻辑中存在跳转状态操作引起的参数错误
                 }
+                else { }
 
                 StateChanging();
 
                 if (!IsStateChanging)//防止多次跳转状态操作同时发生引起的参数错误
                 {
                     "log:{0} FSM state changed : {1} -> {2}".Log(GetType().Name,
-                                    (mPrevious != null) ? mPrevious.StateName.ToString() : DefaultState.ToString(),
+                                    (mPrevious != default) ? mPrevious.StateName.ToString() : DefaultState.ToString(),
                                     CurrentStateName.ToString());
                     AfterStateChanged();
                 }
+                else { }
             }
+            else { }
         }
 
         private void BeforeStateChange()
@@ -428,11 +449,13 @@ namespace ShipDock.FSM
             bool isDeinitLater = IsStateDeinitLater(ref state);
             if (!isDeinitLater)
             {
-                if (Current != null)
+                if (Current != default)
                 {
                     Current.DeinitState();
                 }
+                else { }
             }
+            else { }
         }
 
         protected virtual void StateChanging()
@@ -447,6 +470,7 @@ namespace ShipDock.FSM
             {
                 mPrevious.DeinitState();
             }
+            else { }
         }
 
         protected virtual void AfterStateChanged()
@@ -455,20 +479,23 @@ namespace ShipDock.FSM
             {
                 Current.ChangeSubState(SubStateWillChange, SubStateParam);
             }
-            if (OnFSMChanged != null)
+            else { }
+
+            if (OnFSMChanged != default)
             {
                 OnFSMChanged.Invoke(this, CurrentStateName);
             }
+            else { }
 
-            mNext = null;
-            mStateParam = null;
-            SubStateParam = null;
+            mNext = default;
+            mStateParam = default;
+            SubStateParam = default;
             SubStateWillChange = int.MaxValue;
         }
 
         private bool IsStateDeinitLater(ref IState state)
         {
-            return (state != null) && state.IsDeinitLater;
+            return (state != default) && state.IsDeinitLater;
         }
         #endregion
 

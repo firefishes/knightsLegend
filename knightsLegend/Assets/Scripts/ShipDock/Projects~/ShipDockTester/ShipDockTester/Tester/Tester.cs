@@ -54,6 +54,7 @@ namespace ShipDock.Testers
 
         private int mLogCount;
         private ITester mDefaultTester;
+        private TesterMapper mTesters;
         private UnityEngine.Object mLogSignTarget;
 
         private TesterIndxMapper mTesterIndexs;
@@ -69,26 +70,26 @@ namespace ShipDock.Testers
             mAsserterMapper = new AsserterMapper();
             mLoggerMapper = new LogsMapper();
             mTesterMapper = new TesterMapper();
+            mTesters = new TesterMapper();
         }
 
         public void Dispose()
         {
+            UnityEngine.Application.logMessageReceived -= OnLogMessageReceived;
+            TestBrokers = default;
+            mDefaultTester = default;
+
             mTesterIndexs?.Clear();
             mAsserterMapper?.Clear();
             mLoggerMapper?.Clear();
             mTesterMapper?.Clear();
+            mTesters?.Clear();
         }
 
         public void Init<T>(T defaultTester) where T : ITester
         {
             SetDefaultTester(defaultTester);
-            Application.logMessageReceived += OnLogMessageReceived;
-        }
-
-        public void Clean()
-        {
-            Application.logMessageReceived -= OnLogMessageReceived;
-            TestBrokers = default;
+            UnityEngine.Application.logMessageReceived += OnLogMessageReceived;
         }
 
         [System.Diagnostics.Conditional("G_LOG")]
@@ -165,6 +166,7 @@ namespace ShipDock.Testers
 
             if (!mAsserterMapper.ContainsKey(name))
             {
+                mTesters[name] = tester;
                 mAsserterMapper[name] = new List<Asserter>();
                 mLoggerMapper[name] = new Dictionary<string, LogItem>();
                 if (!emptyName)
@@ -174,6 +176,16 @@ namespace ShipDock.Testers
                 else { }
             }
             else { }
+        }
+
+        public ITester GetTester(string name)
+        {
+#if G_LOG
+            mTesters.TryGetValue(name, out ITester tester);
+            return tester;
+#else
+            return default;
+#endif
         }
 
         [System.Diagnostics.Conditional("G_LOG")]
@@ -296,6 +308,12 @@ namespace ShipDock.Testers
                 if (hasLogger)
                 {
                     logger = list[logID];
+                    if (!logger.enabled)
+                    {
+                        Debug.Log(logID + " disabled ");
+                        return;
+                    }
+                    else { }
                 }
                 else
                 {

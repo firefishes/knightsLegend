@@ -58,6 +58,7 @@ namespace ShipDock.Applications
             {
                 Run();
             }
+            else { }
         }
 
         private void Run()
@@ -124,6 +125,8 @@ namespace ShipDock.Applications
                         statu = 2;//多热更端的模式下，必须指定热更文件
                     }
                 }
+#else
+                else { }
 #endif
             }
             else
@@ -137,6 +140,8 @@ namespace ShipDock.Applications
                 {
                     statu = 1;//没有任何热更端的文件被加载
                 }
+#else
+                else { }
 #endif
             }
 #if LOG_INITER
@@ -184,6 +189,7 @@ namespace ShipDock.Applications
                 ILAppDomain().UnityMainThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
                 ILAppDomain().DebugService.StartDebugService(m_StartUpInfo.DebugPort);
             }
+            else { }
 #endif
         }
 
@@ -220,6 +226,7 @@ namespace ShipDock.Applications
 #endif
                     return;
                 }
+                else { }
             }
             else
             {
@@ -230,18 +237,24 @@ namespace ShipDock.Applications
 
             string method = "GetUpdateMethods";
             string className = m_StartUpInfo.ClassName;
+
             if (m_StartUpInfo.ApplyFixedUpdate)
             {
                 ILRuntimeUtils.InvokeMethodILR(ShellBridge, className, method, 1, OnGetFixedUpdateMethod, m_StartUpInfo.FixedUpdateMethodName);
             }
+            else { }
+
             if (m_StartUpInfo.ApplyUpdate)
             {
                 ILRuntimeUtils.InvokeMethodILR(ShellBridge, className, method, 1, OnGetUpdateMethod, m_StartUpInfo.UpdateMethodName);
             }
+            else { }
+
             if (m_StartUpInfo.ApplyLateUpdate)
             {
                 ILRuntimeUtils.InvokeMethodILR(ShellBridge, className, method, 1, OnGetLateUpdateMethod, m_StartUpInfo.LateUpdateMethodName);
             }
+            else { }
             ILRuntimeUtils.InvokeMethodILR(ShellBridge, className, method, 1, OnGetDestroyMethod, "OnDestroy");
             ILRuntimeUtils.InvokeMethodILR(ShellBridge, className, m_StartUpInfo.IniterMethodName, 1, this);
         }

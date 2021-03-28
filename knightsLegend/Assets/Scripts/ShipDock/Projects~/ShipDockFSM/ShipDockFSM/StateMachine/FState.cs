@@ -2,6 +2,7 @@
 
 using ShipDock.Tools;
 using System;
+using System.Collections.Generic;
 
 namespace ShipDock.FSM
 {
@@ -172,8 +173,8 @@ namespace ShipDock.FSM
         #region 初始化
         private void Init()
         {
-            InitSubStates();
             mIsInited = true;
+            InitSubStates();
             CheckStateFrameUpdate();
         }
 
@@ -194,15 +195,20 @@ namespace ShipDock.FSM
         public void SetFSMName(int FSMName)
         {
             int max = mSubStateList.Size;
-            if (mFSM == null && max > 0)
+            if (mFSM == default && max > 0)
             {
+                int key;
                 IState subState;
+                List<int> keys = mSubStateList.Keys;
                 for (int i = 0; i < max; i++)
                 {
-                    subState = mSubStateList[mSubStateList.Keys[i]];
+                    key = keys[i];
+                    subState = mSubStateList[key];
                     subState.SetFSMName(FSMName);
                 }
             }
+            else { }
+
             mFSMName = FSMName;
         }
 
@@ -210,31 +216,33 @@ namespace ShipDock.FSM
         /// <summary>添加子状态</summary>
         public void AddSubState(int name, IState sub)
         {
-            if (mSubStateList == null)
+            if (mSubStateList == default)
             {
                 return;
             }
+            else { }
 
-            if (!mSubStateList.IsContainsKey(name))
+            if (mSubStateList.IsContainsKey(name))
+            {
+#if !RELEASE
+                "error:不能添加重复的状态 {0}".Log(name.ToString());
+#endif
+            }
+            else
             {
                 mSubStateList.Put(name, sub);
             }
-#if !RELEASE
-            else
-            {
-                "error:不能添加重复的状态 {0}".Log(name.ToString());
-            }
-#endif
             CheckStateFrameUpdate();
         }
 
         /// <summary>移除子状态</summary>
         public void RemoveSubState(int name)
         {
-            if (mSubStateList == null)
+            if (mSubStateList == default)
             {
                 return;
             }
+            else { }
 
             if (mSubStateList.IsContainsKey(name))
             {
@@ -243,24 +251,27 @@ namespace ShipDock.FSM
                 {
                     ChangeSubStateToDefault();
                 }
+                else { }
                 Utils.Reclaim(state);
             }
+            else { }
+
             CheckStateFrameUpdate();
         }
 
         /// <summary>检测是否加入刷帧序列，用于子状态的切换</summary>
         private void CheckStateFrameUpdate()
         {
-            if (!mIsInited)
+            if (mIsInited)
             {
-                return;
+                if (mSubStateList != default)
+                {
+                    bool isAdd = mSubStateList.Size > 0;
+                    StateFrameUpdater?.Invoke(this, isAdd);
+                }
+                else { }
             }
-
-            if (mSubStateList != null)
-            {
-                bool isAdd = mSubStateList.Size > 0;
-                StateFrameUpdater?.Invoke(this, isAdd);
-            }
+            else { }
         }
 
         protected IState GetSubState(int name)
@@ -296,6 +307,7 @@ namespace ShipDock.FSM
             {
                 return;
             }
+            else { }
         }
 
         /// <summary>子状态更新</summary>
@@ -307,16 +319,17 @@ namespace ShipDock.FSM
 
         #region 状态更改
         /// <summary>更改至任意子状态，只有最后一次调用生效</summary>
-        public virtual void ChangeSubState(int name, IStateParam param = null)
+        public virtual void ChangeSubState(int name, IStateParam param = default)
         {
-            if (mSubStateList == null)
+            if (mSubStateList == default)
             {
                 return;
             }
+            else { }
 
-            if ((mSubState != null) && (name == mSubState.StateName))
+            if ((mSubState != default) && (name == mSubState.StateName))
             {
-                if (param != null)
+                if (param != default)
                 {
                     mSubState.SetStateParam(param);
                 }
@@ -325,6 +338,7 @@ namespace ShipDock.FSM
                     return;
                 }
             }
+            else { }
 
             if (mSubStateList.IsContainsKey(name))
             {
@@ -339,50 +353,53 @@ namespace ShipDock.FSM
         }
 
         /// <summary>更改至默认子状态</summary>
-        public void ChangeSubStateToDefault(IStateParam param = null)
+        public void ChangeSubStateToDefault(IStateParam param = default)
         {
-            if (!mSubStateList.IsContainsKey(DefaultState))
+            if (mSubStateList.IsContainsKey(DefaultState))
             {
-                return;
+                ChangeSubState(DefaultState, param);
             }
-
-            ChangeSubState(DefaultState, param);
+            else { }
         }
 
         /// <summary>将状态机更改至任意状态</summary>
-        public virtual void ChangeToState(int name, IStateParam param = null)
+        public virtual void ChangeToState(int name, IStateParam param = default)
         {
-            if (mFSM != null)
+            if (mFSM != default)
             {
                 mFSM.ChangeState(name, param);
             }
+            else { }
         }
 
         /// <summary>将状态机更改至下一个状态</summary>
-        public virtual void ChangeToNextState(IStateParam param = null)
+        public virtual void ChangeToNextState(IStateParam param = default)
         {
-            if (mFSM != null)
+            if (mFSM != default)
             {
                 mFSM.ChangeToNextState(param);
             }
+            else { }
         }
 
         /// <summary>将状态机更改至上一个状态</summary>
-        public virtual void ChangeToPreviousState(IStateParam param = null)
+        public virtual void ChangeToPreviousState(IStateParam param = default)
         {
-            if (mFSM != null)
+            if (mFSM != default)
             {
                 mFSM.ChangeToPreviousState(param);
             }
+            else { }
         }
 
         /// <summary>将状态机更改至默认状态</summary>
-        public virtual void ChangeToDefaultState(IStateParam param = null)
+        public virtual void ChangeToDefaultState(IStateParam param = default)
         {
-            if (mFSM != null)
+            if (mFSM != default)
             {
                 mFSM.ChangeToDefaultState(param);
             }
+            else { }
         }
 
         public virtual void SetStateParam(IStateParam param)
@@ -395,17 +412,20 @@ namespace ShipDock.FSM
         {
             if (mIsStateChanged)
             {
-                if (mSubState != null)
+                if (mSubState != default)
                 {
                     mSubState.DeinitState();
                 }
+                else { }
+
                 mSubState = mChangingState;
                 mSubState.InitState(mChangingStateParam);
-                mChangingStateParam = null;
+                mChangingStateParam = default;
                 mIsStateChanged = false;
 
-                "fsm changed".Log(mSubState != null, StateName.ToString(), "sub state", mSubState.StateName.ToString());
+                "fsm changed".Log(mSubState != default, StateName.ToString(), "sub state", mSubState.StateName.ToString());
             }
+            else { }
         }
 
         public IStateMachine GetFSM()
@@ -419,6 +439,7 @@ namespace ShipDock.FSM
             {
                 mFSM = fsm;
             }
+            else { }
         }
     }
 }

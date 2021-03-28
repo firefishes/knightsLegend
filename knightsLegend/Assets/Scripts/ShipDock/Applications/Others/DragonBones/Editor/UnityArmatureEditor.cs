@@ -119,7 +119,7 @@ namespace DragonBones
                 // Play animation.
                 if (!string.IsNullOrEmpty(_armatureComponent.animationName))
                 {
-                    _armatureComponent.animation.Play(_armatureComponent.animationName, _playTimesPro.intValue);
+                    _armatureComponent.ArmAnimation.Play(_armatureComponent.animationName, _playTimesPro.intValue);
                 }
             }
 
@@ -238,15 +238,15 @@ namespace DragonBones
                         if (animationIndex >= 0)
                         {
                             _armatureComponent.animationName = _animationNames[animationIndex];
-                            var animationData = _armatureComponent.animation.animations[_armatureComponent.animationName];
-                            _armatureComponent.animation.Play(_armatureComponent.animationName, _playTimesPro.intValue);
+                            var animationData = _armatureComponent.ArmAnimation.animations[_armatureComponent.animationName];
+                            _armatureComponent.ArmAnimation.Play(_armatureComponent.animationName, _playTimesPro.intValue);
                             _UpdateParameters();
                         }
                         else
                         {
                             _armatureComponent.animationName = null;
                             _playTimesPro.intValue = 0;
-                            _armatureComponent.animation.Stop();
+                            _armatureComponent.ArmAnimation.Stop();
                         }
 
                         MarkSceneDirty();
@@ -254,18 +254,18 @@ namespace DragonBones
 
                     if (_animationIndex >= 0)
                     {
-                        if (_armatureComponent.animation.isPlaying)
+                        if (_armatureComponent.ArmAnimation.isPlaying)
                         {
                             if (GUILayout.Button("Stop"))
                             {
-                                _armatureComponent.animation.Stop();
+                                _armatureComponent.ArmAnimation.Stop();
                             }
                         }
                         else
                         {
                             if (GUILayout.Button("Play"))
                             {
-                                _armatureComponent.animation.Play(null, _playTimesPro.intValue);
+                                _armatureComponent.ArmAnimation.Play(null, _playTimesPro.intValue);
                             }
                         }
                     }
@@ -279,8 +279,8 @@ namespace DragonBones
                     {
                         if (!string.IsNullOrEmpty(_armatureComponent.animationName))
                         {
-                            _armatureComponent.animation.Reset();
-                            _armatureComponent.animation.Play(_armatureComponent.animationName, _playTimesPro.intValue);
+                            _armatureComponent.ArmAnimation.Reset();
+                            _armatureComponent.ArmAnimation.Play(_armatureComponent.animationName, _playTimesPro.intValue);
                         }
                     }
                     EditorGUILayout.EndHorizontal();
@@ -290,7 +290,7 @@ namespace DragonBones
                     EditorGUILayout.PropertyField(_timeScalePro, false);
                     if (timeScale != _timeScalePro.floatValue)
                     {
-                        _armatureComponent.animation.timeScale = _timeScalePro.floatValue;
+                        _armatureComponent.ArmAnimation.timeScale = _timeScalePro.floatValue;
                     }
                 }
 
@@ -429,7 +429,7 @@ namespace DragonBones
                 if (_armatureComponent.armature.armatureData.parent != null)
                 {
                     _armatureNames = _armatureComponent.armature.armatureData.parent.armatureNames;
-                    _animationNames = _armatureComponent.animation.animationNames;
+                    _animationNames = _armatureComponent.ArmAnimation.animationNames;
                     _armatureIndex = _armatureNames.IndexOf(_armatureComponent.armature.name);
                     //
                     if (!string.IsNullOrEmpty(_armatureComponent.animationName))

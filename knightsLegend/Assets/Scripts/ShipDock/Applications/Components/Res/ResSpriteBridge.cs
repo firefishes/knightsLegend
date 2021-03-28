@@ -14,6 +14,7 @@ namespace ShipDock.Applications
             {
                 CreateRaw();
             }
+            else { }
         }
 
         public void CreateRaw()
@@ -24,9 +25,15 @@ namespace ShipDock.Applications
                 {
                     Assets = ShipDockApp.Instance.ABs;
                 }
-                Sprite = Assets.Get<Sprite>(m_Asset.GetABName(), m_Asset.GetAssetName());
+                else { }
+
+                string abName = m_Asset.GetABName();
+                string assetName = m_Asset.GetAssetName();
+                "error:Do not contains ab pack {0} when ResBridge get asset {1}".Log(!(Assets as Loader.AssetBundles).HasBundel(abName), abName, assetName);
+                Sprite = Assets.Get<Sprite>(abName, assetName);
                 Texture = Sprite.texture;
             }
+            else { }
         }
 
         public Sprite CreateAsset()

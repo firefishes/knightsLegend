@@ -25,7 +25,7 @@ public class AnimationBase : BaseDemo
         this._armatureComp.AddDBEventListener(EventObject.FADE_OUT_COMPLETE, this.OnAnimationEventHandler);
         this._armatureComp.AddDBEventListener(EventObject.FRAME_EVENT, this.OnAnimationEventHandler);
 
-		this._armatureComp.animation.Play("idle");
+		this._armatureComp.ArmAnimation.Play("idle");
     }
 
 	protected override void OnTouch(TouchType type)
@@ -38,17 +38,17 @@ public class AnimationBase : BaseDemo
 		{
 			case TouchType.TOUCH_BEGIN:
 			{
-				this._armatureComp.animation.GotoAndStopByProgress("idle", progress);
+				this._armatureComp.ArmAnimation.GotoAndStopByProgress("idle", progress);
 			}
 			break;
 			case TouchType.TOUCH_END:
 			{
-				this._armatureComp.animation.Play();
+				this._armatureComp.ArmAnimation.Play();
 			}
 			break;
 			case TouchType.TOUCH_MOVE:
 			{
-				var animationState = this._armatureComp.animation.GetState("idle");
+				var animationState = this._armatureComp.ArmAnimation.GetState("idle");
 				if(animationState != null)
 				{
 					animationState.currentTime = animationState.totalTime * progress;

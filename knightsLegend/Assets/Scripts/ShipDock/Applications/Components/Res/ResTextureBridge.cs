@@ -12,6 +12,7 @@ namespace ShipDock.Applications
             {
                 Texture = Assets.Get<Texture>(m_Asset.GetABName(), m_Asset.GetAssetName());
             }
+            else { }
         }
 
         protected override void OnDestroy()

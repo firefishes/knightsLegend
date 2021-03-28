@@ -10,6 +10,19 @@ namespace ShipDock.Applications
         [SerializeField]
         [Tooltip("是否启用发送就绪消息（以 GameObject或Script id为消息名）至热更端的功能")]
         private bool m_IsSendIDAsNotice;
+        [Header("热更端对象就绪消息的配置")]
+        [SerializeField]
+        [Tooltip("是否在物体被渲染时发送对象就绪的消息")]
+#if ODIN_INSPECTOR
+        [Sirenix.OdinInspector.ShowIf("m_IsSendIDAsNotice", true)]
+#endif
+        private bool m_IsSendInRenderObject;
+        [SerializeField]
+        [Tooltip("在物体被渲染时发送对象就绪的消息是否仅发送一次")]
+#if ODIN_INSPECTOR
+        [Sirenix.OdinInspector.ShowIf("@this.m_IsSendIDAsNotice == true && this.m_IsSendInRenderObject == true")]
+#endif
+        private bool m_IsSendOnceInRenderObject = true;
         [SerializeField]
         [Tooltip("是否以 GameObject为消息名")]
 #if ODIN_INSPECTOR
@@ -34,6 +47,18 @@ namespace ShipDock.Applications
         [Sirenix.OdinInspector.ShowIf("m_IsSendIDAsNotice", true)]
 #endif
         private string m_GetIDAsCustomNoticeMethod;
+        [SerializeField]
+        [Tooltip("是否已发送过对象就绪的消息")]
+#if ODIN_INSPECTOR
+        [Sirenix.OdinInspector.ShowIf("m_IsSendIDAsNotice", true)]
+        [Sirenix.OdinInspector.ReadOnly()]
+#endif
+        private bool m_IsReadyNoticeSend;
+
+        public void SetReadyNoticeSend(bool value)
+        {
+            m_IsReadyNoticeSend = value;
+        }
 
         /// <summary>
         /// 禁用热更端对象的就绪消息发送
@@ -83,5 +108,28 @@ namespace ShipDock.Applications
             }
         }
 
+        public bool IsSendInRenderObject
+        {
+            get
+            {
+                return m_IsSendInRenderObject;
+            }
+        }
+
+        public bool IsSendOnceInRenderObject
+        {
+            get
+            {
+                return m_IsSendOnceInRenderObject;
+            }
+        }
+
+        public bool IsReadyNoticeSend
+        {
+            get
+            {
+                return m_IsReadyNoticeSend;
+            }
+        }
     }
 }

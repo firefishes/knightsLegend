@@ -8,8 +8,16 @@ namespace ShipDock.Tools
     public class TesterComponent : MonoBehaviour
     {
         [SerializeField]
+        [Tooltip("日子断点器")]
         private TesterBroker[] m_TesterBrokers;
+        [SerializeField]
+        [Tooltip("日子条目名")]
+        private string[] m_TesterNames;
+        [SerializeField]
+        [Tooltip("日志子组")]
+        private LogsSubgroup m_LogsSubgroup;
 
+#if G_LOG
         private void Awake()
         {
             Testers.Tester.Instance.SetTestBrokerHandler(OnTestBrokerHandler);
@@ -17,6 +25,8 @@ namespace ShipDock.Tools
 
         private void OnTestBrokerHandler(string logID, string[] args)
         {
+            m_LogsSubgroup?.UpdateLogs(logID);
+
             TesterBroker item;
             int max = m_TesterBrokers.Length;
             for (int i = 0; i < max; i++)
@@ -38,6 +48,7 @@ namespace ShipDock.Tools
                 }
             }
         }
+#endif
     }
 
     [Serializable]

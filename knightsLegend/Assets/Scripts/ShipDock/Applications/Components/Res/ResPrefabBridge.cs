@@ -15,6 +15,7 @@ namespace ShipDock.Applications
                 CreateRaw();
                 Instantiate(Prefab);
             }
+            else { }
         }
 
         protected override void OnDestroy()
@@ -32,9 +33,12 @@ namespace ShipDock.Applications
                 {
                     Assets = ShipDockApp.Instance.ABs;
                 }
+                else { }
+
                 GameObject source = Assets.Get(m_Asset.GetABName(), m_Asset.GetAssetName());
                 Prefab = source;
             }
+            else { }
         }
 
         public GameObject CreateAsset(bool isCreateFromPool = false)
@@ -62,6 +66,7 @@ namespace ShipDock.Applications
             {
                 Prefab = raw;
             }
+            else { }
         }
 
         public GameObject Prefab { get; private set; }

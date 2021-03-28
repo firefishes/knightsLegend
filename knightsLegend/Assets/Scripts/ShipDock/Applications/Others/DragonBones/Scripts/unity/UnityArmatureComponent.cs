@@ -364,7 +364,7 @@ namespace DragonBones
         /// <readOnly/>
         /// <version>DragonBones 4.5</version>
         /// <language>zh_CN</language>
-        public new Animation animation
+        public Animation ArmAnimation
         {
             get { return _armature != null ? _armature.animation : null; }
         }

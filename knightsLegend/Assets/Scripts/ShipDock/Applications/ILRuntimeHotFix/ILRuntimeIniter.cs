@@ -12,8 +12,7 @@ namespace ShipDock.Applications
     /// </summary>
     public class ILRuntimeIniter
     {
-        /// <summary>是否应用单独一文件热更模式</summary>
-        public static bool ApplySingleHotFixMode { get; set; } = true;
+        /// <summary>是否已加载过热更脚本文件</summary>
         public static bool HasLoadAnyAssembly { get; set; }
 
         private MemoryStream mDllMemeoryStream;
@@ -40,7 +39,7 @@ namespace ShipDock.Applications
         /// <param name="pdb"></param>
         public void Build(byte[] dll, byte[] pdb)
         {
-            if (ApplySingleHotFixMode && HasLoadAnyAssembly)//单一热更包模式下，如已加载过热更资源则不做后续操作
+            if (HasLoadAnyAssembly)//单一热更包模式下，如已加载过热更资源则不做后续操作
             {
                 return;
             }

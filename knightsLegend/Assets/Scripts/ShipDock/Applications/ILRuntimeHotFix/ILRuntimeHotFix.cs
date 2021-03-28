@@ -19,6 +19,8 @@ namespace ShipDock.Applications
             {
                 instance = new ILRuntimeAppEditor();
             }
+            else { }
+
             return instance;
         }
 
@@ -89,6 +91,7 @@ namespace ShipDock.Applications
             {
                 return;
             }
+            else { }
 
             IsStart = true;
             IHotFixConfig config = this.GetAppILRuntime().GetHotFixConfig();
@@ -105,9 +108,15 @@ namespace ShipDock.Applications
             ILRuntime.Runtime.Generated.CLRBindings.Initialize(ILAppDomain);//注册重定向的方法
         }
 
+        /// <summary>
+        /// 重新读取热更脚本时调用此方法（未完成，需要在ILRuntime中增加统一释放的代码）
+        /// </summary>
         public void Reset()
         {
+            IsStart = false;
             ILRuntimeIniter.HasLoadAnyAssembly = false;
+
+            MethodCacher?.Clear();
         }
 
         /// <summary>
@@ -115,15 +124,14 @@ namespace ShipDock.Applications
         /// </summary>
         public void Clear()
         {
+            UnityEngine.Debug.Log("ILRuntime hot fix 对象以清除，请重新创建");
+
+            Reset();
+
             this.ClearExtension();
-            MethodCacher?.Clear();
 
             MethodCacher = default;
             ILAppDomain = default;
-
-            IsStart = false;
-            ILRuntimeIniter.ApplySingleHotFixMode = true;
-            ILRuntimeIniter.HasLoadAnyAssembly = false;
         }
     }
 }

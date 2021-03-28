@@ -50,16 +50,11 @@ namespace ShipDock.Applications
 
         public void UIRootAwaked(IUIRoot root)
         {
+            ShipDockApp.Instance.InitUIRoot(root);
 #if RELEASE
             Debug.unityLogger.logEnabled = false;
 #endif
-            ShipDockApp.Instance.InitUIRoot(root);
             ShipDockApp.StartUp(m_FrameRate, OnShipDockStart);
-        }
-
-        private void Awake()
-        {
-            CreateGame();
         }
 
         private void OnDestroy()
@@ -82,6 +77,11 @@ namespace ShipDock.Applications
             "debug".Log("ShipDock close.");
         }
 
+        private void Awake()
+        {
+            CreateGame();
+        }
+
         private void CreateGame()
         {
             ShipDockAppComponent component = GetComponent<ShipDockAppComponent>();
@@ -102,6 +102,8 @@ namespace ShipDock.Applications
 
                 "debug".Log("Game Component created..");
             }
+            else { }
+
             GameObject target = GameObject.Find("UIRoot");
             if (target != default)
             {
@@ -111,7 +113,9 @@ namespace ShipDock.Applications
                     "debug".Log("UI Root created..");
                     ui.AddAwakedHandler(UIRootAwaked);
                 }
+                else { }
             }
+            else { }
         }
 
         protected virtual void OnApplicationQuit()
@@ -125,6 +129,7 @@ namespace ShipDock.Applications
             {
                 BackgroundOperation(false);
             }
+            else { }
         }
 
         protected virtual void BackgroundOperation(bool isCleanVersionCache)
@@ -134,6 +139,7 @@ namespace ShipDock.Applications
             {
                 m_DevelopSubgroup.remoteAssetVersions.CacheResVersion(isCleanVersionCache);
             }
+            else { }
 #endif
         }
 
@@ -229,6 +235,7 @@ namespace ShipDock.Applications
                 notice.IsClearHolderList = true;
                 notice.ToPool();
             }
+            else { }
 
             if (m_DevelopSubgroup.ApplyRemoteAssets)
             {
@@ -271,6 +278,7 @@ namespace ShipDock.Applications
                 m_GameAppEvents.getLocalsConfigItemEvent.Invoke(raw, notice);
                 locals.SetLocal(raw);
             }
+            else { }
 
             "log".AssertLog("game", "LocalsInited");
         }
@@ -303,6 +311,7 @@ namespace ShipDock.Applications
             {
                 notice.ParamValue = param;
             }
+            else { }
             commonEvent?.Invoke(notice);
 
             T result = notice.ParamValue;

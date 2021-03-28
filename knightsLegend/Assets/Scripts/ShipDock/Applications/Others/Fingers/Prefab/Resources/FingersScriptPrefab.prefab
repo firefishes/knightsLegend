@@ -893,7 +893,7 @@ MonoBehaviour:
   MouseWheelDeltaMultiplier: 0.025
   PassThroughObjects: []
   AutoAddRequiredComponents: 1
-  ShowTouches: 1
+  ShowTouches: 0
   TouchCircles:
   - {fileID: 1000011844012702}
   - {fileID: 1000011353581076}

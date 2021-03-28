@@ -72,21 +72,38 @@ public class AppHotFixConfigBase : IHotFixConfig
 
     protected virtual void SetRegisterMethods(AppDomain appdomain)
     {
-        appdomain.DelegateManager.RegisterMethodDelegate<int>();
+        appdomain.DelegateManager.RegisterMethodDelegate<System.String, System.String, UnityEngine.LogType>();        appdomain.DelegateManager.RegisterMethodDelegate<int>();
         appdomain.DelegateManager.RegisterMethodDelegate<INoticeBase<int>>();
         appdomain.DelegateManager.RegisterMethodDelegate<INotice>();        appdomain.DelegateManager.RegisterMethodDelegate<IParamNotice<System.Int32>>();
         appdomain.DelegateManager.RegisterMethodDelegate<InputData>();
         appdomain.DelegateManager.RegisterMethodDelegate<GameObject>();        appdomain.DelegateManager.RegisterMethodDelegate<UnityEngine.Vector3>();        appdomain.DelegateManager.RegisterMethodDelegate<ILRuntime.Runtime.Intepreter.ILTypeInstance>();        appdomain.DelegateManager.RegisterMethodDelegate<ShipDock.Tools.TimeGapper>();
-        appdomain.DelegateManager.RegisterMethodDelegate<UnityEngine.EventSystems.BaseEventData>();        appdomain.DelegateManager.RegisterMethodDelegate<System.Boolean, ShipDock.Loader.AssetsLoader>();        appdomain.DelegateManager.RegisterMethodDelegate<System.Int32, ShipDock.Notices.INoticeBase<System.Int32>>();
+        appdomain.DelegateManager.RegisterMethodDelegate<UnityEngine.EventSystems.BaseEventData>();        appdomain.DelegateManager.RegisterMethodDelegate<System.Single>();
+        appdomain.DelegateManager.RegisterMethodDelegate<System.Boolean, ShipDock.Loader.AssetsLoader>();        appdomain.DelegateManager.RegisterMethodDelegate<System.Int32, ShipDock.Notices.INoticeBase<System.Int32>>();
         appdomain.DelegateManager.RegisterMethodDelegate<System.Boolean, System.Single>();        appdomain.DelegateManager.RegisterMethodDelegate<ShipDock.UI.IUIStack, System.Boolean>();        appdomain.DelegateManager.RegisterMethodDelegate<ShipDock.Datas.IDataProxy, System.Int32>();        appdomain.DelegateManager.RegisterMethodDelegate<System.Boolean, UnityEngine.EventSystems.EventTriggerType>();        appdomain.DelegateManager.RegisterMethodDelegate<UnityEngine.SceneManagement.Scene, UnityEngine.SceneManagement.LoadSceneMode>();        appdomain.DelegateManager.RegisterFunctionDelegate<System.Object>();        appdomain.DelegateManager.RegisterFunctionDelegate<INoticeBase<int>>();        appdomain.DelegateManager.RegisterFunctionDelegate<UnityEngine.Vector3>();        appdomain.DelegateManager.RegisterFunctionDelegate<ShipDock.Config.IConfigHolder>();        appdomain.DelegateManager.RegisterFunctionDelegate<ILRuntime.Runtime.Intepreter.ILTypeInstance>();
         appdomain.DelegateManager.RegisterFunctionDelegate<ShipDock.Applications.HotFixerInteractor>();        appdomain.DelegateManager.RegisterFunctionDelegate<System.Boolean>();        appdomain.DelegateManager.RegisterFunctionDelegate<System.Single>();        appdomain.DelegateManager.RegisterFunctionDelegate<System.Int32, ShipDock.Notices.INoticeBase<System.Int32>>();
-        appdomain.DelegateManager.RegisterFunctionDelegate<ShipDock.Applications.IDisposeAdapter.Adapter, ShipDock.Applications.IDisposeAdapter.Adapter, System.Int32>();        //appdomain.DelegateManager.RegisterDelegateConvertor<DG.Tweening.Core.DOGetter<System.Single>>((act) =>
-        //{
-        //    return new DG.Tweening.Core.DOGetter<System.Single>(() =>
-        //    {
-        //        return ((System.Func<System.Single>)act)();
-        //    });
-        //});        appdomain.DelegateManager.RegisterDelegateConvertor<UnityEngine.Events.UnityAction<UnityEngine.SceneManagement.Scene, UnityEngine.SceneManagement.LoadSceneMode>>((act) =>
+        appdomain.DelegateManager.RegisterFunctionDelegate<ShipDock.Applications.IDisposeAdapter.Adapter, ShipDock.Applications.IDisposeAdapter.Adapter, System.Int32>();
+
+        appdomain.DelegateManager.RegisterDelegateConvertor<UnityEngine.Application.LogCallback>((act) =>
+        {
+            return new UnityEngine.Application.LogCallback((condition, stackTrace, type) =>
+            {
+                ((System.Action<System.String, System.String, UnityEngine.LogType>)act)(condition, stackTrace, type);
+            });
+        });
+
+        appdomain.DelegateManager.RegisterDelegateConvertor<DG.Tweening.Core.DOGetter<System.Single>>((act) =>
+        {
+            return new DG.Tweening.Core.DOGetter<System.Single>(() =>
+            {
+                return ((System.Func<System.Single>)act)();
+            });
+        });        appdomain.DelegateManager.RegisterDelegateConvertor<DG.Tweening.Core.DOSetter<System.Single>>((act) =>
+        {
+            return new DG.Tweening.Core.DOSetter<System.Single>((pNewValue) =>
+            {
+                ((System.Action<System.Single>)act)(pNewValue);
+            });
+        });        appdomain.DelegateManager.RegisterDelegateConvertor<UnityEngine.Events.UnityAction<UnityEngine.SceneManagement.Scene, UnityEngine.SceneManagement.LoadSceneMode>>((act) =>
         {
             return new UnityEngine.Events.UnityAction<UnityEngine.SceneManagement.Scene, UnityEngine.SceneManagement.LoadSceneMode>((arg0, arg1) =>
             {
@@ -117,13 +134,14 @@ public class AppHotFixConfigBase : IHotFixConfig
             {
                 ((System.Action<InputData>)act)(arg0);
             });
-        });        appdomain.DelegateManager.RegisterDelegateConvertor<UnityEngine.Events.UnityAction<GameObject>>((act) =>
+        });        appdomain.DelegateManager.RegisterDelegateConvertor<UnityEngine.Events.UnityAction<GameObject>>((act) =>
         {
             return new UnityEngine.Events.UnityAction<GameObject>((arg0) =>
             {
                 ((System.Action<GameObject>)act)(arg0);
             });
         });
+
         appdomain.DelegateManager.RegisterDelegateConvertor<DG.Tweening.TweenCallback>((act) =>
         {
             return new DG.Tweening.TweenCallback(() =>
@@ -131,6 +149,7 @@ public class AppHotFixConfigBase : IHotFixConfig
                 ((System.Action)act)();
             });
         });
+
         appdomain.DelegateManager.RegisterDelegateConvertor<UnityEngine.Events.UnityAction<System.Boolean, ShipDock.Loader.AssetsLoader>>((act) =>
         {
             return new UnityEngine.Events.UnityAction<System.Boolean, ShipDock.Loader.AssetsLoader>((arg0, arg1) =>
@@ -138,19 +157,20 @@ public class AppHotFixConfigBase : IHotFixConfig
                 ((System.Action<System.Boolean, ShipDock.Loader.AssetsLoader>)act)(arg0, arg1);
             });
         });
+
         appdomain.DelegateManager.RegisterDelegateConvertor<DG.Tweening.Core.DOSetter<UnityEngine.Vector3>>((act) =>
         {
             return new DG.Tweening.Core.DOSetter<UnityEngine.Vector3>((pNewValue) =>
             {
                 ((System.Action<UnityEngine.Vector3>)act)(pNewValue);
             });
-        });        appdomain.DelegateManager.RegisterDelegateConvertor<DG.Tweening.Core.DOGetter<UnityEngine.Vector3>>((act) =>
+        });        appdomain.DelegateManager.RegisterDelegateConvertor<DG.Tweening.Core.DOGetter<UnityEngine.Vector3>>((act) =>
         {
             return new DG.Tweening.Core.DOGetter<UnityEngine.Vector3>(() =>
             {
                 return ((System.Func<UnityEngine.Vector3>)act)();
             });
-        });        appdomain.DelegateManager.RegisterDelegateConvertor<System.Comparison<ShipDock.Applications.IDisposeAdapter.Adapter>>((act) =>
+        });        appdomain.DelegateManager.RegisterDelegateConvertor<System.Comparison<ShipDock.Applications.IDisposeAdapter.Adapter>>((act) =>
         {
             return new System.Comparison<ShipDock.Applications.IDisposeAdapter.Adapter>((x, y) =>
             {

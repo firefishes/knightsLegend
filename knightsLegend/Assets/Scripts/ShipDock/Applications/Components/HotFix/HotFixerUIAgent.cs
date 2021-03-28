@@ -52,12 +52,13 @@ namespace ShipDock.Applications
             Bridge = default;
         }
 
-        protected override void InitILRuntime()
+        protected override void ILRuntimeLoaded()
         {
-            base.InitILRuntime();
 
             Bridge = gameObject.AddComponent<HotFixerUI>();
             Bridge.SetHotFixerAgent(this);
+
+            base.ILRuntimeLoaded();
         }
     }
 }

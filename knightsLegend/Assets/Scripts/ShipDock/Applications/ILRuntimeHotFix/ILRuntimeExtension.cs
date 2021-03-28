@@ -32,6 +32,8 @@ public static class ILRuntimeUtils
         {
             appDomain = GetILRuntimeHotFix().ILAppDomain;
         }
+        else { }
+
         return appDomain;
     }
 
@@ -41,6 +43,8 @@ public static class ILRuntimeUtils
         {
             methodCacher = GetILRuntimeHotFix().MethodCacher;
         }
+        else { }
+
         return methodCacher;
     }
 

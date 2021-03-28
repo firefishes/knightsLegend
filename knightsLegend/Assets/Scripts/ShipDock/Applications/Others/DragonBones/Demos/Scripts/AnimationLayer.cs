@@ -18,17 +18,17 @@ public class AnimationLayer : BaseDemo
         //
         this._mechaArmatureComp.AddDBEventListener(EventObject.LOOP_COMPLETE, OnAnimationEventHandler);
 
-        this._mechaArmatureComp.animation.Play("walk");
+        this._mechaArmatureComp.ArmAnimation.Play("walk");
 
         this._mechaArmatureComp.transform.localPosition = new Vector3(0.0f, -2.0f, 0.0f);
     }
 
     void OnAnimationEventHandler(string type, EventObject eventObject)
     {
-        var animationState = this._mechaArmatureComp.animation.GetState("attack_01");
+        var animationState = this._mechaArmatureComp.ArmAnimation.GetState("attack_01");
         if (animationState == null)
         {
-            animationState = this._mechaArmatureComp.animation.FadeIn("attack_01", 0.2f, 1, 1);
+            animationState = this._mechaArmatureComp.ArmAnimation.FadeIn("attack_01", 0.2f, 1, 1);
             animationState.resetToPose = true;
             animationState.autoFadeOutTime = 0.1f;
             //

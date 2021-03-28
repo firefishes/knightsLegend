@@ -50,22 +50,22 @@ public class ReplaceAnimtion : BaseDemo
     void ChangeAnimtion()
     {
 		//
-        var animationName = this._armatureCompD.animation.lastAnimationName;
+        var animationName = this._armatureCompD.ArmAnimation.lastAnimationName;
         if (!string.IsNullOrEmpty(animationName))
         {
-            var animationNames = this._armatureCompD.animation.animationNames;
+            var animationNames = this._armatureCompD.ArmAnimation.animationNames;
             var animationIndex = (animationNames.IndexOf(animationName) + 1) % animationNames.Count;
-            this._armatureCompD.animation.Play(animationNames[animationIndex]);
+            this._armatureCompD.ArmAnimation.Play(animationNames[animationIndex]);
         }
         else
         {
-            this._armatureCompD.animation.Play();
+            this._armatureCompD.ArmAnimation.Play();
         }
 
-        animationName = this._armatureCompD.animation.lastAnimationName;
+        animationName = this._armatureCompD.ArmAnimation.lastAnimationName;
 
-        this._armatureCompA.animation.Play(animationName);
-        this._armatureCompB.animation.Play(animationName);
-        this._armatureCompC.animation.Play(animationName);
+        this._armatureCompA.ArmAnimation.Play(animationName);
+        this._armatureCompB.ArmAnimation.Play(animationName);
+        this._armatureCompC.ArmAnimation.Play(animationName);
     }
 }

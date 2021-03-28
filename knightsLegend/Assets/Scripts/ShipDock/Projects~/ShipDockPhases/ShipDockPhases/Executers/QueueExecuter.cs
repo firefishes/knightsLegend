@@ -22,7 +22,7 @@ namespace ShipDock.Tools
         /// <summary>全部队列执行完毕的回调</summary>
         public QueueUnitCompleted OnUnitCompleted { set; get; }
         /// <summary>提交操作后是否直接执行所在队列的下一个单元</summary>
-        public bool ShouldNextAfterCommit { get; protected set; }
+        public bool ImmediatelyCommitNext { get; set; }
         /// <summary>此执行项是否可被忽略</summary>
         public bool IgnoreInQueue { get; set; }
 
@@ -73,9 +73,10 @@ namespace ShipDock.Tools
             {
                 return;//不重复销毁，否则会引起循环调用
             }
+            else { }
 
             IsDisposed = true;
-            ClearQueue(true);
+            ClearQueue(true, true);
 
 #if HOT_FIX
             ReclaimQueues(IsDisposQueueItem);
@@ -88,6 +89,13 @@ namespace ShipDock.Tools
 
             mQueue = default;
             mQueueExecuted = default;
+
+            CleanEvents();
+        }
+
+        private void CleanEvents()
+        {
+            UnityEngine.Debug.Log("Queue finihed " + this);
             OnNextUnit = default;
             OnUnitExecuted = default;
             OnUnitCompleted = default;
@@ -108,6 +116,8 @@ namespace ShipDock.Tools
                         item?.Dispose();
                     }
                 }
+                else { }
+
                 if (mQueueExecuted != default)
                 {
                     while (mQueueExecuted.Count > 0)
@@ -116,7 +126,9 @@ namespace ShipDock.Tools
                         item?.Dispose();
                     }
                 }
+                else { }
             }
+            else { }
         }
 #endif
 
@@ -134,11 +146,11 @@ namespace ShipDock.Tools
         }
         
         /// <summary>清理队列</summary>
-        public void ClearQueue(bool isDispose = false)
+        public void ClearQueue(bool isDispose = false, bool isDisposeQueue = false)
         {
             isRunning = false;
 #if HOT_FIX
-            ReclaimQueues(isDispose);
+            ReclaimQueues(isDisposeQueue);
 
             mQueue?.Clear();
             mQueueExecuted?.Clear();
@@ -147,7 +159,10 @@ namespace ShipDock.Tools
             {
                 mQueue = default;
                 mQueueExecuted = default;
+
+                CleanEvents();
             }
+            else { }
 #else
             Utils.Reclaim(ref mQueue, isDispose, isDispose);
             Utils.Reclaim(ref mQueueExecuted, isDispose, isDispose);
@@ -164,10 +179,11 @@ namespace ShipDock.Tools
             mCurrentIndex = 0;
         }
 
-        /// <summary>重置队列</summary>
-        public void ResetQueue(bool autoDispose = true)
+        /// <summary>销毁后重置队列</summary>
+        public void ResetAfterDispose(bool autoDispose = true)
         {
             Dispose();
+
             mQueue = new Queue<IQueueExecuter>();
             mQueueExecuted = new Queue<IQueueExecuter>();
             mAutoDispose = autoDispose;
@@ -181,6 +197,7 @@ namespace ShipDock.Tools
             {
                 return;
             }
+            else { }
 
             mQueue.Enqueue(target);
         }
@@ -192,6 +209,7 @@ namespace ShipDock.Tools
             {
                 return;
             }
+            else { }
 
             QueueExecuter unit = new QueueExecuter();
             unit.ActionUnit = args;
@@ -200,24 +218,28 @@ namespace ShipDock.Tools
 
         /// <summary>开始执行流程队列</summary>
         protected void Start()
-        {
+        {   
             if (isRunning)
             {
                 return;
             }
+            else { }
+
             isRunning = true;
             IsDisposed = false;
             if (mAutoDispose || (QueueSize == 0))
             {
                 mCurrentIndex = 0;
             }
+            else { }
+
             ExecuteUnit();
         }
 
         /// <summary>重置</summary>
         public virtual void Reset()
         {
-            ClearQueue();
+            ClearQueue(false, true);
         }
         
         /// <summary>执行队列中的下一个执行器</summary>
@@ -225,7 +247,7 @@ namespace ShipDock.Tools
         {
             OnUnitExecuted?.Invoke(this);//本执行单元开始执行
 
-            if ((mQueue != null) && (mQueue.Count > 0))
+            if ((mQueue != default) && (mQueue.Count > 0))
             {
                 mCurrent = mQueue.Dequeue();//设置当前单元为下一个执行单元
                 mQueueExecuted.Enqueue(mCurrent);
@@ -244,33 +266,45 @@ namespace ShipDock.Tools
                     {
                         Dispose();
                     }
+                    else { }
                 }
+                else { }
+
                 return;
             }
 
             bool immediatelyNext = true;
             if (!IgnoreInQueue)
             {
-                if (mCurrent != default)
+                IQueueExecuter executer = mCurrent;
+                if (executer != default)
                 {
-                    if (mCurrent.ActionUnit != default)
+                    if (executer.ActionUnit != default)
                     {
-                        mCurrent.ActionUnit();//执行普通委托
+                        executer.ActionUnit();//执行普通委托
                     }
                     else
                     {
-                        immediatelyNext = mCurrent.ShouldNextAfterCommit;//执行子项时需等待子项全部完成
-                        mCurrent.OnNextUnit += NextUnit;//衔接上下子项的执行顺序
-                        mCurrent.Commit();//执行子项
+                        immediatelyNext = executer.ImmediatelyCommitNext;//执行子项时需等待子项全部完成
+                        if (!immediatelyNext)
+                        {
+                            executer.OnNextUnit += NextUnit;//衔接上下子项的执行顺序
+                        }
+                        else { }
+                        executer.Commit();//执行子项
                     }
-                    var executed = mCurrent.OnUnitExecuted;
+                    QueueUnitExecuted executed = executer?.OnUnitExecuted;
                     executed?.Invoke(this);//本执行单元已执行
                 }
+                else { }
             }
+            else { }
+
             if (immediatelyNext)
             {
                 ExecuteUnit();
             }
+            else { }
         }
 
         /// <summary>衔接队列中下一个执行器事件处理函数的执行，构成队列的自动运行结构</summary>

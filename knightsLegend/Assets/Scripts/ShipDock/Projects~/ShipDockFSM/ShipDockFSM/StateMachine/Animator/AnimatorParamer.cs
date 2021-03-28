@@ -17,6 +17,7 @@ namespace ShipDock.FSM
     public class AnimatorParamer
     {
         private KeyValueList<string, ValueItem> mFieldMapper;
+        private string mMotionName;
 
         /// <summary>即将播放的动画遮罩层索引</summary>
         public int AniMaskLayerWillPlay { get; private set; }
@@ -26,8 +27,6 @@ namespace ShipDock.FSM
         public int MotionRepeate { get; private set; } = 1;
         /// <summary>参数是否生效</summary>
         public bool IsValid { get; private set; }
-        /// <summary>动画名</summary>
-        public string MotionName { get; private set; }
         /// <summary>当前动画是否正在播放</summary>
         public bool IsMotionPlaying { get; private set; }
         /// <summary>动画开关</summary>
@@ -37,6 +36,19 @@ namespace ShipDock.FSM
         /// <summary>播放动画的起始时间</summary>
         public float NormalizedTime { get; private set; } = 0f;
         public bool IsSetWillPlay { get; private set; }
+
+        /// <summary>动画名</summary>
+        public string MotionName
+        {
+            get
+            {
+                return mMotionName;
+            }
+            private set
+            {
+                mMotionName = value;
+            }
+        }
 
         public AnimatorParamer()
         {
@@ -155,6 +167,8 @@ namespace ShipDock.FSM
             {
                 return;
             }
+            else { }
+
             ValueItem item;
             int max = mFieldMapper.Size;
             for (int i = 0; i < max; i++)
@@ -164,6 +178,8 @@ namespace ShipDock.FSM
                 {
                     continue;
                 }
+                else { }
+
                 switch (item.Type)
                 {
                     case ValueItem.FLOAT:
@@ -225,6 +241,8 @@ namespace ShipDock.FSM
             {
                 return;
             }
+            else { }
+
             AniMaskLayerWillPlay = aniMaskLayer;
             MotionName = motionName;
             MotionState = state;

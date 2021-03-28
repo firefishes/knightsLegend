@@ -118,7 +118,7 @@ namespace ShipDock.Applications
             AppModulars = new DecorativeModulars();//新建装饰模块管理器
             Configs = new ConfigHelper();//新建配置管理器
 
-            "debug".Log("UI root ready 2222");
+            "debug".Log("UI root ready");
             Framework framework = Framework.Instance;
             FrameworkUnits = new IFrameworkUnit[]
             {

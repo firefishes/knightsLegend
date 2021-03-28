@@ -52,11 +52,11 @@ public class BoundingBox : BaseDemo
         this._pointSlotA.transform.localScale = new Vector3(0.6f, 0.6f, 1.0f);
         this._pointSlotB.transform.localScale = new Vector3(0.4f, 0.4f, 1.0f);
 
-        this._armatureComp.animation.Play("walk");
-        this._boundingBoxComp.animation.Play("0");
+        this._armatureComp.ArmAnimation.Play("walk");
+        this._boundingBoxComp.ArmAnimation.Play("0");
 
-        this._targetA.animation.Play("0");
-        this._targetB.animation.Play("0");
+        this._targetA.ArmAnimation.Play("0");
+        this._targetB.ArmAnimation.Play("0");
 
         // Drag
         EnableDrag(this._targetA.gameObject);
@@ -85,21 +85,21 @@ public class BoundingBox : BaseDemo
 
         // if it hits, play 1, otherwise, play 0
         var animationName = containsTargetA != null ? "1" : "0";
-        if (this._targetA.animation.lastAnimationName != animationName)
+        if (this._targetA.ArmAnimation.lastAnimationName != animationName)
         {
-            this._targetA.animation.FadeIn(animationName, 0.2f).resetToPose = false; ;
+            this._targetA.ArmAnimation.FadeIn(animationName, 0.2f).resetToPose = false; ;
         }
         // if it hits, play 1, otherwise, play 0
         animationName = containsTargetB != null ? "1" : "0";
-        if (this._targetB.animation.lastAnimationName != animationName)
+        if (this._targetB.ArmAnimation.lastAnimationName != animationName)
         {
-            this._targetB.animation.FadeIn(animationName, 0.2f).resetToPose = false; ;
+            this._targetB.ArmAnimation.FadeIn(animationName, 0.2f).resetToPose = false; ;
         }
         // if it hits, play 1, otherwise, play 0
         animationName = intersectsSlots != null ? "1" : "0";
-        if (this._boundingBoxComp.animation.lastAnimationName != animationName)
+        if (this._boundingBoxComp.ArmAnimation.lastAnimationName != animationName)
         {
-            this._boundingBoxComp.animation.FadeIn(animationName, 0.2f).resetToPose = false;
+            this._boundingBoxComp.ArmAnimation.FadeIn(animationName, 0.2f).resetToPose = false;
         }
 
         var targetPointA = this._targetA.transform.localPosition;

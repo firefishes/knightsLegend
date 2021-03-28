@@ -58,31 +58,51 @@ namespace ShipDock.Applications
 
             m_Settings.Init();
 
-            TextAsset dll, pdb = default;
-            if (hotFixAsset != default)
+            if (ILRuntimeIniter.HasLoadAnyAssembly)
             {
-                dll = hotFixAsset;
+                ILRuntimeLoaded();
             }
             else
             {
-                AssetBundles abs = ShipDockApp.Instance.ABs;
-                dll = abs.Get<TextAsset>(m_Settings.HotFixABName, m_Settings.HotFixDLL);
-                pdb = abs.Get<TextAsset>(m_Settings.HotFixABName, m_Settings.HotFixPDB);
-            }
+                TextAsset dll, pdb = default;
+                if (hotFixAsset != default)
+                {
+                    dll = hotFixAsset;
+                }
+                else
+                {
+                    AssetBundles abs = ShipDockApp.Instance.ABs;
+                    dll = abs.Get<TextAsset>(m_Settings.HotFixABName, m_Settings.HotFixDLL);
+                    pdb = abs.Get<TextAsset>(m_Settings.HotFixABName, m_Settings.HotFixPDB);
+                }
 
-            StartHotFixeByAsset(this, dll, pdb);
+                StartHotFixeByAsset(this, dll, pdb);
+            }
         }
 
         protected override void ILRuntimeLoaded()
         {
             base.ILRuntimeLoaded();
 
-            SendLoadedNotice();
+            if (!m_LoadedNoticeInfo.IsSendInRenderObject)
+            {
+                SendLoadedNotice();
+            }
+            else { }
+        }
+
+        private void OnRenderObject()
+        {
+            if (m_LoadedNoticeInfo.IsSendInRenderObject && !m_LoadedNoticeInfo.IsReadyNoticeSend)
+            {
+                SendLoadedNotice();
+            }
+            else { }
         }
 
         private void SendLoadedNotice()
         {
-            if (m_LoadedNoticeInfo.IsSendIDAsNotice)
+            if (m_LoadedNoticeInfo.IsSendIDAsNotice && !m_LoadedNoticeInfo.IsReadyNoticeSend)
             {
                 if (m_LoadedNoticeInfo.ApplyDefaultNoticeType)
                 {
@@ -123,6 +143,13 @@ namespace ShipDock.Applications
             {
                 mIDAsNotice?.Dispose();
             }
+
+            if (m_LoadedNoticeInfo.IsSendInRenderObject)
+            {
+                bool flag = m_LoadedNoticeInfo.IsSendOnceInRenderObject;
+                m_LoadedNoticeInfo.SetReadyNoticeSend(flag);
+            }
+            else { }
         }
 
         private void ApplyCustomNotice()

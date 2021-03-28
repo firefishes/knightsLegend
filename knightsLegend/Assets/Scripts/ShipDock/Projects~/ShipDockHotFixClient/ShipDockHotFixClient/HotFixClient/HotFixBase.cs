@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ShipDock.Applications
 {
-    public abstract class HotFixBase //: object
+    public abstract class HotFixBase
     {
         public abstract void ShellInited(MonoBehaviour target);
 

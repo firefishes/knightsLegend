@@ -48,7 +48,7 @@ public class BoneOffset : BaseDemo
         rootSlot.InvalidUpdate();
         bulletSlot.InvalidUpdate();
         //
-        armatureComp.animation.timeScale = 0.5f + Random.Range(0.0f, 1.0f) * 1.0f; // Random animation speed.
-        armatureComp.animation.Play("idle", 1);
+        armatureComp.ArmAnimation.timeScale = 0.5f + Random.Range(0.0f, 1.0f) * 1.0f; // Random animation speed.
+        armatureComp.ArmAnimation.Play("idle", 1);
     }
 }
