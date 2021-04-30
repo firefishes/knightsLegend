@@ -58,11 +58,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SoruceCode\ShipDockModulars\Modulars\ApplicationModular.cs">
+      <Link>ShipDockModulars\ApplicationModular.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockModulars\Modulars\DecorativeModulars.cs">
+      <Link>ShipDockModulars\DecorativeModulars.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockModulars\Modulars\IAppModulars.cs">
+      <Link>ShipDockModulars\IAppModulars.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockModulars\Modulars\IModular.cs">
+      <Link>ShipDockModulars\IModular.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ShipDockModulars\Modulars\ApplicationModular.cs" />
-    <Compile Include="ShipDockModulars\Modulars\DecorativeModulars.cs" />
-    <Compile Include="ShipDockModulars\Modulars\IAppModulars.cs" />
-    <Compile Include="ShipDockModulars\Modulars\IModular.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

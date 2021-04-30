@@ -1,0 +1,44 @@
+﻿using ShipDock.Tools;
+using UnityEngine;
+
+namespace ShipDock.Applications
+{
+
+    public abstract class SceneInfosMapper<K, V> : KeyValueList<K, V>
+    {
+        [SerializeField]
+        protected bool m_DisposeInfos;
+
+        [SerializeField]
+        public V[] infos;
+
+        public virtual void InitMapper(V[] source = default)
+        {
+            if (source != default)
+            {
+                infos = source;
+            }
+
+            V info;
+            int max = infos.Length;
+            for (int i = 0; i < max; i++)
+            {
+                info = infos[i];
+                Put(GetInfoKey(ref info), info);
+                AfterInitItem(ref info);
+            }
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            Utils.Reclaim(ref infos, true, m_DisposeInfos);
+        }
+
+        protected virtual void AfterInitItem(ref V item) { }
+
+        public abstract K GetInfoKey(ref V item);
+
+    }
+}

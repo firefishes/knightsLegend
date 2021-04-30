@@ -58,17 +58,37 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SoruceCode\ShipDockLoader\Loaders\AssetBundleInfo.cs">
+      <Link>ShipDockLoader\AssetBundleInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockLoader\Loaders\AssetBundles.cs">
+      <Link>ShipDockLoader\AssetBundles.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockLoader\Loaders\AssetQuoteder.cs">
+      <Link>ShipDockLoader\AssetQuoteder.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockLoader\Loaders\AssetsLoader.cs">
+      <Link>ShipDockLoader\AssetsLoader.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockLoader\Loaders\Events\LoaderEvents.cs">
+      <Link>ShipDockLoader\LoaderEvents.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockLoader\Loaders\Interfaces\IAssetBundleInfo.cs">
+      <Link>ShipDockLoader\IAssetBundleInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockLoader\Loaders\Interfaces\IAssetBundles.cs">
+      <Link>ShipDockLoader\IAssetBundles.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockLoader\Loaders\Interfaces\ICustomAssetBundle.cs">
+      <Link>ShipDockLoader\ICustomAssetBundle.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockLoader\Loaders\Loader.cs">
+      <Link>ShipDockLoader\Loader.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockLoader\Loaders\LoaderOpertion.cs">
+      <Link>ShipDockLoader\LoaderOpertion.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ShipDockLoader\Loaders\AssetBundleInfo.cs" />
-    <Compile Include="ShipDockLoader\Loaders\AssetBundles.cs" />
-    <Compile Include="ShipDockLoader\Loaders\AssetQuoteder.cs" />
-    <Compile Include="ShipDockLoader\Loaders\AssetsLoader.cs" />
-    <Compile Include="ShipDockLoader\Loaders\Events\LoaderEvents.cs" />
-    <Compile Include="ShipDockLoader\Loaders\Interfaces\ICustomAssetBundle.cs" />
-    <Compile Include="ShipDockLoader\Loaders\Interfaces\IAssetBundleInfo.cs" />
-    <Compile Include="ShipDockLoader\Loaders\Interfaces\IAssetBundles.cs" />
-    <Compile Include="ShipDockLoader\Loaders\Loader.cs" />
-    <Compile Include="ShipDockLoader\Loaders\LoaderOpertion.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

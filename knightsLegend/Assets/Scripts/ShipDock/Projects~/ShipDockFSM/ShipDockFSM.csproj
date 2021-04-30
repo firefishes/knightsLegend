@@ -63,19 +63,43 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SoruceCode\ShipDockFSM\StateMachine\AnimationInfoUpdater.cs">
+      <Link>ShipDockFSM\AnimationInfoUpdater.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockFSM\StateMachine\Animator\AnimatorParamer.cs">
+      <Link>ShipDockFSM\AnimatorParamer.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockFSM\StateMachine\Animator\AnimatorState.cs">
+      <Link>ShipDockFSM\AnimatorState.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockFSM\StateMachine\Animator\AnimatorStateMachine.cs">
+      <Link>ShipDockFSM\AnimatorStateMachine.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockFSM\StateMachine\Animator\ParamerFields.cs">
+      <Link>ShipDockFSM\ParamerFields.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockFSM\StateMachine\FState.cs">
+      <Link>ShipDockFSM\FState.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockFSM\StateMachine\Interfaces\IAnimatorState.cs">
+      <Link>ShipDockFSM\IAnimatorState.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockFSM\StateMachine\Interfaces\IState.cs">
+      <Link>ShipDockFSM\IState.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockFSM\StateMachine\Interfaces\IStateMachine.cs">
+      <Link>ShipDockFSM\IStateMachine.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockFSM\StateMachine\Interfaces\IStateParam.cs">
+      <Link>ShipDockFSM\IStateParam.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockFSM\StateMachine\StateMachine.cs">
+      <Link>ShipDockFSM\StateMachine.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockFSM\StateMachine\StateMachines.cs">
+      <Link>ShipDockFSM\StateMachines.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ShipDockFSM\StateMachine\AnimationInfoUpdater.cs" />
-    <Compile Include="ShipDockFSM\StateMachine\Animator\AnimatorParamer.cs" />
-    <Compile Include="ShipDockFSM\StateMachine\Animator\AnimatorState.cs" />
-    <Compile Include="ShipDockFSM\StateMachine\Animator\AnimatorStateMachine.cs" />
-    <Compile Include="ShipDockFSM\StateMachine\Animator\ParamerFields.cs" />
-    <Compile Include="ShipDockFSM\StateMachine\FState.cs" />
-    <Compile Include="ShipDockFSM\StateMachine\Interfaces\IAnimatorState.cs" />
-    <Compile Include="ShipDockFSM\StateMachine\Interfaces\IState.cs" />
-    <Compile Include="ShipDockFSM\StateMachine\Interfaces\IStateMachine.cs" />
-    <Compile Include="ShipDockFSM\StateMachine\Interfaces\IStateParam.cs" />
-    <Compile Include="ShipDockFSM\StateMachine\StateMachine.cs" />
-    <Compile Include="ShipDockFSM\StateMachine\StateMachines.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

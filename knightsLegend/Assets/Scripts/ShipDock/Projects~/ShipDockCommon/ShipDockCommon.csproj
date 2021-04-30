@@ -46,30 +46,76 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SoruceCode\ShipDockCommon\Applications\Interfaces\ICamerLens.cs">
+      <Link>ShipDockCommon\ICamerLens.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCommon\Applications\Tools\AppPaths.cs">
+      <Link>ShipDockCommon\AppPaths.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCommon\Applications\Tools\FileOperater.cs">
+      <Link>ShipDockCommon\FileOperater.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCommon\Pooling\AllPools.cs">
+      <Link>ShipDockCommon\AllPools.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCommon\Pooling\Interfaces\IPool.cs">
+      <Link>ShipDockCommon\IPool.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCommon\Pooling\Interfaces\IPoolBase.cs">
+      <Link>ShipDockCommon\IPoolBase.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCommon\Pooling\Interfaces\IPoolItem.cs">
+      <Link>ShipDockCommon\IPoolItem.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCommon\Pooling\Pooling.cs">
+      <Link>ShipDockCommon\Pooling.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCommon\Tools\ByteBuffer.cs">
+      <Link>ShipDockCommon\ByteBuffer.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCommon\Tools\DoubleBuffers.cs">
+      <Link>ShipDockCommon\DoubleBuffers.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCommon\Tools\IntegerID.cs">
+      <Link>ShipDockCommon\IntegerID.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCommon\Tools\IntegerMapper.cs">
+      <Link>ShipDockCommon\IntegerMapper.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCommon\Tools\Interfaces\IDispose.cs">
+      <Link>ShipDockCommon\IDispose.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCommon\Tools\KeyValueList.cs">
+      <Link>ShipDockCommon\KeyValueList.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCommon\Tools\ScopeChecker.cs">
+      <Link>ShipDockCommon\ScopeChecker.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCommon\Tools\ShipDockExtension.cs">
+      <Link>ShipDockCommon\ShipDockExtension.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCommon\Tools\Singletons.cs">
+      <Link>ShipDockCommon\Singletons.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCommon\Tools\StringUtils.cs">
+      <Link>ShipDockCommon\StringUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCommon\Tools\Subgroups\AnimationSubgroup.cs">
+      <Link>ShipDockCommon\AnimationSubgroup.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCommon\Tools\Subgroups\AssetSubgroup.cs">
+      <Link>ShipDockCommon\AssetSubgroup.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCommon\Tools\TimeGapper.cs">
+      <Link>ShipDockCommon\TimeGapper.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCommon\Tools\Utils.cs">
+      <Link>ShipDockCommon\Utils.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCommon\Tools\ValueItem.cs">
+      <Link>ShipDockCommon\ValueItem.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ShipDockCommon\Pooling\AllPools.cs" />
-    <Compile Include="ShipDockCommon\Pooling\Interfaces\IPool.cs" />
-    <Compile Include="ShipDockCommon\Pooling\Interfaces\IPoolBase.cs" />
-    <Compile Include="ShipDockCommon\Pooling\Interfaces\IPoolItem.cs" />
-    <Compile Include="ShipDockCommon\Pooling\Pooling.cs" />
-    <Compile Include="ShipDockCommon\Applications\Tools\AppPaths.cs" />
-    <Compile Include="ShipDockCommon\Tools\ByteBuffer.cs" />
-    <Compile Include="ShipDockCommon\Tools\DoubleBuffers.cs" />
-    <Compile Include="ShipDockCommon\Applications\Tools\FileOperater.cs" />
-    <Compile Include="ShipDockCommon\Tools\IntegerID.cs" />
-    <Compile Include="ShipDockCommon\Tools\IntegerMapper.cs" />
-    <Compile Include="ShipDockCommon\Applications\Interfaces\ICamerLens.cs" />
-    <Compile Include="ShipDockCommon\Tools\Interfaces\IDispose.cs" />
-    <Compile Include="ShipDockCommon\Tools\KeyValueList.cs" />
-    <Compile Include="ShipDockCommon\Tools\ScopeChecker.cs" />
-    <Compile Include="ShipDockCommon\Tools\ShipDockExtension.cs" />
-    <Compile Include="ShipDockCommon\Tools\Singletons.cs" />
-    <Compile Include="ShipDockCommon\Tools\StringUtils.cs" />
-    <Compile Include="ShipDockCommon\Tools\Subgroups\AnimationSubgroup.cs" />
-    <Compile Include="ShipDockCommon\Tools\Subgroups\AssetSubgroup.cs" />
-    <Compile Include="ShipDockCommon\Tools\TimeGapper.cs" />
-    <Compile Include="ShipDockCommon\Tools\Utils.cs" />
-    <Compile Include="ShipDockCommon\Tools\ValueItem.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

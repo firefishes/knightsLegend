@@ -20,6 +20,8 @@ namespace ShipDock.Applications
         public bool startUpIOC = false;
         [Tooltip("是否包含多语言本地化配置")]
         public bool hasLocalsConfig = false;
+        [Tooltip("是否包含多语言本地化配置")]
+        public bool isDeletePlayerPref;
         [Tooltip("远程资源客户端配置")]
         public ClientResVersion remoteAssetVersions;
         [Tooltip("预加载的配置列表")]

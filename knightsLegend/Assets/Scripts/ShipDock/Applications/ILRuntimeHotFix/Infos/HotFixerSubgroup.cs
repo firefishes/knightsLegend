@@ -13,27 +13,29 @@ namespace ShipDock.Applications
     public class HotFixerSubgroup
     {
         [Header("桥接至热更端的绑定信息")]
-        [SerializeField]
-        [Tooltip("AsstBundle资源名")]
+        [SerializeField, Tooltip("AsstBundle资源名")]
+#if ODIN_INSPECTOR
+        [LabelText("热更文件所在资源包名")]
+#endif
         protected string m_HotFixABName;
+
+        [SerializeField, Tooltip("dll热更资源名")]
 #if ODIN_INSPECTOR
-        [SuffixLabel(".dll")]
+        [LabelText("热更文件（dll）"), SuffixLabel(".dll")]
 #endif
-        [SerializeField]
-        [Tooltip("dll热更资源名")]
         protected string m_HotFixDLL;
+
+        [SerializeField, Tooltip("pdb符号表文件资源名")]
 #if ODIN_INSPECTOR
-        [SuffixLabel(".pdb")]
+        [LabelText("热更文件（pdb）"), SuffixLabel(".pdb")]
 #endif
-        [SerializeField]
-        [Tooltip("pdb符号表文件资源名")]
         protected string m_HotFixPDB;
-#if ODIN_INSPECTOR
+#if ODIN_INSPECTOR && UNITY_EDITOR
         [SerializeField]
+        [LabelText("查看所有引用")]
         private bool m_EditHotFixBinding = false;
-        [ReadOnly]
-        [PropertyTooltip("@Overview")]
-        [SerializeField]
+
+        [SerializeField, ReadOnly, PropertyTooltip("@Overview")]
         private string m_Overviews = "热更绑定值概览";
 
         private string mOverviewTooltips;
@@ -139,6 +141,57 @@ namespace ShipDock.Applications
                             }
                             temp = string.Format(sceneItem.keyField.Append(":", nextLine, "{0}"), temp);
                             break;
+                        case SceneNodeType.UI_LAYOUT_GROUP:
+                            temp = sceneItem.keyField.Append(" Layout group {", sceneItem.layoutGroup.name, "}");
+                            break;
+                        case SceneNodeType.UI_TOGGLE:
+                            temp = sceneItem.keyField.Append(" Toggle {", sceneItem.toggle.name, "}");
+                            break;
+                        case SceneNodeType.UI_TOGGLE_GROUP:
+                            temp = sceneItem.keyField.Append(" Layout toggle group {", sceneItem.toggleGroup.name, "}");
+                            break;
+                        case SceneNodeType.UI_SLIDER:
+                            temp = sceneItem.keyField.Append(" Slider {", sceneItem.slider.name, "}");
+                            break;
+                        case SceneNodeType.UI_SCROLL_BAR:
+                            temp = sceneItem.keyField.Append(" Scroll bar {", sceneItem.scrollBar.name, "}");
+                            break;
+                        case SceneNodeType.UI_DROP_DOWN:
+                            temp = sceneItem.keyField.Append(" Drop down {", sceneItem.dropDown.name, "}");
+                            break;
+                        case SceneNodeType.UI_INPUT_FIELD:
+                            temp = sceneItem.keyField.Append(" Input field {", sceneItem.inputField.name, "}");
+                            break;
+                        case SceneNodeType.UI_CANVAS:
+                            temp = sceneItem.keyField.Append(" Canvas {", sceneItem.canvas.name, "}");
+                            break;
+                        case SceneNodeType.UI_EVENT_SYSTEM:
+                            temp = sceneItem.keyField.Append(" Event system {", sceneItem.eventSystem.name, "}");
+                            break;
+                        case SceneNodeType.UI_EVENT_TRIGGER:
+                            temp = sceneItem.keyField.Append(" Event trigger {", sceneItem.eventTrigger.name, "}");
+                            break;
+                        case SceneNodeType.TRANSFORM:
+                            temp = sceneItem.keyField.Append(" Transform {", sceneItem.trans.name, "}");
+                            break;
+                        case SceneNodeType.MATERIAL:
+                            temp = sceneItem.keyField.Append(" Material {", sceneItem.materialNode.name, "}");
+                            break;
+                        case SceneNodeType.SPRITE_RENDERER:
+                            temp = sceneItem.keyField.Append(" Sprite renderer {", sceneItem.spriteRendererNode.name, "}");
+                            break;
+                        case SceneNodeType.MESH_FILTER:
+                            temp = sceneItem.keyField.Append(" Mesh filter {", sceneItem.meshFilterNode.name, "}");
+                            break;
+                        case SceneNodeType.AUDIO_SOURCE:
+                            temp = sceneItem.keyField.Append(" Audio source {", sceneItem.audioSource.name, "}");
+                            break;
+                        case SceneNodeType.ILRUNTIME_HOTFIX:
+                            temp = sceneItem.keyField.Append(" HotFixer {", sceneItem.hotFixer.HotFixCompClassName, "}");
+                            break;
+                        case SceneNodeType.ILRUNTIME_HOTFIX_UI:
+                            temp = sceneItem.keyField.Append(" HotFixer UI { ", sceneItem.hotFixerUI.UIInteractorName, sceneItem.hotFixerUI.UIModularName, "}");
+                            break;
                         default:
                             temp = sceneItem.keyField.Append(" Null");
                             break;
@@ -149,16 +202,15 @@ namespace ShipDock.Applications
             }
         }
 
-        [ShowIf("m_EditHotFixBinding", true)]
+        [LabelText("值类型引用绑定"), ShowIf("m_EditHotFixBinding", true)]
 #endif
-        [SerializeField]
-        [Tooltip("热更端可能用到的值类型桥接设置")]
+        [SerializeField, Tooltip("热更端可能用到的值类型桥接设置")]
         private ValueSubgroup[] m_ComponentData;
+
+        [SerializeField, Tooltip("热更端可能用到的引用类型桥接设置")]
 #if ODIN_INSPECTOR
-        [ShowIf("m_EditHotFixBinding", true)]
+        [LabelText("场景节点引用绑定"), ShowIf("m_EditHotFixBinding", true)]
 #endif
-        [SerializeField]
-        [Tooltip("热更端可能用到的引用类型桥接设置")]
         private SceneNodeSubgroup[] m_SceneNodes;
         
         public Dictionary<string, ValueSubgroup> DataMapper { get; private set; }
@@ -223,6 +275,15 @@ namespace ShipDock.Applications
             for (int i = 0; i < max; i++)
             {
                 item = SceneNodes[i];
+                if (item != default)
+                {
+                    if (item.button != default)
+                    {
+                        item.button.onClick.RemoveAllListeners();
+                    }
+                    else { }
+                }
+                else { }
                 item.value = default;
             }
             SceneNodes?.Clone();

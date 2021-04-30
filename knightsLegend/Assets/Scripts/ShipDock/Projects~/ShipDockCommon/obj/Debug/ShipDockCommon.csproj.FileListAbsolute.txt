@@ -10,3 +10,9 @@ D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Proje
 D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCommon\obj\Debug\ShipDockCommon.csproj.CoreCompileInputs.cache
 D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCommon\obj\Debug\ShipDockCommon.dll
 D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCommon\obj\Debug\ShipDockCommon.pdb
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCommon\bin\Debug\ShipDockCommon.dll
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCommon\bin\Debug\ShipDockCommon.pdb
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCommon\obj\Debug\ShipDockCommon.csprojAssemblyReference.cache
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCommon\obj\Debug\ShipDockCommon.csproj.CoreCompileInputs.cache
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCommon\obj\Debug\ShipDockCommon.dll
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCommon\obj\Debug\ShipDockCommon.pdb

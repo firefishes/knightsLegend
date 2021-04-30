@@ -83,11 +83,11 @@ public static class ShipDockAppExtension
         return ShipDockApp.Instance.Locals.Language(target, args);
     }
 
-    public static GameObject Create(this GameObject target, int poolID = int.MaxValue)
+    public static GameObject Create(this GameObject target, int poolID = int.MaxValue, bool selfActive = true)
     {
         if (poolID != int.MaxValue)
         {
-            return ShipDockApp.Instance.AssetsPooling.FromPool(poolID, ref target);
+            return ShipDockApp.Instance.AssetsPooling.FromPool(poolID, ref target, default, selfActive);
         }
         else
         {

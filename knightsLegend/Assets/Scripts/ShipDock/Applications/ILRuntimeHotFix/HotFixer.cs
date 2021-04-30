@@ -1,7 +1,9 @@
-﻿#define _LOG_INOVKED_METHOD_BY_ARGS_COUNT
-#define _LOG_INITER
+﻿#define _LOG_STATU
 #define _LOG_HOT_FIX_COMP_START
 
+#if ODIN_INSPECTOR
+using Sirenix.OdinInspector;
+#endif
 using ILRuntime.Runtime.Enviorment;
 using UnityEngine;
 
@@ -15,7 +17,6 @@ namespace ShipDock.Applications
     /// </summary>
     public abstract class HotFixer : MonoBehaviour
     {
-        private static bool isDebugServiceStarted;
 
         public static void StartHotFixeByAsset(HotFixer target, TextAsset dll, TextAsset pdb = default)
         {
@@ -28,6 +29,9 @@ namespace ShipDock.Applications
 #endif
         }
 
+#if ODIN_INSPECTOR
+        [TitleGroup("热更组件")]
+#endif
         [SerializeField]
         protected HotFixerStartUpInfo m_StartUpInfo = new HotFixerStartUpInfo();
 
@@ -106,7 +110,7 @@ namespace ShipDock.Applications
         /// <param name="pdb"></param>
         protected virtual void StartHotfix(byte[] dll, byte[] pdb = default)
         {
-#if LOG_INITER
+#if LOG_STATU
             int statu = 0;
 #endif
             bool hasDll = dll != default;
@@ -117,17 +121,7 @@ namespace ShipDock.Applications
                 {
                     mILRuntimeIniter.Build(dll, pdb);
                 }
-#if LOG_INITER
-                else
-                {
-                    if (!ILRuntimeIniter.ApplySingleHotFixMode)
-                    {
-                        statu = 2;//多热更端的模式下，必须指定热更文件
-                    }
-                }
-#else
                 else { }
-#endif
             }
             else
             {
@@ -135,7 +129,7 @@ namespace ShipDock.Applications
                 {
                     mILRuntimeIniter.Build(dll, pdb);
                 }
-#if LOG_INITER
+#if LOG_STATU
                 else
                 {
                     statu = 1;//没有任何热更端的文件被加载
@@ -144,7 +138,7 @@ namespace ShipDock.Applications
                 else { }
 #endif
             }
-#if LOG_INITER
+#if LOG_STATU
             switch (statu)
             {
                 case 1:
@@ -161,9 +155,9 @@ namespace ShipDock.Applications
             InitILRuntime();
             ILRuntimeLoaded();
 
-#if LOG_HOT_FIX_COMP_START
+#if LOG_STATU && LOG_HOT_FIX_COMP_START
             "HotFixer InstantiateFromIL, class name is {0}".Log(m_StartUpInfo.ClassName);
-            "HotFixer {0} loaded.".Log(statu != 0 && mShellBridge != default ? mShellBridge.ToString() : "do not need, may be is UI");
+            "HotFixer {0} loaded.".Log(statu != 0 && ShellBridge != default ? ShellBridge.ToString() : "do not need, may be is UI");
 #endif
         }
 
@@ -182,15 +176,7 @@ namespace ShipDock.Applications
         /// </summary>
         protected virtual void InitILRuntime()
         {
-#if DEBUG && (UNITY_EDITOR || UNITY_ANDROID || UNITY_IPHONE)
-            if (!isDebugServiceStarted)
-            {
-                isDebugServiceStarted = true;
-                ILAppDomain().UnityMainThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
-                ILAppDomain().DebugService.StartDebugService(m_StartUpInfo.DebugPort);
-            }
-            else { }
-#endif
+            ILRuntimeHotFix.StartDebugServices(m_StartUpInfo.DebugPort);
         }
 
 #region Unity周期函数回调
@@ -221,7 +207,7 @@ namespace ShipDock.Applications
             {
                 if (string.IsNullOrEmpty(m_StartUpInfo.ClassName))
                 {
-#if LOG_INITER
+#if LOG_STATU
                     Debug.Log(GetType().Name + "'s ClassName is null.");
 #endif
                     return;
@@ -233,29 +219,47 @@ namespace ShipDock.Applications
                 return;
             }
 
-            ShellBridge = ILRuntimeUtils.InstantiateFromIL(m_StartUpInfo.ClassName);
+            string clsName = m_StartUpInfo.ClassName;
+            if (m_StartUpInfo.IsMonoBehaviorMode)
+            {
+                ILRuntimeUtils.InstantiateMonoFromIL(gameObject, clsName);
+            }
+            else
+            {
+                HotFixBaseMode(ref clsName);
+            }
+        }
+
+        /// <summary>
+        /// 官方不推荐直接在热更端使用组件，故提供一种绕过 MonoBehaviour 组件纯热更的开发方式
+        /// </summary>
+        /// <param name="clsName"></param>
+        private void HotFixBaseMode(ref string clsName)
+        {
+            ShellBridge = ILRuntimeUtils.InstantiateFromIL(clsName);
 
             string method = "GetUpdateMethods";
             string className = m_StartUpInfo.ClassName;
 
             if (m_StartUpInfo.ApplyFixedUpdate)
             {
-                ILRuntimeUtils.InvokeMethodILR(ShellBridge, className, method, 1, OnGetFixedUpdateMethod, m_StartUpInfo.FixedUpdateMethodName);
+                ILRuntimeUtils.InvokeMethodILR(ShellBridge, className, method, 1, OnGetFixedUpdateMethod, m_StartUpInfo.FixedUpdateMethodName);//模拟 FixedUpdate
             }
             else { }
 
             if (m_StartUpInfo.ApplyUpdate)
             {
-                ILRuntimeUtils.InvokeMethodILR(ShellBridge, className, method, 1, OnGetUpdateMethod, m_StartUpInfo.UpdateMethodName);
+                ILRuntimeUtils.InvokeMethodILR(ShellBridge, className, method, 1, OnGetUpdateMethod, m_StartUpInfo.UpdateMethodName);//模拟 Update
             }
             else { }
 
             if (m_StartUpInfo.ApplyLateUpdate)
             {
-                ILRuntimeUtils.InvokeMethodILR(ShellBridge, className, method, 1, OnGetLateUpdateMethod, m_StartUpInfo.LateUpdateMethodName);
+                ILRuntimeUtils.InvokeMethodILR(ShellBridge, className, method, 1, OnGetLateUpdateMethod, m_StartUpInfo.LateUpdateMethodName);//模拟 LateUpdate
             }
             else { }
-            ILRuntimeUtils.InvokeMethodILR(ShellBridge, className, method, 1, OnGetDestroyMethod, "OnDestroy");
+
+            ILRuntimeUtils.InvokeMethodILR(ShellBridge, className, method, 1, OnGetDestroyMethod, "OnDestroy");//模拟 OnDestroy
             ILRuntimeUtils.InvokeMethodILR(ShellBridge, className, m_StartUpInfo.IniterMethodName, 1, this);
         }
 

@@ -184,39 +184,45 @@ namespace DigitalRubyShared
             //ScaleGesture.ThresholdUnits = ZoomThresholdUnits;
 
             // pan gesture
-            PanGesture = new PanGestureRecognizer();
-            PanGesture.MaximumNumberOfTouchesToTrack = 2;
-            PanGesture.StateUpdated += PanGesture_Updated;
-
-            // create a tap gesture that only executes on the target, note that this requires a physics ray caster on the camera
-            TapGesture = new TapGestureRecognizer();
-            TapGesture.StateUpdated += TapGesture_Updated;
-            TapGesture.PlatformSpecificView = OrbitTarget.gameObject;
-
-            if (RequireOrbitGesturesToStartOnTarget)
+            if (PanGesture == default)
             {
-                ScaleGesture.PlatformSpecificView = OrbitTarget.gameObject;
-                PanGesture.PlatformSpecificView = OrbitTarget.gameObject;
-            }
+                PanGesture = new PanGestureRecognizer
+                {
+                    MaximumNumberOfTouchesToTrack = 2
+                };
+                PanGesture.StateUpdated += PanGesture_Updated;
 
-            if (LookAtTarget)
-            {
-                // point oribiter at target
-                Orbiter.transform.LookAt(OrbitTarget.transform);
-            }
+                // create a tap gesture that only executes on the target, note that this requires a physics ray caster on the camera
+                TapGesture = new TapGestureRecognizer();
+                TapGesture.StateUpdated += TapGesture_Updated;
+                TapGesture.PlatformSpecificView = OrbitTarget.gameObject;
 
-            FingersScript.Instance.AddGesture(ScaleGesture);
+                if (RequireOrbitGesturesToStartOnTarget)
+                {
+                    ScaleGesture.PlatformSpecificView = OrbitTarget.gameObject;
+                    PanGesture.PlatformSpecificView = OrbitTarget.gameObject;
+                }
+
+                if (LookAtTarget)
+                {
+                    // point oribiter at target
+                    Orbiter.transform.LookAt(OrbitTarget.transform);
+                }
+            }
+            else { }
+
+            //FingersScript.Instance.AddGesture(ScaleGesture);
             FingersScript.Instance.AddGesture(PanGesture);
-            FingersScript.Instance.AddGesture(TapGesture);
+            //FingersScript.Instance.AddGesture(TapGesture);
         }
 
         private void OnDisable()
         {
             if (FingersScript.HasInstance)
             {
-                FingersScript.Instance.RemoveGesture(ScaleGesture);
+                //FingersScript.Instance.RemoveGesture(ScaleGesture);
                 FingersScript.Instance.RemoveGesture(PanGesture);
-                FingersScript.Instance.RemoveGesture(TapGesture);
+                //FingersScript.Instance.RemoveGesture(TapGesture);
             }
         }
 

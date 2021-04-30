@@ -1,0 +1,19 @@
+﻿namespace ShipDock.Notices
+{
+    public static class ShipDockConsts
+    {
+        public const int NOTICE_APPLICATION_STARTUP = -1000;
+        public const int NOTICE_APPLICATION_CLOSE = -1001;
+        public const int NOTICE_ADD_UPDATE = -1002;
+        public const int NOTICE_REMOVE_UPDATE = -1003;
+        public const int NOTICE_FRAME_UPDATER_COMP_READY = -1004;
+        public const int NOTICE_ADD_SCENE_UPDATE = -1005;
+        public const int NOTICE_REMOVE_SCENE_UPDATE = -1006;
+        public const int NOTICE_SCENE_UPDATE_READY = -1007;
+        public const int NOTICE_SCENE_CALL_LATE = -1008;
+        public const int NOTICE_CONFIG_PRELOADED = -1009;
+        public const int NOTICE_APPLICATION_PAUSE = -1010;
+
+        public const string SERVER_CONFIG = "ShipDockConfigServer";
+    }
+}

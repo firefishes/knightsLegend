@@ -1,8 +1,10 @@
 ﻿using ILRuntime.CLR.Method;
 using ILRuntime.CLR.TypeSystem;
 using ILRuntime.Runtime.Enviorment;
+using ILRuntime.Runtime.Intepreter;
 using ShipDock.Applications;
 using System.Collections.Generic;
+using UnityEngine;
 using ParamBuilderAction = System.Action<ILRuntime.Runtime.Enviorment.InvocationContext, object[]>;
 
 public static class ILRuntimeUtils
@@ -188,6 +190,28 @@ public static class ILRuntimeUtils
         return result;
     }
 
+    public static object InstantiateMonoFromIL(GameObject target, string monoCompName)
+    {
+        ILType type = appDomain.LoadedTypes[monoCompName] as ILType;//获取Mono组件在ILRuntime中的类型定义
+        
+        if (type == default)
+        {
+            Debug.Log("Error: ILType is null when call InstantiateMonoFromIL");
+            return default;
+        }
+        else { }
+
+        ILTypeInstance result = new ILTypeInstance(type as ILType, false);//以适配器的方式新建组件
+        MonoBehaviourAdapter.Adaptor component = target.AddComponent<MonoBehaviourAdapter.Adaptor>();//添加组件
+
+        component.ILInstance = result;//手动构建ILRuntime热更端实例的关联
+        component.AppDomain = ILAppDomain();
+        result.CLRInstance = component;//手动替换组件的实例（AddComponent不是引擎中原来的API）
+        component.Awake();//补调 Awake
+
+        return result;
+    }
+
     /// <summary>
     /// 通过实例调用成员方法
     /// </summary>
@@ -199,7 +223,7 @@ public static class ILRuntimeUtils
     public static void InvokeMethodILR(object instance, string typeName, string methodName, int paramCount, System.Action<InvocationContext> resultCallback, params object[] args)
     {
         ILRuntimeInvokeCacher methodCacher = MethodCacher().GetMethodCacher(typeName);
-        IMethod method = methodCacher.GetMethodFromCache(ILAppDomain(), typeName, methodName, paramCount);
+        IMethod method = methodCacher.GetMethodFromCache(ILAppDomain(), typeName, methodName, paramCount);//检测是否存在方法缓存，没有则将使用反射获取
         using (InvocationContext ctx = ILAppDomain().BeginInvoke(method))
         {
             ctx.PushObject(instance);
@@ -216,7 +240,7 @@ public static class ILRuntimeUtils
     public static void InvokeMethodILR(object instance, string typeName, string methodName, int paramCount, params object[] args)
     {
         ILRuntimeInvokeCacher methodCacher = MethodCacher().GetMethodCacher(typeName);
-        IMethod method = methodCacher.GetMethodFromCache(ILAppDomain(), typeName, methodName, paramCount);
+        IMethod method = methodCacher.GetMethodFromCache(ILAppDomain(), typeName, methodName, paramCount);//检测是否存在方法缓存，没有则将使用反射获取
         using (InvocationContext ctx = ILAppDomain().BeginInvoke(method))
         {
             ctx.PushObject(instance);
@@ -226,7 +250,7 @@ public static class ILRuntimeUtils
                 ctx.PushObject(args[i]);
             }
 #if LOG_INOVKED_METHOD_BY_ARGS_COUNT
-                Debug.Log(string.Format("HOTFIX invoke: {0}.{1}", typeName, methodName));
+            Debug.Log(string.Format("HOTFIX invoke: {0}.{1}", typeName, methodName));
 #endif
             ctx.Invoke();
         }

@@ -8,10 +8,13 @@ namespace ShipDock.Applications
     public class UIChangingTasker
     {
         private string mCurrentTaskName;
+        private Action<TimeGapper> mTaskCallback;
         private List<string> mStartedChangeTask = new List<string>();
         private List<int> mFinishTaskIndex = new List<int>();
         private List<TimeGapper> mChangeTimes = new List<TimeGapper>();
         private KeyValueList<string, Action<TimeGapper>> mChangeHnadlers = new KeyValueList<string, Action<TimeGapper>>();
+
+        private UI.UI Owner { get; set; }
 
         public UIChangingTasker(UI.UI target)
         {
@@ -20,14 +23,49 @@ namespace ShipDock.Applications
 
         public void Clean()
         {
-            Utils.Reclaim(ref mStartedChangeTask);
-            Utils.Reclaim(ref mFinishTaskIndex);
-            Utils.Reclaim(ref mChangeTimes);
-            Utils.Reclaim(ref mChangeHnadlers);
+            mStartedChangeTask?.Clear();
+            mFinishTaskIndex?.Clear();
+            mChangeTimes = default;
+
+            int max = mChangeHnadlers.Keys.Count;
+            string key;
+            for (int i = 0; i < max; i++)
+            {
+                key = mChangeHnadlers.Keys[i];
+                mChangeHnadlers[key] = default;
+            }
+
             Owner = default;
         }
 
-        public void StopChangeTasak(string taskName)
+        public bool HasTask(string taskName)
+        {
+            return mStartedChangeTask.Contains(taskName);
+        }
+
+        public bool IsTaskStoped(string taskName)
+        {
+            bool result = false;
+            if (mStartedChangeTask.Contains(taskName))
+            {
+                int index = mStartedChangeTask.IndexOf(taskName);
+                if (index != -1)
+                {
+                    if (!mFinishTaskIndex.Contains(index))
+                    {
+                        mFinishTaskIndex.Add(index);
+                        TimeGapper timeGapper = mChangeTimes[index];
+                        result = timeGapper.IsFinised;
+                    }
+                    else { }
+                }
+                else { }
+            }
+            else { }
+            return result;
+        }
+
+        public void StopChangeTask(string taskName)
         {
             if (mStartedChangeTask.Contains(taskName))
             {
@@ -42,8 +80,11 @@ namespace ShipDock.Applications
 
                         mChangeTimes[index] = timeGapper;
                     }
+                    else { }
                 }
+                else { }
             }
+            else { }
         }
 
         public void AddChangeTask(string taskName, float duringTime, Action<TimeGapper> handler)
@@ -92,16 +133,18 @@ namespace ShipDock.Applications
                         else
                         {
                             mCurrentTaskName = mStartedChangeTask[i];
-                            mChangeHnadlers[mCurrentTaskName].Invoke(gapper);
                         }
+                        mTaskCallback = mChangeHnadlers[mCurrentTaskName];
+                        mTaskCallback?.Invoke(gapper);
+                        mTaskCallback = default;
                     }
+                    else { }
                 }
 
                 Owner.UIChanged = !isChangeFinish;
             }
+            else { }
         }
-
-        private UI.UI Owner { get; set; }
 
     }
 }

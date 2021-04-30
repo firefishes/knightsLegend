@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{78FEA28D-86FD-47DA-B940-962EA6BC78C0}</ProjectGuid>
+    <ProjectGuid>{4095032C-2FCA-4D59-8146-D883A3777D4E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ShipDockHotFixClientLib</RootNamespace>
@@ -70,10 +70,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SoruceCode\ShipDockHotFixClient\HotFixClient\HotFixBase.cs">
+      <Link>ShipDockHotFixClient\HotFixBase.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockHotFixClient\HotFixClient\HotFixBaseUI.cs">
+      <Link>ShipDockHotFixClient\HotFixBaseUI.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockHotFixClient\HotFixClient\HotFixClient.cs">
+      <Link>ShipDockHotFixClient\HotFixClient.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockHotFixClient\HotFixClient\HotFixData.cs">
+      <Link>ShipDockHotFixClient\HotFixData.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ShipDockHotFixClient\HotFixClient\HotFixBase.cs" />
-    <Compile Include="ShipDockHotFixClient\HotFixClient\HotFixBaseUI.cs" />
-    <Compile Include="ShipDockHotFixClient\HotFixClient\HotFixClient.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

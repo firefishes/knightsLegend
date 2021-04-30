@@ -11,6 +11,7 @@ namespace ShipDock.Applications
         public override int[] DataProxyLinks { get; set; }
 
         protected Func<HotFixerInteractor> UIInteracterCreater { get; set; }
+        protected Action<INoticeBase<int>> UIInteracterHandler { get; set; }
 
         protected HotFixerUIAgent UIAgent
         {
@@ -39,6 +40,13 @@ namespace ShipDock.Applications
         {
             base.Init();
 
+            if (UIInteracterHandler != default)
+            {
+                mUI.Remove(UIModularHandler);
+                mUI.Add(UIInteracterHandler);
+            }
+            else { }
+
             HotFixerInteractor interacter = UIInteracterCreater?.Invoke();
             interacter.SetUIModular(this);
 
@@ -59,6 +67,16 @@ namespace ShipDock.Applications
         sealed public override void Exit(bool isDestroy)
         {
             base.Exit(isDestroy);
+
+            if (isDestroy)
+            {
+                if (UIInteracterHandler != default)
+                {
+                    mUI.Remove(UIInteracterHandler);
+                }
+                else { }
+            }
+            else { }
 
             ILRuntimeUtils.InvokeMethodILR(mBridge.HotFixerInteractor.UIModular, UIAgent.UIModularName, "AfterUIModularExit", 1, isDestroy);
         }

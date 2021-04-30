@@ -59,11 +59,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SoruceCode\ShipDockPhases\Executers\Interfaces\IQueueExecuter.cs">
+      <Link>ShipDockPhases\IQueueExecuter.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockPhases\Executers\QueueExecuter.cs">
+      <Link>ShipDockPhases\QueueExecuter.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockPhases\Executers\StepQueueItem.cs">
+      <Link>ShipDockPhases\StepQueueItem.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockPhases\Executers\TimerQueueItem.cs">
+      <Link>ShipDockPhases\TimerQueueItem.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ShipDockPhases\Executers\Interfaces\IQueueExecuter.cs" />
-    <Compile Include="ShipDockPhases\Executers\QueueExecuter.cs" />
-    <Compile Include="ShipDockPhases\Executers\StepQueueItem.cs" />
-    <Compile Include="ShipDockPhases\Executers\TimerQueueItem.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

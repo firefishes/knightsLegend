@@ -61,8 +61,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SoruceCode\ShipDockNetwork\Network\NetDistributer.cs">
+      <Link>ShipDockNetwork\NetDistributer.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ShipDockNetwork\Network\NetDistributer.cs" />
     <Compile Include="ShipDockNetwork\Network\Socket.IO\JSONObjectReuse.cs" />
     <Compile Include="ShipDockNetwork\Network\Socket.IO\JSONObject\Editor\JSONChecker.cs" />
     <Compile Include="ShipDockNetwork\Network\Socket.IO\JSONObject\JSONObject.cs" />

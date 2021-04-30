@@ -55,16 +55,47 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SoruceCode\ShipDockDatas\Datas\ClientData.cs">
+      <Link>ShipDockDatas\ClientData.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockDatas\Datas\ClientLocalInfo.cs">
+      <Link>ShipDockDatas\ClientLocalInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockDatas\Datas\DataProxy.cs">
+      <Link>ShipDockDatas\DataProxy.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockDatas\Datas\DatasExtension.cs">
+      <Link>ShipDockDatas\DatasExtension.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockDatas\Datas\DataStorager.cs">
+      <Link>ShipDockDatas\DataStorager.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockDatas\Datas\DataWarehouse.cs">
+      <Link>ShipDockDatas\DataWarehouse.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockDatas\Datas\DeviceLocalInfo.cs">
+      <Link>ShipDockDatas\DeviceLocalInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockDatas\Datas\FieldableData.cs">
+      <Link>ShipDockDatas\FieldableData.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockDatas\Datas\Interfaces\IDataProxy.cs">
+      <Link>ShipDockDatas\IDataProxy.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockDatas\Datas\Interfaces\IDataUnit.cs">
+      <Link>ShipDockDatas\IDataUnit.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockDatas\Datas\Interfaces\IFieldableData.cs">
+      <Link>ShipDockDatas\IFieldableData.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockDatas\Datas\LocalsManager.cs">
+      <Link>ShipDockDatas\LocalsManager.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ShipDockDatas\Datas\DataProxy.cs" />
-    <Compile Include="ShipDockDatas\Datas\DatasExtension.cs" />
-    <Compile Include="ShipDockDatas\Datas\DataStorager.cs" />
-    <Compile Include="ShipDockDatas\Datas\DataWarehouse.cs" />
-    <Compile Include="ShipDockDatas\Datas\FieldableData.cs" />
-    <Compile Include="ShipDockDatas\Datas\Interfaces\IDataProxy.cs" />
-    <Compile Include="ShipDockDatas\Datas\Interfaces\IDataUnit.cs" />
-    <Compile Include="ShipDockDatas\Datas\Interfaces\IFieldableData.cs" />
-    <Compile Include="ShipDockDatas\Datas\LocalsManager.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
+    <None Include="ClassDiagram2.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

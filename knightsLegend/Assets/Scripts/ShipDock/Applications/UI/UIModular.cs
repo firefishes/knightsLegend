@@ -66,8 +66,11 @@ namespace ShipDock.Applications
             {
                 UILayer = layer.UILayerValue;
             }
+            else { }
+
             GetUIParent(out Transform parent);
             mUI.transform.SetParent(parent);
+            mUI.Add(UIModularHandler);
         }
 
         private void GetUIParent(out Transform parent)
@@ -113,6 +116,7 @@ namespace ShipDock.Applications
             {
                 ShowUI();
             }
+            else { }
         }
 
         /// <summary>
@@ -120,11 +124,13 @@ namespace ShipDock.Applications
         /// </summary>
         protected virtual void ShowUI()
         {
-            mUI.Add(UIModularHandler);
+            //mUI.Add(UIModularHandler);
             if (UILayer == UILayerType.POPUPS)
             {
                 mUI.transform.SetAsLastSibling();
             }
+            else { }
+
             mUI.transform.localScale = Vector3.one;
         }
 
@@ -155,10 +161,9 @@ namespace ShipDock.Applications
 
             if (mUI != default)
             {
-                mUI.Remove(UIModularHandler);
-
                 if (isDestroy)
                 {
+                    mUI.Remove(UIModularHandler);
                     Object.Destroy(mUI.gameObject);
                 }
                 else
@@ -166,6 +171,7 @@ namespace ShipDock.Applications
                     HideUI();
                 }
             }
+            else { }
 
         }
 

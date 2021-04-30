@@ -16,3 +16,9 @@ D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDo
 D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockTicks\obj\Debug\ShipDockTicks.csproj.CoreCompileInputs.cache
 D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockTicks\obj\Debug\ShipDockTicks.dll
 D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockTicks\obj\Debug\ShipDockTicks.pdb
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockTicks\bin\Debug\ShipDockTicks.dll
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockTicks\bin\Debug\ShipDockTicks.pdb
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockTicks\obj\Debug\ShipDockTicks.csprojAssemblyReference.cache
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockTicks\obj\Debug\ShipDockTicks.csproj.CoreCompileInputs.cache
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockTicks\obj\Debug\ShipDockTicks.dll
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockTicks\obj\Debug\ShipDockTicks.pdb

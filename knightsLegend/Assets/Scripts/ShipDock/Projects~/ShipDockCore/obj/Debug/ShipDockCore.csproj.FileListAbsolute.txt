@@ -19,3 +19,15 @@ D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Proje
 D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\obj\Debug\ShipDockCore.csproj.CoreCompileInputs.cache
 D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\obj\Debug\ShipDockCore.dll
 D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\obj\Debug\ShipDockCore.pdb
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\bin\Debug\ShipDockCore.dll
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\bin\Debug\ShipDockCore.pdb
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\obj\Debug\ShipDockCore.csprojAssemblyReference.cache
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\obj\Debug\ShipDockCore.csproj.CoreCompileInputs.cache
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\obj\Debug\ShipDockCore.dll
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\obj\Debug\ShipDockCore.pdb
+E:\Work\ElimGame\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\bin\Debug\ShipDockCore.dll
+E:\Work\ElimGame\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\bin\Debug\ShipDockCore.pdb
+E:\Work\ElimGame\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\obj\Debug\ShipDockCore.csprojAssemblyReference.cache
+E:\Work\ElimGame\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\obj\Debug\ShipDockCore.csproj.CoreCompileInputs.cache
+E:\Work\ElimGame\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\obj\Debug\ShipDockCore.dll
+E:\Work\ElimGame\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockCore\obj\Debug\ShipDockCore.pdb

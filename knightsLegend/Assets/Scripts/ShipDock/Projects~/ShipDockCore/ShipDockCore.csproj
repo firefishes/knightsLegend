@@ -58,18 +58,40 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SoruceCode\ShipDockCore\Framework\Framework.cs">
+      <Link>ShipDockCore\Framework.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCore\Framework\FrameworkUnitBrige.cs">
+      <Link>ShipDockCore\FrameworkUnitBrige.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCore\Framework\Interfaces\ICustomFramework.cs">
+      <Link>ShipDockCore\ICustomFramework.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCore\Framework\Interfaces\IFrameworkUnit.cs">
+      <Link>ShipDockCore\IFrameworkUnit.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCore\Framework\Interfaces\IUpdatesComponent.cs">
+      <Link>ShipDockCore\IUpdatesComponent.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCore\Notices\Interfaces\INoticeBase.cs">
+      <Link>ShipDockCore\INoticeBase.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCore\Notices\Interfaces\INotificationSender.cs">
+      <Link>ShipDockCore\INotificationSender.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCore\Notices\Notice.cs">
+      <Link>ShipDockCore\Notice.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCore\Notices\NoticeHandler.cs">
+      <Link>ShipDockCore\NoticeHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCore\Notices\Notifications.cs">
+      <Link>ShipDockCore\Notifications.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockCore\Notices\ParamNotice.cs">
+      <Link>ShipDockCore\ParamNotice.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ShipDockCore\Framework\FrameworkUnitBrige.cs" />
-    <Compile Include="ShipDockCore\Framework\Framework.cs" />
-    <Compile Include="ShipDockCore\Framework\Interfaces\ICustomFramework.cs" />
-    <Compile Include="ShipDockCore\Framework\Interfaces\IFrameworkUnit.cs" />
-    <Compile Include="ShipDockCore\Framework\Interfaces\IUpdatesComponent.cs" />
-    <Compile Include="ShipDockCore\Notices\Interfaces\INoticeBase.cs" />
-    <Compile Include="ShipDockCore\Notices\Interfaces\INotificationSender.cs" />
-    <Compile Include="ShipDockCore\Notices\Notice.cs" />
-    <Compile Include="ShipDockCore\Notices\NoticeHandler.cs" />
-    <Compile Include="ShipDockCore\Notices\Notifications.cs" />
-    <Compile Include="ShipDockCore\Notices\ParamNotice.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

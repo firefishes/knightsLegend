@@ -10,3 +10,9 @@ D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Proje
 D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockTester\obj\Debug\ShipDockTester.csproj.CoreCompileInputs.cache
 D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockTester\obj\Debug\ShipDockTester.dll
 D:\Work\ThreeEliminate_172.31.1.3\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockTester\obj\Debug\ShipDockTester.pdb
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockTester\bin\Debug\ShipDockTester.dll
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockTester\bin\Debug\ShipDockTester.pdb
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockTester\obj\Debug\ShipDockTester.csprojAssemblyReference.cache
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockTester\obj\Debug\ShipDockTester.csproj.CoreCompileInputs.cache
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockTester\obj\Debug\ShipDockTester.dll
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockTester\obj\Debug\ShipDockTester.pdb

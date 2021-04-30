@@ -15,3 +15,9 @@ D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDo
 D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockModulars\obj\Debug\ShipDockModulars.csproj.CoreCompileInputs.cache
 D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockModulars\obj\Debug\ShipDockModulars.dll
 D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockModulars\obj\Debug\ShipDockModulars.pdb
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockModulars\bin\Debug\ShipDockModulars.dll
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockModulars\bin\Debug\ShipDockModulars.pdb
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockModulars\obj\Debug\ShipDockModulars.csprojAssemblyReference.cache
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockModulars\obj\Debug\ShipDockModulars.csproj.CoreCompileInputs.cache
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockModulars\obj\Debug\ShipDockModulars.dll
+F:\Work\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockModulars\obj\Debug\ShipDockModulars.pdb

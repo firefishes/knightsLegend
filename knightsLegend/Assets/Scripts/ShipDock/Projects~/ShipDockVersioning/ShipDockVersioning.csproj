@@ -86,10 +86,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SoruceCode\ShipDockVersioning\ResVersioning\ClientResVersion.cs">
+      <Link>ShipDockVersioning\ClientResVersion.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockVersioning\ResVersioning\ResDataVersion.cs">
+      <Link>ShipDockVersioning\ResDataVersion.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockVersioning\ResVersioning\ResVersion.cs">
+      <Link>ShipDockVersioning\ResVersion.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ShipDockVersioning\ResVersioning\ClientResVersion.cs" />
-    <Compile Include="ShipDockVersioning\ResVersioning\ResDataVersion.cs" />
-    <Compile Include="ShipDockVersioning\ResVersioning\ResVersion.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

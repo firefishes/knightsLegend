@@ -59,12 +59,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SoruceCode\ShipDockConfig\ConfigHelper\ConfigHolder.cs">
+      <Link>ShipDockConfig\ConfigHolder.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockConfig\ConfigHelper\IConfig.cs">
+      <Link>ShipDockConfig\IConfig.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockConfig\ConfigHelper\IConfigHolder.cs">
+      <Link>ShipDockConfig\IConfigHolder.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockConfig\DataParser.cs">
+      <Link>ShipDockConfig\DataParser.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockConfig\TDData.cs">
+      <Link>ShipDockConfig\TDData.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ShipDockConfig\ConfigHelper\ConfigHolder.cs" />
-    <Compile Include="ShipDockConfig\ConfigHelper\IConfig.cs" />
-    <Compile Include="ShipDockConfig\ConfigHelper\IConfigHolder.cs" />
-    <Compile Include="ShipDockConfig\DataParser.cs" />
-    <Compile Include="ShipDockConfig\TDData.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

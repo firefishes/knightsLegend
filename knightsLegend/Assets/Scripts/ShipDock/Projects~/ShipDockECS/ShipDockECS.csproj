@@ -63,36 +63,94 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\Applications\BehaviourIDsComponent.cs">
+      <Link>ShipDockECS\BehaviourIDsComponent.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\Applications\ClusteringComponent.cs">
+      <Link>ShipDockECS\ClusteringComponent.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\Applications\Datas\BulletData.cs">
+      <Link>ShipDockECS\BulletData.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\Applications\Datas\WorldMovement.cs">
+      <Link>ShipDockECS\WorldMovement.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\Applications\EntitasComponentable.cs">
+      <Link>ShipDockECS\EntitasComponentable.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\Applications\Interfaces\IBulletBehaviour.cs">
+      <Link>ShipDockECS\IBulletBehaviour.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\Applications\Interfaces\ICommonBulletChecker.cs">
+      <Link>ShipDockECS\ICommonBulletChecker.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\Applications\Interfaces\ICommonOverlayMapper.cs">
+      <Link>ShipDockECS\ICommonOverlayMapper.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\Applications\Interfaces\IProcessing.cs">
+      <Link>ShipDockECS\IProcessing.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\Applications\Interfaces\IProcessingComponent.cs">
+      <Link>ShipDockECS\IProcessingComponent.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\Applications\Interfaces\IWorldIntercatable.cs">
+      <Link>ShipDockECS\IWorldIntercatable.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\Applications\StaticWorldComponent.cs">
+      <Link>ShipDockECS\StaticWorldComponent.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\Applications\Systems\WorldSceneSystem.cs">
+      <Link>ShipDockECS\WorldSceneSystem.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\Applications\WorldComponent.cs">
+      <Link>ShipDockECS\WorldComponent.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\Applications\WorldItem\WorldInteracter.cs">
+      <Link>ShipDockECS\WorldInteracter.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\Applications\WorldMovementComponent.cs">
+      <Link>ShipDockECS\WorldMovementComponent.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\ComponentGroup.cs">
+      <Link>ShipDockECS\ComponentGroup.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\DataComponent.cs">
+      <Link>ShipDockECS\DataComponent.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\Interfaces\Commons\IPositionEntitas.cs">
+      <Link>ShipDockECS\IPositionEntitas.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\Interfaces\IDataComponent.cs">
+      <Link>ShipDockECS\IDataComponent.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\Interfaces\IShipDockComponent.cs">
+      <Link>ShipDockECS\IShipDockComponent.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\Interfaces\IShipDockComponentContext.cs">
+      <Link>ShipDockECS\IShipDockComponentContext.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\Interfaces\IShipDockEntitas.cs">
+      <Link>ShipDockECS\IShipDockEntitas.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\Interfaces\ISystemComponent.cs">
+      <Link>ShipDockECS\ISystemComponent.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\ShipDockComponent.cs">
+      <Link>ShipDockECS\ShipDockComponent.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\ShipDockComponentContext.cs">
+      <Link>ShipDockECS\ShipDockComponentContext.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\ShipDockECS.cs">
+      <Link>ShipDockECS\ShipDockECS.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\ShipDockEntitas.cs">
+      <Link>ShipDockECS\ShipDockEntitas.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockECS\ECS\SystemComponent.cs">
+      <Link>ShipDockECS\SystemComponent.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ShipDockECS\ECS\Applications\BehaviourIDsComponent.cs" />
-    <Compile Include="ShipDockECS\ECS\Applications\ClusteringComponent.cs" />
-    <Compile Include="ShipDockECS\ECS\Applications\Datas\BulletData.cs" />
-    <Compile Include="ShipDockECS\ECS\Applications\Datas\WorldMovement.cs" />
-    <Compile Include="ShipDockECS\ECS\Applications\EntitasComponentable.cs" />
-    <Compile Include="ShipDockECS\ECS\Applications\Interfaces\IBulletBehaviour.cs" />
-    <Compile Include="ShipDockECS\ECS\Applications\Interfaces\ICommonBulletChecker.cs" />
-    <Compile Include="ShipDockECS\ECS\Applications\Interfaces\ICommonOverlayMapper.cs" />
-    <Compile Include="ShipDockECS\ECS\Applications\Interfaces\IProcessing.cs" />
-    <Compile Include="ShipDockECS\ECS\Applications\Interfaces\IProcessingComponent.cs" />
-    <Compile Include="ShipDockECS\ECS\Applications\Interfaces\IWorldIntercatable.cs" />
-    <Compile Include="ShipDockECS\ECS\Applications\StaticWorldComponent.cs" />
-    <Compile Include="ShipDockECS\ECS\Applications\Systems\WorldSceneSystem.cs" />
-    <Compile Include="ShipDockECS\ECS\Applications\WorldComponent.cs" />
-    <Compile Include="ShipDockECS\ECS\Applications\WorldItem\WorldInteracter.cs" />
-    <Compile Include="ShipDockECS\ECS\Applications\WorldMovementComponent.cs" />
-    <Compile Include="ShipDockECS\ECS\ComponentGroup.cs" />
-    <Compile Include="ShipDockECS\ECS\DataComponent.cs" />
-    <Compile Include="ShipDockECS\ECS\Interfaces\Commons\IPositionEntitas.cs" />
-    <Compile Include="ShipDockECS\ECS\Interfaces\IDataComponent.cs" />
-    <Compile Include="ShipDockECS\ECS\Interfaces\IShipDockComponent.cs" />
-    <Compile Include="ShipDockECS\ECS\Interfaces\IShipDockComponentContext.cs" />
-    <Compile Include="ShipDockECS\ECS\Interfaces\IShipDockEntitas.cs" />
-    <Compile Include="ShipDockECS\ECS\Interfaces\ISystemComponent.cs" />
-    <Compile Include="ShipDockECS\ECS\ShipDockComponent.cs" />
-    <Compile Include="ShipDockECS\ECS\ShipDockComponentContext.cs" />
-    <Compile Include="ShipDockECS\ECS\ShipDockECS.cs" />
-    <Compile Include="ShipDockECS\ECS\ShipDockEntitas.cs" />
-    <Compile Include="ShipDockECS\ECS\SystemComponent.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

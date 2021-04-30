@@ -3,6 +3,9 @@ using ILRuntime.Runtime.Enviorment;
 using ShipDock.Loader;
 using ShipDock.Notices;
 using ShipDock.Pooling;
+#if ODIN_INSPECTOR
+using Sirenix.OdinInspector;
+#endif
 using UnityEngine;
 
 namespace ShipDock.Applications
@@ -11,14 +14,33 @@ namespace ShipDock.Applications
     {
 
         [SerializeField]
+#if ODIN_INSPECTOR
+        [TitleGroup("基础信息及引用绑定")]
+#endif
         private HotFixerSubgroup m_Settings = new HotFixerSubgroup();
+
         [SerializeField]
+#if ODIN_INSPECTOR
+        [TitleGroup("就绪消息"), HideIf("@this.m_StartUpInfo.IsMonoBehaviorMode == true")]
+#endif
         private HotFixerLoadedNoticeInfo m_LoadedNoticeInfo = new HotFixerLoadedNoticeInfo();
 
+        [Tooltip("设置后将覆盖动态加载的热更文件")]
+#if ODIN_INSPECTOR
+        [TitleGroup("文件覆盖"), LabelText("热更文件资源")]
+#endif
         public TextAsset hotFixAsset;
 
         private ComponentBridge mCompBridge;
         private INoticeBase<int> mIDAsNotice;
+
+        public string HotFixCompClassName
+        {
+            get
+            {
+                return m_StartUpInfo != default ? m_StartUpInfo.ClassName : string.Empty;
+            }
+        }
 
         protected override void Awake()
         {
@@ -188,6 +210,11 @@ namespace ShipDock.Applications
         public void DisableReadyNotice()
         {
             m_LoadedNoticeInfo?.DisableReadyNotice();
+        }
+
+        protected void EnableReadyNotice()
+        {
+            m_LoadedNoticeInfo?.EnableReadyNotice();
         }
     }
 }

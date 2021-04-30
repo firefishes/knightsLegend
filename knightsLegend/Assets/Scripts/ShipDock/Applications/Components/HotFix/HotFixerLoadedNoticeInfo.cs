@@ -1,4 +1,8 @@
-﻿using System;
+﻿
+#if ODIN_INSPECTOR
+using Sirenix.OdinInspector;
+#endif
+using System;
 using UnityEngine;
 
 namespace ShipDock.Applications
@@ -6,52 +10,58 @@ namespace ShipDock.Applications
     [Serializable]
     public class HotFixerLoadedNoticeInfo
     {
-        [Header("热更端对象就绪消息的配置")]
-        [SerializeField]
-        [Tooltip("是否启用发送就绪消息（以 GameObject或Script id为消息名）至热更端的功能")]
-        private bool m_IsSendIDAsNotice;
-        [Header("热更端对象就绪消息的配置")]
-        [SerializeField]
-        [Tooltip("是否在物体被渲染时发送对象就绪的消息")]
+        [Header("热更对象就绪消息的配置")]
+        [SerializeField, Tooltip("是否启用发送就绪消息（以 GameObject或Script id为消息名）至热更端的功能")]
 #if ODIN_INSPECTOR
-        [Sirenix.OdinInspector.ShowIf("m_IsSendIDAsNotice", true)]
+        [LabelText("启用")]
+#endif
+        private bool m_IsSendIDAsNotice;
+
+        [SerializeField, Tooltip("是否在物体被渲染时发送对象就绪的消息"), Indent(1)]
+#if ODIN_INSPECTOR
+        [LabelText("在物体被渲染时发送消息"), ShowIf("m_IsSendIDAsNotice", true)]
 #endif
         private bool m_IsSendInRenderObject;
-        [SerializeField]
-        [Tooltip("在物体被渲染时发送对象就绪的消息是否仅发送一次")]
+
+        [SerializeField, Tooltip("在物体被渲染时发送对象就绪的消息是否仅发送一次")]
 #if ODIN_INSPECTOR
-        [Sirenix.OdinInspector.ShowIf("@this.m_IsSendIDAsNotice == true && this.m_IsSendInRenderObject == true")]
+        [LabelText("仅发送一次"), ShowIf("@this.m_IsSendIDAsNotice == true && this.m_IsSendInRenderObject == true"), Indent(2)]
 #endif
         private bool m_IsSendOnceInRenderObject = true;
-        [SerializeField]
-        [Tooltip("是否以 GameObject为消息名")]
+
+        [SerializeField, Tooltip("是否以 GameObject为消息名，不勾选则使用本组件的唯一 ID 标识作为消息名")]
 #if ODIN_INSPECTOR
-        [Sirenix.OdinInspector.ShowIf("m_IsSendIDAsNotice", true)]
+        [LabelText("以物体唯一 ID 标识作为消息名"), ShowIf("m_IsSendIDAsNotice", true), Indent(1)]
 #endif
         private bool m_ApplyGameObjectID = true;
-        [SerializeField]
-        [Tooltip("是否使用默认的消息类型发送")]
+
+        [SerializeField, Tooltip("是否使用默认的消息类型发送")]
 #if ODIN_INSPECTOR
-        [Sirenix.OdinInspector.ShowIf("m_IsSendIDAsNotice", true)]
+        [LabelText("使用默认消息类（Notice）传递消息"), ShowIf("m_IsSendIDAsNotice", true), Indent(1)]
 #endif
         private bool m_ApplyDefaultNoticeType = true;
-        [SerializeField]
-        [Tooltip("是否推迟到下一帧发送消息")]
+
+        [SerializeField, Tooltip("能从热更端对象获取自定义的消息类型的函数名"), Indent(1)]
 #if ODIN_INSPECTOR
-        [Sirenix.OdinInspector.ShowIf("m_IsSendIDAsNotice", true)]
-#endif
-        private bool m_ApplyCallLate;
-        [SerializeField]
-        [Tooltip("能从热更端对象获取自定义的消息类型的函数名")]
-#if ODIN_INSPECTOR
-        [Sirenix.OdinInspector.ShowIf("m_IsSendIDAsNotice", true)]
+        [LabelText("获取自定义消息类对象的方法名"), ShowIf("@this.m_IsSendIDAsNotice && !this.m_ApplyDefaultNoticeType"), OnValueChanged("GetIDAsCustomNoticeMethodChanged"), Indent(2)]
 #endif
         private string m_GetIDAsCustomNoticeMethod;
-        [SerializeField]
-        [Tooltip("是否已发送过对象就绪的消息")]
 #if ODIN_INSPECTOR
-        [Sirenix.OdinInspector.ShowIf("m_IsSendIDAsNotice", true)]
-        [Sirenix.OdinInspector.ReadOnly()]
+        private void GetIDAsCustomNoticeMethodChanged()
+        {
+            m_ApplyDefaultNoticeType = string.IsNullOrEmpty(m_GetIDAsCustomNoticeMethod);
+        }
+#endif
+
+        [SerializeField]
+#if ODIN_INSPECTOR
+        [LabelText("推迟到下一帧发送消息"), ShowIf("m_IsSendIDAsNotice", true), Indent(1)]
+#endif
+        private bool m_ApplyCallLate;
+
+        [SerializeField, Tooltip("是否已发送过对象就绪的消息")]
+#if ODIN_INSPECTOR
+        [LabelText("消息是否已发送"), ShowIf("m_IsSendIDAsNotice", true), ReadOnly()]
 #endif
         private bool m_IsReadyNoticeSend;
 
@@ -66,6 +76,11 @@ namespace ShipDock.Applications
         public void DisableReadyNotice()
         {
             m_IsSendIDAsNotice = false;
+        }
+
+        public void EnableReadyNotice()
+        {
+            m_IsSendIDAsNotice = true;
         }
 
         public bool IsSendIDAsNotice

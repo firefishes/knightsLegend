@@ -18,7 +18,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;G_LOG</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;G_LOG;_COLOR_LOG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <LangVersion>7.1</LangVersion>
@@ -54,11 +54,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SoruceCode\ShipDockTester\Tester\DebugUtils.cs">
+      <Link>ShipDockTester\DebugUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockTester\Tester\ShipDockLogExtension.cs">
+      <Link>ShipDockTester\ShipDockLogExtension.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockTester\Tester\Tester.cs">
+      <Link>ShipDockTester\Tester.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockTester\Tester\TesterBaseApp.cs">
+      <Link>ShipDockTester\TesterBaseApp.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ShipDockTester\Tester\DebugUtils.cs" />
-    <Compile Include="ShipDockTester\Tester\ShipDockLogExtension.cs" />
-    <Compile Include="ShipDockTester\Tester\Tester.cs" />
-    <Compile Include="ShipDockTester\Tester\TesterBaseApp.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -62,7 +62,10 @@ namespace ShipDock.Applications
 
         public virtual void ServerFinishedHandler() { }
 
-        public virtual void ApplicationCloseHandler() { }
+        public virtual void ApplicationCloseHandler()
+        {
+            ShipDockApp.Instance.Clean();
+        }
 
         public virtual void UpdateRemoteAssetHandler()
         {

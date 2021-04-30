@@ -59,14 +59,28 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SoruceCode\ShipDockTicks\Ticks\MethodUpdater.cs">
+      <Link>ShipDockTicks\MethodUpdater.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockTicks\Ticks\ShipDockTicks.cs">
+      <Link>ShipDockTicks\ShipDockTicks.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockTicks\Ticks\ThreadTicks.cs">
+      <Link>ShipDockTicks\ThreadTicks.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockTicks\Ticks\TicksLater.cs">
+      <Link>ShipDockTicks\TicksLater.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockTicks\Ticks\TicksUpdater.cs">
+      <Link>ShipDockTicks\TicksUpdater.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockTicks\Ticks\TimingCallbacker.cs">
+      <Link>ShipDockTicks\TimingCallbacker.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockTicks\Ticks\UpdatesCacher.cs">
+      <Link>ShipDockTicks\UpdatesCacher.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ShipDockTicks\Ticks\MethodUpdater.cs" />
-    <Compile Include="ShipDockTicks\Ticks\ShipDockTicks.cs" />
-    <Compile Include="ShipDockTicks\Ticks\ThreadTicks.cs" />
-    <Compile Include="ShipDockTicks\Ticks\TicksLater.cs" />
-    <Compile Include="ShipDockTicks\Ticks\TicksUpdater.cs" />
-    <Compile Include="ShipDockTicks\Ticks\TimingCallbacker.cs" />
-    <Compile Include="ShipDockTicks\Ticks\UpdatesCacher.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

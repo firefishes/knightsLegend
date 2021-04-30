@@ -1,61 +1,101 @@
-﻿using UnityEngine;
+﻿#if ODIN_INSPECTOR
+using Sirenix.OdinInspector;
+#endif
+using UnityEngine;
 
 namespace ShipDock.Applications
 {
     [System.Serializable]
     public class HotFixerStartUpInfo
     {
+#if !ODIN_INSPECTOR
         [Header("热更端桥接类、方法信息")]
-        [SerializeField]
-        [Tooltip("是否脱离框架单独运行")]
-        protected bool m_ApplyRunStandalone;
-        [SerializeField]
-        [Tooltip("是否一启动立刻加载热更逻辑")]
-        protected bool m_RunInAwake = true;
-        [SerializeField]
-        [Tooltip("是否应用启动的热更类名")]
-        private bool m_ApplyClassName = true;
-        [SerializeField]
-        [Tooltip("热更端的类名")]
+#endif
+        [SerializeField, Tooltip("是否脱离框架单独运行")]
 #if ODIN_INSPECTOR
-        [Sirenix.OdinInspector.ShowIf("m_ApplyClassName", true)]
+        [LabelText("脱离框架运行")]
+#endif
+        protected bool m_ApplyRunStandalone;
+
+        [SerializeField, Tooltip("是否一启动立刻加载热更逻辑")]
+#if ODIN_INSPECTOR
+        [LabelText("在Awake时启动")]
+#endif
+        protected bool m_RunInAwake = true;
+
+        [SerializeField, Tooltip("是否应用启动的热更类名")]
+#if ODIN_INSPECTOR
+        [LabelText("启用热更端类名")]
+#endif
+        private bool m_ApplyClassName = true;
+
+        [SerializeField, Tooltip("热更端的类名")]
+#if ODIN_INSPECTOR
+        [LabelText("热更端类名"), ShowIf("m_ApplyClassName", true), SuffixLabel("须包含命名空间", overlay: true)]
 #endif
         protected string m_ClassName;
-        [SerializeField]
-        [Tooltip("主项目启动热更端的入口方法")]
+
+        [SerializeField, Tooltip("主项目启动热更端的入口方法")]
 #if ODIN_INSPECTOR
-        [Sirenix.OdinInspector.ShowIf("m_ApplyClassName", true)]
+        [LabelText("热更端对接的方法"), ShowIf("m_ApplyClassName", true), HideIf("@this.m_IsMonoBehaviorMode == true")]
 #endif
         protected string m_IniterMethodName = "ShellInited";
-        [SerializeField]
-        [Tooltip("是否应用固定帧更新回调方法")]
-        private bool m_ApplyFixedUpdate;
-        [SerializeField]
-        [Tooltip("固定帧更新回调方法名")]
+
+        [SerializeField, Tooltip("是否应用固定帧更新回调方法")]
 #if ODIN_INSPECTOR
-        [Sirenix.OdinInspector.ShowIf("m_ApplyFixedUpdate", true)]
+        [LabelText("启用 FixedUpdate 模拟方法"), HideIf("@this.m_IsMonoBehaviorMode == true")]
+#endif
+        private bool m_ApplyFixedUpdate;
+
+        [SerializeField, Tooltip("固定帧更新回调方法名")]
+#if ODIN_INSPECTOR
+        [LabelText("FixedUpdate 方法名"), ShowIf("m_ApplyFixedUpdate", true), HideIf("@this.m_IsMonoBehaviorMode == true")]
 #endif
         private string m_FixedUpdateMethodName = "FixedUpdate";
-        [SerializeField]
-        [Tooltip("是否应用帧更新回调方法")]
-        private bool m_ApplyUpdate;
-        [SerializeField]
-        [Tooltip("帧更新回调方法名")]
+
+        [SerializeField, Tooltip("是否应用帧更新回调方法")]
 #if ODIN_INSPECTOR
-        [Sirenix.OdinInspector.ShowIf("m_ApplyUpdate", true)]
+        [LabelText("启用 Update 模拟方法"), HideIf("@this.m_IsMonoBehaviorMode == true")]
+#endif
+        private bool m_ApplyUpdate;
+
+        [SerializeField, Tooltip("帧更新回调方法名")]
+#if ODIN_INSPECTOR
+        [LabelText("Update 方法名"), ShowIf("m_ApplyUpdate", true), HideIf("@this.m_IsMonoBehaviorMode == true")]
 #endif
         private string m_UpdateMethodName = "Update";
-        [SerializeField]
-        [Tooltip("是否应用延迟帧更新回调方法")]
-        private bool m_ApplyLateUpdate;
-        [SerializeField]
-        [Tooltip("延迟帧更新回调方法名")]
+
+        [SerializeField, Tooltip("是否应用延迟帧更新回调方法")]
 #if ODIN_INSPECTOR
-        [Sirenix.OdinInspector.ShowIf("m_ApplyLateUpdate", true)]
+        [LabelText("启用 LateUpdate 模拟方法"), HideIf("@this.m_IsMonoBehaviorMode == true")]
+#endif
+        private bool m_ApplyLateUpdate;
+
+        [SerializeField, Tooltip("延迟帧更新回调方法名")]
+#if ODIN_INSPECTOR
+        [LabelText("LateUpdate 方法名"), ShowIf("m_ApplyLateUpdate", true), HideIf("@this.m_IsMonoBehaviorMode == true")]
 #endif
         private string m_LateUpdateMethodName = "LateUpdate";
+
+        [SerializeField, Tooltip("MonoBehavior 模式下热更端类名必须设置为对应的 MonoBehavior 子类")]
+#if ODIN_INSPECTOR
+        [LabelText("启用 MonoBehavior 模式")]
+#endif
+        private bool m_IsMonoBehaviorMode = false;
+
         [Tooltip("调试端口")]
+#if ODIN_INSPECTOR
+        [LabelText("热更调试端口号")]
+#endif
         private int m_DebugPort = 56000;
+
+        public bool IsMonoBehaviorMode
+        {
+            get
+            {
+                return m_IsMonoBehaviorMode;
+            }
+        }
 
         public int DebugPort
         {

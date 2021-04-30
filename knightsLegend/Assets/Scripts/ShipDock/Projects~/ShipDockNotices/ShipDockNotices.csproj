@@ -54,12 +54,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SoruceCode\ShipDockNotices\Interfaces\IUpdate.cs">
+      <Link>ShipDockNotices\IUpdate.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockNotices\NotificationInfo.cs">
+      <Link>ShipDockNotices\NotificationInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockNotices\ShipDockConsts.cs">
+      <Link>ShipDockNotices\ShipDockConsts.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockNotices\ShipDockNotification.cs">
+      <Link>ShipDockNotices\ShipDockNotification.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockNotices\UpdaterNotice.cs">
+      <Link>ShipDockNotices\UpdaterNotice.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ShipDockNotices\Interfaces\IUpdate.cs" />
-    <Compile Include="ShipDockNotices\NotificationInfo.cs" />
-    <Compile Include="ShipDockNotices\ShipDockConsts.cs" />
-    <Compile Include="ShipDockNotices\ShipDockNotification.cs" />
-    <Compile Include="ShipDockNotices\UpdaterNotice.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

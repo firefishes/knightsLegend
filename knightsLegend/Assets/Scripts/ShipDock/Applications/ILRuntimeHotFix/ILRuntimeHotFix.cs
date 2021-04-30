@@ -69,6 +69,30 @@ namespace ShipDock.Applications
             }
         }
 #endif
+        private static bool isDebugServiceStarted;
+
+        public static void ClearDebugService()
+        {
+#if DEBUG && (UNITY_EDITOR || UNITY_ANDROID || UNITY_IPHONE)
+            isDebugServiceStarted = false;
+            AppDomain appDomain = ILRuntimeUtils.GetILRuntimeHotFix().ILAppDomain;
+            appDomain.DebugService.StopDebugService();
+#endif
+        }
+
+        public static void StartDebugServices(int debugPort)
+        {
+#if DEBUG && (UNITY_EDITOR || UNITY_ANDROID || UNITY_IPHONE)
+            if (!isDebugServiceStarted)
+            {
+                isDebugServiceStarted = true;
+                AppDomain appDomain = ILRuntimeUtils.GetILRuntimeHotFix().ILAppDomain;
+                appDomain.UnityMainThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
+                appDomain.DebugService.StartDebugService(debugPort);
+            }
+            else { }
+#endif
+        }
 
         public AppDomain ILAppDomain { get; private set; }
         public ILMethodCacher MethodCacher { get; private set; }
@@ -114,9 +138,11 @@ namespace ShipDock.Applications
         public void Reset()
         {
             IsStart = false;
+            ClearDebugService();
+
             ILRuntimeIniter.HasLoadAnyAssembly = false;
 
-            MethodCacher?.Clear();
+            MethodCacher?.Clear(); 
         }
 
         /// <summary>
@@ -124,14 +150,14 @@ namespace ShipDock.Applications
         /// </summary>
         public void Clear()
         {
-            UnityEngine.Debug.Log("ILRuntime hot fix 对象以清除，请重新创建");
-
             Reset();
 
             this.ClearExtension();
 
             MethodCacher = default;
             ILAppDomain = default;
+
+            UnityEngine.Debug.Log("ILRuntime hot fix 对象已清除");
         }
     }
 }

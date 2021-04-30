@@ -63,14 +63,28 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SoruceCode\ShipDockUI\UIBase\Events\UIRootEvents.cs">
+      <Link>ShipDockUI\UIRootEvents.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockUI\UIBase\Interfaces\IUIModular.cs">
+      <Link>ShipDockUI\IUIModular.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockUI\UIBase\Interfaces\IUIRoot.cs">
+      <Link>ShipDockUI\IUIRoot.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockUI\UIBase\Interfaces\IUIStack.cs">
+      <Link>ShipDockUI\IUIStack.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockUI\UIBase\UICacher.cs">
+      <Link>ShipDockUI\UICacher.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockUI\UIBase\UIManager.cs">
+      <Link>ShipDockUI\UIManager.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockUI\UIBase\UIStack.cs">
+      <Link>ShipDockUI\UIStack.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ShipDockUI\UI\Events\UIRootEvents.cs" />
-    <Compile Include="ShipDockUI\UI\Interfaces\IUIModular.cs" />
-    <Compile Include="ShipDockUI\UI\Interfaces\IUIRoot.cs" />
-    <Compile Include="ShipDockUI\UI\Interfaces\IUIStack.cs" />
-    <Compile Include="ShipDockUI\UI\UICacher.cs" />
-    <Compile Include="ShipDockUI\UI\UIManager.cs" />
-    <Compile Include="ShipDockUI\UI\UIStack.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

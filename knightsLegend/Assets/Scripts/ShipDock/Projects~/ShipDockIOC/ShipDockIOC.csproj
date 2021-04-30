@@ -70,25 +70,61 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SoruceCode\ShipDockIOC\Applications\Servers\MainServer.cs">
+      <Link>ShipDockIOC\MainServer.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockIOC\Servers\Attributes\ResolvableAttribute.cs">
+      <Link>ShipDockIOC\ResolvableAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockIOC\Servers\Attributes\ServerPriority.cs">
+      <Link>ShipDockIOC\ServerPriority.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockIOC\Servers\Infos\ResolvableInfo.cs">
+      <Link>ShipDockIOC\ResolvableInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockIOC\Servers\Interfaces\IResolvable.cs">
+      <Link>ShipDockIOC\IResolvable.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockIOC\Servers\Interfaces\IResolvableConfig.cs">
+      <Link>ShipDockIOC\IResolvableConfig.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockIOC\Servers\Interfaces\IResolverCacher.cs">
+      <Link>ShipDockIOC\IResolverCacher.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockIOC\Servers\Interfaces\IResolverHandler.cs">
+      <Link>ShipDockIOC\IResolverHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockIOC\Servers\Interfaces\IResolverParamer.cs">
+      <Link>ShipDockIOC\IResolverParamer.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockIOC\Servers\Interfaces\IServer.cs">
+      <Link>ShipDockIOC\IServer.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockIOC\Servers\Interfaces\IServersHolder.cs">
+      <Link>ShipDockIOC\IServersHolder.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockIOC\Servers\Resolvable.cs">
+      <Link>ShipDockIOC\Resolvable.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockIOC\Servers\ResolvableBinder.cs">
+      <Link>ShipDockIOC\ResolvableBinder.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockIOC\Servers\ResolvableConfigItem.cs">
+      <Link>ShipDockIOC\ResolvableConfigItem.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockIOC\Servers\ResolverHandler.cs">
+      <Link>ShipDockIOC\ResolverHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockIOC\Servers\Server.cs">
+      <Link>ShipDockIOC\Server.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockIOC\Servers\ServerExtension.cs">
+      <Link>ShipDockIOC\ServerExtension.cs</Link>
+    </Compile>
+    <Compile Include="..\SoruceCode\ShipDockIOC\Servers\Servers.cs">
+      <Link>ShipDockIOC\Servers.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ShipDockIOC\Applications\Servers\MainServer.cs" />
-    <Compile Include="ShipDockIOC\Servers\Attributes\ResolvableAttribute.cs" />
-    <Compile Include="ShipDockIOC\Servers\Attributes\ServerPriority.cs" />
-    <Compile Include="ShipDockIOC\Servers\Infos\ResolvableInfo.cs" />
-    <Compile Include="ShipDockIOC\Servers\Interfaces\IResolvable.cs" />
-    <Compile Include="ShipDockIOC\Servers\Interfaces\IResolvableConfig.cs" />
-    <Compile Include="ShipDockIOC\Servers\Interfaces\IResolverCacher.cs" />
-    <Compile Include="ShipDockIOC\Servers\Interfaces\IResolverHandler.cs" />
-    <Compile Include="ShipDockIOC\Servers\Interfaces\IResolverParamer.cs" />
-    <Compile Include="ShipDockIOC\Servers\Interfaces\IServer.cs" />
-    <Compile Include="ShipDockIOC\Servers\Interfaces\IServersHolder.cs" />
-    <Compile Include="ShipDockIOC\Servers\Resolvable.cs" />
-    <Compile Include="ShipDockIOC\Servers\ResolvableBinder.cs" />
-    <Compile Include="ShipDockIOC\Servers\ResolvableConfigItem.cs" />
-    <Compile Include="ShipDockIOC\Servers\ResolverHandler.cs" />
-    <Compile Include="ShipDockIOC\Servers\Server.cs" />
-    <Compile Include="ShipDockIOC\Servers\ServerExtension.cs" />
-    <Compile Include="ShipDockIOC\Servers\Servers.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

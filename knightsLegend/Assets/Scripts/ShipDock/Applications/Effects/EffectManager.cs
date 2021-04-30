@@ -17,6 +17,11 @@ namespace ShipDock.Applications
             public int poolID;
             public GameObject source;
 
+            private int CacheIndex { get; set; }
+            private List<GameObject> UniqueCache { get; set; }
+
+            public int Surplus { get; private set; }
+
             public void Init()
             {
                 Surplus = total;
@@ -28,21 +33,24 @@ namespace ShipDock.Applications
                 total = 0;
                 Surplus = 0;
                 source = default;
-                UniqueCache = default;
 
                 List<GameObject> list = UniqueCache;
                 Utils.Reclaim(ref list);
+
+                UniqueCache = default;
             }
 
-            public void CreateAndFill(out GameObject result, bool isFromPool = false)
+            public void CreateAndFill(out GameObject result, bool isFromPool = false, bool selfActive = true)
             {
                 result = default;
                 if (ShouldCreate())
                 {
                     Surplus--;
-                    result = source.Create(isFromPool ? poolID : int.MaxValue);
+                    int poolIDValue = isFromPool ? poolID : int.MaxValue;
+                    result = source.Create(poolIDValue, selfActive);
                     UniqueCache.Add(result);
                 }
+                else { }
             }
 
             public bool ShouldCreate()
@@ -55,16 +63,20 @@ namespace ShipDock.Applications
                 int index = CacheIndex;
                 CacheIndex++;
                 CacheIndex = CacheIndex >= total - 1 ? 0 : CacheIndex;
-                GameObject result = index >= 0 && index < UniqueCache.Count ? UniqueCache[index] : default;
+
+                GameObject result = (index >= 0) && (index < UniqueCache.Count) ? UniqueCache[index] : default;
+
+                if (result == default && source != default)
+                {
+                    result = Object.Instantiate(source);
+                    UniqueCache[index] = result;
+                }
+                else { }
+
                 return result;
             }
 
-            private int CacheIndex { get; set; }
-            private List<GameObject> UniqueCache { get; set; }
-
-            public int Surplus { get; private set; }
-
-            internal void CollectEffect(GameObject target)
+            public void CollectEffect(GameObject target)
             {
                 UniqueCache.Remove(target);
                 target.Terminate(poolID);
@@ -89,6 +101,7 @@ namespace ShipDock.Applications
                     list[i].Clean();
                 }
             }
+            else { }
 
             Utils.Reclaim(ref mPrefabRaw);
         }
@@ -116,6 +129,7 @@ namespace ShipDock.Applications
                 effect.Init();
                 mPrefabRaw[id] = effect;
             }
+
             int max = preCreate;
             for (int i = 0; i < max; i++)
             {
@@ -136,9 +150,10 @@ namespace ShipDock.Applications
                 source.SetPoolID(id);
                 source.FillRaw(mPrefabRaw[id].source);
             }
+            else { }
         }
 
-        public void CreateEffect(int id, out GameObject result, bool isFromPool = true)
+        public void CreateEffect(int id, out GameObject result, bool isFromPool = true, bool selfActive = true)
         {
             result = default;
             if (mPrefabRaw.ContainsKey(id))
@@ -146,13 +161,14 @@ namespace ShipDock.Applications
                 Effect effect = mPrefabRaw[id];
                 if (effect.ShouldCreate())
                 {
-                    effect.CreateAndFill(out result, isFromPool);
+                    effect.CreateAndFill(out result, isFromPool, selfActive);
                 }
                 else
                 {
                     result = effect.GetUniqueCache();
                 }
             }
+            else { }
         }
 
         public void CollectEffect(int id, GameObject target)
@@ -168,12 +184,19 @@ namespace ShipDock.Applications
             }
         }
 
-        public void RemoveEffectRaw(int id)
+        public void RemoveEffectRaw(params int[] ids)
         {
-            if (mPrefabRaw.ContainsKey(id))
+            Effect effect;
+            int max = ids.Length;
+            for (int i = 0; i < max; i++)
             {
-                Effect effect = mPrefabRaw.Remove(id);
-                effect.Clean();
+                int id = ids[i];
+                if (mPrefabRaw != default && mPrefabRaw.ContainsKey(id))
+                {
+                    effect = mPrefabRaw.Remove(id);
+                    effect?.Clean();
+                }
+                else { }
             }
         }
     }

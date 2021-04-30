@@ -74,6 +74,11 @@ namespace ShipDock.Loader
             {
                 assetName = sprite.name;
             }
+            else if (audioClip != default)
+            {
+                assetName = audioClip.name;
+            }
+            else { }
         }
 
         public void SyncCustomAssetType()

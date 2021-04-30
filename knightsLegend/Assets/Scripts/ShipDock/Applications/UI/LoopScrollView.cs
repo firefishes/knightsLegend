@@ -22,6 +22,8 @@ namespace ShipDock.Applications
         private Vector2 m_ItemAnchorMin = new Vector2(0.5f, 1f);
         [SerializeField]
         private Vector2 m_ItemAnchorMax = new Vector2(0.5f, 1f);
+        [SerializeField]
+        private LoopScrollItem m_PrefabItem;
 
         private int mMaxCount;
         private int mDataCount;
@@ -36,8 +38,8 @@ namespace ShipDock.Applications
         private Vector2 mScrollRectSize;
         private ScrollRect mScrollRect;
         private RectTransform mContentRectTrans;
-        private LoopScrollItem mUpdateItem;
         private LoopScrollItem mPrefabItem;
+        private LoopScrollItem mUpdateItem;
         private LoopScrollItem mChangingItem;
         private List<LoopScrollItem> mItemList;
         private Queue<LoopScrollItem> mItemQueue;
@@ -51,6 +53,7 @@ namespace ShipDock.Applications
             mContentRectTrans = default;
             mUpdateCell = default;
             mUpdateItem = default;
+            m_PrefabItem = default;
             mPrefabItem = default;
             mChangingItem = default;
 
@@ -64,10 +67,13 @@ namespace ShipDock.Applications
         {
             mItemData = infos;
             mUpdateCell += UpdateItemInfo;
+
             if (onUpdateCell != default)
             {
                 mUpdateCell += onUpdateCell;
             }
+            else { }
+
             Show(infos.Count, itemRenderer, padding);
         }
 
@@ -80,8 +86,9 @@ namespace ShipDock.Applications
         private void Show(int dataCount, LoopScrollItem item, float padding = 0f)
         {
             mDataCount = dataCount;
-            mPrefabItem = item;
             mCellPadding = padding;
+
+            mPrefabItem = (m_PrefabItem == default) ? item : m_PrefabItem;
 
             mItemList = new List<LoopScrollItem>();
             mItemQueue = new Queue<LoopScrollItem>();
@@ -154,7 +161,7 @@ namespace ShipDock.Applications
             }
             else
             {
-                item = Instantiate(mPrefabItem);
+                item = Instantiate(m_PrefabItem);
                 mItemIndexDic.Add(item, index);
                 item.transform.SetParent(mContentRectTrans.transform);
 
@@ -191,6 +198,7 @@ namespace ShipDock.Applications
                     {
                         RecoverItem(mChangingItem);
                     }
+                    else { }
                 }
 
                 for (int i = mStartIndex; i < mStartIndex + mCreateCount; i++)
@@ -199,6 +207,7 @@ namespace ShipDock.Applications
                     {
                         break;
                     }
+                    else { }
 
                     bool isExist = false;
                     for (int j = 0; j < mItemList.Count; j++)
@@ -210,11 +219,13 @@ namespace ShipDock.Applications
                             isExist = true;
                             break;
                         }
+                        else { }
                     }
                     if (isExist)
                     {
                         continue;
                     }
+                    else { }
 
                     CreateItem(i);
                 }

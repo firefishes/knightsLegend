@@ -79,6 +79,13 @@ namespace ShipDock.Applications
 
         private void Awake()
         {
+            if (m_DevelopSubgroup.isDeletePlayerPref)
+            {
+                m_DevelopSubgroup.isDeletePlayerPref = false;
+                PlayerPrefs.DeleteAll();
+            }
+            else { }
+
             CreateGame();
         }
 
@@ -130,6 +137,11 @@ namespace ShipDock.Applications
                 BackgroundOperation(false);
             }
             else { }
+
+            ParamNotice<bool> notice = Pooling<ParamNotice<bool>>.From();
+            notice.ParamValue = focus;
+            ShipDockConsts.NOTICE_APPLICATION_PAUSE.Broadcast(notice);
+            Pooling<ParamNotice<bool>>.To(notice);
         }
 
         protected virtual void BackgroundOperation(bool isCleanVersionCache)
