@@ -1,6 +1,0 @@
-D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockRelates\bin\Debug\ShipDockRelates.dll
-D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockRelates\bin\Debug\ShipDockRelates.pdb
-D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockRelates\obj\Debug\ShipDockRelates.csprojAssemblyReference.cache
-D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockRelates\obj\Debug\ShipDockRelates.csproj.CoreCompileInputs.cache
-D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockRelates\obj\Debug\ShipDockRelates.dll
-D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockRelates\obj\Debug\ShipDockRelates.pdb

@@ -1,6 +1,0 @@
-D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockFSM\obj\Debug\ShipDockFSM.csprojAssemblyReference.cache
-D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockFSM\obj\Debug\ShipDockFSM.csproj.CoreCompileInputs.cache
-D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockFSM\bin\Debug\ShipDockFSM.dll
-D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockFSM\bin\Debug\ShipDockFSM.pdb
-D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockFSM\obj\Debug\ShipDockFSM.dll
-D:\Work\ThreeEliminate\trunk\Eliminates\Assets\Scripts\ShipDock\Projects~\ShipDockFSM\obj\Debug\ShipDockFSM.pdb
